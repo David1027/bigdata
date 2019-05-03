@@ -1,8 +1,6 @@
 import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.junit.Test;
-import setBean.SeBeanUtils;
 
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;

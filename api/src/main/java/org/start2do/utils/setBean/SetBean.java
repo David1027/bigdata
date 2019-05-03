@@ -1,6 +1,12 @@
-package setBean.pojo;
+package org.start2do.utils.setBean;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
+@Target({ElementType.FIELD, ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
 public @interface SetBean {
   /**
    * @title alias
@@ -11,7 +17,7 @@ public @interface SetBean {
    * @throws
    * @description 别名
    */
-  String alias();
+  String alias() default "";
 
   /**
    * @title setMethod
@@ -22,7 +28,7 @@ public @interface SetBean {
    * @throws
    * @description 设置方法
    */
-  String setMethod();
+  String setMethod() default "";
 
   /**
    * @title getMethod
@@ -33,7 +39,7 @@ public @interface SetBean {
    * @throws
    * @description 获取方法
    */
-  String getMethod();
+  String getMethod() default "";
 
   /**
    * @title skin
@@ -55,7 +61,7 @@ public @interface SetBean {
    * @throws
    * @description 转换实现类
    */
-  Class ConvertCLass();
+  Class convertCLass() default Object.class;
 
   /**
    * @title Scope
@@ -64,7 +70,7 @@ public @interface SetBean {
    * @returns java.lang.String
    * @updateTime 2019-05-01 10:35
    * @throws
-   * @description 作用域。。有些转换类型仅限于某些作用域
+   * @description 作用域,当打在类上面的时候仅上面的类可以是用
    */
-  String Scope();
+  String[] scope() default "";
 }

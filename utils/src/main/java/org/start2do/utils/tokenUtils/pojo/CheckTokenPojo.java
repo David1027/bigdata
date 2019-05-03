@@ -1,4 +1,4 @@
-package tokenUtils.pojo;
+package org.start2do.utils.tokenUtils.pojo;
 
 import lombok.Builder;
 import lombok.Data;

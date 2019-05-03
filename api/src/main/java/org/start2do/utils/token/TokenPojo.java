@@ -1,5 +1,6 @@
-package tokenUtils.pojo;
+package org.start2do.utils.token;
 /** Created by IntelliJ IDEA. User: Lijie HelloBox@outlook.com Date: 2019/4/24 Time: 10:16 */
+
 import lombok.Data;
 
 import java.util.Date;

@@ -1,9 +1,11 @@
-package tokenUtils;
+package org.start2do.utils.tokenUtils;
 
+import org.start2do.utils.classUtils.ClassUtils;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.Md5Crypt;
-import tokenUtils.pojo.CheckTokenPojo;
-import tokenUtils.pojo.TokenPojo;
+import org.start2do.utils.tokenUtils.pojo.CheckTokenPojo;
+import org.start2do.utils.token.TokenPojo;
+import org.start2do.utils.token.TokenBuilder;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
@@ -189,7 +191,8 @@ public class TokenUtils {
       for (String s : tokenString.split("&")) {
         String[] fld = s.split("=");
         try {
-          Method method = o.getDeclaredMethod(getSetMethodString(fld[0]), String.class);
+          Method method =
+              o.getDeclaredMethod(ClassUtils.getSetMethodString("set", fld[0]), String.class);
           method.invoke(result, fld[1]);
         } catch (NoSuchMethodException e) {
         }
@@ -199,19 +202,6 @@ public class TokenUtils {
       e.printStackTrace();
     }
     return null;
-  }
-
-  /**
-   * * 获取方法名称
-   *
-   * @author Lijie HelloBox@outlook.com
-   * @date 2019/4/27 11:26
-   */
-  private static String getSetMethodString(String fldName) {
-    if (fldName == null || fldName.length() < 1) throw new NullPointerException();
-    return "set"
-        + String.valueOf((Character.toUpperCase(fldName.charAt(0))))
-        + fldName.substring(1);
   }
 
   /**

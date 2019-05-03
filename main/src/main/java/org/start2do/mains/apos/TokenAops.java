@@ -7,9 +7,9 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.start2do.mains.apos.pojo.TokenCheck;
-import org.start2do.mains.utils.tokenUtils.TokenUtils;
-import org.start2do.mains.utils.tokenUtils.pojo.CheckTokenPojo;
 import org.start2do.mains.views.MessageResult;
+import org.start2do.utils.tokenUtils.TokenUtils;
+import org.start2do.utils.tokenUtils.pojo.CheckTokenPojo;
 
 import javax.servlet.http.HttpServletRequest;
 

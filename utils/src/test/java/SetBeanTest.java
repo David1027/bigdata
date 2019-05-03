@@ -1,6 +1,6 @@
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
-import org.start2do.utils.setBean.SeBeanUtils;
+import org.start2do.utils.setBean.SetBeanUtils;
 import pojo.SetBeanTestPojo;
 import pojo.SetBeanTestPojo2;
 
@@ -16,7 +16,7 @@ public class SetBeanTest {
     Map<String, Object> map = new HashMap<>();
     map.put("id", 1);
     map.put("ppp", "test");
-    SetBeanTestPojo pojo = SeBeanUtils.set(map, SetBeanTestPojo.class);
+    SetBeanTestPojo pojo = SetBeanUtils.set(map, SetBeanTestPojo.class);
     System.out.println(pojo);
     Assert.assertEquals(pojo.getId(), map.get("id"));
     Assert.assertEquals(pojo.getXxx(), map.get("ppp"));
@@ -28,7 +28,7 @@ public class SetBeanTest {
     setBeanTestPojo.setId(1);
     setBeanTestPojo.setXxx("nihao");
     setBeanTestPojo.setDate(new Date());
-    SetBeanTestPojo2 setBeanTestPojo2 = SeBeanUtils.set(setBeanTestPojo, SetBeanTestPojo2.class);
+    SetBeanTestPojo2 setBeanTestPojo2 = SetBeanUtils.set(setBeanTestPojo, SetBeanTestPojo2.class);
     System.out.println(setBeanTestPojo2);
     Assert.assertEquals(setBeanTestPojo.getId(), Integer.valueOf(setBeanTestPojo2.getPkey()));
     Assert.assertEquals(setBeanTestPojo.getXxx(), setBeanTestPojo2.getH());
@@ -40,7 +40,7 @@ public class SetBeanTest {
     setBeanTestPojo.setPkey(1);
     setBeanTestPojo.setH("SetBeanTestPojo2是我");
     setBeanTestPojo.setTimestamp(new Timestamp(new Date().getTime()));
-    SetBeanTestPojo pojo = SeBeanUtils.set(setBeanTestPojo, SetBeanTestPojo.class);
+    SetBeanTestPojo pojo = SetBeanUtils.set(setBeanTestPojo, SetBeanTestPojo.class);
     System.out.println(pojo);
     Assert.assertEquals(pojo.getId(), Integer.valueOf(setBeanTestPojo.getPkey()));
     Assert.assertEquals(pojo.getXxx(), setBeanTestPojo.getH());

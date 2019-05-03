@@ -1,5 +1,6 @@
 package org.start2do.utils.classUtils;
 
+import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.start2do.utils.MyStringUtils;
@@ -16,9 +17,15 @@ import java.util.concurrent.ConcurrentHashMap;
 public class GetClassInfo {
   private static ConcurrentHashMap<String, List<SetBeanFldInfo>> map;
   private static final Logger logger = LogManager.getLogger(GetClassInfo.class);
+  @Setter private static Integer maxItemNumber = 1000;
 
   static {
     map = new ConcurrentHashMap<>();
+  }
+
+  public static void add(String key, List<SetBeanFldInfo> list) {
+    if (map.size() > maxItemNumber) map.clear();
+    map.put(key, list);
   }
 
   /**
@@ -30,16 +37,15 @@ public class GetClassInfo {
    * @throws
    * @description isLef用于校验 方向。。 true SetBean打在source上
    */
-  public static List<SetBeanFldInfo> getFld(Object o, boolean isLeft) {
-    Class aClass = o.getClass();
-    String key = aClass.getName() + "_" + isLeft;
+  public static List<SetBeanFldInfo> getFld(Class source, Class target, boolean isLeft) {
+    String key = source.getName() + "_" + isLeft + "_" + target.getName();
     List<SetBeanFldInfo> result = map.get(key);
     if (result != null) {
       logger.debug("使用缓存");
       return result;
     }
-    result = isLeft ? leftgetFld(aClass) : rightgetFld(aClass);
-    map.put(key, result);
+    result = isLeft ? leftgetFld(source) : rightgetFld(target);
+    add(key, result);
     return result;
   }
 
@@ -71,9 +77,9 @@ public class GetClassInfo {
         if (!setBeanFldInfo.isAuto()) {
           setBeanFldInfo.setGetMethod(
               ClassUtils.getSetMethodString("get", declaredField.getName()));
-        }else{
+        } else {
           setBeanFldInfo.setGetMethod(
-                  ClassUtils.getSetMethodString("get", declaredField.getName()));
+              ClassUtils.getSetMethodString("get", declaredField.getName()));
         }
       }
       result.add(setBeanFldInfo);

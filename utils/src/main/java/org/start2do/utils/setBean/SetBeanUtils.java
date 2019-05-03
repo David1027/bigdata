@@ -13,8 +13,8 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 
-public class SeBeanUtils {
-  private static final Logger logger = LogManager.getLogger(SeBeanUtils.class);
+public class SetBeanUtils {
+  private static final Logger logger = LogManager.getLogger(SetBeanUtils.class);
 
   public static <T, S> T set(
       S source,
@@ -51,7 +51,7 @@ public class SeBeanUtils {
           logger.error(String.format("%s 该类不在作用域内", name));
           return target;
         }
-        fldList = GetClassInfo.getFld(target, isLeft);
+        fldList = GetClassInfo.getFld(source.getClass(), target.getClass(), isLeft);
       }
     } else {
       setBean = source.getClass().getAnnotation(SetBean.class);
@@ -65,7 +65,7 @@ public class SeBeanUtils {
         }
       }
       isLeft = true;
-      fldList = GetClassInfo.getFld(source, isLeft);
+      fldList = GetClassInfo.getFld(source.getClass(), target.getClass(), isLeft);
     }
     Class sourceClass = isLeft ? target.getClass() : source.getClass();
     for (SetBeanFldInfo setBeanFldInfo : fldList) {
@@ -94,7 +94,7 @@ public class SeBeanUtils {
   }
 
   public static <T> T mapSet(Map map, T target, SetRun<Map, T> run) {
-    for (SetBeanFldInfo setBeanFldInfo : GetClassInfo.getFld(target, false)) {
+    for (SetBeanFldInfo setBeanFldInfo : GetClassInfo.getFld(Map.class, target.getClass(), false)) {
       Object value = map.get(setBeanFldInfo.getName());
       TypeSafeResult result = TypeSafeUtil.convert(null, value, setBeanFldInfo.getType());
       if (result == null) continue;

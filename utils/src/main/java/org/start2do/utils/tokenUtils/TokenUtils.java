@@ -1,43 +1,43 @@
 package org.start2do.utils.tokenUtils;
 
-import org.start2do.utils.classUtils.ClassUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.Md5Crypt;
-import org.start2do.utils.tokenUtils.pojo.CheckTokenPojo;
-import org.start2do.utils.token.TokenPojo;
+import org.start2do.utils.ResourceUtils;
+import org.start2do.utils.classUtils.ClassUtils;
 import org.start2do.utils.token.TokenBuilder;
+import org.start2do.utils.token.TokenPojo;
+import org.start2do.utils.tokenUtils.pojo.CheckTokenPojo;
+import org.start2do.utils.tokenUtils.pojo.TokenUtilConfig;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Properties;
 import java.util.StringJoiner;
 
 /** Created by IntelliJ IDEA. Lijie HelloBox@outlook.com Date: 2019/4/23 Time: 14:06 */
 public class TokenUtils {
-  private static String KEY;
-  private static String IV;
-  private static String Md5Salt;
+  private static String KEY = "bpb31tS$&2J;F@0S";
+  private static String IV = "5FMz2wEo=D52D/~\\";
+  private static String Md5Salt = "Yni|#`z@Ms+K7m,Y";
 
   static {
-    Properties properties = new Properties();
+    ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
     try {
-      InputStream inputStream = TokenUtils.class.getResourceAsStream("cryptConf1ig.properties");
-      if (inputStream != null) {
-        properties.load(inputStream);
-      }
+      TokenUtilConfig config =
+          mapper.readValue(
+              ResourceUtils.getFile("classpath:cryptConf1ig.yml"), TokenUtilConfig.class);
+      KEY = config.getKey();
+      IV = config.getIv();
+      Md5Salt = config.getMd5Salt();
     } catch (IOException e) {
       e.printStackTrace();
     }
-    KEY = properties.getProperty("Key", "bpb31tS$&2J;F@0S");
-    IV = properties.getProperty("Iv", "5FMz2wEo=D52D/~\\");
-    Md5Salt = properties.getProperty("Md5Salt", "Yni|#`z@Ms+K7m,Y");
   }
   /**
    * * 转换成指定的DTO
@@ -75,7 +75,7 @@ public class TokenUtils {
       field.setAccessible(true);
       try {
         if (skin && field.getName().equals("sign")) continue;
-        stringJoiner.add(field.getName() + "=" + String.valueOf(field.get(tokenPojo)));
+        stringJoiner.add(field.getName() + "=" + field.get(tokenPojo));
       } catch (IllegalAccessException e) {
         e.printStackTrace();
       }
@@ -156,14 +156,14 @@ public class TokenUtils {
   /**
    * @Description: 校验是否Token是否有效
    *
-   * @param initVector 向量
+   * @param decryptString
    * @date 2019/4/23 16:26
    * @author Lijie HelloBox@outlook.com
    */
-  public static boolean checkSign(String decrypt) {
-    if (null == decrypt) return false;
-    String s = decrypt.substring(0, decrypt.indexOf("sign") - 1);
-    return getSign(s).equals(decrypt.substring(decrypt.indexOf("sign") + 5));
+  public static boolean checkSign(String decryptString) {
+    if (null == decryptString) return false;
+    String s = decryptString.substring(0, decryptString.indexOf("sign") - 1);
+    return getSign(s).equals(decryptString.substring(decryptString.indexOf("sign") + 5));
   }
 
   /**
@@ -190,12 +190,8 @@ public class TokenUtils {
       T result = o.newInstance();
       for (String s : tokenString.split("&")) {
         String[] fld = s.split("=");
-        try {
-          Method method =
-              o.getDeclaredMethod(ClassUtils.getSetMethodString("set", fld[0]), String.class);
-          method.invoke(result, fld[1]);
-        } catch (NoSuchMethodException e) {
-        }
+        ClassUtils.Value(
+            result, ClassUtils.getSetMethodString("set", fld[0]), String.class, fld[1], true);
       }
       return result;
     } catch (Exception e) {

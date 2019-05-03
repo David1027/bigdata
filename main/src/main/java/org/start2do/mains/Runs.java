@@ -12,9 +12,13 @@ public class Runs {
    * @returns
    * @updateTime 2019-04-29 20:23
    * @throws
-   * @description 请在启动参数添加 --spring.config.name=classpath:application-dev.yml
+   * @description 请在启动参数添加 --spring.profiles.active=dev
    */
   public static void main(String[] args) {
+    System.out.println("args");
+    for (String arg : args) {
+      System.out.println(arg);
+    }
     SpringApplication.run(Runs.class, args);
   }
 }

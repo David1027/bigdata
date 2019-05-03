@@ -1,7 +1,7 @@
 package org.start2do.mains.trigger;
 
 import org.start2do.mains.trigger.pojo.TriggerPojo;
-import org.start2do.mains.views.MessageResult;
+import org.start2do.mains.pojo.MessageResult;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

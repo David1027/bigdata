@@ -1,11 +1,9 @@
-package org.start2do.mains.utils.errorCode;
+package com.shoestp.mains.utils.errorCode;
 
-import org.springframework.context.annotation.PropertySource;
+import com.shoestp.mains.utils.errorCode.langs.BaseLangs;
+import javax.annotation.Resource;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
-import org.start2do.mains.utils.errorCode.langs.BaseLangs;
-
-import javax.annotation.Resource;
 
 @Component
 public class ErrorCodeUtils {

@@ -1,17 +1,16 @@
-package org.start2do.mains.apos;
+package com.shoestp.mains.apos;
 
+import com.shoestp.mains.apos.pojo.TokenCheck;
+import com.shoestp.mains.pojo.MessageResult;
+import javax.servlet.http.HttpServletRequest;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import org.start2do.mains.apos.pojo.TokenCheck;
-import org.start2do.mains.pojo.MessageResult;
 import org.start2do.utils.tokenUtils.TokenUtils;
 import org.start2do.utils.tokenUtils.pojo.CheckTokenPojo;
-
-import javax.servlet.http.HttpServletRequest;
 
 @Aspect
 public class TokenAops {

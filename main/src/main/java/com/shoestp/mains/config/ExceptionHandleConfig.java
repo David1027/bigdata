@@ -1,11 +1,10 @@
-package org.start2do.mains.config;
+package com.shoestp.mains.config;
 
-import org.start2do.mains.pojo.MessageResult;
+import com.shoestp.mains.pojo.MessageResult;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.servlet.http.HttpServletRequest;
 
 // @ControllerAdvice(basePackageClasses = AcmeController.class)
 @ControllerAdvice

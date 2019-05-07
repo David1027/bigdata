@@ -1,12 +1,11 @@
-package org.start2do.mains.controllers;
+package com.shoestp.mains.controllers;
 
+import com.shoestp.mains.pojo.MessageResult;
+import javax.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.start2do.mains.pojo.MessageResult;
-
-import javax.servlet.http.HttpServletRequest;
 
 @RestController
 public class IndexController {

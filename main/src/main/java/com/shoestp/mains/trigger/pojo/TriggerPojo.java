@@ -1,4 +1,4 @@
-package org.start2do.mains.trigger.pojo;
+package com.shoestp.mains.trigger.pojo;
 
 import lombok.Builder;
 import lombok.Data;

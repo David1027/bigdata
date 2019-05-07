@@ -1,4 +1,4 @@
-package org.start2do.mains;
+package com.shoestp.mains;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -15,10 +15,6 @@ public class Runs {
    * @description 请在启动参数添加 --spring.profiles.active=dev
    */
   public static void main(String[] args) {
-    System.out.println("args");
-    for (String arg : args) {
-      System.out.println(arg);
-    }
     SpringApplication.run(Runs.class, args);
   }
 }

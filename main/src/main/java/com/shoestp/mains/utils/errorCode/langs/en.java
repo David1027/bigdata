@@ -1,4 +1,4 @@
-package org.start2do.mains.utils.errorCode.langs;
+package com.shoestp.mains.utils.errorCode.langs;
 
 import org.springframework.context.annotation.PropertySource;
 

@@ -1,7 +1,7 @@
-package org.start2do.mains.trigger;
+package com.shoestp.mains.trigger;
 
-import org.start2do.mains.trigger.pojo.TriggerPojo;
-import org.start2do.mains.pojo.MessageResult;
+import com.shoestp.mains.pojo.MessageResult;
+import com.shoestp.mains.trigger.pojo.TriggerPojo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

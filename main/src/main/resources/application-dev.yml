@@ -28,3 +28,6 @@ spring:
     database-platform: org.hibernate.dialect.MySQL5Dialect
     show-sql: true
   messages: lang
+  quartz:
+    job-store-type: memory
+

@@ -9,5 +9,6 @@ public enum InquiryTypeEnum {
   /** 供应商询盘 */
   SUPPLIER,
   /** 商品询盘 */
-  COMMODITY
+  COMMODITY,
+  RFQ
 }

@@ -15,15 +15,15 @@ import lombok.Data;
 @Entity
 @Builder
 public class DataViewCountry {
-    @Id
-    @GeneratedValue
-    private Integer id;
-    /** 国家名称 */
-    private String countryName;
-    /** 国旗图片 */
-    private String countryImage;
-    /** 访客数 */
-    private Integer visitorCount;
-    /** 浏览量 */
-    private Integer viewCount;
+  @Id @GeneratedValue private Integer id;
+  /** 国家名称 */
+  private String countryName;
+  /** 国旗图片 */
+  private String countryImage;
+  /** PC端访客数 */
+  private Integer visitorCountPc;
+  /** 移动端访客数 */
+  private Integer visitorCountWap;
+  /** 总访客数 */
+  private Integer visitorCount;
 }

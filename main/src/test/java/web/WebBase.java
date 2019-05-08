@@ -15,7 +15,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
  * @title 前端自动化测试类
  * @author Lijie HelloBox@outlook.com
  */
-public class WebBase {
+public class WebBase  {
   protected WebDriver driver;
   protected Map<String, Object> vars;
   JavascriptExecutor js;

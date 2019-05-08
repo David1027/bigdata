@@ -1,4 +1,4 @@
-package com.shoestp.mains.entitys.MetaData;
+package com.shoestp.mains.entitys.DataView;
 
 import java.util.Date;
 import javax.persistence.Entity;

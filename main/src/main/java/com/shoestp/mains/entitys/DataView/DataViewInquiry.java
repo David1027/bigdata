@@ -1,4 +1,4 @@
-package com.shoestp.mains.entitys.MetaData;
+package com.shoestp.mains.entitys.DataView;
 
 import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
 import java.util.Date;

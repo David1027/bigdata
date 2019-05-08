@@ -1,4 +1,4 @@
-package com.shoestp.mains.entitys.MetaData;
+package com.shoestp.mains.entitys.DataView;
 
 import com.shoestp.mains.enums.flow.DeviceTypeEnum;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;

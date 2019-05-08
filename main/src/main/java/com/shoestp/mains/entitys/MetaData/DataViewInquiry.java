@@ -1,12 +1,12 @@
-package com.shoestp.mains.entitys;
-
-import java.util.Date;
-
-import javax.persistence.*;
+package com.shoestp.mains.entitys.MetaData;
 
 import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
-import com.shoestp.mains.enums.user.VisitorTypeEnum;
-
+import java.util.Date;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import lombok.Builder;
 import lombok.Data;
 

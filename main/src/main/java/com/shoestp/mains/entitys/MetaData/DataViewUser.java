@@ -1,13 +1,14 @@
-package com.shoestp.mains.entitys;
+package com.shoestp.mains.entitys.MetaData;
 
-import java.util.Date;
-
-import javax.persistence.*;
-
+import com.shoestp.mains.enums.user.RegisterTypeEnum;
 import com.shoestp.mains.enums.user.SexEnum;
 import com.shoestp.mains.enums.user.VisitorTypeEnum;
-import com.shoestp.mains.enums.user.RegisterTypeEnum;
-
+import java.util.Date;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import lombok.Builder;
 import lombok.Data;
 

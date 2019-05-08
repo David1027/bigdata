@@ -23,8 +23,10 @@ public class DataViewCountry {
     private String countryName;
     /** 国旗图片 */
     private String countryImage;
-    /** 访客数 */
+    /** PC端访客数 */
+    private Integer visitorCountPc;
+    /** 移动端访客数 */
+    private Integer visitorCountWap;
+    /** 总访客数 */
     private Integer visitorCount;
-    /** 浏览量 */
-    private Integer viewCount;
 }

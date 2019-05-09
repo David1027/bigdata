@@ -15,18 +15,25 @@ import lombok.Data;
 @Data
 @Entity
 @Builder
+@Table(name = "data_view_real")
 public class DataViewReal {
   @Id @GeneratedValue private Integer id;
   /** 访客数 */
+  @Column(name = "visitor_count")
   private Integer visitorCount;
   /** 浏览量 */
+  @Column(name = "view_count")
   private Integer viewCount;
   /** 注册量 */
+  @Column(name = "register_count")
   private Integer registerCount;
   /** 询盘量 */
+  @Column(name = "inquiry_count")
   private Integer inquiryCount;
   /** RFQ数 */
+  @Column(name = "rfq_ount")
   private Integer rfqCount;
   /** 创建时间 */
+  @Column(name = "create_time")
   private Date createTime;
 }

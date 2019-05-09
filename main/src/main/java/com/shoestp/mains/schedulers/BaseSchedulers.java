@@ -2,8 +2,6 @@ package com.shoestp.mains.schedulers;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.SimpleScheduleBuilder;
@@ -13,7 +11,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 
 public abstract class BaseSchedulers extends QuartzJobBean {
-  private static final Logger logger = LogManager.getLogger(BaseSchedulers.class);
   @Setter @Getter private String jobNmae = this.getClass().getName();
 
   private SimpleScheduleBuilder scheduleBuilder;

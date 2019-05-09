@@ -6,6 +6,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import lombok.Builder;
 import lombok.Data;
 
@@ -13,6 +14,7 @@ import lombok.Data;
 @Entity
 @Data
 @Builder
+@Table(name = "sys_config")
 public class SysConfig {
   @Id @GeneratedValue private Integer id;
   /** * 类型 */

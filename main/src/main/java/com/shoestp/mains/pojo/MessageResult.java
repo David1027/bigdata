@@ -8,5 +8,5 @@ import lombok.Data;
 public class MessageResult {
   private Integer code;
   private String msg;
-  private String result;
+  private Object result;
 }

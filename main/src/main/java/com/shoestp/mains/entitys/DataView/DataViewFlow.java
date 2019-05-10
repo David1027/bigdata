@@ -20,7 +20,6 @@ import lombok.Data;
  */
 @Data
 @Entity
-@Builder
 @Table(name = "data_view_flow")
 public class DataViewFlow {
   @Id @GeneratedValue private Integer id;
@@ -48,7 +47,7 @@ public class DataViewFlow {
   @Column(name = "click_rate")
   private Double clickRate;
   /** 跳失率 */
-  @Column(name = "click_rate")
+  @Column(name = "jump_rate")
   private Double jumpRate;
   /** 平均停留时长 */
   @Column(name = "average_stay_time")

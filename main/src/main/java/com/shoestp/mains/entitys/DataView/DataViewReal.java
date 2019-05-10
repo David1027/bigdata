@@ -16,7 +16,6 @@ import lombok.Data;
  */
 @Data
 @Entity
-@Builder
 @Table(name = "data_view_real")
 public class DataViewReal {
   @Id @GeneratedValue private Integer id;

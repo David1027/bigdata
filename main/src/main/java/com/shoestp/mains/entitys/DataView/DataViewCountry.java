@@ -15,7 +15,6 @@ import lombok.Data;
  */
 @Data
 @Entity
-@Builder
 @Table(name = "dataview_country")
 public class DataViewCountry {
   @Id @GeneratedValue private Integer id;

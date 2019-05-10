@@ -1,7 +1,7 @@
 package com.shoestp.mains.controllers;
 
 import com.shoestp.mains.pojo.MessageResult;
-import com.shoestp.mains.service.UserService;
+import com.shoestp.mains.service.DataView.UserService;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.LogManager;
@@ -20,7 +20,7 @@ public class IndexController {
   @GetMapping(value = {"/", ""})
   public Object index(HttpServletRequest httpRequest) {
     logger.debug(httpRequest.getCookies());
-    userService.test();
+//    userService.test();
     return MessageResult.builder().code(1).msg("Hello").build();
   }
 }

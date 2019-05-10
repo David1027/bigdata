@@ -1,11 +1,16 @@
 package com.shoestp.mains.dao.DataView;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.querydsl.core.Tuple;
 import com.shoestp.mains.dao.BaseDao;
 import com.shoestp.mains.entitys.DataView.DataViewFlow;
+import com.shoestp.mains.entitys.DataView.QDataViewFlow;
+import com.shoestp.mains.enums.flow.DeviceTypeEnum;
+import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.repositorys.DataView.FlowRepository;
 
 import org.springframework.stereotype.Repository;
@@ -18,6 +23,26 @@ import org.springframework.stereotype.Repository;
 public class FlowDao extends BaseDao<DataViewFlow> {
 
   @Resource private FlowRepository flowRepository;
+
+  /**
+   * 根据设备来源，当天时间，流量来源分组获取访客数
+   *
+   * @author: lingjian @Date: 2019/5/10 16:45
+   * @param device 设备来源
+   * @param start 开始时间
+   * @param end 结束时间
+   * @return
+   */
+  public List<Tuple> findAllByDeviceType(DeviceTypeEnum device, Date start, Date end) {
+    QDataViewFlow dataViewFlow = QDataViewFlow.dataViewFlow;
+    return getQuery()
+        .select(
+                dataViewFlow.sourceType.stringValue().as("sourceType"),
+                dataViewFlow.visitorCount.sum().as("visitCount"))
+        .from(dataViewFlow)
+        .where(dataViewFlow.deviceType.eq(device))
+        .where(dataViewFlow.createTime.between(start,end)).groupBy(dataViewFlow.sourceType).fetchResults().getResults();
+  }
 
   @Override
   public DataViewFlow find(DataViewFlow dataViewFlow) {

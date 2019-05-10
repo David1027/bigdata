@@ -11,7 +11,6 @@ import lombok.Data;
 
 /** 搜索关键词元数据 */
 @Data
-@Builder
 @Entity
 @Table(name = "search_word_info")
 public class SearchWordInfo {

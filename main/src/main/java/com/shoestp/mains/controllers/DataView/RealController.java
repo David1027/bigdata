@@ -53,6 +53,10 @@ public class RealController {
   @PostMapping(value = "/realtrend")
   public Object getRealTrend(@DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
     logger.debug(date);
-    return MessageResult.builder().code(1).msg("Hello").result(realService.getRealTrend(date)).build();
+    return MessageResult.builder()
+        .code(1)
+        .msg("Hello")
+        .result(realService.getRealTrend(date))
+        .build();
   }
 }

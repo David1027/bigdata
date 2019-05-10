@@ -42,6 +42,33 @@ public class RealServiceImpl implements RealService {
   }
 
   /**
+   * 获取某一天开始时间和结束之间以内的累加值
+   *
+   * @author: lingjian @Date: 2019/5/10 9:21
+   * @param start
+   * @param end
+   * @return
+   */
+  public int[] getAddByHour(Date start, Date end) {
+    return add(realDao.findAllByCreateTimeBetween(start, end));
+  }
+
+  /**
+   * 获取两个值的比较率
+   *
+   * @author: lingjian @Date: 2019/5/10 9:21
+   * @param num1
+   * @param num2
+   * @return
+   */
+  public Double getCompare(int num1, int num2) {
+    if (num2 == 0) {
+      num2 = 1;
+    }
+    return (num1 - num2) / (num2 * 1.0);
+  }
+
+  /**
    * 获取实时概况的值
    *
    * @author: lingjian @Date: 2019/5/9 15:31
@@ -49,51 +76,62 @@ public class RealServiceImpl implements RealService {
    */
   @Override
   public DataViewRealView getRealOverview() {
-    // 获取当天的值
-    List<DataViewReal> realToday =
-        realDao.findAllByCreateTimeBetween(
-            DateTimeUtil.getTimesmorning(), DateTimeUtil.getTimesnight());
-    // 获取昨天的值
-    List<DataViewReal> realendYesterday =
-        realDao.findAllByCreateTimeBetween(
-            DateTimeUtil.getYesterdaymorning(), DateTimeUtil.getYesterdaynight());
-    // 获取上周同一天的值
-    List<DataViewReal> realWeek =
-        realDao.findAllByCreateTimeBetween(
-            DateTimeUtil.getWeekmorning(), DateTimeUtil.getWeeknight());
-
-    // 获取当天所有的累加值
-    int[] arrToday = add(realToday);
-    // 获取昨天所有的累加值
-    int[] arrYesterday = add(realendYesterday);
-    // 获取上周同一天所有的累加值
-    int[] arrWeek = add(realendYesterday);
-
+    // 获取当天，昨天，上周同一天所有的累加值
+    int[] arrToday = getAddByHour(DateTimeUtil.getTimesmorning(), DateTimeUtil.getTimesnight());
+    int[] arrYesterday =
+        getAddByHour(DateTimeUtil.getYesterdaymorning(), DateTimeUtil.getYesterdaynight());
+    int[] arrWeek = getAddByHour(DateTimeUtil.getWeekmorning(), DateTimeUtil.getWeeknight());
+    // 创建返回前端对象
     DataViewRealView realView = new DataViewRealView();
-    // 访客数
     realView.setVisitorCount(arrToday[0]);
-    realView.setVisitorCompareYesterday((arrToday[0] - arrYesterday[0]) / (arrYesterday[0] * 1.0));
-    realView.setVisitorCompareWeek((arrToday[0] - arrWeek[0]) / (arrWeek[0] * 1.0));
-    // 浏览量
+    realView.setVisitorCompareYesterday(getCompare(arrToday[0], arrYesterday[0]));
+    realView.setVisitorCompareWeek(getCompare(arrToday[0], arrWeek[0]));
     realView.setViewCount(arrToday[1]);
-    realView.setViewCompareYesterday((arrToday[1] - arrYesterday[1]) / (arrYesterday[1] * 1.0));
-    realView.setViewCompareWeek((arrToday[1] - arrWeek[1]) / (arrWeek[1] * 1.0));
-    // 注册量
+    realView.setViewCompareYesterday(getCompare(arrToday[1], arrYesterday[1]));
+    realView.setViewCompareWeek(getCompare(arrToday[1], arrWeek[1]));
     realView.setRegisterCount(arrToday[2]);
-    realView.setRegisterCompareYesterday((arrToday[2] - arrYesterday[2]) / (arrYesterday[2] * 1.0));
-    realView.setRegisterCompareWeek((arrToday[2] - arrWeek[2]) / (arrWeek[2] * 1.0));
-    // 询盘量
+    realView.setRegisterCompareYesterday(getCompare(arrToday[2], arrYesterday[2]));
+    realView.setRegisterCompareWeek(getCompare(arrToday[2], arrWeek[2]));
     realView.setInquiryCount(arrToday[3]);
-    realView.setInquiryCompareYesterday((arrToday[3] - arrYesterday[3]) / (arrYesterday[3] * 1.0));
-    realView.setInquiryCompareWeek((arrToday[3] - arrWeek[3]) / (arrWeek[3] * 1.0));
-    // RFQ数
+    realView.setInquiryCompareYesterday(getCompare(arrToday[3], arrYesterday[3]));
+    realView.setInquiryCompareWeek(getCompare(arrToday[3], arrWeek[3]));
     realView.setRfqCount(arrToday[4]);
-    realView.setRfqCompareYesterday((arrToday[4] - arrYesterday[4]) / (arrYesterday[4] * 1.0));
-    realView.setRfqCompareWeek((arrToday[4] - arrWeek[4]) / (arrWeek[4] * 1.0));
-    // 更新时间
+    realView.setRfqCompareYesterday(getCompare(arrToday[4], arrYesterday[4]));
+    realView.setRfqCompareWeek(getCompare(arrToday[4], arrWeek[4]));
     realView.setUpdateTime(new Date());
-
     return realView;
+  }
+
+  /**
+   * 获取一定时间段以内的累加值
+   *
+   * @author: lingjian @Date: 2019/5/10 9:21
+   * @param date
+   * @param start
+   * @param end
+   * @return
+   */
+  public int[] getAddByTime(Date date, int start, int end) {
+    List<DataViewReal> real =
+        realDao.findAllByCreateTimeBetween(
+            DateTimeUtil.getTimesOfDay(date, start), DateTimeUtil.getTimesOfDay(date, end));
+    int[] arr = add(real);
+    return arr;
+  }
+
+  /**
+   * 获取24个小时中每一个小时的值
+   *
+   * @author: lingjian @Date: 2019/5/10 9:21
+   * @param date
+   * @return
+   */
+  public int[] getEveryHour(Date date, int num) {
+    int[] arr = new int[23];
+    for (int i = 0; i < arr.length; i++) {
+      arr[i] = getAddByTime(date, i, i + 1)[num];
+    }
+    return arr;
   }
 
   /**
@@ -104,46 +142,12 @@ public class RealServiceImpl implements RealService {
    * @return
    */
   @Override
-  public Map<String,int[]> getRealTrend(Date date) {
-
-
-
-    List<DataViewReal> real0 =
-            realDao.findAllByCreateTimeBetween(
-                    DateTimeUtil.getTimesOfDay(date,0),DateTimeUtil.getTimesOfDay(date,1));
-    int[] arr0 = add(real0);
-
-    List<DataViewReal> real1 =
-            realDao.findAllByCreateTimeBetween(
-                    DateTimeUtil.getTimesOfDay(date,1),DateTimeUtil.getTimesOfDay(date,2));
-    int[] arr1 = add(real1);
-
-    // 访客数
-    int[] arrVisitor = new int[2];
-    arrVisitor[0] = arr0[0];
-    arrVisitor[1] = arr1[0];
-
-    //浏览量
-    int[] arrView = new int[2];
-    arrView[0] = arr0[1];
-    arrView[1] = arr1[1];
-
-    //注册量
-    int[] arrRegister = new int[2];
-    arrRegister[0] = arr0[2];
-    arrRegister[1] = arr1[2];
-
-    //询盘数
-    int[] arrInquiry = new int[2];
-    arrInquiry[0] = arr0[3];
-    arrInquiry[1] = arr1[3];
-
-    Map<String,int[]> visitorMap = new HashMap<>();
-    visitorMap.put("visitor",arrVisitor);
-    visitorMap.put("view",arrView);
-    visitorMap.put("register",arrRegister);
-    visitorMap.put("inquiry",arrInquiry);
-
+  public Map<String, int[]> getRealTrend(Date date) {
+    Map<String, int[]> visitorMap = new HashMap<>();
+    visitorMap.put("visitor", getEveryHour(date, 0));
+    visitorMap.put("view", getEveryHour(date, 1));
+    visitorMap.put("register", getEveryHour(date, 2));
+    visitorMap.put("inquiry", getEveryHour(date, 3));
     return visitorMap;
   }
 }

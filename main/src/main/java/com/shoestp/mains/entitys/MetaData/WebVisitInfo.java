@@ -11,7 +11,6 @@ import lombok.Data;
 
 /** 网站访问元数据 */
 @Data
-@Builder
 @Entity
 @Table(name = "web_visit_info")
 public class WebVisitInfo {

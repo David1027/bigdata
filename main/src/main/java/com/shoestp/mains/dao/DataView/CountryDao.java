@@ -1,11 +1,16 @@
 package com.shoestp.mains.dao.DataView;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.querydsl.core.Tuple;
 import com.shoestp.mains.dao.BaseDao;
 import com.shoestp.mains.entitys.DataView.DataViewCountry;
+import com.shoestp.mains.entitys.DataView.DataViewReal;
+import com.shoestp.mains.entitys.DataView.QDataViewCountry;
+import com.shoestp.mains.repositorys.DataView.CountryRepository;
 import com.shoestp.mains.repositorys.DataView.CountryRepository;
 
 import org.springframework.stereotype.Repository;
@@ -18,6 +23,18 @@ import org.springframework.stereotype.Repository;
 public class CountryDao extends BaseDao<DataViewCountry> {
 
   @Resource private CountryRepository countryRepository;
+
+  /**
+   * 根据时间获取国家地区类数据
+   *
+   * @author: lingjian @Date: 2019/5/13 11:14
+   * @param start 开始时间
+   * @param end 结束时间
+   * @return List<DataViewCountry>
+   */
+  public List<DataViewCountry> findAllByCountry(Date start, Date end) {
+    return countryRepository.findAllByCreateTimeBetween(start, end);
+  }
 
   @Override
   public DataViewCountry find(DataViewCountry dataViewCountry) {

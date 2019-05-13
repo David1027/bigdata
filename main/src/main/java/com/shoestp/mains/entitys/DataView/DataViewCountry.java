@@ -1,5 +1,7 @@
 package com.shoestp.mains.entitys.DataView;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,12 +17,15 @@ import lombok.Data;
  */
 @Data
 @Entity
-@Table(name = "dataview_country")
+@Table(name = "data_view_country")
 public class DataViewCountry {
   @Id @GeneratedValue private Integer id;
   /** 国家名称 */
   @Column(name = "country_name")
   private String countryName;
+  /** 国家英文名称 */
+  @Column(name = "country_english_name")
+  private String countryEnglishName;
   /** 国旗图片 */
   @Column(name = "country_image")
   private String countryImage;
@@ -33,4 +38,7 @@ public class DataViewCountry {
   /** 总访客数 */
   @Column(name = "visitor_count")
   private Integer visitorCount;
+  /** 创建时间 */
+  @Column(name = "create_time")
+  private Date createTime;
 }

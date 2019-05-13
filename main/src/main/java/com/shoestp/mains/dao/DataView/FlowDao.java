@@ -37,11 +37,35 @@ public class FlowDao extends BaseDao<DataViewFlow> {
     QDataViewFlow dataViewFlow = QDataViewFlow.dataViewFlow;
     return getQuery()
         .select(
-                dataViewFlow.sourceType.stringValue().as("sourceType"),
-                dataViewFlow.visitorCount.sum().as("visitCount"))
+            dataViewFlow.sourceType.stringValue().as("sourceType"),
+            dataViewFlow.visitorCount.sum().as("visitCount"))
         .from(dataViewFlow)
         .where(dataViewFlow.deviceType.eq(device))
-        .where(dataViewFlow.createTime.between(start,end)).groupBy(dataViewFlow.sourceType).fetchResults().getResults();
+        .where(dataViewFlow.createTime.between(start, end))
+        .groupBy(dataViewFlow.sourceType)
+        .fetchResults()
+        .getResults();
+  }
+
+  /**
+   * 根据时间获取设备来源的访客数
+   *
+   * @author: lingjian @Date: 2019/5/13 9:58
+   * @param start
+   * @param end
+   * @return
+   */
+  public List<Tuple> findAllByDeviceCount(Date start, Date end) {
+    QDataViewFlow dataViewFlow = QDataViewFlow.dataViewFlow;
+    return getQuery()
+        .select(
+            dataViewFlow.deviceType.stringValue().as("deviceType"),
+            dataViewFlow.visitorCount.sum().as("visitCount"))
+        .from(dataViewFlow)
+        .where(dataViewFlow.createTime.between(start, end))
+        .groupBy(dataViewFlow.deviceType)
+        .fetchResults()
+        .getResults();
   }
 
   @Override

@@ -15,4 +15,9 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
 
   @Resource private UserDao userDao;
+
+  @Override
+  public void getUserOverview() {
+
+  }
 }

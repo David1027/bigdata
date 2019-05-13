@@ -1,8 +1,12 @@
 import java.util.*;
 
-import com.shoestp.mains.enums.flow.DeviceTypeEnum;
+import javax.annotation.Resource;
+
+import com.shoestp.mains.dao.DataView.CountryDao;
+import com.shoestp.mains.entitys.DataView.DataViewCountry;
+import com.shoestp.mains.repositorys.DataView.CountryRepository;
 import com.shoestp.mains.utils.dateUtils.DateTimeUtil;
-import com.sun.org.apache.xerces.internal.dom.PSVIAttrNSImpl;
+
 
 /**
  * @description: 测试
@@ -10,9 +14,9 @@ import com.sun.org.apache.xerces.internal.dom.PSVIAttrNSImpl;
  * @create: 2019/5/9 13:34
  */
 public class Test111 {
-
-  private static Object DeviceTypeEnum;
+  @Resource private static CountryDao countryDao;
 
   public static void main(String[] args) {
+
   }
 }

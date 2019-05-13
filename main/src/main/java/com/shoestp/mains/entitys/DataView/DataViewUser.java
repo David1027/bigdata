@@ -28,14 +28,23 @@ public class DataViewUser {
   @Enumerated(EnumType.STRING)
   @Column(name = "visitor_type")
   private VisitorTypeEnum visitorType;
+  /** 访客数 */
+  @Column(name = "visitor_count")
+  private Integer visitorCount;
   /** 注册类型：PURCHASE-采购商，SUPPLIER-供应商 */
   @Enumerated(EnumType.STRING)
   @Column(name = "register_type")
   private RegisterTypeEnum registerType;
+  /** 注册量 */
+  @Column(name = "register_count")
+  private Integer registerCount;
   /** 性别类型：MAN-男，WOMAN-女，UNKNOWN-未知 */
   @Enumerated(EnumType.STRING)
   @Column(name = "sex")
   private SexEnum sex;
+  /** 性别人数 */
+  @Column(name = "sex_count")
+  private Integer sexCount;
   /** 创建时间 */
   @Column(name = "create_time")
   private Date createTime;

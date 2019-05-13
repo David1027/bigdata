@@ -19,6 +19,8 @@ public class UserDao extends BaseDao<DataViewUser> {
 
   @Resource private UserRepository userRepository;
 
+
+
   @Override
   public DataViewUser find(DataViewUser dataViewUser) {
     return null;

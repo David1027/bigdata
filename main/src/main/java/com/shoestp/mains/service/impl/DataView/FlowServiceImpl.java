@@ -9,7 +9,8 @@ import com.shoestp.mains.dao.DataView.FlowDao;
 import com.shoestp.mains.enums.flow.DeviceTypeEnum;
 import com.shoestp.mains.service.DataView.FlowService;
 import com.shoestp.mains.utils.dateUtils.DateTimeUtil;
-import com.shoestp.mains.views.DataView.DataViewFlowView;
+import com.shoestp.mains.views.DataView.flow.FlowSourceView;
+import com.shoestp.mains.views.DataView.flow.FlowDeviceView;
 
 import org.springframework.stereotype.Service;
 
@@ -35,7 +36,6 @@ public class FlowServiceImpl implements FlowService {
    */
   @Override
   public Map<String, List> getFlowSource() {
-
     Map<String, List> flowViewMap = new HashMap<>();
     for (DeviceTypeEnum device : DeviceTypeEnum.values()) {
       flowViewMap.put(
@@ -43,7 +43,7 @@ public class FlowServiceImpl implements FlowService {
           flowDao.findAllByDeviceType(device, start, end).stream()
               .map(
                   bean -> {
-                    DataViewFlowView flowView = new DataViewFlowView();
+                    FlowSourceView flowView = new FlowSourceView();
                     flowView.setSourceType(bean.get(0, String.class));
                     flowView.setVisitorCount(bean.get(1, Integer.class));
                     return flowView;
@@ -51,5 +51,30 @@ public class FlowServiceImpl implements FlowService {
               .collect(Collectors.toList()));
     }
     return flowViewMap;
+  }
+
+  /**
+   * 根据时间获取设备来源
+   *
+   * @author: lingjian @Date: 2019/5/13 9:56
+   * @param startDate
+   * @param endDate
+   * @return List<FlowDeviceView>
+   */
+  @Override
+  public List<FlowDeviceView> getFlowDevice(Date startDate, Date endDate) {
+      List<FlowDeviceView> flowDeviceViewList = flowDao
+              .findAllByDeviceCount(
+                      DateTimeUtil.getTimesOfDay(startDate, 0), DateTimeUtil.getTimesOfDay(endDate, 24))
+              .stream()
+              .map(
+                      bean -> {
+                          FlowDeviceView flowDeviceView = new FlowDeviceView();
+                          flowDeviceView.setDeviceType(bean.get(0, String.class));
+                          flowDeviceView.setVisitorCount(bean.get(1, Integer.class));
+                          return flowDeviceView;
+                      })
+              .collect(Collectors.toList());
+      return flowDeviceViewList;
   }
 }

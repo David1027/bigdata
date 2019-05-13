@@ -35,8 +35,7 @@ public class RealDao extends BaseDao<DataViewReal> {
    * @return List<DataViewReal>
    */
   public List<DataViewReal> findAllByCreateTimeBetween(Date start, Date end) {
-    List<DataViewReal> realList = realRepository.findAllByCreateTimeBetween(start, end);
-    return realList;
+    return realRepository.findAllByCreateTimeBetween(start, end);
   }
 
   @Override

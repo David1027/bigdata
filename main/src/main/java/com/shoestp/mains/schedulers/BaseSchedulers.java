@@ -1,7 +1,5 @@
 package com.shoestp.mains.schedulers;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.SimpleScheduleBuilder;
@@ -9,6 +7,9 @@ import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.quartz.QuartzJobBean;
+
+import lombok.Getter;
+import lombok.Setter;
 
 public abstract class BaseSchedulers extends QuartzJobBean {
   @Setter @Getter private String jobNmae = this.getClass().getName();

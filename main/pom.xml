@@ -95,6 +95,12 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-log4j2</artifactId>
       <version>${spring.version}</version>
+      <exclusions>
+      	<exclusion>
+      		<groupId>org.apache.logging.log4j</groupId>
+      		<artifactId>log4j-slf4j-impl</artifactId>
+      	</exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
@@ -176,11 +182,46 @@
       <artifactId>disruptor</artifactId>
       <version>3.4.2</version>
     </dependency>
+    <!--谷歌统计依赖-->
+    <dependency>
+      <groupId>com.google.apis</groupId>
+      <artifactId>google-api-services-analyticsreporting</artifactId>
+      <version>v4-rev128-1.25.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.irille</groupId>
+      <artifactId>irille-base-plat</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <exclusions>
+      	<exclusion>
+      		<groupId>junit</groupId>
+      		<artifactId>junit</artifactId>
+      	</exclusion>
+      	<exclusion>
+      		<groupId>org.apache.logging.log4j</groupId>
+      		<artifactId>log4j-slf4j-impl</artifactId>
+      	</exclusion>
+      	<exclusion>
+      		<groupId>org.apache.struts</groupId>
+      		<artifactId>struts2-core</artifactId>
+      	</exclusion>
+      </exclusions>
+    </dependency>
 
-
+    <dependency>
+    	<groupId>org.junit.vintage</groupId>
+    	<artifactId>junit-vintage-engine</artifactId>
+    	<version>5.4.2</version>
+    	<exclusions>
+    		<exclusion>
+    			<groupId>junit</groupId>
+    			<artifactId>junit</artifactId>
+    		</exclusion>
+    	</exclusions>
+    </dependency>
   </dependencies>
   <build>
-    <outputDirectory>/Volumes/RamDisk/java</outputDirectory>
+    <!-- <outputDirectory>/Volumes/RamDisk/java</outputDirectory> -->
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

@@ -48,7 +48,7 @@ public class DataViewFlow {
   @Column(name = "click_rate")
   private Double clickRate;
   /** 跳失率 */
-  @Column(name = "click_rate")
+  @Column(name = "bounce_rate")
   private Double jumpRate;
   /** 平均停留时长 */
   @Column(name = "average_stay_time")

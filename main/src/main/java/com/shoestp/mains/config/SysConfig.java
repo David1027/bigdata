@@ -14,6 +14,4 @@ public class SysConfig {
   public HttpMessageConverter httpMessageConverter() {
     return new MappingJackson2HttpMessageConverter();
   }
-
-
 }

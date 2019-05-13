@@ -15,7 +15,6 @@ import lombok.Data;
 /** * 从鞋帽港推送过来的数据 */
 @Data
 @Entity
-@Builder
 @Table(name = "inquiry_info")
 public class InquiryInfo {
   @Id @GeneratedValue private Integer id;

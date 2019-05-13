@@ -204,7 +204,7 @@ public final class DateTimeUtil {
   }
 
   /**
-   * 获得当天0点时间
+   * 获得某一天0点时间
    * @return
    */
   public static Date getTimesOfDay(Date date,int hour) {

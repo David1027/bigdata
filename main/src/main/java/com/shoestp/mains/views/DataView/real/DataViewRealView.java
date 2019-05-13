@@ -7,7 +7,7 @@ import javax.persistence.*;
 import lombok.Data;
 
 /**
- * @description: 实时表
+ * @description: 实时前端展示类
  * @author: lingjian
  * @create: 2019/5/8 9:40
  */

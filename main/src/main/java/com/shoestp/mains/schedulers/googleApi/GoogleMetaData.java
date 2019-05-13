@@ -35,7 +35,7 @@ import com.shoestp.mains.entitys.MetaData.GooglePageProperty;
 import com.shoestp.mains.entitys.MetaData.GoogleVisitorInfo;
 import com.shoestp.mains.schedulers.BaseSchedulers;
 
-@Component
+//@Component
 public class GoogleMetaData extends BaseSchedulers {
 
   public GoogleMetaData() {

@@ -4,8 +4,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import org.junit.After;
-import org.junit.Before;
+
+import org.aspectj.lang.annotation.After;
+import org.aspectj.lang.annotation.Before;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -21,14 +22,14 @@ public class WebBase  {
   JavascriptExecutor js;
   private String serverUrl = "";
 
-  @Before
+//  @Before
   public void setUp() throws MalformedURLException {
     driver = new RemoteWebDriver(new URL(serverUrl), DesiredCapabilities.chrome());
     js = (JavascriptExecutor) driver;
     vars = new HashMap<String, Object>();
   }
 
-  @After
+//  @After
   public void tearDown() {
     driver.quit();
   }

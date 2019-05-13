@@ -1,8 +1,7 @@
 package com.shoestp.mains.entitys.DataView;
 
-import com.shoestp.mains.enums.flow.DeviceTypeEnum;
-import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -10,7 +9,10 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import lombok.Builder;
+
+import com.shoestp.mains.enums.flow.DeviceTypeEnum;
+import com.shoestp.mains.enums.flow.SourceTypeEnum;
+
 import lombok.Data;
 
 /**
@@ -20,7 +22,6 @@ import lombok.Data;
  */
 @Data
 @Entity
-@Builder
 @Table(name = "data_view_flow")
 public class DataViewFlow {
   @Id @GeneratedValue private Integer id;
@@ -48,7 +49,7 @@ public class DataViewFlow {
   @Column(name = "click_rate")
   private Double clickRate;
   /** 跳失率 */
-  @Column(name = "bounce_rate")
+  @Column(name = "jump_rate")
   private Double jumpRate;
   /** 平均停留时长 */
   @Column(name = "average_stay_time")

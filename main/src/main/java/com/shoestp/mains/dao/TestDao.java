@@ -2,14 +2,14 @@ package com.shoestp.mains.dao;
 
 import com.shoestp.mains.entitys.QUser;
 import com.shoestp.mains.entitys.User;
-import com.shoestp.mains.repositorys.UserRepository;
+import com.shoestp.mains.repositorys.DataView.UserRepository;
 import java.util.List;
 import javax.annotation.Resource;
 import org.springframework.stereotype.Repository;
 
 /** Created by IntelliJ IDEA. User: lijie@shoestp.cn Date: 2019/5/8 Time: 9:26 */
 @Repository
-public class UserDao extends BaseDao<User> {
+public class TestDao extends BaseDao<User> {
 
   @Resource private UserRepository repository;
 

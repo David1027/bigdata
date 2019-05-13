@@ -8,9 +8,10 @@ spring:
     jcache:
       config: ehcacheConfig.xml
   datasource:
-    url: jdbc:mysql://192.168.99.100:3306/test?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
+#    url: jdbc:mysql://192.168.99.100:3306/test?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/dataview?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
     username: root
-    password: 123
+    password: root
     driver-class-name: com.mysql.jdbc.Driver
     type: com.zaxxer.hikari.HikariDataSource
     hikari:
@@ -24,7 +25,8 @@ spring:
       connection-test-query: SELECT 1
   jpa:
     hibernate:
-      ddl-auto: create-drop
+#      ddl-auto: create-drop
+      ddl-auto: update
     database-platform: org.hibernate.dialect.MySQL5Dialect
     show-sql: true
   messages: lang

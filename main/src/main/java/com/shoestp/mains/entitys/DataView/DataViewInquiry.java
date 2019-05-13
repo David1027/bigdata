@@ -19,7 +19,6 @@ import lombok.Data;
  */
 @Data
 @Entity
-@Builder
 @Table(name = "data_view_inquiry")
 public class DataViewInquiry {
   @Id @GeneratedValue private Integer id;

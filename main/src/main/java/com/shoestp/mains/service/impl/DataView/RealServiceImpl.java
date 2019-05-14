@@ -8,7 +8,7 @@ import com.shoestp.mains.dao.DataView.RealDao;
 import com.shoestp.mains.entitys.DataView.DataViewReal;
 import com.shoestp.mains.service.DataView.RealService;
 import com.shoestp.mains.utils.dateUtils.DateTimeUtil;
-import com.shoestp.mains.views.DataView.real.DataViewRealView;
+import com.shoestp.mains.views.DataView.real.RealView;
 
 import org.springframework.stereotype.Service;
 
@@ -74,14 +74,14 @@ public class RealServiceImpl implements RealService {
    * @return DataViewRealView对象
    */
   @Override
-  public DataViewRealView getRealOverview() {
+  public RealView getRealOverview() {
     // 获取当天，昨天，上周同一天所有的累加值
     int[] arrToday = getAddByHour(DateTimeUtil.getTimesmorning(), DateTimeUtil.getTimesnight());
     int[] arrYesterday =
         getAddByHour(DateTimeUtil.getYesterdaymorning(), DateTimeUtil.getYesterdaynight());
     int[] arrWeek = getAddByHour(DateTimeUtil.getWeekmorning(), DateTimeUtil.getWeeknight());
     // 创建返回前端对象
-    DataViewRealView realView = new DataViewRealView();
+    RealView realView = new RealView();
     realView.setVisitorCount(arrToday[0]);
     realView.setVisitorCompareYesterday(getCompare(arrToday[0], arrYesterday[0]));
     realView.setVisitorCompareWeek(getCompare(arrToday[0], arrWeek[0]));

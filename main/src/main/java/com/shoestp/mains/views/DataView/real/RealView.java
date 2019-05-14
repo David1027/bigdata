@@ -12,7 +12,7 @@ import lombok.Data;
  * @create: 2019/5/8 9:40
  */
 @Data
-public class DataViewRealView {
+public class RealView {
   /** 访客数 */
   private Integer visitorCount;
   /** 访客数与昨日的比较值 */

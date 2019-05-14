@@ -5,11 +5,14 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import com.querydsl.core.Tuple;
 import com.shoestp.mains.dao.DataView.flow.FlowDao;
+import com.shoestp.mains.dao.DataView.flow.FlowPageDao;
 import com.shoestp.mains.enums.flow.DeviceTypeEnum;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.service.DataView.FlowService;
 import com.shoestp.mains.utils.dateUtils.DateTimeUtil;
+import com.shoestp.mains.views.DataView.flow.AccessPageView;
 import com.shoestp.mains.views.DataView.flow.FlowSourcePageView;
 import com.shoestp.mains.views.DataView.flow.FlowSourceView;
 import com.shoestp.mains.views.DataView.flow.FlowDeviceView;
@@ -25,6 +28,7 @@ import org.springframework.stereotype.Service;
 public class FlowServiceImpl implements FlowService {
 
   @Resource private FlowDao flowDao;
+  @Resource private FlowPageDao flowPageDao;
 
   /** 获取当天0:0:0 */
   private Date start = DateTimeUtil.getTimesmorning();
@@ -195,5 +199,33 @@ public class FlowServiceImpl implements FlowService {
               .collect(Collectors.toList()));
     }
     return flowViewMap;
+  }
+
+  /**
+   * 根据时间获取页面分析
+   *
+   * @author: lingjian @Date: 2019/5/14 16:26
+   * @param startDate
+   * @param endDate
+   * @return
+   */
+  @Override
+  public List getFlowPageAnalysis(Date startDate, Date endDate) {
+      return flowPageDao
+        .findAllByAccessPage(
+            DateTimeUtil.getTimesOfDay(startDate, 0), DateTimeUtil.getTimesOfDay(endDate, 24))
+        .stream()
+        .map(
+            bean -> {
+              AccessPageView accessPageView = new AccessPageView();
+              accessPageView.setAccessType(bean.get(0, String.class));
+              accessPageView.setVisitorCount(bean.get(1, Integer.class));
+              accessPageView.setViewCount(bean.get(2, Integer.class));
+              accessPageView.setClickRate(bean.get(3, Double.class));
+              accessPageView.setJumpRate(bean.get(4, Double.class));
+              accessPageView.setAverageStayTime(bean.get(5, Double.class));
+              return accessPageView;
+            })
+        .collect(Collectors.toList());
   }
 }

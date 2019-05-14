@@ -9,7 +9,6 @@ import com.querydsl.core.Tuple;
 import com.shoestp.mains.dao.BaseDao;
 import com.shoestp.mains.entitys.DataView.inquiry.DataViewInquiry;
 import com.shoestp.mains.entitys.DataView.inquiry.DataViewInquiryRank;
-import com.shoestp.mains.entitys.DataView.inquiry.QDataViewInquiry;
 import com.shoestp.mains.entitys.DataView.inquiry.QDataViewInquiryRank;
 import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
 import com.shoestp.mains.repositorys.DataView.inquory.InquiryRankRepository;

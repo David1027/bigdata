@@ -55,4 +55,14 @@ public interface FlowService {
    * @return Map<String, List>
    */
   Map<String, List> getFlowSourcePage(Date startDate, Date endDate);
+
+  /**
+   * 根据时间获取页面分析
+   *
+   * @author: lingjian @Date: 2019/5/14 16:26
+   * @param startDate
+   * @param endDate
+   * @return List
+   */
+  List getFlowPageAnalysis(Date startDate, Date endDate);
 }

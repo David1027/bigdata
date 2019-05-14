@@ -4,6 +4,8 @@ import java.util.Date;
 
 import javax.persistence.*;
 
+import com.shoestp.mains.enums.flow.AccessTypeEnum;
+
 import lombok.Data;
 
 /**
@@ -16,9 +18,10 @@ import lombok.Data;
 @Table(name = "data_view_flow_page")
 public class DataViewFlowPage {
   @Id @GeneratedValue private Integer id;
-  /** 访问具体页面 */
-  @Column(name = "access_page")
-  private String accessPage;
+  /** 页面类型：INDEX-首页, DETAIL-商品详情页, SEARCH-搜索结果页, SVS-SVS专题页, CATEGORY-商品分类页, OTHER-其他页 */
+  @Enumerated(EnumType.STRING)
+  @Column(name = "access_type")
+  private AccessTypeEnum accessType;
   /** 访客数 */
   @Column(name = "visitor_count")
   private Integer visitorCount;

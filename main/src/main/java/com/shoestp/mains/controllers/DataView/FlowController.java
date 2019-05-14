@@ -116,4 +116,24 @@ public class FlowController {
         .result(flowService.getFlowSourcePage(startDate, endDate))
         .build();
   }
+
+  /**
+   * 根据时间获取页面分析
+   *
+   * @author: lingjian @Date: 2019/5/14 16:26
+   * @param startDate
+   * @param endDate
+   * @return
+   */
+  @PostMapping(value = "/flowpageanalysis")
+  public Object getFlowPageAnalysis(
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
+    logger.debug(startDate+"===="+endDate);
+    return MessageResult.builder()
+            .code(1)
+            .msg("Hello")
+            .result(flowService.getFlowPageAnalysis(startDate, endDate))
+            .build();
+  }
 }

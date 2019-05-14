@@ -44,13 +44,56 @@ public class UserController {
         .build();
   }
 
-//  @GetMapping(value = "/usertime")
-//  public Object getUserTime(HttpServletRequest httpRequest) {
-//    logger.debug(httpRequest.getCookies());
-//    return MessageResult.builder()
-//            .code(1)
-//            .msg("Hello")
-//            .result(userService.getUserTime())
-//            .build();
-//  }
+  /**
+   * 获取用户概况中的时段分布
+   *
+   * @author: lingjian @Date: 2019/5/13 15:53
+   * @param httpRequest
+   * @return
+   */
+  @GetMapping(value = "/usertime")
+  public Object getUserTime(HttpServletRequest httpRequest) {
+    logger.debug(httpRequest.getCookies());
+    return MessageResult.builder().code(1).msg("Hello").result(userService.getUserTime()).build();
+  }
+
+  /**
+   * 根据时间获取用户性别数量
+   *
+   * @author: lingjian @Date: 2019/5/13 16:12
+   * @param startDate
+   * @param endDate
+   * @return
+   */
+  @PostMapping(value = "/usersex")
+  public Object getUserSex(
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
+    logger.debug(startDate);
+    return MessageResult.builder()
+        .code(1)
+        .msg("Hello")
+        .result(userService.getUserSex(startDate, endDate))
+        .build();
+  }
+
+  /**
+   * 根据时间获取用户地域分布
+   *
+   * @author: lingjian @Date: 2019/5/13 16:34
+   * @param startDate
+   * @param endDate
+   * @return
+   */
+  @PostMapping(value = "/userarea")
+  public Object getUserArea(
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
+    logger.debug(startDate);
+    return MessageResult.builder()
+        .code(1)
+        .msg("Hello")
+        .result(userService.getUserArea(startDate, endDate))
+        .build();
+  }
 }

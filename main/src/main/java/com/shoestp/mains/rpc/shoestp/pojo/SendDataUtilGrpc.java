@@ -109,21 +109,21 @@ public final class SendDataUtilGrpc {
   }
 
   private static volatile io.grpc.MethodDescriptor<
-          com.shoestp.mains.rpc.shoestp.pojo.GRPC_SendDataProto.ViewInfo,
+          com.shoestp.mains.rpc.shoestp.pojo.GRPC_SendDataProto.Inquiry,
           com.shoestp.mains.rpc.shoestp.pojo.GRPC_ResultProto.Result>
       getSendInquiryMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "sendInquiry",
-      requestType = com.shoestp.mains.rpc.shoestp.pojo.GRPC_SendDataProto.ViewInfo.class,
+      requestType = com.shoestp.mains.rpc.shoestp.pojo.GRPC_SendDataProto.Inquiry.class,
       responseType = com.shoestp.mains.rpc.shoestp.pojo.GRPC_ResultProto.Result.class,
       methodType = io.grpc.MethodDescriptor.MethodType.BIDI_STREAMING)
   public static io.grpc.MethodDescriptor<
-          com.shoestp.mains.rpc.shoestp.pojo.GRPC_SendDataProto.ViewInfo,
+          com.shoestp.mains.rpc.shoestp.pojo.GRPC_SendDataProto.Inquiry,
           com.shoestp.mains.rpc.shoestp.pojo.GRPC_ResultProto.Result>
       getSendInquiryMethod() {
     io.grpc.MethodDescriptor<
-            com.shoestp.mains.rpc.shoestp.pojo.GRPC_SendDataProto.ViewInfo,
+            com.shoestp.mains.rpc.shoestp.pojo.GRPC_SendDataProto.Inquiry,
             com.shoestp.mains.rpc.shoestp.pojo.GRPC_ResultProto.Result>
         getSendInquiryMethod;
     if ((getSendInquiryMethod = SendDataUtilGrpc.getSendInquiryMethod) == null) {
@@ -132,7 +132,7 @@ public final class SendDataUtilGrpc {
           SendDataUtilGrpc.getSendInquiryMethod =
               getSendInquiryMethod =
                   io.grpc.MethodDescriptor
-                      .<com.shoestp.mains.rpc.shoestp.pojo.GRPC_SendDataProto.ViewInfo,
+                      .<com.shoestp.mains.rpc.shoestp.pojo.GRPC_SendDataProto.Inquiry,
                           com.shoestp.mains.rpc.shoestp.pojo.GRPC_ResultProto.Result>
                           newBuilder()
                       .setType(io.grpc.MethodDescriptor.MethodType.BIDI_STREAMING)
@@ -140,7 +140,7 @@ public final class SendDataUtilGrpc {
                       .setSampledToLocalTracing(true)
                       .setRequestMarshaller(
                           io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.shoestp.mains.rpc.shoestp.pojo.GRPC_SendDataProto.ViewInfo
+                              com.shoestp.mains.rpc.shoestp.pojo.GRPC_SendDataProto.Inquiry
                                   .getDefaultInstance()))
                       .setResponseMarshaller(
                           io.grpc.protobuf.ProtoUtils.marshaller(
@@ -194,7 +194,7 @@ public final class SendDataUtilGrpc {
 
     /** */
     public io.grpc.stub.StreamObserver<
-            com.shoestp.mains.rpc.shoestp.pojo.GRPC_SendDataProto.ViewInfo>
+            com.shoestp.mains.rpc.shoestp.pojo.GRPC_SendDataProto.Inquiry>
         sendInquiry(
             io.grpc.stub.StreamObserver<com.shoestp.mains.rpc.shoestp.pojo.GRPC_ResultProto.Result>
                 responseObserver) {
@@ -222,7 +222,7 @@ public final class SendDataUtilGrpc {
               getSendInquiryMethod(),
               asyncBidiStreamingCall(
                   new MethodHandlers<
-                      com.shoestp.mains.rpc.shoestp.pojo.GRPC_SendDataProto.ViewInfo,
+                      com.shoestp.mains.rpc.shoestp.pojo.GRPC_SendDataProto.Inquiry,
                       com.shoestp.mains.rpc.shoestp.pojo.GRPC_ResultProto.Result>(
                       this, METHODID_SEND_INQUIRY)))
           .build();
@@ -266,7 +266,7 @@ public final class SendDataUtilGrpc {
 
     /** */
     public io.grpc.stub.StreamObserver<
-            com.shoestp.mains.rpc.shoestp.pojo.GRPC_SendDataProto.ViewInfo>
+            com.shoestp.mains.rpc.shoestp.pojo.GRPC_SendDataProto.Inquiry>
         sendInquiry(
             io.grpc.stub.StreamObserver<com.shoestp.mains.rpc.shoestp.pojo.GRPC_ResultProto.Result>
                 responseObserver) {

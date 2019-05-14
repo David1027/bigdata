@@ -743,6 +743,11 @@ public final class GRPC_SendDataProto {
 
     /** <code>uint32 userId = 4;</code> */
     int getUserId();
+
+    /** <code>string referer = 5;</code> */
+    java.lang.String getReferer();
+    /** <code>string referer = 5;</code> */
+    com.google.protobuf.ByteString getRefererBytes();
   }
   /** Protobuf type {@code ViewInfo} */
   public static final class ViewInfo extends com.google.protobuf.GeneratedMessageV3
@@ -759,6 +764,7 @@ public final class GRPC_SendDataProto {
       url_ = "";
       useragent_ = "";
       ip_ = "";
+      referer_ = "";
     }
 
     @java.lang.Override
@@ -809,6 +815,13 @@ public final class GRPC_SendDataProto {
             case 32:
               {
                 userId_ = input.readUInt32();
+                break;
+              }
+            case 42:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                referer_ = s;
                 break;
               }
             default:
@@ -933,6 +946,33 @@ public final class GRPC_SendDataProto {
       return userId_;
     }
 
+    public static final int REFERER_FIELD_NUMBER = 5;
+    private volatile java.lang.Object referer_;
+    /** <code>string referer = 5;</code> */
+    public java.lang.String getReferer() {
+      java.lang.Object ref = referer_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        referer_ = s;
+        return s;
+      }
+    }
+    /** <code>string referer = 5;</code> */
+    public com.google.protobuf.ByteString getRefererBytes() {
+      java.lang.Object ref = referer_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        referer_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -959,6 +999,9 @@ public final class GRPC_SendDataProto {
       if (userId_ != 0) {
         output.writeUInt32(4, userId_);
       }
+      if (!getRefererBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, referer_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -980,6 +1023,9 @@ public final class GRPC_SendDataProto {
       if (userId_ != 0) {
         size += com.google.protobuf.CodedOutputStream.computeUInt32Size(4, userId_);
       }
+      if (!getRefererBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, referer_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -1000,6 +1046,7 @@ public final class GRPC_SendDataProto {
       if (!getUseragent().equals(other.getUseragent())) return false;
       if (!getIp().equals(other.getIp())) return false;
       if (getUserId() != other.getUserId()) return false;
+      if (!getReferer().equals(other.getReferer())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -1019,6 +1066,8 @@ public final class GRPC_SendDataProto {
       hash = (53 * hash) + getIp().hashCode();
       hash = (37 * hash) + USERID_FIELD_NUMBER;
       hash = (53 * hash) + getUserId();
+      hash = (37 * hash) + REFERER_FIELD_NUMBER;
+      hash = (53 * hash) + getReferer().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -1167,6 +1216,8 @@ public final class GRPC_SendDataProto {
 
         userId_ = 0;
 
+        referer_ = "";
+
         return this;
       }
 
@@ -1199,6 +1250,7 @@ public final class GRPC_SendDataProto {
         result.useragent_ = useragent_;
         result.ip_ = ip_;
         result.userId_ = userId_;
+        result.referer_ = referer_;
         onBuilt();
         return result;
       }
@@ -1267,6 +1319,10 @@ public final class GRPC_SendDataProto {
         }
         if (other.getUserId() != 0) {
           setUserId(other.getUserId());
+        }
+        if (!other.getReferer().isEmpty()) {
+          referer_ = other.referer_;
+          onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -1477,6 +1533,60 @@ public final class GRPC_SendDataProto {
       public Builder clearUserId() {
 
         userId_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object referer_ = "";
+      /** <code>string referer = 5;</code> */
+      public java.lang.String getReferer() {
+        java.lang.Object ref = referer_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          referer_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /** <code>string referer = 5;</code> */
+      public com.google.protobuf.ByteString getRefererBytes() {
+        java.lang.Object ref = referer_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          referer_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /** <code>string referer = 5;</code> */
+      public Builder setReferer(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        referer_ = value;
+        onChanged();
+        return this;
+      }
+      /** <code>string referer = 5;</code> */
+      public Builder clearReferer() {
+
+        referer_ = getDefaultInstance().getReferer();
+        onChanged();
+        return this;
+      }
+      /** <code>string referer = 5;</code> */
+      public Builder setRefererBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        referer_ = value;
         onChanged();
         return this;
       }
@@ -2204,16 +2314,16 @@ public final class GRPC_SendDataProto {
     java.lang.String[] descriptorData = {
       "\n\020searchInfo.proto\032\014result.proto\"9\n\nSear"
           + "chInfo\022\017\n\007keyword\030\001 \001(\t\022\n\n\002ip\030\002 \001(\t\022\016\n\006u"
-          + "serId\030\003 \001(\r\"F\n\010ViewInfo\022\013\n\003url\030\001 \001(\t\022\021\n\t"
+          + "serId\030\003 \001(\r\"W\n\010ViewInfo\022\013\n\003url\030\001 \001(\t\022\021\n\t"
           + "useragent\030\002 \001(\t\022\n\n\002ip\030\003 \001(\t\022\016\n\006userId\030\004 "
-          + "\001(\r\";\n\007Inquiry\022\014\n\004type\030\001 \001(\r\022\021\n\tinquiryI"
-          + "d\030\002 \001(\r\022\017\n\007referer\030\003 \001(\t2\205\001\n\014SendDataUti"
-          + "l\022&\n\nsendSearch\022\013.SearchInfo\032\007.Result(\0010"
-          + "\001\022&\n\014sendViewInfo\022\t.ViewInfo\032\007.Result(\0010"
-          + "\001\022%\n\013sendInquiry\022\t.ViewInfo\032\007.Result(\0010\001"
-          + "BG\n\"com.shoestp.mains.rpc.shoestp.pojoB\022"
-          + "GRPC_SendDataProtoP\000\242\002\nSearchInfob\006proto"
-          + "3"
+          + "\001(\r\022\017\n\007referer\030\005 \001(\t\";\n\007Inquiry\022\014\n\004type\030"
+          + "\001 \001(\r\022\021\n\tinquiryId\030\002 \001(\r\022\017\n\007referer\030\003 \001("
+          + "\t2\204\001\n\014SendDataUtil\022&\n\nsendSearch\022\013.Searc"
+          + "hInfo\032\007.Result(\0010\001\022&\n\014sendViewInfo\022\t.Vie"
+          + "wInfo\032\007.Result(\0010\001\022$\n\013sendInquiry\022\010.Inqu"
+          + "iry\032\007.Result(\0010\001BG\n\"com.shoestp.mains.rp"
+          + "c.shoestp.pojoB\022GRPC_SendDataProtoP\000\242\002\nS"
+          + "earchInfob\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -2241,7 +2351,7 @@ public final class GRPC_SendDataProto {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_ViewInfo_descriptor,
             new java.lang.String[] {
-              "Url", "Useragent", "Ip", "UserId",
+              "Url", "Useragent", "Ip", "UserId", "Referer",
             });
     internal_static_Inquiry_descriptor = getDescriptor().getMessageTypes().get(2);
     internal_static_Inquiry_fieldAccessorTable =

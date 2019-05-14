@@ -18,7 +18,7 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
     return new StreamObserver<GRPC_SendDataProto.SearchInfo>() {
       @Override
       public void onNext(GRPC_SendDataProto.SearchInfo searchInfo) {
-        System.out.println(searchInfo);
+        logger.debug(searchInfo);
       }
 
       @Override
@@ -38,7 +38,9 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
       StreamObserver<GRPC_ResultProto.Result> responseObserver) {
     return new StreamObserver<GRPC_SendDataProto.ViewInfo>() {
       @Override
-      public void onNext(GRPC_SendDataProto.ViewInfo viewInfo) {}
+      public void onNext(GRPC_SendDataProto.ViewInfo viewInfo) {
+        logger.debug(viewInfo);
+      }
 
       @Override
       public void onError(Throwable throwable) {
@@ -53,11 +55,13 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
   }
 
   @Override
-  public StreamObserver<GRPC_SendDataProto.ViewInfo> sendInquiry(
+  public StreamObserver<GRPC_SendDataProto.Inquiry> sendInquiry(
       StreamObserver<GRPC_ResultProto.Result> responseObserver) {
-    return new StreamObserver<GRPC_SendDataProto.ViewInfo>() {
+    return new StreamObserver<GRPC_SendDataProto.Inquiry>() {
       @Override
-      public void onNext(GRPC_SendDataProto.ViewInfo viewInfo) {}
+      public void onNext(GRPC_SendDataProto.Inquiry inquiry) {
+        logger.debug(inquiry);
+      }
 
       @Override
       public void onError(Throwable throwable) {

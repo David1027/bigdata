@@ -7,7 +7,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 
-import com.shoestp.mains.rpc.imp.RPCServiceImp;
+import com.shoestp.mains.rpc.shoestp.imp.RPCServiceImp;
 
 import io.grpc.Server;
 import io.grpc.netty.NettyServerBuilder;

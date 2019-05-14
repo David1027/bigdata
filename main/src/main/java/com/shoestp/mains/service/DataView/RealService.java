@@ -3,7 +3,7 @@ package com.shoestp.mains.service.DataView;
 import java.util.Date;
 import java.util.Map;
 
-import com.shoestp.mains.views.DataView.real.DataViewRealView;
+import com.shoestp.mains.views.DataView.real.RealView;
 
 /**
  * @description: 实时-服务层接口
@@ -16,7 +16,7 @@ public interface RealService {
    * @author: lingjian @Date: 2019/5/9 15:31
    * @return DataViewRealView对象
    */
-  DataViewRealView getRealOverview();
+  RealView getRealOverview();
 
   /**
    * 获取实时趋势的值

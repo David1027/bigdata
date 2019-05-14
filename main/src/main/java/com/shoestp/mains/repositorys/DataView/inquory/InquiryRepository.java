@@ -1,6 +1,6 @@
-package com.shoestp.mains.repositorys.DataView;
+package com.shoestp.mains.repositorys.DataView.inquory;
 
-import com.shoestp.mains.entitys.DataView.DataViewInquiry;
+import com.shoestp.mains.entitys.DataView.inquiry.DataViewInquiry;
 
 import org.springframework.data.repository.PagingAndSortingRepository;
 

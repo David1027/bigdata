@@ -8,7 +8,7 @@ import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import lombok.Data;
 
 /**
- * @description: 根据设备来源，流量来源获取访客数前端展示类
+ * @description: 根据流量来源获取访客数前端展示类
  * @author: lingjian @Date: 2019/5/10 11:28
  */
 @Data

@@ -10,15 +10,14 @@ import lombok.Data;
 
 /**
  * @description: 询盘排行表
- * @author: lingjian
- * @Date: 2019/5/14 10:43
+ * @author: lingjian @Date: 2019/5/14 10:43
  */
 @Data
 @Entity
 @Table(name = "data_view_inquiry_rank")
 public class DataViewInquiryRank {
   @Id @GeneratedValue private Integer id;
-  /** 询盘类型：SUPPLIER-供应商询盘，COMMODITY-商品询盘 */
+  /** 询盘类型：SUPPLIER-供应商询盘，COMMODITY-商品询盘，SEARCHTERM-热门关键词 */
   @Enumerated(EnumType.STRING)
   @Column(name = "inquiry_type")
   private InquiryTypeEnum inquiryType;

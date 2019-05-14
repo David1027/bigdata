@@ -1,11 +1,8 @@
-package com.shoestp.mains.entitys.DataView;
+package com.shoestp.mains.entitys.DataView.flow;
 
 import java.util.Date;
 
 import javax.persistence.*;
-
-import com.shoestp.mains.enums.flow.DeviceTypeEnum;
-import com.shoestp.mains.enums.flow.SourceTypeEnum;
 
 import lombok.Data;
 

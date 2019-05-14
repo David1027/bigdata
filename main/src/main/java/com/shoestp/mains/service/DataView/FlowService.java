@@ -17,8 +17,7 @@ public interface FlowService {
    * @author: lingjian @Date: 2019/5/10 16:43
    * @return Map<String, List>对象
    */
-  Map<String, List> getFlowSource();
-
+  Map<String, List> getRealSource();
   /**
    * 根据时间获取设备来源
    *
@@ -28,4 +27,32 @@ public interface FlowService {
    * @return List<FlowDeviceView>
    */
   List<FlowDeviceView> getFlowDevice(Date startDate, Date endDate);
+  /**
+   * 根据时间获取流量来源
+   *
+   * @author: lingjian @Date: 2019/5/14 14:12
+   * @param startDate
+   * @param endDate
+   * @return List
+   */
+  List getFlowSourceType(Date startDate, Date endDate);
+
+  /**
+   * 根据时间获取流量概况
+   *
+   * @author: lingjian @Date: 2019/5/14 15:07
+   * @param date
+   * @return Map<String, int[]>
+   */
+  Map<String, int[]> getFlowSourceTypeTime(Date date);
+
+  /**
+   * 根据时间获取来源渠道
+   *
+   * @author: lingjian @Date: 2019/5/14 14:27
+   * @param startDate
+   * @param endDate
+   * @return Map<String, List>
+   */
+  Map<String, List> getFlowSourcePage(Date startDate, Date endDate);
 }

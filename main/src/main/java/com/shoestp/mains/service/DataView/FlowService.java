@@ -65,4 +65,14 @@ public interface FlowService {
    * @return List
    */
   List getFlowPageAnalysis(Date startDate, Date endDate);
+
+  /**
+   * 根据时间获取流量概况参数（跳失率，平均浏览量，平均停留时长）
+   *
+   * @author: lingjian @Date: 2019/5/14 16:48
+   * @param startDate
+   * @param endDate
+   * @return
+   */
+  List getFlowPage(Date startDate, Date endDate);
 }

@@ -12,10 +12,7 @@ import com.shoestp.mains.enums.flow.DeviceTypeEnum;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.service.DataView.FlowService;
 import com.shoestp.mains.utils.dateUtils.DateTimeUtil;
-import com.shoestp.mains.views.DataView.flow.AccessPageView;
-import com.shoestp.mains.views.DataView.flow.FlowSourcePageView;
-import com.shoestp.mains.views.DataView.flow.FlowSourceView;
-import com.shoestp.mains.views.DataView.flow.FlowDeviceView;
+import com.shoestp.mains.views.DataView.flow.*;
 import com.sun.org.apache.xerces.internal.xs.StringList;
 
 import org.springframework.stereotype.Service;
@@ -211,7 +208,7 @@ public class FlowServiceImpl implements FlowService {
    */
   @Override
   public List getFlowPageAnalysis(Date startDate, Date endDate) {
-      return flowPageDao
+    return flowPageDao
         .findAllByAccessPage(
             DateTimeUtil.getTimesOfDay(startDate, 0), DateTimeUtil.getTimesOfDay(endDate, 24))
         .stream()
@@ -225,6 +222,47 @@ public class FlowServiceImpl implements FlowService {
               accessPageView.setJumpRate(bean.get(4, Double.class));
               accessPageView.setAverageStayTime(bean.get(5, Double.class));
               return accessPageView;
+            })
+        .collect(Collectors.toList());
+  }
+
+  /**
+   * 计算平均浏览量
+   *
+   * @author: lingjian @Date: 2019/5/14 16:52
+   * @param num1
+   * @param num2
+   * @return
+   */
+  public Double getCompare(int num1, int num2) {
+    if (num2 == 0) {
+      num2 = 1;
+    }
+    return num1 / (num2 * 1.0);
+  }
+
+  /**
+   * 根据时间获取流量概况参数（跳失率，平均浏览量，平均停留时长）
+   *
+   * @author: lingjian @Date: 2019/5/14 16:47
+   * @param startDate
+   * @param endDate
+   * @return
+   */
+  @Override
+  public List getFlowPage(Date startDate, Date endDate) {
+    return flowPageDao
+        .findAllByCreateTime(
+            DateTimeUtil.getTimesOfDay(startDate, 0), DateTimeUtil.getTimesOfDay(endDate, 24))
+        .stream()
+        .map(
+            bean -> {
+              PageView pageView = new PageView();
+              pageView.setViewAvgCount(
+                  getCompare(bean.get(0, Integer.class), bean.get(1, Integer.class)));
+              pageView.setJumpRate(bean.get(2, Double.class));
+              pageView.setAverageStayTime(bean.get(3, Double.class));
+              return pageView;
             })
         .collect(Collectors.toList());
   }

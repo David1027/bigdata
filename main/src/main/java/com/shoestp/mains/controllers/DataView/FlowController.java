@@ -129,11 +129,31 @@ public class FlowController {
   public Object getFlowPageAnalysis(
       @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
       @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
-    logger.debug(startDate+"===="+endDate);
+    logger.debug(startDate + "====" + endDate);
     return MessageResult.builder()
-            .code(1)
-            .msg("Hello")
-            .result(flowService.getFlowPageAnalysis(startDate, endDate))
-            .build();
+        .code(1)
+        .msg("Hello")
+        .result(flowService.getFlowPageAnalysis(startDate, endDate))
+        .build();
+  }
+
+  /**
+   * 根据时间获取流量概况参数（跳失率，平均浏览量，平均停留时长）
+   *
+   * @author: lingjian @Date: 2019/5/14 16:46
+   * @param startDate
+   * @param endDate
+   * @return
+   */
+  @PostMapping(value = "/flowpage")
+  public Object getFlowPage(
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
+    logger.debug(startDate + "====" + endDate);
+    return MessageResult.builder()
+        .code(1)
+        .msg("Hello")
+        .result(flowService.getFlowPage(startDate, endDate))
+        .build();
   }
 }

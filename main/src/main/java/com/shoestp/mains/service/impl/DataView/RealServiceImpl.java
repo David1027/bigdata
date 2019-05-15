@@ -126,7 +126,7 @@ public class RealServiceImpl implements RealService {
    * @return
    */
   public int[] getEveryHour(Date date, int num) {
-    int[] arr = new int[23];
+    int[] arr = new int[24];
     for (int i = 0; i < arr.length; i++) {
       arr[i] = getAddByTime(date, i, i + 1)[num];
     }
@@ -134,19 +134,49 @@ public class RealServiceImpl implements RealService {
   }
 
   /**
-   * 获取实时趋势的值
+   * 获取实时趋势的横坐标
    *
-   * @author: lingjian @Date: 2019/5/9 16:08
+   * @author: lingjian @Date: 2019/5/15 16:55
+   * @return
+   */
+  public Map<String, String[]> getHourAbscissa() {
+    String[] arr = new String[24];
+    for (int i = 0; i < arr.length; i++) {
+      arr[i] = i + 1 + ":00";
+    }
+    Map<String, String[]> arrMap = new HashMap<>();
+    arrMap.put("hour", arr);
+    return arrMap;
+  }
+
+  /**
+   * 获取当前时间的实时趋势的值
+   *
    * @param date
    * @return
    */
-  @Override
-  public Map<String, int[]> getRealTrend(Date date) {
+  public Map<String, int[]> getRealTrendByDay(Date date) {
     Map<String, int[]> visitorMap = new HashMap<>();
     visitorMap.put("visitor", getEveryHour(date, 0));
     visitorMap.put("view", getEveryHour(date, 1));
     visitorMap.put("register", getEveryHour(date, 2));
     visitorMap.put("inquiry", getEveryHour(date, 3));
     return visitorMap;
+  }
+
+  /**
+   * 获取今日和对比日的实时趋势的值
+   *
+   * @author: lingjian @Date: 2019/5/9 16:08
+   * @param date
+   * @return
+   */
+  @Override
+  public Map<String, Map> getRealTrend(Date date) {
+    Map<String, Map> visitorAllMap = new HashMap<>();
+    visitorAllMap.put("abscissa", getHourAbscissa());
+    visitorAllMap.put("today", getRealTrendByDay(new Date()));
+    visitorAllMap.put("ratherday", getRealTrendByDay(date));
+    return visitorAllMap;
   }
 }

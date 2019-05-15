@@ -204,13 +204,30 @@ public final class DateTimeUtil {
   }
 
   /**
-   * 获得某一天0点时间
+   * 获得某一天某点时间
+   * @param date 某天
+   * @param hour 某点
    * @return
    */
   public static Date getTimesOfDay(Date date,int hour) {
     Calendar cal = Calendar.getInstance();
     cal.setTime(date);
     cal.set(Calendar.HOUR_OF_DAY, hour);
+    cal.set(Calendar.MINUTE, 0);
+    cal.set(Calendar.SECOND, 0);
+    cal.set(Calendar.MILLISECOND, 0);
+    return cal.getTime();
+  }
+
+  /**
+   * 获取某天0点时间
+   * @param date
+   * @return
+   */
+  public static Date getTimesOfDay(Date date) {
+    Calendar cal = Calendar.getInstance();
+    cal.setTime(date);
+    cal.set(Calendar.HOUR_OF_DAY, 0);
     cal.set(Calendar.MINUTE, 0);
     cal.set(Calendar.SECOND, 0);
     cal.set(Calendar.MILLISECOND, 0);
@@ -284,6 +301,17 @@ public final class DateTimeUtil {
     Calendar cal = Calendar.getInstance();
     cal.setTime(getTimesnight());
     cal.add(Calendar.DAY_OF_MONTH, -7);
+    return cal.getTime();
+  }
+
+  /**
+   * 获得当天近num天时间
+   * @param num
+   * @return
+   */
+  public static Date getDayFromNum(Date date,int num) {
+    Calendar cal = Calendar.getInstance();
+    cal.setTimeInMillis(getTimesOfDay(date).getTime() - 3600 * 24 * 1000 * num);
     return cal.getTime();
   }
 

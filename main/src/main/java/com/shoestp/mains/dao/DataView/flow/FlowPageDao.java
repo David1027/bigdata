@@ -11,6 +11,7 @@ import com.shoestp.mains.entitys.DataView.flow.DataViewFlow;
 import com.shoestp.mains.entitys.DataView.flow.DataViewFlowPage;
 import com.shoestp.mains.entitys.DataView.flow.QDataViewFlow;
 import com.shoestp.mains.entitys.DataView.flow.QDataViewFlowPage;
+import com.shoestp.mains.enums.flow.AccessTypeEnum;
 import com.shoestp.mains.enums.flow.DeviceTypeEnum;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.repositorys.DataView.flow.FlowPageRepository;
@@ -50,6 +51,24 @@ public class FlowPageDao extends BaseDao<DataViewFlowPage> {
         .groupBy(qDataViewFlowPage.accessType)
         .fetchResults()
         .getResults();
+  }
+
+  public List<Tuple> findAllByAccess(AccessTypeEnum access, Date start, Date end) {
+    QDataViewFlowPage qDataViewFlowPage = QDataViewFlowPage.dataViewFlowPage;
+    return getQuery()
+            .select(
+                    qDataViewFlowPage.accessType.stringValue(),
+                    qDataViewFlowPage.visitorCount.sum(),
+                    qDataViewFlowPage.viewCount.sum(),
+                    qDataViewFlowPage.clickRate.avg(),
+                    qDataViewFlowPage.jumpRate.avg(),
+                    qDataViewFlowPage.averageStayTime.avg())
+            .from(qDataViewFlowPage)
+            .where(qDataViewFlowPage.accessType.eq(access))
+            .where(qDataViewFlowPage.createTime.between(start, end))
+            .groupBy(qDataViewFlowPage.accessType)
+            .fetchResults()
+            .getResults();
   }
 
   /**

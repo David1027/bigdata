@@ -8,6 +8,7 @@ import javax.annotation.Resource;
 import com.querydsl.core.Tuple;
 import com.shoestp.mains.dao.DataView.flow.FlowDao;
 import com.shoestp.mains.dao.DataView.flow.FlowPageDao;
+import com.shoestp.mains.enums.flow.AccessTypeEnum;
 import com.shoestp.mains.enums.flow.DeviceTypeEnum;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.service.DataView.FlowService;
@@ -116,19 +117,27 @@ public class FlowServiceImpl implements FlowService {
    * @param end
    * @return
    */
-  public List<FlowSourceView> getFlowSourceTypeByHour(Date date, int start, int end) {
-    return flowDao
-        .findAllBySourceType(
-            DateTimeUtil.getTimesOfDay(date, start), DateTimeUtil.getTimesOfDay(date, end))
-        .stream()
-        .map(
-            bean -> {
-              FlowSourceView flowSourceView = new FlowSourceView();
-              flowSourceView.setSourceType(bean.get(0, String.class));
-              flowSourceView.setVisitorCount(bean.get(1, Integer.class));
-              return flowSourceView;
-            })
-        .collect(Collectors.toList());
+  public Map<String, List<FlowSourceView>> getFlowSourceTypeByHour(Date date, int start, int end) {
+    Map<String, List<FlowSourceView>> flowSourceMap = new HashMap<>();
+    for (SourceTypeEnum source : SourceTypeEnum.values()) {
+      flowSourceMap.put(
+          source.name(),
+          flowDao
+              .findAllBySource(
+                  source,
+                  DateTimeUtil.getTimesOfDay(date, start),
+                  DateTimeUtil.getTimesOfDay(date, end))
+              .stream()
+              .map(
+                  bean -> {
+                    FlowSourceView flowSourceView = new FlowSourceView();
+                    flowSourceView.setSourceType(bean.get(0, String.class));
+                    flowSourceView.setVisitorCount(bean.get(1, Integer.class));
+                    return flowSourceView;
+                  })
+              .collect(Collectors.toList()));
+    }
+    return flowSourceMap;
   }
 
   /**
@@ -136,34 +145,92 @@ public class FlowServiceImpl implements FlowService {
    *
    * @author: lingjian @Date: 2019/5/14 15:08
    * @param date
-   * @param num
    * @return
    */
-  public int[] getEveryHour(Date date, int num) {
+  public int[] getEveryDay(Date date, SourceTypeEnum source) {
     int[] arr = new int[23];
     for (int i = 0; i < arr.length; i++) {
-      if (!getFlowSourceTypeByHour(date, i, i + 1).isEmpty()) {
-        arr[i] = getFlowSourceTypeByHour(date, i, i + 1).get(num).getVisitorCount().intValue();
+      if (!getFlowSourceTypeByHour(date, i, i + 1).get(source.toString()).isEmpty()) {
+        arr[i] =
+            getFlowSourceTypeByHour(date, i, i + 1).get(source.toString()).get(0).getVisitorCount();
       }
     }
     return arr;
   }
 
   /**
-   * 根据时间获取流量概况
+   * 获取某一天24个小时每个小时的流量概况
    *
    * @author: lingjian @Date: 2019/5/14 15:07
    * @param date
    * @return
    */
   @Override
-  public Map<String, int[]> getFlowSourceTypeTime(Date date) {
+  public Map<String, int[]> getFlowSourceTypeTimeByDay(Date date) {
     Map<String, int[]> inquiryTimeMap = new HashMap<>();
-    inquiryTimeMap.put("BAIDU", getEveryHour(date, 0));
-    inquiryTimeMap.put("GOOGLE", getEveryHour(date, 1));
-    inquiryTimeMap.put("INTERVIEW", getEveryHour(date, 2));
-    inquiryTimeMap.put("OTHER", getEveryHour(date, 3));
+    inquiryTimeMap.put("BAIDU", getEveryDay(date, SourceTypeEnum.BAIDU));
+    inquiryTimeMap.put("GOOGLE", getEveryDay(date, SourceTypeEnum.GOOGLE));
+    inquiryTimeMap.put("INTERVIEW", getEveryDay(date, SourceTypeEnum.INTERVIEW));
+    inquiryTimeMap.put("OTHER", getEveryDay(date, SourceTypeEnum.OTHER));
     return inquiryTimeMap;
+  }
+
+  /**
+   * 根据时间获取某一天开始的前一周的每一天的流量来源的访客数
+   *
+   * @author: lingjian @Date: 2019/5/15 11:43
+   * @param date
+   * @param source
+   * @return
+   */
+  public int[] getEvery(int num, Date date, SourceTypeEnum source) {
+    int[] arr = new int[num];
+    for (int i = 0; i < arr.length; i++) {
+      if (!getFlowSourceTypeByHour(DateTimeUtil.getDayFromNum(date, i), 0, 24)
+          .get(source.toString())
+          .isEmpty()) {
+        arr[i] =
+            getFlowSourceTypeByHour(DateTimeUtil.getDayFromNum(date, i), 0, 24)
+                .get(source.toString())
+                .get(0)
+                .getVisitorCount();
+      }
+    }
+    return arr;
+  }
+
+  /**
+   * 获取某一天开始的前一周的每一天的流量概况
+   *
+   * @author: lingjian @Date: 2019/5/15 11:43
+   * @param date
+   * @return
+   */
+  @Override
+  public Map<String, int[]> getFlowSourceTypeTimeByWeek(Date date) {
+    Map<String, int[]> inquiryWeekMap = new HashMap<>();
+    inquiryWeekMap.put("BAIDU", getEvery(7, date, SourceTypeEnum.BAIDU));
+    inquiryWeekMap.put("GOOGLE", getEvery(7, date, SourceTypeEnum.GOOGLE));
+    inquiryWeekMap.put("INTERVIEW", getEvery(7, date, SourceTypeEnum.INTERVIEW));
+    inquiryWeekMap.put("OTHER", getEvery(7, date, SourceTypeEnum.OTHER));
+    return inquiryWeekMap;
+  }
+
+  /**
+   * 获取某一天开始的一个月三十天每一天的流量概况
+   *
+   * @author: lingjian @Date: 2019/5/15 13:38
+   * @param date
+   * @return
+   */
+  @Override
+  public Map<String, int[]> getFlowSourceTypeTimeByMonth(Date date) {
+    Map<String, int[]> inquiryMonthMap = new HashMap<>();
+    inquiryMonthMap.put("BAIDU", getEvery(30, date, SourceTypeEnum.BAIDU));
+    inquiryMonthMap.put("GOOGLE", getEvery(30, date, SourceTypeEnum.GOOGLE));
+    inquiryMonthMap.put("INTERVIEW", getEvery(30, date, SourceTypeEnum.INTERVIEW));
+    inquiryMonthMap.put("OTHER", getEvery(30, date, SourceTypeEnum.OTHER));
+    return inquiryMonthMap;
   }
 
   /**
@@ -227,9 +294,219 @@ public class FlowServiceImpl implements FlowService {
   }
 
   /**
+   * 根据指定时间，开始小时，结束小时，获取页面分析参数
+   *
+   * @author: lingjian @Date: 2019/5/15 15:15
+   * @param date
+   * @param start
+   * @param end
+   * @return
+   */
+  public Map<String, List<AccessPageView>> getFlowPageAnalysisByAccess(
+      Date date, int start, int end) {
+    Map<String, List<AccessPageView>> accessPageMap = new HashMap<>();
+    for (AccessTypeEnum access : AccessTypeEnum.values()) {
+      accessPageMap.put(
+          access.name(),
+          flowPageDao
+              .findAllByAccess(
+                  access,
+                  DateTimeUtil.getTimesOfDay(date, start),
+                  DateTimeUtil.getTimesOfDay(date, end))
+              .stream()
+              .map(
+                  bean -> {
+                    AccessPageView accessPageView = new AccessPageView();
+                    accessPageView.setAccessType(bean.get(0, String.class));
+                    accessPageView.setVisitorCount(bean.get(1, Integer.class));
+                    accessPageView.setViewCount(bean.get(2, Integer.class));
+                    accessPageView.setClickRate(bean.get(3, Double.class));
+                    accessPageView.setJumpRate(bean.get(4, Double.class));
+                    accessPageView.setAverageStayTime(bean.get(5, Double.class));
+                    return accessPageView;
+                  })
+              .collect(Collectors.toList()));
+    }
+    return accessPageMap;
+  }
+
+  /**
+   * 根据时间和页面分类，获取一天24小时每个小时的页面参数 (访客数，浏览量，点击率，跳失率，平均停留时长)
+   *
+   * @author: lingjian @Date: 2019/5/15 15:13
+   * @param date
+   * @param access
+   * @param parameter
+   * @return
+   */
+  public double[] getAccessHour(Date date, AccessTypeEnum access, String parameter) {
+    double[] arr = new double[23];
+    for (int i = 0; i < arr.length; i++) {
+      if (!getFlowPageAnalysisByAccess(date, i, i + 1).get(access.toString()).isEmpty()
+          && "visitorCount".equals(parameter)) {
+        arr[i] =
+            getFlowPageAnalysisByAccess(date, i, i + 1)
+                .get(access.toString())
+                .get(0)
+                .getVisitorCount()
+                .doubleValue();
+      } else if (!getFlowPageAnalysisByAccess(date, i, i + 1).get(access.toString()).isEmpty()
+          && "viewCount".equals(parameter)) {
+        arr[i] =
+            getFlowPageAnalysisByAccess(date, i, i + 1)
+                .get(access.toString())
+                .get(0)
+                .getViewCount()
+                .doubleValue();
+      } else if (!getFlowPageAnalysisByAccess(date, i, i + 1).get(access.toString()).isEmpty()
+          && "clickRate".equals(parameter)) {
+        arr[i] =
+            getFlowPageAnalysisByAccess(date, i, i + 1)
+                .get(access.toString())
+                .get(0)
+                .getClickRate();
+      } else if (!getFlowPageAnalysisByAccess(date, i, i + 1).get(access.toString()).isEmpty()
+          && "jumpRate".equals(parameter)) {
+        arr[i] =
+            getFlowPageAnalysisByAccess(date, i, i + 1).get(access.toString()).get(0).getJumpRate();
+      } else if (!getFlowPageAnalysisByAccess(date, i, i + 1).get(access.toString()).isEmpty()
+          && "averageStayTime".equals(parameter)) {
+        arr[i] =
+            getFlowPageAnalysisByAccess(date, i, i + 1)
+                .get(access.toString())
+                .get(0)
+                .getAverageStayTime();
+      }
+    }
+    return arr;
+  }
+
+  /**
+   * 根据时间和页面，获取某几天每一天的页面参数(访客数，浏览量，点击率，跳失率，平均停留时长)
+   *
+   * @author: lingjian @Date: 2019/5/15 15:30
+   * @param num 某几天
+   * @param date
+   * @param access
+   * @param parameter
+   * @return
+   */
+  public double[] getAccessDay(int num, Date date, AccessTypeEnum access, String parameter) {
+    double[] arr = new double[num];
+    for (int i = 0; i < arr.length; i++) {
+      if (!getFlowPageAnalysisByAccess(DateTimeUtil.getDayFromNum(date, i), 0, 24)
+              .get(access.toString())
+              .isEmpty()
+          && "visitorCount".equals(parameter)) {
+        arr[i] =
+            getFlowPageAnalysisByAccess(DateTimeUtil.getDayFromNum(date, i), 0, 24)
+                .get(access.toString())
+                .get(0)
+                .getVisitorCount()
+                .doubleValue();
+      } else if (!getFlowPageAnalysisByAccess(DateTimeUtil.getDayFromNum(date, i), 0, 24)
+              .get(access.toString())
+              .isEmpty()
+          && "viewCount".equals(parameter)) {
+        arr[i] =
+            getFlowPageAnalysisByAccess(DateTimeUtil.getDayFromNum(date, i), 0, 24)
+                .get(access.toString())
+                .get(0)
+                .getViewCount()
+                .doubleValue();
+      } else if (!getFlowPageAnalysisByAccess(DateTimeUtil.getDayFromNum(date, i), 0, 24)
+              .get(access.toString())
+              .isEmpty()
+          && "clickRate".equals(parameter)) {
+        arr[i] =
+            getFlowPageAnalysisByAccess(DateTimeUtil.getDayFromNum(date, i), 0, 24)
+                .get(access.toString())
+                .get(0)
+                .getClickRate();
+      } else if (!getFlowPageAnalysisByAccess(DateTimeUtil.getDayFromNum(date, i), 0, 24)
+              .get(access.toString())
+              .isEmpty()
+          && "jumpRate".equals(parameter)) {
+        arr[i] =
+            getFlowPageAnalysisByAccess(DateTimeUtil.getDayFromNum(date, i), 0, 24)
+                .get(access.toString())
+                .get(0)
+                .getJumpRate();
+      } else if (!getFlowPageAnalysisByAccess(DateTimeUtil.getDayFromNum(date, i), 0, 24)
+              .get(access.toString())
+              .isEmpty()
+          && "averageStayTime".equals(parameter)) {
+        arr[i] =
+            getFlowPageAnalysisByAccess(DateTimeUtil.getDayFromNum(date, i), 0, 24)
+                .get(access.toString())
+                .get(0)
+                .getAverageStayTime();
+      }
+    }
+    return arr;
+  }
+
+  /**
+   * 根据时间和页面分类，获取一天24小时每个小时的页面参数
+   *
+   * @author: lingjian @Date: 2019/5/15 15:13
+   * @param date
+   * @param access
+   * @return
+   */
+  @Override
+  public Map<String, double[]> getFlowPageAnalysisByDay(Date date, AccessTypeEnum access) {
+    Map<String, double[]> analysisDayMap = new HashMap<>();
+    analysisDayMap.put("visitorCount", getAccessHour(date, access, "visitorCount"));
+    analysisDayMap.put("viewCount", getAccessHour(date, access, "viewCount"));
+    analysisDayMap.put("clickRate", getAccessHour(date, access, "clickRate"));
+    analysisDayMap.put("jumpRate", getAccessHour(date, access, "jumpRate"));
+    analysisDayMap.put("averageStayTime", getAccessHour(date, access, "averageStayTime"));
+    return analysisDayMap;
+  }
+
+  /**
+   * 根据时间和页面，获取一周七天每一天的页面参数
+   *
+   * @author: lingjian @Date: 2019/5/15 15:30
+   * @param date
+   * @param access
+   * @return
+   */
+  @Override
+  public Map<String, double[]> getFlowPageAnalysisByWeek(Date date, AccessTypeEnum access) {
+    Map<String, double[]> analysisWeekMap = new HashMap<>();
+    analysisWeekMap.put("visitorCount", getAccessDay(7, date, access, "visitorCount"));
+    analysisWeekMap.put("viewCount", getAccessDay(7, date, access, "viewCount"));
+    analysisWeekMap.put("clickRate", getAccessDay(7, date, access, "clickRate"));
+    analysisWeekMap.put("jumpRate", getAccessDay(7, date, access, "jumpRate"));
+    analysisWeekMap.put("averageStayTime", getAccessDay(7, date, access, "averageStayTime"));
+    return analysisWeekMap;
+  }
+
+  /**
+   * 根据时间和页面，获取一个月三十天每一天的页面参数
+   *
+   * @author: lingjian @Date: 2019/5/15 15:35
+   * @param date
+   * @param access
+   * @return
+   */
+  @Override
+  public Map<String, double[]> getFlowPageAnalysisByMonth(Date date, AccessTypeEnum access) {
+    Map<String, double[]> analysisMonthMap = new HashMap<>();
+    analysisMonthMap.put("visitorCount", getAccessDay(30, date, access, "visitorCount"));
+    analysisMonthMap.put("viewCount", getAccessDay(30, date, access, "viewCount"));
+    analysisMonthMap.put("clickRate", getAccessDay(30, date, access, "clickRate"));
+    analysisMonthMap.put("jumpRate", getAccessDay(30, date, access, "jumpRate"));
+    analysisMonthMap.put("averageStayTime", getAccessDay(30, date, access, "averageStayTime"));
+    return analysisMonthMap;
+  }
+
+  /**
    * 计算平均浏览量
    *
-   * @author: lingjian @Date: 2019/5/14 16:52
+   * @author: lingjian @Date: 2019/5/14 16:53
    * @param num1
    * @param num2
    * @return
@@ -245,25 +522,73 @@ public class FlowServiceImpl implements FlowService {
    * 根据时间获取流量概况参数（跳失率，平均浏览量，平均停留时长）
    *
    * @author: lingjian @Date: 2019/5/14 16:47
-   * @param startDate
-   * @param endDate
+   * @param date
    * @return
    */
   @Override
-  public List getFlowPage(Date startDate, Date endDate) {
+  public List<PageView> getFlowPage(Date date) {
     return flowPageDao
         .findAllByCreateTime(
-            DateTimeUtil.getTimesOfDay(startDate, 0), DateTimeUtil.getTimesOfDay(endDate, 24))
+            DateTimeUtil.getTimesOfDay(date, 0), DateTimeUtil.getTimesOfDay(date, 24))
         .stream()
         .map(
             bean -> {
               PageView pageView = new PageView();
-              pageView.setViewAvgCount(
-                  getCompare(bean.get(0, Integer.class), bean.get(1, Integer.class)));
+              if (bean.get(0, Integer.class) != null && bean.get(1, Integer.class) != null) {
+                pageView.setViewAvgCount(
+                    getCompare(bean.get(0, Integer.class), bean.get(1, Integer.class)));
+              }
               pageView.setJumpRate(bean.get(2, Double.class));
               pageView.setAverageStayTime(bean.get(3, Double.class));
               return pageView;
             })
         .collect(Collectors.toList());
+  }
+
+  /**
+   * 根据时间，参数，获取三十天中每一天的跳失率、人均流量量、平均停留时长
+   *
+   * @author: lingjian @Date: 2019/5/15 14:27
+   * @param date
+   * @param parameter
+   * @return
+   */
+  public double[] getEveryPage(Date date, String parameter) {
+    double[] arr = new double[30];
+    for (int i = 0; i < arr.length; i++) {
+      if (!getFlowPage(DateTimeUtil.getDayFromNum(date, i)).isEmpty()
+          && "viewAvgCount".equals(parameter)) {
+        arr[i] =
+            getFlowPage(DateTimeUtil.getDayFromNum(date, i)).get(0).getViewAvgCount().doubleValue();
+      } else if (!getFlowPage(DateTimeUtil.getDayFromNum(date, i)).isEmpty()
+          && "jumpRate".equals(parameter)) {
+        arr[i] =
+            getFlowPage(DateTimeUtil.getDayFromNum(date, i)).get(0).getJumpRate().doubleValue();
+      } else if (!getFlowPage(DateTimeUtil.getDayFromNum(date, i)).isEmpty()
+          && "averageStayTime".equals(parameter)) {
+        arr[i] =
+            getFlowPage(DateTimeUtil.getDayFromNum(date, i))
+                .get(0)
+                .getAverageStayTime()
+                .doubleValue();
+      }
+    }
+    return arr;
+  }
+
+  /**
+   * 根据时间获取一个三十天中每一天的流量概况参数
+   *
+   * @author: lingjian @Date: 2019/5/15 14:27
+   * @param date
+   * @return
+   */
+  @Override
+  public Map<String, double[]> getFlowPageByMonth(Date date) {
+    Map<String, double[]> flowPageMonthMap = new HashMap<>();
+    flowPageMonthMap.put("viewAvgCount", getEveryPage(date, "viewAvgCount"));
+    flowPageMonthMap.put("jumpRate", getEveryPage(date, "jumpRate"));
+    flowPageMonthMap.put("averageStayTime", getEveryPage(date, "averageStayTime"));
+    return flowPageMonthMap;
   }
 }

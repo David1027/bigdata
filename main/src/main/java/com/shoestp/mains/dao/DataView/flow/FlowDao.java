@@ -89,6 +89,27 @@ public class FlowDao extends BaseDao<DataViewFlow> {
   }
 
   /**
+   * 根据来源类型，当天时间，分组获取来源类型的访客数
+   * @author: lingjian
+   * @Date: 2019/5/15 13:44
+   * @param source
+   * @param start
+   * @param end
+   * @return
+   */
+  public List<Tuple> findAllBySource(SourceTypeEnum source, Date start, Date end) {
+    QDataViewFlow dataViewFlow = QDataViewFlow.dataViewFlow;
+    return getQuery()
+            .select(dataViewFlow.sourceType.stringValue(), dataViewFlow.visitorCount.sum())
+            .from(dataViewFlow)
+            .where(dataViewFlow.sourceType.eq(source))
+            .where(dataViewFlow.createTime.between(start, end))
+            .groupBy(dataViewFlow.sourceType)
+            .fetchResults()
+            .getResults();
+  }
+
+  /**
    * 根据当天时间，来源类型，来源渠道分组获取访客数
    *
    * @author: lingjian @Date: 2019/5/14 14:28

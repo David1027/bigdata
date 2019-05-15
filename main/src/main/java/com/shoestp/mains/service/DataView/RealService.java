@@ -23,7 +23,7 @@ public interface RealService {
    *
    * @author: lingjian @Date: 2019/5/9 16:08
    * @param date
-   * @return DataViewRealView对象
+   * @return Map<String,Map>
    */
-  Map<String,int[]> getRealTrend(Date date);
+  Map<String,Map> getRealTrend(Date date);
 }

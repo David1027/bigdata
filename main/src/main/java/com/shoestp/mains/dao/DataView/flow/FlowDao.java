@@ -1,4 +1,4 @@
-package com.shoestp.mains.dao.DataView;
+package com.shoestp.mains.dao.DataView.flow;
 
 import java.util.Date;
 import java.util.List;
@@ -7,10 +7,11 @@ import javax.annotation.Resource;
 
 import com.querydsl.core.Tuple;
 import com.shoestp.mains.dao.BaseDao;
-import com.shoestp.mains.entitys.DataView.DataViewFlow;
-import com.shoestp.mains.entitys.DataView.QDataViewFlow;
+import com.shoestp.mains.entitys.DataView.flow.DataViewFlow;
+import com.shoestp.mains.entitys.DataView.flow.QDataViewFlow;
 import com.shoestp.mains.enums.flow.DeviceTypeEnum;
-import com.shoestp.mains.repositorys.DataView.FlowRepository;
+import com.shoestp.mains.enums.flow.SourceTypeEnum;
+import com.shoestp.mains.repositorys.DataView.flow.FlowRepository;
 
 import org.springframework.stereotype.Repository;
 
@@ -63,6 +64,46 @@ public class FlowDao extends BaseDao<DataViewFlow> {
         .from(dataViewFlow)
         .where(dataViewFlow.createTime.between(start, end))
         .groupBy(dataViewFlow.deviceType)
+        .fetchResults()
+        .getResults();
+  }
+
+  /**
+   * 根据当天时间，来源类型分组获取访客数
+   *
+   * @author: lingjian @Date: 2019/5/14 14:13
+   * @param start
+   * @param end
+   * @return
+   */
+  public List<Tuple> findAllBySourceType(Date start, Date end) {
+    QDataViewFlow dataViewFlow = QDataViewFlow.dataViewFlow;
+    return getQuery()
+        .select(dataViewFlow.sourceType.stringValue(), dataViewFlow.visitorCount.sum())
+        .from(dataViewFlow)
+        .where(dataViewFlow.createTime.between(start, end))
+        .groupBy(dataViewFlow.sourceType)
+        .fetchResults()
+        .getResults();
+  }
+
+  /**
+   * 根据当天时间，来源类型，来源渠道分组获取访客数
+   *
+   * @author: lingjian @Date: 2019/5/14 14:28
+   * @param source
+   * @param start
+   * @param end
+   * @return
+   */
+  public List<Tuple> findAllBySourcePage(SourceTypeEnum source, Date start, Date end) {
+    QDataViewFlow dataViewFlow = QDataViewFlow.dataViewFlow;
+    return getQuery()
+        .select(dataViewFlow.sourcePage.stringValue(), dataViewFlow.visitorCount.sum())
+        .from(dataViewFlow)
+        .where(dataViewFlow.sourceType.eq(source))
+        .where(dataViewFlow.createTime.between(start, end))
+        .groupBy(dataViewFlow.sourcePage)
         .fetchResults()
         .getResults();
   }

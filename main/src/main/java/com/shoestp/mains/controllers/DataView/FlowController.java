@@ -34,10 +34,10 @@ public class FlowController {
    * @param httpRequest
    * @return
    */
-  @GetMapping(value = "/flowsource")
-  public Object getFlowSource(HttpServletRequest httpRequest) {
+  @GetMapping(value = "/realsource")
+  public Object getRealSource(HttpServletRequest httpRequest) {
     logger.debug(httpRequest.getCookies());
-    return MessageResult.builder().code(1).msg("Hello").result(flowService.getFlowSource()).build();
+    return MessageResult.builder().code(1).msg("Hello").result(flowService.getRealSource()).build();
   }
 
   /**
@@ -57,6 +57,103 @@ public class FlowController {
         .code(1)
         .msg("Hello")
         .result(flowService.getFlowDevice(startDate, endDate))
+        .build();
+  }
+
+  /**
+   * 根据时间获取流量来源
+   *
+   * @author: lingjian @Date: 2019/5/14 14:11
+   * @param startDate
+   * @param endDate
+   * @return
+   */
+  @PostMapping(value = "/flowsourcetype")
+  public Object getFlowSourceType(
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
+    logger.debug(startDate);
+    return MessageResult.builder()
+        .code(1)
+        .msg("Hello")
+        .result(flowService.getFlowSourceType(startDate, endDate))
+        .build();
+  }
+
+  /**
+   * 根据时间获取流量概况
+   *
+   * @author: lingjian @Date: 2019/5/14 15:05
+   * @param date
+   * @return
+   */
+  @PostMapping(value = "/flowsourcetypetime")
+  public Object getFlowSourceTypeTime(@DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
+    logger.debug(date);
+    return MessageResult.builder()
+        .code(1)
+        .msg("Hello")
+        .result(flowService.getFlowSourceTypeTime(date))
+        .build();
+  }
+
+  /**
+   * 根据时间获取来源渠道
+   *
+   * @author: lingjian @Date: 2019/5/14 14:25
+   * @param startDate
+   * @param endDate
+   * @return
+   */
+  @PostMapping(value = "/flowsourcepage")
+  public Object getFlowSourcePage(
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
+    logger.debug(startDate);
+    return MessageResult.builder()
+        .code(1)
+        .msg("Hello")
+        .result(flowService.getFlowSourcePage(startDate, endDate))
+        .build();
+  }
+
+  /**
+   * 根据时间获取页面分析
+   *
+   * @author: lingjian @Date: 2019/5/14 16:26
+   * @param startDate
+   * @param endDate
+   * @return
+   */
+  @PostMapping(value = "/flowpageanalysis")
+  public Object getFlowPageAnalysis(
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
+    logger.debug(startDate + "====" + endDate);
+    return MessageResult.builder()
+        .code(1)
+        .msg("Hello")
+        .result(flowService.getFlowPageAnalysis(startDate, endDate))
+        .build();
+  }
+
+  /**
+   * 根据时间获取流量概况参数（跳失率，平均浏览量，平均停留时长）
+   *
+   * @author: lingjian @Date: 2019/5/14 16:46
+   * @param startDate
+   * @param endDate
+   * @return
+   */
+  @PostMapping(value = "/flowpage")
+  public Object getFlowPage(
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
+    logger.debug(startDate + "====" + endDate);
+    return MessageResult.builder()
+        .code(1)
+        .msg("Hello")
+        .result(flowService.getFlowPage(startDate, endDate))
         .build();
   }
 }

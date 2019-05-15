@@ -10,5 +10,6 @@ public enum InquiryTypeEnum {
   SUPPLIER,
   /** 商品询盘 */
   COMMODITY,
-  RFQ
+  /** 热门关键词 */
+  SEARCHTERM
 }

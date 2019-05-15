@@ -1,7 +1,7 @@
 package com.shoestp.mains.entitys.MetaData;
 
-import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
 import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -9,7 +9,9 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import lombok.Builder;
+
+import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
+
 import lombok.Data;
 
 /** * 从鞋帽港推送过来的数据 */
@@ -25,6 +27,8 @@ public class InquiryInfo {
   /** * 询盘的ID */
   @Column(name = "inquiry_id")
   private Integer inquiryId;
+  /** * 来自于那个链接 */
+  private String referer;
   /** * 创建时间 */
   @Column(name = "create_time")
   private Date createTime;

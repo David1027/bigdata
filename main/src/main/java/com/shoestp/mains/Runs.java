@@ -1,7 +1,12 @@
 package com.shoestp.mains;
 
+import java.io.IOException;
+
+import com.shoestp.mains.rpc.RPCServer;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 
 @SpringBootApplication
 public class Runs {
@@ -15,6 +20,17 @@ public class Runs {
    * @description 请在启动参数添加 --spring.profiles.active=dev
    */
   public static void main(String[] args) {
-    SpringApplication.run(Runs.class, args);
+    ConfigurableApplicationContext configurableApplicationContext =
+        SpringApplication.run(Runs.class, args);
+    //    Map<String, Object> grpcServiceBeanMap =
+    //        configurableApplicationContext.getBeansWithAnnotation(GrpcService.class);
+    RPCServer rpcServer = configurableApplicationContext.getBean(RPCServer.class);
+    try {
+      rpcServer.start();
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 }

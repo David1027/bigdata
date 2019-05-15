@@ -3,7 +3,6 @@ package com.shoestp.mains.repositorys.DataView;
 import java.util.Date;
 import java.util.List;
 
-import com.shoestp.mains.entitys.DataView.DataViewInquiry;
 import com.shoestp.mains.entitys.DataView.DataViewReal;
 
 import org.springframework.data.repository.PagingAndSortingRepository;

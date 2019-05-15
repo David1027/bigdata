@@ -21,7 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.shoestp.mains.dao.DataView.FlowDao;
 import com.shoestp.mains.dao.MetaData.GoogleBrowseInfoDao;
-import com.shoestp.mains.entitys.DataView.DataViewFlow;
+import com.shoestp.mains.entitys.DataView.flow.DataViewFlow;
 import com.shoestp.mains.entitys.MetaData.GoogleBrowseInfo;
 import com.shoestp.mains.enums.flow.DeviceTypeEnum;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;

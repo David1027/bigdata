@@ -2,18 +2,18 @@ package com.shoestp.mains.dao.DataView;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.annotation.Resource;
+
+import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.Tuple;
 import com.shoestp.mains.dao.BaseDao;
 import com.shoestp.mains.entitys.DataView.DataViewFlow;
 import com.shoestp.mains.entitys.DataView.QDataViewFlow;
 import com.shoestp.mains.enums.flow.DeviceTypeEnum;
-import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.repositorys.DataView.FlowRepository;
-
-import org.springframework.stereotype.Repository;
 
 /**
  * @description: 流量-数据层
@@ -96,5 +96,10 @@ public class FlowDao extends BaseDao<DataViewFlow> {
   @Override
   public int removeByIds(Integer... id) {
     return 0;
+  }
+
+  public Optional<DataViewFlow> getFlowTopOne() {
+    Optional<DataViewFlow> flow = flowRepository.findTopByOrderByCreateTimeDesc();
+    return flow;
   }
 }

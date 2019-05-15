@@ -28,9 +28,21 @@ public class GoogleBrowseInfo {
   @Column(name = "page_path", length = 1000)
   private String pagePath;
 
-  // 主机名称
+  /*// 主机名称
   @Column(name = "host_name", length = 50)
-  private String hostName;
+  private String hostName;*/
+
+  // 访问源地址
+  @Column(name = "source_page", length = 1000)
+  private String sourcePage;
+
+  // 系统设备
+  @Column(length = 50)
+  private String system;
+
+  // 省
+  @Column(length = 50)
+  private String province;
 
   // 访问时间
   @Column(name = "access_time", length = 50)

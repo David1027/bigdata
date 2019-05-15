@@ -22,6 +22,7 @@ import io.grpc.stub.StreamObserver;
 
 /** Created by IntelliJ IDEA. User: lijie@shoestp.cn Date: 2019/5/14 Time: 15:00 */
 public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
+
   private static final Logger logger = LogManager.getLogger(RPCServiceImp.class);
   @Inject private SearchDao searchDao;
   @Inject private ViewInfoDao viewInfoDao;

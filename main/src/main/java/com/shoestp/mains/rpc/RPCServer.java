@@ -3,8 +3,6 @@ package com.shoestp.mains.rpc;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 
 import com.shoestp.mains.rpc.shoestp.imp.RPCServiceImp;
@@ -24,10 +22,9 @@ public class RPCServer {
 
   @Resource private Environment environment;
 
-  @PostConstruct
   public void start() throws InterruptedException, IOException {
     String host = environment.getProperty("rpc.host", "0.0.0.0");
-    Integer port = Integer.parseInt(environment.getProperty("rpc.port"));
+    Integer port = Integer.parseInt(environment.getProperty("rpc.port", "888"));
     logger.info(String.format("RPC Listen:%s:%d", host, port));
     server =
         NettyServerBuilder.forAddress(new InetSocketAddress(host, port))
@@ -37,7 +34,6 @@ public class RPCServer {
     server.awaitTermination();
   }
 
-  @PreDestroy
   private void stop() {
     if (server != null) {
       logger.info("*** shutting down gRPC server since JVM is shutting down");

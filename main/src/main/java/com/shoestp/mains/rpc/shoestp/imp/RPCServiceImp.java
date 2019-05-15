@@ -4,7 +4,7 @@ import java.util.Date;
 
 import javax.inject.Inject;
 
-import com.shoestp.mains.dao.shoestpData.InquiryDao;
+import com.shoestp.mains.dao.shoestpData.InquiryInfoDao;
 import com.shoestp.mains.dao.shoestpData.SearchDao;
 import com.shoestp.mains.dao.shoestpData.ViewInfoDao;
 import com.shoestp.mains.entitys.MetaData.InquiryInfo;
@@ -29,7 +29,7 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
     @Inject
     private ViewInfoDao viewInfoDao;
     @Inject
-    private InquiryDao inquiryDao;
+    private InquiryInfoDao inquiryDao;
 
     @Override
     public StreamObserver<GRPC_SendDataProto.SearchInfo> sendSearch(

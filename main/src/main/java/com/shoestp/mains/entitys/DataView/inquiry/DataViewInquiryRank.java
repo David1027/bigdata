@@ -39,4 +39,7 @@ public class DataViewInquiryRank {
   /** 询盘金额 */
   @Column(name = "inquiry_amount")
   private Integer inquiryAmount;
+  /** 创建时间 */
+  @Column(name = "create_time")
+  private Date createTime;
 }

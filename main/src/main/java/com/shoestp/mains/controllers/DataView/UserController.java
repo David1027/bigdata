@@ -36,7 +36,7 @@ public class UserController {
   public Object getUserOverview(
       @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
       @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
-    logger.debug(startDate);
+    logger.debug(startDate+"======="+endDate);
     return MessageResult.builder()
         .code(1)
         .msg("Hello")
@@ -45,16 +45,42 @@ public class UserController {
   }
 
   /**
-   * 获取用户概况中的时段分布
+   * 根据时间获取用户概况中的时段分布(一天24小时)
    *
    * @author: lingjian @Date: 2019/5/13 15:53
-   * @param httpRequest
+   * @param date
    * @return
    */
-  @GetMapping(value = "/usertime")
-  public Object getUserTime(HttpServletRequest httpRequest) {
-    logger.debug(httpRequest.getCookies());
-    return MessageResult.builder().code(1).msg("Hello").result(userService.getUserTime()).build();
+  @PostMapping(value = "/usertimebyday")
+  public Object getUserTimeByDay(@DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
+    logger.debug(date);
+    return MessageResult.builder().code(1).msg("Hello").result(userService.getUserTimeByDay(date)).build();
+  }
+
+  /**
+   * 根据时间获取用户概况中的时段分布(一周7天)
+   * @author: lingjian
+   * @Date: 2019/5/16 10:12
+   * @param date
+   * @return
+   */
+  @PostMapping(value = "/usertimebyweek")
+  public Object getUserTimeByWeek(@DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
+    logger.debug(date);
+    return MessageResult.builder().code(1).msg("Hello").result(userService.getUserTimeByWeek(date)).build();
+  }
+
+  /**
+   * 根据时间获取用户概况中的时段分布(一个月30天)
+   *
+   * @author: lingjian @Date: 2019/5/16 10:39
+   * @param date
+   * @return
+   */
+  @PostMapping(value = "/usertimebymonth")
+  public Object getUserTimeByMonth(@DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
+    logger.debug(date);
+    return MessageResult.builder().code(1).msg("Hello").result(userService.getUserTimeByMonth(date)).build();
   }
 
   /**

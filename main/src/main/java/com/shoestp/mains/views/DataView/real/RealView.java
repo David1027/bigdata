@@ -15,35 +15,12 @@ import lombok.Data;
 public class RealView {
   /** 访客数 */
   private Integer visitorCount;
-  /** 访客数与昨日的比较值 */
-  private Double visitorCompareYesterday;
-  /** 访客数与上周同一日的比较值 */
-  private Double visitorCompareWeek;
   /** 浏览量 */
   private Integer viewCount;
-  /** 浏览量与昨日的比较值 */
-  private Double viewCompareYesterday;
-  /** 浏览量与上周同一日的比较值 */
-  private Double viewCompareWeek;
   /** 注册量 */
   private Integer registerCount;
-  /** 注册量与昨日的比较值 */
-  private Double registerCompareYesterday;
-  /** 注册量与上周同一日的比较值 */
-  private Double registerCompareWeek;
   /** 询盘量 */
   private Integer inquiryCount;
-  /** 询盘量与昨日的比较值 */
-  private Double inquiryCompareYesterday;
-  /** 询盘量与上周同一日的比较值 */
-  private Double inquiryCompareWeek;
   /** RFQ数 */
   private Integer rfqCount;
-  /** RFQ数与昨日的比较值 */
-  private Double rfqCompareYesterday;
-  /** RFQ数与上周同一日的比较值 */
-  private Double rfqCompareWeek;
-  /** 更新时间 */
-  private Date updateTime;
-
 }

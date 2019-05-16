@@ -18,6 +18,8 @@ import com.shoestp.mains.views.DataView.inquiry.InquiryView;
 
 import org.springframework.stereotype.Service;
 
+import static com.shoestp.mains.utils.dateUtils.DateTimeUtil.DATE_FARMAT_10;
+
 /**
  * @description: 询盘-服务层实现类
  * @author: lingjian @Date: 2019/5/9 10:18
@@ -85,7 +87,7 @@ public class InquiryServiceImpl implements InquiryService {
    * @return
    */
   public int[] getEveryHour(Date date) {
-    int[] arr = new int[23];
+    int[] arr = new int[24];
     for (int i = 0; i < arr.length; i++) {
       if (!getInquiryByHour(date, i, i + 1).isEmpty()) {
         arr[i] = getInquiryByHour(date, i, i + 1).get(0).getInquiryCount().intValue();
@@ -95,15 +97,125 @@ public class InquiryServiceImpl implements InquiryService {
   }
 
   /**
-   * 获取询盘概况中的时段分布
+   * 获取询盘概况中的时段分布的横坐标(小时)
+   *
+   * @author: lingjian @Date: 2019/5/16 11:14
+   * @return
+   */
+  public Map<String, String[]> getHourAbscissa() {
+    String[] arr = new String[24];
+    for (int i = 0; i < arr.length; i++) {
+      arr[i] = i + 1 + "";
+    }
+    Map<String, String[]> arrMap = new HashMap<>();
+    arrMap.put("hour", arr);
+    return arrMap;
+  }
+
+  /**
+   * 获取询盘概况中的时段分布(一天24小时)
+   *
+   * @author: lingjian @Date: 2019/5/16 11:14
+   * @param date
+   * @return
+   */
+  public Map<String, int[]> getInquiryTimeMap(Date date) {
+    Map<String, int[]> inquiryTimeMap = new HashMap<>();
+    inquiryTimeMap.put("inquiryCount", getEveryHour(date));
+    return inquiryTimeMap;
+  }
+
+  /**
+   * 获取询盘概况中的时段分布(一天24小时)+横坐标
    *
    * @author: lingjian @Date: 2019/5/14 11:03
    * @return
    */
   @Override
-  public Map<String, int[]> getInquiryTime() {
+  public Map<String, Map> getInquiryTimeByDay(Date date) {
+    Map<String, Map> inquiryTimeMap = new HashMap<>();
+    inquiryTimeMap.put("abscissa", getHourAbscissa());
+    inquiryTimeMap.put("day", getInquiryTimeMap(date));
+    return inquiryTimeMap;
+  }
+
+  /**
+   * 获取num天内每天的询盘数
+   *
+   * @author: lingjian @Date: 2019/5/16 11:24
+   * @param num
+   * @param date
+   * @return
+   */
+  public int[] getEveryDay(int num, Date date) {
+    int[] arr = new int[num];
+    for (int i = 0; i < arr.length; i++) {
+      if (!getInquiryByHour(date, 0, 24).isEmpty()) {
+        arr[i] = getInquiryByHour(date, 0, 24).get(0).getInquiryCount().intValue();
+      }
+    }
+    return arr;
+  }
+
+  /**
+   * 获取询盘概况中的时段分布的横坐标(日期)
+   *
+   * @author: lingjian @Date: 2019/5/16 11:25
+   * @param num
+   * @param date
+   * @return
+   */
+  public Map<String, String[]> getDayAbscissa(int num, Date date) {
+    String[] arr = new String[num];
+    for (int i = 0; i < arr.length; i++) {
+      arr[i] = DateTimeUtil.formatDateToString(DateTimeUtil.getDayFromNum(date, i), DATE_FARMAT_10);
+    }
+    Map<String, String[]> arrMap = new HashMap<>();
+    arrMap.put("everyday", arr);
+    return arrMap;
+  }
+
+  /**
+   * 获取询盘概况中的时段分布(一周七天)
+   *
+   * @author: lingjian @Date: 2019/5/16 11:26
+   * @param num
+   * @param date
+   * @return
+   */
+  public Map<String, int[]> getInquiryTimeDaYMap(int num, Date date) {
     Map<String, int[]> inquiryTimeMap = new HashMap<>();
-    inquiryTimeMap.put("inquiryCount", getEveryHour(new Date()));
+    inquiryTimeMap.put("inquiryCount", getEveryDay(num, date));
+    return inquiryTimeMap;
+  }
+
+  /**
+   * 获取询盘概况中的时段分布(一周七天)+横坐标(日期)
+   *
+   * @author: lingjian @Date: 2019/5/16 11:24
+   * @param date
+   * @return
+   */
+  @Override
+  public Map<String, Map> getInquiryTimeByWeek(Date date) {
+    Map<String, Map> inquiryTimeMap = new HashMap<>();
+    inquiryTimeMap.put("abscissa", getDayAbscissa(7, date));
+    inquiryTimeMap.put("week", getInquiryTimeDaYMap(7, date));
+    return inquiryTimeMap;
+  }
+
+  /**
+   * 获取询盘概况中的时段分布(一个月三十天)+横坐标(日期)
+   *
+   * @author: lingjian @Date: 2019/5/16 11:33
+   * @param date
+   * @return
+   */
+  @Override
+  public Map<String, Map> getInquiryTimeByMonth(Date date) {
+    Map<String, Map> inquiryTimeMap = new HashMap<>();
+    inquiryTimeMap.put("abscissa", getDayAbscissa(30, date));
+    inquiryTimeMap.put("week", getInquiryTimeDaYMap(30, date));
     return inquiryTimeMap;
   }
 
@@ -116,17 +228,170 @@ public class InquiryServiceImpl implements InquiryService {
    */
   @Override
   public List<InquiryRankView> getInquiryRank(InquiryTypeEnum inquiryType) {
-      return inquiryRankDao.findAllByInquiryType(inquiryType).stream()
-        .map(bean -> {
-            InquiryRankView inquiryRankView = new InquiryRankView();
-            inquiryRankView.setInquiryName(bean.getInquiryName());
-            inquiryRankView.setVisitorCount(bean.getVisitorCount());
-            inquiryRankView.setViewCount(bean.getViewCount());
-            inquiryRankView.setInquiryCount(bean.getInquiryCount());
-            inquiryRankView.setInquiryNumber(bean.getInquiryNumber());
-            inquiryRankView.setInquiryAmount(bean.getInquiryAmount());
-            return inquiryRankView;
-        })
+    return inquiryRankDao.findAllByInquiryType(inquiryType, DateTimeUtil.getTimesmorning()).stream()
+        .map(
+            bean -> {
+              InquiryRankView inquiryRankView = new InquiryRankView();
+              inquiryRankView.setInquiryName(bean.getInquiryName());
+              inquiryRankView.setVisitorCount(bean.getVisitorCount());
+              inquiryRankView.setViewCount(bean.getViewCount());
+              inquiryRankView.setInquiryCount(bean.getInquiryCount());
+              inquiryRankView.setInquiryNumber(bean.getInquiryNumber());
+              inquiryRankView.setInquiryAmount(bean.getInquiryAmount());
+              return inquiryRankView;
+            })
         .collect(Collectors.toList());
+  }
+
+  /**
+   * 根据询盘类型获取实时询盘排行
+   *
+   * @author: lingjian @Date: 2019/5/16 14:16
+   * @param inquiryType
+   * @return
+   */
+  @Override
+  public List<InquiryRankView> getInquiryRealRank(InquiryTypeEnum inquiryType) {
+    return inquiryRankDao
+        .findAllByInquiryTypeBetween(
+            inquiryType, DateTimeUtil.getTimesmorning(), DateTimeUtil.getTimesnight())
+        .stream()
+        .map(
+            bean -> {
+              InquiryRankView inquiryRankView = new InquiryRankView();
+              inquiryRankView.setInquiryName(bean.getInquiryName());
+              inquiryRankView.setVisitorCount(bean.getVisitorCount());
+              inquiryRankView.setViewCount(bean.getViewCount());
+              inquiryRankView.setInquiryCount(bean.getInquiryCount());
+              inquiryRankView.setInquiryNumber(bean.getInquiryNumber());
+              inquiryRankView.setInquiryAmount(bean.getInquiryAmount());
+              return inquiryRankView;
+            })
+        .collect(Collectors.toList());
+  }
+
+  /**
+   * 根据询盘类型，询盘名称，开始时间和结束时间获取询盘排行的数据
+   *
+   * @param inquiryType
+   * @param inquiryName
+   * @param date
+   * @param start
+   * @param end
+   * @return
+   */
+  public List<InquiryRankView> getInquiryRealRankByHour(
+      InquiryTypeEnum inquiryType, String inquiryName, Date date, int start, int end) {
+    return inquiryRankDao
+        .findAllByInquiryTypeAndInquiryNameBetween(
+            inquiryType,
+            inquiryName,
+            DateTimeUtil.getTimesOfDay(date, start),
+            DateTimeUtil.getTimesOfDay(date, end))
+        .stream()
+        .map(
+            bean -> {
+              InquiryRankView inquiryRankView = new InquiryRankView();
+              inquiryRankView.setInquiryName(bean.getInquiryName());
+              inquiryRankView.setVisitorCount(bean.getVisitorCount());
+              inquiryRankView.setViewCount(bean.getViewCount());
+              inquiryRankView.setInquiryCount(bean.getInquiryCount());
+              inquiryRankView.setInquiryNumber(bean.getInquiryNumber());
+              inquiryRankView.setInquiryAmount(bean.getInquiryAmount());
+              return inquiryRankView;
+            })
+        .collect(Collectors.toList());
+  }
+
+  /**
+   * 根据询盘类型，询盘名称获取24个小时每个小时的数据
+   *
+   * @author: lingjian @Date: 2019/5/16 14:45
+   * @param inquiryType
+   * @param inquiryName
+   * @param date
+   * @param parameter
+   * @return
+   */
+  public int[] getEveryHourByInquiryName(
+      InquiryTypeEnum inquiryType, String inquiryName, Date date, String parameter) {
+    int[] arr = new int[24];
+    for (int i = 0; i < arr.length; i++) {
+      if (!getInquiryRealRankByHour(inquiryType, inquiryName, date, i, i + 1).isEmpty()
+          && "visitorCount".equals(parameter)) {
+        arr[i] =
+            getInquiryRealRankByHour(inquiryType, inquiryName, date, i, i + 1)
+                .get(0)
+                .getVisitorCount();
+      } else if (!getInquiryRealRankByHour(inquiryType, inquiryName, date, i, i + 1).isEmpty()
+          && "viewCount".equals(parameter)) {
+        arr[i] =
+            getInquiryRealRankByHour(inquiryType, inquiryName, date, i, i + 1)
+                .get(0)
+                .getViewCount();
+      } else if (!getInquiryRealRankByHour(inquiryType, inquiryName, date, i, i + 1).isEmpty()
+          && "inquiryCount".equals(parameter)) {
+        arr[i] =
+            getInquiryRealRankByHour(inquiryType, inquiryName, date, i, i + 1)
+                .get(0)
+                .getInquiryCount();
+      } else if (!getInquiryRealRankByHour(inquiryType, inquiryName, date, i, i + 1).isEmpty()
+          && "inquiryNumber".equals(parameter)) {
+        arr[i] =
+            getInquiryRealRankByHour(inquiryType, inquiryName, date, i, i + 1)
+                .get(0)
+                .getInquiryNumber();
+      } else if (!getInquiryRealRankByHour(inquiryType, inquiryName, date, i, i + 1).isEmpty()
+          && "inquiryAmount".equals(parameter)) {
+        arr[i] =
+            getInquiryRealRankByHour(inquiryType, inquiryName, date, i, i + 1)
+                .get(0)
+                .getInquiryAmount();
+      }
+    }
+    return arr;
+  }
+
+  /**
+   * 根据询盘类型，询盘名称获取实时排行时段分析(一天24小时)
+   *
+   * @author: lingjian @Date: 2019/5/16 14:45
+   * @param inquiryType
+   * @param inquiryName
+   * @param date
+   * @return
+   */
+  public Map<String, int[]> getInquiryTimeHourMap(
+      InquiryTypeEnum inquiryType, String inquiryName, Date date) {
+    Map<String, int[]> inquiryTimeMap = new HashMap<>();
+    inquiryTimeMap.put(
+        "visitorCount", getEveryHourByInquiryName(inquiryType, inquiryName, date, "visitorCount"));
+    inquiryTimeMap.put(
+        "viewCount", getEveryHourByInquiryName(inquiryType, inquiryName, date, "viewCount"));
+    inquiryTimeMap.put(
+        "inquiryCount", getEveryHourByInquiryName(inquiryType, inquiryName, date, "inquiryCount"));
+    inquiryTimeMap.put(
+        "inquiryNumber",
+        getEveryHourByInquiryName(inquiryType, inquiryName, date, "inquiryNumber"));
+    inquiryTimeMap.put(
+        "inquiryAmount",
+        getEveryHourByInquiryName(inquiryType, inquiryName, date, "inquiryAmount"));
+    return inquiryTimeMap;
+  }
+
+  /**
+   * 根据询盘类型，询盘名称获取实时排行时段分析(一天24小时)+横坐标
+   *
+   * @author: lingjian @Date: 2019/5/16 14:45
+   * @param inquiryType
+   * @param inquiryName
+   * @return
+   */
+  @Override
+  public Map<String, Map> getInquiryRealRankByDay(InquiryTypeEnum inquiryType, String inquiryName) {
+    Map<String, Map> inquiryTimeMap = new HashMap<>();
+    inquiryTimeMap.put("abscissa", getHourAbscissa());
+    inquiryTimeMap.put("week", getInquiryTimeHourMap(inquiryType, inquiryName, new Date()));
+    return inquiryTimeMap;
   }
 }

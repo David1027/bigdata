@@ -26,16 +26,57 @@ public class InquiryRankDao extends BaseDao<DataViewInquiryRank> {
   @Resource private InquiryRankRepository inquiryRankRepository;
 
   /**
-   * 根据询盘类型获取数据（降序排序，取前50条）
+   * 根据时间，询盘类型获取数据（降序排序，取前50条，在时间之前的总和）
+   *
    * @param inquiryType
+   * @param date
    * @return
    */
-  public List<DataViewInquiryRank> findAllByInquiryType(InquiryTypeEnum inquiryType) {
+  public List<DataViewInquiryRank> findAllByInquiryType(InquiryTypeEnum inquiryType, Date date) {
+    QDataViewInquiryRank qDataViewInquiryRank = QDataViewInquiryRank.dataViewInquiryRank;
+    return getQuery()
+        .select(qDataViewInquiryRank)
+        .from(qDataViewInquiryRank)
+        .where(qDataViewInquiryRank.createTime.before(date))
+        .where(qDataViewInquiryRank.inquiryType.eq(inquiryType))
+        .orderBy(qDataViewInquiryRank.inquiryCount.desc())
+        .limit(50)
+        .fetchResults()
+        .getResults();
+  }
+
+  /**
+   * 根据时间，询盘类型获取数据（降序排序，取前50条）
+   *
+   * @author: lingjian @Date: 2019/5/16 14:16
+   * @param inquiryType
+   * @param startDate
+   * @param endDate
+   * @return
+   */
+  public List<DataViewInquiryRank> findAllByInquiryTypeBetween(
+      InquiryTypeEnum inquiryType, Date startDate, Date endDate) {
+    QDataViewInquiryRank qDataViewInquiryRank = QDataViewInquiryRank.dataViewInquiryRank;
+    return getQuery()
+        .select(qDataViewInquiryRank)
+        .from(qDataViewInquiryRank)
+        .where(qDataViewInquiryRank.createTime.between(startDate, endDate))
+        .where(qDataViewInquiryRank.inquiryType.eq(inquiryType))
+        .orderBy(qDataViewInquiryRank.inquiryCount.desc())
+        .limit(50)
+        .fetchResults()
+        .getResults();
+  }
+
+  public List<DataViewInquiryRank> findAllByInquiryTypeAndInquiryNameBetween(
+      InquiryTypeEnum inquiryType, String inquiryName, Date startDate, Date endDate) {
     QDataViewInquiryRank qDataViewInquiryRank = QDataViewInquiryRank.dataViewInquiryRank;
     return getQuery()
         .select(qDataViewInquiryRank)
         .from(qDataViewInquiryRank)
         .where(qDataViewInquiryRank.inquiryType.eq(inquiryType))
+        .where(qDataViewInquiryRank.inquiryName.eq(inquiryName))
+        .where(qDataViewInquiryRank.createTime.between(startDate, endDate))
         .orderBy(qDataViewInquiryRank.inquiryCount.desc())
         .limit(50)
         .fetchResults()

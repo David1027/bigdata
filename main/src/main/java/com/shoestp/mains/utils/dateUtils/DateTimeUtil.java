@@ -43,6 +43,9 @@ public final class DateTimeUtil {
   /** 日期格式：yyyy-MM-dd HH:mm */
   public static final String DATE_FARMAT_9 = "yyyy-MM-dd HH:mm";
 
+  /** 日期格式：MM-dd */
+  public static final String DATE_FARMAT_10 = "MM-dd";
+
   /** 数据库存储的date类型字段转成JAVA的String类型为2006-06-11 03:35:13.0，需要去掉后面的.0 */
   private static final String DATE_STRING_EXTRA = ".0";
 
@@ -311,7 +314,8 @@ public final class DateTimeUtil {
    */
   public static Date getDayFromNum(Date date,int num) {
     Calendar cal = Calendar.getInstance();
-    cal.setTimeInMillis(getTimesOfDay(date).getTime() - 3600 * 24 * 1000 * num);
+    cal.setTime(getTimesOfDay(date));
+    cal.add(Calendar.DATE,-num);
     return cal.getTime();
   }
 

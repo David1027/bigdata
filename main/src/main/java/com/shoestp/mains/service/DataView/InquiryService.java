@@ -25,12 +25,30 @@ public interface InquiryService {
   List<InquiryView> getInquiryOverview(Date startDate, Date endDate);
 
   /**
-   * 获取询盘概况中的时段分布
+   * 获取询盘概况中的时段分布(一天24小时)
    *
    * @author: lingjian @Date: 2019/5/14 11:02
    * @return Map<String, int[]>
    */
-  Map<String, int[]> getInquiryTime();
+  Map<String, Map> getInquiryTimeByDay(Date date);
+
+  /**
+   * 获取询盘概况中的时段分布(一周七天)
+   *
+   * @author: lingjian @Date: 2019/5/16 11:23
+   * @param date
+   * @return
+   */
+  Map<String, Map> getInquiryTimeByWeek(Date date);
+
+  /**
+   * 获取询盘概况中的时段分布(一个月三十天)
+   *
+   * @author: lingjian @Date: 2019/5/16 11:47
+   * @param date
+   * @return
+   */
+  Map<String, Map> getInquiryTimeByMonth(Date date);
 
   /**
    * 根据询盘类型获取询盘排行
@@ -40,4 +58,22 @@ public interface InquiryService {
    * @return List<InquiryRankView>
    */
   List<InquiryRankView> getInquiryRank(InquiryTypeEnum inquiryType);
+
+  /**
+   * 根据询盘类型获取实时询盘排行
+   *
+   * @param inquiryType
+   * @return
+   */
+  List<InquiryRankView> getInquiryRealRank(InquiryTypeEnum inquiryType);
+
+  /**
+   * 根据询盘类型，询盘名称获取实时排行时段分析(一天24小时)
+   *
+   * @author: lingjian @Date: 2019/5/16 14:45
+   * @param inquiryType
+   * @param inquiryName
+   * @return
+   */
+  Map<String, Map> getInquiryRealRankByDay(InquiryTypeEnum inquiryType, String inquiryName);
 }

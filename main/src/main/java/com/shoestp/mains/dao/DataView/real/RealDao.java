@@ -5,10 +5,15 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Projections;
 import com.shoestp.mains.dao.BaseDao;
 import com.shoestp.mains.entitys.DataView.real.DataViewReal;
+import com.shoestp.mains.entitys.DataView.real.QDataViewReal;
 import com.shoestp.mains.entitys.QUser;
 import com.shoestp.mains.repositorys.DataView.real.RealRepository;
+import com.shoestp.mains.views.DataView.real.RealView;
+import com.shoestp.mains.views.DataView.user.DataViewUserView;
 
 import org.springframework.stereotype.Repository;
 
@@ -25,10 +30,22 @@ public class RealDao extends BaseDao<DataViewReal> {
    * 根据时间间隔获取所有的记录
    *
    * @author: lingjian @Date: 2019/5/9 15:47
-   * @return List<DataViewReal>
+   * @return DataViewReal
    */
-  public List<DataViewReal> findAllByCreateTimeBetween(Date start, Date end) {
-    return realRepository.findAllByCreateTimeBetween(start, end);
+  public RealView findAllByCreateTimeBetween(Date start, Date end) {
+    QDataViewReal qDataViewReal = QDataViewReal.dataViewReal;
+    return getQuery()
+        .select(
+            Projections.bean(
+                RealView.class,
+                qDataViewReal.visitorCount.sum().as("visitorCount"),
+                qDataViewReal.viewCount.sum().as("viewCount"),
+                qDataViewReal.registerCount.sum().as("registerCount"),
+                qDataViewReal.inquiryCount.sum().as("inquiryCount"),
+                qDataViewReal.rfqCount.sum().as("rfqCount")))
+        .from(qDataViewReal)
+        .where(qDataViewReal.createTime.between(start, end))
+        .fetchOne();
   }
 
   @Override

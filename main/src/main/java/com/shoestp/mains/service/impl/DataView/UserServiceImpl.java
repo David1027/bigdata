@@ -1,9 +1,7 @@
 package com.shoestp.mains.service.impl.DataView;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -17,7 +15,10 @@ import com.shoestp.mains.views.DataView.user.DataViewUserAreaView;
 import com.shoestp.mains.views.DataView.user.DataViewUserSexView;
 import com.shoestp.mains.views.DataView.user.DataViewUserView;
 
+import org.ehcache.impl.internal.classes.commonslang.ArrayUtils;
 import org.springframework.stereotype.Service;
+
+import static com.shoestp.mains.utils.dateUtils.DateTimeUtil.DATE_FARMAT_10;
 
 /**
  * @description: 用户-服务层实现类
@@ -36,26 +37,12 @@ public class UserServiceImpl implements UserService {
    * @author: lingjian @Date: 2019/5/13 14:50
    * @param startDate
    * @param endDate
-   * @return List<DataViewUserView>
+   * @return DataViewUserView
    */
   @Override
-  public List<DataViewUserView> getUserOverview(Date startDate, Date endDate) {
-    return userDao
-        .findUserByCreateTimeBetween(
-            DateTimeUtil.getTimesOfDay(startDate, 0), DateTimeUtil.getTimesOfDay(endDate, 24))
-        .stream()
-        .map(
-            bean -> {
-              DataViewUserView dataViewUserView = new DataViewUserView();
-              dataViewUserView.setVisitorCount(bean.get(0, Integer.class));
-              dataViewUserView.setNewVisitorCount(bean.get(1, Integer.class));
-              dataViewUserView.setOldVisitorCount(bean.get(2, Integer.class));
-              dataViewUserView.setRegisterCount(bean.get(3, Integer.class));
-              dataViewUserView.setPurchaseCount(bean.get(4, Integer.class));
-              dataViewUserView.setSupplierCount(bean.get(5, Integer.class));
-              return dataViewUserView;
-            })
-        .collect(Collectors.toList());
+  public DataViewUserView getUserOverview(Date startDate, Date endDate) {
+    return userDao.findUserByCreateTimeBetweenObject(
+        DateTimeUtil.getTimesOfDay(startDate, 0), DateTimeUtil.getTimesOfDay(endDate, 24));
   }
 
   /**
@@ -99,15 +86,126 @@ public class UserServiceImpl implements UserService {
   }
 
   /**
-   * 获取用户概况中的时段分布
+   * 获取用户概况中的时段分布(一天24小时)
+   *
+   * @author: lingjian @Date: 2019/5/16 9:33
+   * @param date
+   * @return
+   */
+  public Map<String, int[]> getUserTime(Date date) {
+    Map<String, int[]> userTimeMap = new HashMap<>();
+    userTimeMap.put("visitor", getEveryHour(date));
+    return userTimeMap;
+  }
+
+  /**
+   * 获取用户概况中的时段分布的横坐标-24小时
+   *
+   * @author: lingjian @Date: 2019/5/16 9:34
+   * @return
+   */
+  public Map<String, String[]> getHourAbscissa() {
+    String[] arr = new String[24];
+    for (int i = 0; i < arr.length; i++) {
+      arr[i] = i + 1 + "";
+    }
+    Map<String, String[]> arrMap = new HashMap<>();
+    arrMap.put("hour", arr);
+    return arrMap;
+  }
+
+  /**
+   * 获取用户概况中的时段分布(一天24小时)+小时横坐标
    *
    * @author: lingjian @Date: 2019/5/13 15:53
    * @return Map<String, int[]>
    */
   @Override
-  public Map<String, int[]> getUserTime() {
-    Map<String, int[]> userTimeMap = new HashMap<>();
-    userTimeMap.put("visitor", getEveryHour(new Date()));
+  public Map<String, Map> getUserTimeByDay(Date date) {
+    Map<String, Map> userTimeMap = new HashMap<>();
+    userTimeMap.put("abscissa", getHourAbscissa());
+    userTimeMap.put("day", getUserTime(date));
+    return userTimeMap;
+  }
+
+  /**
+   * 获取某几天每天的访客数
+   *
+   * @author: lingjian @Date: 2019/5/16 10:18
+   * @param num
+   * @param date
+   * @return
+   */
+  public int[] getEveryDay(int num, Date date) {
+    int[] arr = new int[num];
+    for (int i = 0; i < arr.length; i++) {
+      if (!getUserTimeByHour(DateTimeUtil.getDayFromNum(date, i), 0, 24).isEmpty()) {
+        arr[i] =
+            getUserTimeByHour(DateTimeUtil.getDayFromNum(date, i), 0, 24)
+                .get(0)
+                .getVisitorCount()
+                .intValue();
+      }
+    }
+    return arr;
+  }
+
+  /**
+   * 获取用户概况中的时段分布的横坐标-num天
+   *
+   * @author: lingjian @Date: 2019/5/16 10:20
+   * @param num
+   * @param date
+   * @return
+   */
+  public Map<String, String[]> getDayAbscissa(int num, Date date) {
+    String[] arr = new String[num];
+    for (int i = 0; i < arr.length; i++) {
+      arr[i] = DateTimeUtil.formatDateToString(DateTimeUtil.getDayFromNum(date, i), DATE_FARMAT_10);
+    }
+    Map<String, String[]> arrMap = new HashMap<>();
+    arrMap.put("everyday", arr);
+    return arrMap;
+  }
+  /**
+   * 获取用户概况中的时段分布(num天)
+   *
+   * @param date
+   * @return
+   */
+  public Map<String, int[]> getUserTimeDayMap(int num, Date date) {
+    Map<String, int[]> userTimeWeekMap = new HashMap<>();
+    userTimeWeekMap.put("visitor", getEveryDay(num, date));
+    return userTimeWeekMap;
+  }
+
+  /**
+   * 根据时间获取用户概况中的时段分布(一周7天)+横坐标(一周)
+   *
+   * @author: lingjian @Date: 2019/5/16 10:13
+   * @param date
+   * @return
+   */
+  @Override
+  public Map<String, Map> getUserTimeByWeek(Date date) {
+    Map<String, Map> userTimeMap = new HashMap<>();
+    userTimeMap.put("abscissa", getDayAbscissa(7, date));
+    userTimeMap.put("week", getUserTimeDayMap(7, date));
+    return userTimeMap;
+  }
+
+  /**
+   * 根据时间获取用户概况中的时段分布(一个月30天)
+   *
+   * @author: lingjian @Date: 2019/5/16 10:40
+   * @param date
+   * @return
+   */
+  @Override
+  public Map<String, Map> getUserTimeByMonth(Date date) {
+    Map<String, Map> userTimeMap = new HashMap<>();
+    userTimeMap.put("abscissa", getDayAbscissa(30, date));
+    userTimeMap.put("week", getUserTimeDayMap(30, date));
     return userTimeMap;
   }
 

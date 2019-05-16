@@ -28,6 +28,12 @@ public class DataViewFlowPage {
   /** 浏览量 */
   @Column(name = "view_count")
   private Integer viewCount;
+  /** 点击次数 */
+  @Column(name = "click_count")
+  private Double clickCount;
+  /** 点击人数 */
+  @Column(name = "click_number")
+  private Double clickNumber;
   /** 点击率 */
   @Column(name = "click_rate")
   private Double clickRate;

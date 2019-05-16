@@ -1,9 +1,9 @@
-package com.shoestp.mains.repositorys.DataView;
+package com.shoestp.mains.repositorys.DataView.real;
 
 import java.util.Date;
 import java.util.List;
 
-import com.shoestp.mains.entitys.DataView.DataViewReal;
+import com.shoestp.mains.entitys.DataView.real.DataViewReal;
 
 import org.springframework.data.repository.PagingAndSortingRepository;
 

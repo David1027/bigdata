@@ -1,22 +1,15 @@
-package com.shoestp.mains.dao.DataView;
+package com.shoestp.mains.dao.DataView.real;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 
-import com.querydsl.jpa.impl.JPAQuery;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.shoestp.mains.dao.BaseDao;
-import com.shoestp.mains.entitys.DataView.DataViewReal;
-import com.shoestp.mains.entitys.DataView.QDataViewReal;
+import com.shoestp.mains.entitys.DataView.real.DataViewReal;
 import com.shoestp.mains.entitys.QUser;
-import com.shoestp.mains.repositorys.DataView.RealRepository;
-import com.shoestp.mains.utils.dateUtils.DateTimeUtil;
+import com.shoestp.mains.repositorys.DataView.real.RealRepository;
 
-import jdk.nashorn.internal.objects.annotations.Where;
 import org.springframework.stereotype.Repository;
 
 /**

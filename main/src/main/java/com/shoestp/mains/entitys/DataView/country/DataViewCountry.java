@@ -1,4 +1,4 @@
-package com.shoestp.mains.entitys.DataView;
+package com.shoestp.mains.entitys.DataView.country;
 
 import java.util.Date;
 

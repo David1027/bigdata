@@ -1,9 +1,5 @@
 package com.shoestp.mains.repositorys.DataView.user;
 
-import java.util.Date;
-import java.util.List;
-
-import com.shoestp.mains.entitys.DataView.DataViewReal;
 import com.shoestp.mains.entitys.DataView.user.DataViewUser;
 
 import org.springframework.data.repository.PagingAndSortingRepository;

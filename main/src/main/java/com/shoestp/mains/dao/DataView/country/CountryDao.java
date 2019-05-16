@@ -1,17 +1,13 @@
-package com.shoestp.mains.dao.DataView;
+package com.shoestp.mains.dao.DataView.country;
 
 import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 
-import com.querydsl.core.Tuple;
 import com.shoestp.mains.dao.BaseDao;
-import com.shoestp.mains.entitys.DataView.DataViewCountry;
-import com.shoestp.mains.entitys.DataView.DataViewReal;
-import com.shoestp.mains.entitys.DataView.QDataViewCountry;
-import com.shoestp.mains.repositorys.DataView.CountryRepository;
-import com.shoestp.mains.repositorys.DataView.CountryRepository;
+import com.shoestp.mains.entitys.DataView.country.DataViewCountry;
+import com.shoestp.mains.repositorys.DataView.country.CountryRepository;
 
 import org.springframework.stereotype.Repository;
 

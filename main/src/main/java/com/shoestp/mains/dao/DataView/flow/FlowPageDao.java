@@ -7,15 +7,10 @@ import javax.annotation.Resource;
 
 import com.querydsl.core.Tuple;
 import com.shoestp.mains.dao.BaseDao;
-import com.shoestp.mains.entitys.DataView.flow.DataViewFlow;
 import com.shoestp.mains.entitys.DataView.flow.DataViewFlowPage;
-import com.shoestp.mains.entitys.DataView.flow.QDataViewFlow;
 import com.shoestp.mains.entitys.DataView.flow.QDataViewFlowPage;
 import com.shoestp.mains.enums.flow.AccessTypeEnum;
-import com.shoestp.mains.enums.flow.DeviceTypeEnum;
-import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.repositorys.DataView.flow.FlowPageRepository;
-import com.shoestp.mains.repositorys.DataView.flow.FlowRepository;
 
 import org.springframework.stereotype.Repository;
 

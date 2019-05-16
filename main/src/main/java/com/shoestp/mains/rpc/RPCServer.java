@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 
 import com.shoestp.mains.rpc.shoestp.imp.RPCServiceImp;
 
+import io.grpc.BindableService;
 import io.grpc.Server;
 import io.grpc.netty.NettyServerBuilder;
 import org.apache.logging.log4j.LogManager;
@@ -22,13 +23,14 @@ public class RPCServer {
 
   @Resource private Environment environment;
 
-  public void start() throws InterruptedException, IOException {
+
+  public void start(RPCServiceImp service) throws InterruptedException, IOException {
     String host = environment.getProperty("rpc.host", "0.0.0.0");
     Integer port = Integer.parseInt(environment.getProperty("rpc.port", "888"));
     logger.info(String.format("RPC Listen:%s:%d", host, port));
     server =
         NettyServerBuilder.forAddress(new InetSocketAddress(host, port))
-            .addService(new RPCServiceImp())
+            .addService(service)
             .build();
     server.start();
     server.awaitTermination();

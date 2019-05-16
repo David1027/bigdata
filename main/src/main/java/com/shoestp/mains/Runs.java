@@ -3,6 +3,7 @@ package com.shoestp.mains;
 import java.io.IOException;
 
 import com.shoestp.mains.rpc.RPCServer;
+import com.shoestp.mains.rpc.shoestp.imp.RPCServiceImp;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -25,8 +26,9 @@ public class Runs {
     //    Map<String, Object> grpcServiceBeanMap =
     //        configurableApplicationContext.getBeansWithAnnotation(GrpcService.class);
     RPCServer rpcServer = configurableApplicationContext.getBean(RPCServer.class);
+    RPCServiceImp rpcServiceImp = configurableApplicationContext.getBean(RPCServiceImp.class);
     try {
-      rpcServer.start();
+      rpcServer.start(rpcServiceImp);
     } catch (InterruptedException e) {
       e.printStackTrace();
     } catch (IOException e) {

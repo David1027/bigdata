@@ -23,25 +23,6 @@ public class RealServiceImpl implements RealService {
   @Resource private RealDao realDao;
 
   /**
-   * 累加数据
-   *
-   * @author: lingjian @Date: 2019/5/9 15:30
-   * @param real
-   * @return
-   */
-  public int[] add(List<DataViewReal> real) {
-    int[] arr = new int[5];
-    for (int i = 0; i < real.size(); i++) {
-      arr[0] += real.get(i).getVisitorCount();
-      arr[1] += real.get(i).getViewCount();
-      arr[2] += real.get(i).getRegisterCount();
-      arr[3] += real.get(i).getInquiryCount();
-      arr[4] += real.get(i).getRfqCount();
-    }
-    return arr;
-  }
-
-  /**
    * 获取两个值的比较率
    *
    * @author: lingjian @Date: 2019/5/10 9:21
@@ -143,35 +124,19 @@ public class RealServiceImpl implements RealService {
    * @return
    */
   public int[] getEveryHour(Date date, String parameter) {
-    int[] arr = new int[24];
+    int[] arr = new int[12];
     for (int i = 0; i < arr.length; i++) {
       if ("visitorCount".equals(parameter)) {
-        arr[i] = getAddByTime(date, i, i + 1).getVisitorCount();
-      }else if ("viewCount".equals(parameter)) {
-        arr[i] = getAddByTime(date, i, i + 1).getViewCount();
-      }else if ("registerCount".equals(parameter)) {
-        arr[i] = getAddByTime(date, i, i + 1).getRegisterCount();
-      }else if ("inquiryCount".equals(parameter)) {
-        arr[i] = getAddByTime(date, i, i + 1).getInquiryCount();
+        arr[i] = getAddByTime(date, i*2, i*2 + 2).getVisitorCount();
+      } else if ("viewCount".equals(parameter)) {
+        arr[i] = getAddByTime(date, i*2, i*2 + 2).getViewCount();
+      } else if ("registerCount".equals(parameter)) {
+        arr[i] = getAddByTime(date, i*2, i*2 + 2).getRegisterCount();
+      } else if ("inquiryCount".equals(parameter)) {
+        arr[i] = getAddByTime(date, i*2, i*2 + 2).getInquiryCount();
       }
     }
     return arr;
-  }
-
-  /**
-   * 获取实时趋势的横坐标
-   *
-   * @author: lingjian @Date: 2019/5/15 16:55
-   * @return
-   */
-  public Map<String, String[]> getHourAbscissa() {
-    String[] arr = new String[24];
-    for (int i = 0; i < arr.length; i++) {
-      arr[i] = i + 1 + ":00";
-    }
-    Map<String, String[]> arrMap = new HashMap<>();
-    arrMap.put("hour", arr);
-    return arrMap;
   }
 
   /**
@@ -180,14 +145,14 @@ public class RealServiceImpl implements RealService {
    * @param date
    * @return
    */
-    public Map<String, int[]> getRealTrendByDay(Date date) {
-      Map<String, int[]> visitorMap = new HashMap<>();
-      visitorMap.put("visitorCount", getEveryHour(date, "visitorCount"));
-      visitorMap.put("viewCount", getEveryHour(date, "viewCount"));
-      visitorMap.put("registerCount", getEveryHour(date, "registerCount"));
-      visitorMap.put("inquiryCount", getEveryHour(date, "inquiryCount"));
-      return visitorMap;
-    }
+  public Map<String, int[]> getRealTrendByDay(Date date) {
+    Map<String, int[]> visitorMap = new HashMap<>();
+    visitorMap.put("visitorCount", getEveryHour(date, "visitorCount"));
+    visitorMap.put("viewCount", getEveryHour(date, "viewCount"));
+    visitorMap.put("registerCount", getEveryHour(date, "registerCount"));
+    visitorMap.put("inquiryCount", getEveryHour(date, "inquiryCount"));
+    return visitorMap;
+  }
 
   /**
    * 获取今日和对比日的实时趋势的值
@@ -199,9 +164,9 @@ public class RealServiceImpl implements RealService {
   @Override
   public Map<String, Map> getRealTrend(Date date) {
     Map<String, Map> visitorAllMap = new HashMap<>();
-    visitorAllMap.put("abscissa", getHourAbscissa());
-        visitorAllMap.put("today", getRealTrendByDay(new Date()));
-        visitorAllMap.put("ratherday", getRealTrendByDay(date));
+    visitorAllMap.put("abscissa", DateTimeUtil.getHourAbscissa(2));
+    visitorAllMap.put("today", getRealTrendByDay(new Date()));
+    visitorAllMap.put("ratherday", getRealTrendByDay(date));
     return visitorAllMap;
   }
 }

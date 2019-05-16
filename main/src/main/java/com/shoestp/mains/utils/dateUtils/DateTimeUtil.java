@@ -6,9 +6,7 @@ package com.shoestp.mains.utils.dateUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
+import java.util.*;
 
 /**
  * 日期和时间工具类
@@ -45,6 +43,9 @@ public final class DateTimeUtil {
 
   /** 日期格式：MM-dd */
   public static final String DATE_FARMAT_10 = "MM-dd";
+
+  /** 24小时组成的横坐标名称 */
+  public static final String HOUR = "hour";
 
   /** 数据库存储的date类型字段转成JAVA的String类型为2006-06-11 03:35:13.0，需要去掉后面的.0 */
   private static final String DATE_STRING_EXTRA = ".0";
@@ -206,25 +207,12 @@ public final class DateTimeUtil {
     return dateString;
   }
 
-  /**
-   * 获得某一天某点时间
-   * @param date 某天
-   * @param hour 某点
-   * @return
-   */
-  public static Date getTimesOfDay(Date date,int hour) {
-    Calendar cal = Calendar.getInstance();
-    cal.setTime(date);
-    cal.set(Calendar.HOUR_OF_DAY, hour);
-    cal.set(Calendar.MINUTE, 0);
-    cal.set(Calendar.SECOND, 0);
-    cal.set(Calendar.MILLISECOND, 0);
-    return cal.getTime();
-  }
+  /** =================================大数据使用中================================= */
 
   /**
    * 获取某天0点时间
-   * @param date
+   *
+   * @param date 某天
    * @return
    */
   public static Date getTimesOfDay(Date date) {
@@ -238,7 +226,25 @@ public final class DateTimeUtil {
   }
 
   /**
+   * 获得某一天某点时间
+   *
+   * @param date 某天
+   * @param hour 某点
+   * @return
+   */
+  public static Date getTimesOfDay(Date date, int hour) {
+    Calendar cal = Calendar.getInstance();
+    cal.setTime(date);
+    cal.set(Calendar.HOUR_OF_DAY, hour);
+    cal.set(Calendar.MINUTE, 0);
+    cal.set(Calendar.SECOND, 0);
+    cal.set(Calendar.MILLISECOND, 0);
+    return cal.getTime();
+  }
+
+  /**
    * 获得当天0点时间
+   *
    * @return
    */
   public static Date getTimesmorning() {
@@ -252,6 +258,7 @@ public final class DateTimeUtil {
 
   /**
    * 获得当天23:59:59点时间
+   *
    * @return
    */
   public static Date getTimesnight() {
@@ -265,6 +272,7 @@ public final class DateTimeUtil {
 
   /**
    * 获得昨天0点时间
+   *
    * @return
    */
   public static Date getYesterdaymorning() {
@@ -276,6 +284,7 @@ public final class DateTimeUtil {
 
   /**
    * 获得昨天23:59:59点时间
+   *
    * @return
    */
   public static Date getYesterdaynight() {
@@ -287,6 +296,7 @@ public final class DateTimeUtil {
 
   /**
    * 获得上周同一天0点时间
+   *
    * @return
    */
   public static Date getWeekmorning() {
@@ -298,6 +308,7 @@ public final class DateTimeUtil {
 
   /**
    * 获得上周同一天23:59:59点时间
+   *
    * @return
    */
   public static Date getWeeknight() {
@@ -309,15 +320,34 @@ public final class DateTimeUtil {
 
   /**
    * 获得当天近num天时间
+   *
    * @param num
    * @return
    */
-  public static Date getDayFromNum(Date date,int num) {
+  public static Date getDayFromNum(Date date, int num) {
     Calendar cal = Calendar.getInstance();
     cal.setTime(getTimesOfDay(date));
-    cal.add(Calendar.DATE,-num);
+    cal.add(Calendar.DATE, -num);
     return cal.getTime();
   }
+
+  /**
+   * 获取24小时每num个小时的横坐标
+   *
+   * @param num
+   * @return
+   */
+  public static Map<String, String[]> getHourAbscissa(int num) {
+    String[] arr = new String[24 / num];
+    for (int i = 0; i < arr.length; i++) {
+      arr[i] = i * num + num + "";
+    }
+    Map<String, String[]> arrMap = new HashMap<>();
+    arrMap.put(HOUR, arr);
+    return arrMap;
+  }
+
+  /** =================================大数据使用中================================= */
 
   // 获得当天近7天时间
   public static Date getWeekFromNow() {

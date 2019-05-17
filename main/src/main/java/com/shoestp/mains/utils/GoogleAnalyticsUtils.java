@@ -1,6 +1,5 @@
 package com.shoestp.mains.utils;
 
-import static org.apache.tika.metadata.MSOffice.APPLICATION_NAME;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -68,10 +67,8 @@ public class GoogleAnalyticsUtils {
         GoogleCredential.fromStream(
                 this.getClass().getResourceAsStream("/GoogleAnalytics/client_id.json"))
             .createScoped(AnalyticsReportingScopes.all());
-
-    // Construct the Analytics Reporting service object.
     return new AnalyticsReporting.Builder(httpTransport, JSON_FACTORY, credential)
-        .setApplicationName(APPLICATION_NAME)
+        .setApplicationName("BigData")
         .build();
   }
 

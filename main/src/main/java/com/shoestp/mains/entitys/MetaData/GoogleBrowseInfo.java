@@ -41,8 +41,8 @@ public class GoogleBrowseInfo {
   private String system;
 
   // 省
-  @Column(length = 50)
-  private String province;
+  /*@Column(length = 50)
+  private String province;*/
 
   // 访问时间
   @Column(name = "access_time", length = 50)
@@ -61,8 +61,8 @@ public class GoogleBrowseInfo {
   private String bounceRate;
 
   // 平均停留时长
-  @Column(name = "avg_time_on_page", length = 50)
-  private String avgTimeOnPage;
+  @Column(name = "time_on_page", length = 50)
+  private String timeOnPage;
 
   // 上一个页面
   @Column(name = "previous_page", length = 1000)
@@ -71,6 +71,10 @@ public class GoogleBrowseInfo {
   // 同一会话访问数
   @Column(length = 50)
   private String visitor;
+
+  // 访问次数
+  @Column(length = 50)
+  private String pageViews;
 
   // 创建时间
   @Column(name = "create_time")

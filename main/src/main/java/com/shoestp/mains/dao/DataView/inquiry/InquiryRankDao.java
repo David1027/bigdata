@@ -5,16 +5,13 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import com.querydsl.core.Tuple;
+import org.springframework.stereotype.Repository;
+
 import com.shoestp.mains.dao.BaseDao;
-import com.shoestp.mains.entitys.DataView.inquiry.DataViewInquiry;
 import com.shoestp.mains.entitys.DataView.inquiry.DataViewInquiryRank;
 import com.shoestp.mains.entitys.DataView.inquiry.QDataViewInquiryRank;
 import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
 import com.shoestp.mains.repositorys.DataView.inquory.InquiryRankRepository;
-import com.shoestp.mains.repositorys.DataView.inquory.InquiryRepository;
-
-import org.springframework.stereotype.Repository;
 
 /**
  * @description: 询盘-数据层

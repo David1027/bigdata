@@ -30,10 +30,10 @@ public class DataViewFlowPage {
   private Integer viewCount;
   /** 点击次数 */
   @Column(name = "click_count")
-  private Double clickCount;
+  private Integer clickCount;
   /** 点击人数 */
   @Column(name = "click_number")
-  private Double clickNumber;
+  private Integer clickNumber;
   /** 点击率 */
   @Column(name = "click_rate")
   private Double clickRate;

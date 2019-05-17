@@ -6,7 +6,7 @@ server:
 spring:
   cache:
     jcache:
-      config: ehcacheConfig.xml
+      config: classpath:ehcacheConfig.xml
   datasource:
     url: jdbc:mysql://192.168.99.100:3306/test?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
     #    url: jdbc:mysql://localhost:3306/dataview?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC

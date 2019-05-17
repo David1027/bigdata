@@ -1,9 +1,10 @@
 package com.shoestp.mains.trigger;
 
+import javax.annotation.Resource;
+
 import com.shoestp.mains.pojo.MessageResult;
-import com.shoestp.mains.trigger.pojo.TriggerPojo;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
+
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -11,15 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/trigger")
 public class TriggerController {
 
-  @PostMapping("/")
-  public Object trigger(TriggerPojo triggerPojo) {
-    return MessageResult.builder().code(1).build();
+  @Resource Test test;
+
+  @GetMapping(value = {"/", ""})
+  public Object trigger() {
+    return MessageResult.builder().code(1).msg(String.valueOf(test.rand())).build();
   };
-
-  /** */
-  @PutMapping("/put/inquiry")
-  public MessageResult saveInquiryInfo() {
-
-    return MessageResult.builder().code(1).build();
-  }
 }

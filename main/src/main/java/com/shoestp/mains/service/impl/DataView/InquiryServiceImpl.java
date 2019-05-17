@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -15,6 +16,7 @@ import com.shoestp.mains.service.DataView.InquiryService;
 import com.shoestp.mains.utils.dateUtils.DateTimeUtil;
 import com.shoestp.mains.views.DataView.inquiry.InquiryRankView;
 import com.shoestp.mains.views.DataView.inquiry.InquiryView;
+import com.shoestp.mains.views.DataView.user.DataViewUserView;
 
 import org.springframework.stereotype.Service;
 
@@ -31,6 +33,22 @@ public class InquiryServiceImpl implements InquiryService {
   @Resource private InquiryRankDao inquiryRankDao;
 
   /**
+   * 判断非空处理
+   *
+   * @author: lingjian @Date: 2019/5/17 11:16
+   * @param inquiry 询盘对象
+   * @return
+   */
+  private InquiryView isNullTo(InquiryView inquiry) {
+    if (inquiry.getVisitorCount() == null) {
+      inquiry.setVisitorCount(0);
+      inquiry.setInquiryNumber(0);
+      inquiry.setInquiryCount(0);
+    }
+    return inquiry;
+  }
+
+  /**
    * 根据时间获取询盘概况
    *
    * @author: lingjian @Date: 2019/5/14 10:08
@@ -39,21 +57,14 @@ public class InquiryServiceImpl implements InquiryService {
    * @return
    */
   @Override
-  public List<InquiryView> getInquiryOverview(Date startDate, Date endDate) {
-    return inquiryDao
-        .findAllByCreateTime(
-            DateTimeUtil.getTimesOfDay(startDate, 0), DateTimeUtil.getTimesOfDay(endDate, 24))
-        .stream()
-        .map(
-            bean -> {
-              InquiryView inquiryView = new InquiryView();
-              inquiryView.setVisitorCount(bean.get(0, Integer.class));
-              inquiryView.setInquiryNumber(bean.get(1, Integer.class));
-              inquiryView.setInquiryCount(bean.get(2, Integer.class));
-              inquiryView.setTotalInquiryCount(inquiryDao.findAllByInquiry());
-              return inquiryView;
-            })
-        .collect(Collectors.toList());
+  public InquiryView getInquiryOverview(Date startDate, Date endDate) {
+    InquiryView inquiry =
+        isNullTo(
+            inquiryDao.findAllByCreateTimeObject(
+                DateTimeUtil.getTimesOfDay(startDate, 0), DateTimeUtil.getTimesOfDay(endDate, 24)));
+    inquiry.setTotalInquiryCount(
+        inquiryDao.findAllByInquiry().isEmpty() ? 0 : inquiryDao.findAllByInquiry().get(0));
+    return inquiry;
   }
 
   /**
@@ -65,7 +76,7 @@ public class InquiryServiceImpl implements InquiryService {
    * @param end
    * @return List<InquiryView>
    */
-  public List<InquiryView> getInquiryByHour(Date date, int start, int end) {
+  public List<InquiryView> getInquiry(Date date, int start, int end) {
     return inquiryDao
         .findAllByCreateTime(
             DateTimeUtil.getTimesOfDay(date, start), DateTimeUtil.getTimesOfDay(date, end))
@@ -89,54 +100,11 @@ public class InquiryServiceImpl implements InquiryService {
   public int[] getEveryHour(Date date) {
     int[] arr = new int[24];
     for (int i = 0; i < arr.length; i++) {
-      if (!getInquiryByHour(date, i, i + 1).isEmpty()) {
-        arr[i] = getInquiryByHour(date, i, i + 1).get(0).getInquiryCount().intValue();
+      if (!getInquiry(date, i, i + 1).isEmpty()) {
+        arr[i] = getInquiry(date, i, i + 1).get(0).getInquiryCount();
       }
     }
     return arr;
-  }
-
-  /**
-   * 获取询盘概况中的时段分布的横坐标(小时)
-   *
-   * @author: lingjian @Date: 2019/5/16 11:14
-   * @return
-   */
-  public Map<String, String[]> getHourAbscissa() {
-    String[] arr = new String[24];
-    for (int i = 0; i < arr.length; i++) {
-      arr[i] = i + 1 + "";
-    }
-    Map<String, String[]> arrMap = new HashMap<>();
-    arrMap.put("hour", arr);
-    return arrMap;
-  }
-
-  /**
-   * 获取询盘概况中的时段分布(一天24小时)
-   *
-   * @author: lingjian @Date: 2019/5/16 11:14
-   * @param date
-   * @return
-   */
-  public Map<String, int[]> getInquiryTimeMap(Date date) {
-    Map<String, int[]> inquiryTimeMap = new HashMap<>();
-    inquiryTimeMap.put("inquiryCount", getEveryHour(date));
-    return inquiryTimeMap;
-  }
-
-  /**
-   * 获取询盘概况中的时段分布(一天24小时)+横坐标
-   *
-   * @author: lingjian @Date: 2019/5/14 11:03
-   * @return
-   */
-  @Override
-  public Map<String, Map> getInquiryTimeByDay(Date date) {
-    Map<String, Map> inquiryTimeMap = new HashMap<>();
-    inquiryTimeMap.put("abscissa", getHourAbscissa());
-    inquiryTimeMap.put("day", getInquiryTimeMap(date));
-    return inquiryTimeMap;
   }
 
   /**
@@ -150,72 +118,69 @@ public class InquiryServiceImpl implements InquiryService {
   public int[] getEveryDay(int num, Date date) {
     int[] arr = new int[num];
     for (int i = 0; i < arr.length; i++) {
-      if (!getInquiryByHour(date, 0, 24).isEmpty()) {
-        arr[i] = getInquiryByHour(date, 0, 24).get(0).getInquiryCount().intValue();
+      if (!getInquiry(DateTimeUtil.getDayFromNum(date, num - i - 1), 0, 24).isEmpty()) {
+        arr[i] =
+            getInquiry(DateTimeUtil.getDayFromNum(date, num - i - 1), 0, 24)
+                .get(0)
+                .getInquiryCount();
       }
     }
     return arr;
   }
 
   /**
-   * 获取询盘概况中的时段分布的横坐标(日期)
+   * 获取询盘概况中的时段分布(小时)
    *
-   * @author: lingjian @Date: 2019/5/16 11:25
-   * @param num
-   * @param date
-   * @return
+   * @author: lingjian @Date: 2019/5/16 11:14
+   * @param date 时间
+   * @return Map<String, int[]>
    */
-  public Map<String, String[]> getDayAbscissa(int num, Date date) {
-    String[] arr = new String[num];
-    for (int i = 0; i < arr.length; i++) {
-      arr[i] = DateTimeUtil.formatDateToString(DateTimeUtil.getDayFromNum(date, i), DATE_FARMAT_10);
-    }
-    Map<String, String[]> arrMap = new HashMap<>();
-    arrMap.put("everyday", arr);
-    return arrMap;
+  public Map<String, int[]> getInquiryTimeHourMap(Date date) {
+    Map<String, int[]> inquiryTimeHourMap = new HashMap<>();
+    inquiryTimeHourMap.put("inquiryCount", getEveryHour(date));
+    return inquiryTimeHourMap;
   }
 
   /**
-   * 获取询盘概况中的时段分布(一周七天)
+   * 获取询盘概况中的时段分布(天)
    *
    * @author: lingjian @Date: 2019/5/16 11:26
    * @param num
    * @param date
    * @return
    */
-  public Map<String, int[]> getInquiryTimeDaYMap(int num, Date date) {
-    Map<String, int[]> inquiryTimeMap = new HashMap<>();
-    inquiryTimeMap.put("inquiryCount", getEveryDay(num, date));
+  public Map<String, int[]> getInquiryTimeDayMap(int num, Date date) {
+    Map<String, int[]> inquiryTimeDayMap = new HashMap<>();
+    inquiryTimeDayMap.put("inquiryCount", getEveryDay(num, date));
+    return inquiryTimeDayMap;
+  }
+
+  /**
+   * 获取询盘概况中的时段分布(小时)+横坐标(小时)
+   *
+   * @author: lingjian @Date: 2019/5/14 11:03
+   * @return
+   */
+  @Override
+  public Map<String, Map> getInquiryTimeByHour(Date date) {
+    Map<String, Map> inquiryTimeMap = new HashMap<>();
+    inquiryTimeMap.put("abscissa", DateTimeUtil.getHourAbscissa(1));
+    inquiryTimeMap.put("day", getInquiryTimeHourMap(date));
     return inquiryTimeMap;
   }
 
   /**
-   * 获取询盘概况中的时段分布(一周七天)+横坐标(日期)
+   * 获取询盘概况中的时段分布(天)+横坐标(日期)
    *
    * @author: lingjian @Date: 2019/5/16 11:24
    * @param date
    * @return
    */
   @Override
-  public Map<String, Map> getInquiryTimeByWeek(Date date) {
+  public Map<String, Map> getInquiryTimeByDay(Date date, Integer day) {
     Map<String, Map> inquiryTimeMap = new HashMap<>();
-    inquiryTimeMap.put("abscissa", getDayAbscissa(7, date));
-    inquiryTimeMap.put("week", getInquiryTimeDaYMap(7, date));
-    return inquiryTimeMap;
-  }
-
-  /**
-   * 获取询盘概况中的时段分布(一个月三十天)+横坐标(日期)
-   *
-   * @author: lingjian @Date: 2019/5/16 11:33
-   * @param date
-   * @return
-   */
-  @Override
-  public Map<String, Map> getInquiryTimeByMonth(Date date) {
-    Map<String, Map> inquiryTimeMap = new HashMap<>();
-    inquiryTimeMap.put("abscissa", getDayAbscissa(30, date));
-    inquiryTimeMap.put("week", getInquiryTimeDaYMap(30, date));
+    inquiryTimeMap.put("abscissa", DateTimeUtil.getDayAbscissa(day, date));
+    inquiryTimeMap.put("day", getInquiryTimeDayMap(day, date));
     return inquiryTimeMap;
   }
 
@@ -388,10 +353,11 @@ public class InquiryServiceImpl implements InquiryService {
    * @return
    */
   @Override
-  public Map<String, Map> getInquiryRealRankByDay(InquiryTypeEnum inquiryType, String inquiryName) {
+  public Map<String, Map> getInquiryRealRankByHour(
+      InquiryTypeEnum inquiryType, String inquiryName) {
     Map<String, Map> inquiryTimeMap = new HashMap<>();
-    inquiryTimeMap.put("abscissa", getHourAbscissa());
-    inquiryTimeMap.put("week", getInquiryTimeHourMap(inquiryType, inquiryName, new Date()));
+    inquiryTimeMap.put("abscissa", DateTimeUtil.getHourAbscissa(1));
+    inquiryTimeMap.put("hour", getInquiryTimeHourMap(inquiryType, inquiryName, new Date()));
     return inquiryTimeMap;
   }
 }

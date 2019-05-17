@@ -36,7 +36,7 @@ public class UserAreaDao extends BaseDao<DataViewUserArea> {
         .select(qDataViewUserArea.area, qDataViewUserArea.areaCount.sum())
         .from(qDataViewUserArea)
         .where(qDataViewUserArea.createTime.between(start, end))
-            .groupBy(qDataViewUserArea.area)
+        .groupBy(qDataViewUserArea.area)
         .fetchResults()
         .getResults();
   }

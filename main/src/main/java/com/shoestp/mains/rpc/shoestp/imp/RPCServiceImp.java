@@ -2,14 +2,13 @@ package com.shoestp.mains.rpc.shoestp.imp;
 
 import java.util.Date;
 
-import javax.inject.Inject;
-
+import com.shoestp.mains.dao.shoestpData.impl.ViewInfoDao;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.shoestp.mains.dao.shoestpData.InquiryInfoDao;
 import com.shoestp.mains.dao.shoestpData.SearchDao;
-import com.shoestp.mains.dao.shoestpData.ViewInfoDao;
+import com.shoestp.mains.dao.shoestpData.WebVisitInfoRepository;
 import com.shoestp.mains.entitys.MetaData.InquiryInfo;
 import com.shoestp.mains.entitys.MetaData.SearchWordInfo;
 import com.shoestp.mains.entitys.MetaData.WebVisitInfo;
@@ -22,6 +21,8 @@ import io.grpc.stub.StreamObserver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
+
 /**
  * Created by IntelliJ IDEA. User: lijie@shoestp.cn Date: 2019/5/14 Time: 15:00
  */
@@ -32,7 +33,9 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
     @Autowired
     private SearchDao searchDao;
     @Autowired
-    private ViewInfoDao viewInfoDao;
+    private WebVisitInfoRepository webVisitInfoRepository;
+
+    @Resource private ViewInfoDao viewInfoDao;
     @Autowired
     private InquiryInfoDao inquiryDao;
 
@@ -79,7 +82,7 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
                 webVisitInfo.setIp(viewInfo.getIp());
                 webVisitInfo.setUserId(viewInfo.getUserId());
                 webVisitInfo.setCreateTime(new Date());
-                viewInfoDao.save(webVisitInfo);
+                webVisitInfoRepository.save(webVisitInfo);
             }
 
             @Override

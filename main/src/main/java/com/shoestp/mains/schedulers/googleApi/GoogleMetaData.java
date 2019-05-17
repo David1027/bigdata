@@ -8,6 +8,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import com.shoestp.mains.dao.metaData.GoogleBrowseInfoDao;
+import com.shoestp.mains.repositorys.metaData.GooglePagePropertyInfoRepository;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.SimpleScheduleBuilder;
@@ -26,10 +28,9 @@ import com.google.api.services.analyticsreporting.v4.model.MetricHeaderEntry;
 import com.google.api.services.analyticsreporting.v4.model.Report;
 import com.google.api.services.analyticsreporting.v4.model.ReportRequest;
 import com.google.api.services.analyticsreporting.v4.model.ReportRow;
-import com.shoestp.mains.dao.MetaData.GoogleBrowseInfoDao;
-import com.shoestp.mains.dao.MetaData.GooglePagePropertyInfoDao;
 import com.shoestp.mains.entitys.MetaData.GoogleBrowseInfo;
 import com.shoestp.mains.entitys.MetaData.GooglePageProperty;
+import com.shoestp.mains.entitys.MetaData.QGoogleBrowseInfo;
 import com.shoestp.mains.schedulers.BaseSchedulers;
 
 @Component
@@ -42,9 +43,9 @@ public class GoogleMetaData extends BaseSchedulers {
 
   @Autowired private AnalyticsReporting ar;
   @Autowired private GoogleBrowseInfoDao googleBrowseInfoDao;
-  @Autowired private GooglePagePropertyInfoDao googlePagePropertyInfoDao;
+  @Autowired private GooglePagePropertyInfoRepository googlePagePropertyInfoDao;
 
-  private static int timing = 5; // 定时5分钟
+  private static int timing = 20; // 定时5分钟
   private static List<Dimension> browseDimensionList = new ArrayList<>();
   private static List<Metric> browseMetricList = new ArrayList<>();
   private static List<Metric> pageMetricList = new ArrayList<>();
@@ -54,33 +55,44 @@ public class GoogleMetaData extends BaseSchedulers {
     /*browseDimensionList.add(new Dimension().setName("ga:hostname")); // 域名 */
     browseDimensionList.add(new Dimension().setName("ga:dateHourMinute")); // 时间
     browseDimensionList.add(new Dimension().setName("ga:country")); // 访问国家
-    browseDimensionList.add(new Dimension().setName("ga:region")); // 省份
+    // browseDimensionList.add(new Dimension().setName("ga:region")); // 省份
     browseDimensionList.add(new Dimension().setName("ga:previousPagePath")); // 上一个访问地址
     browseDimensionList.add(new Dimension().setName("ga:source")); // 访问源
     browseDimensionList.add(new Dimension().setName("ga:operatingSystem")); // 系统设备
     /*browseDimensionList.add(new Dimension().setName("ga:minute")); // 分钟 */
     browseMetricList.add(new Metric().setExpression("ga:sessions")); // 会话总数 ---访客数
     browseMetricList.add(new Metric().setExpression("ga:bounceRate")); // 跳失率
-    browseMetricList.add(new Metric().setExpression("ga:avgTimeOnPage")); // 平均停留时间
+    browseMetricList.add(new Metric().setExpression("ga:timeOnPage")); // 平均停留时间
     browseMetricList.add(new Metric().setExpression("ga:uniquePageviews")); // 页面唯一访问数
+    browseMetricList.add(new Metric().setExpression("ga:pageviews")); // 总浏览数
     pageMetricList.add(new Metric().setExpression("ga:bounceRate")); // 跳失率
-    pageMetricList.add(new Metric().setExpression("ga:pageviews")); // 总访问数
+    pageMetricList.add(new Metric().setExpression("ga:pageviews")); // 总浏览数
     pageMetricList.add(new Metric().setExpression("ga:avgTimeOnPage")); // 平均停留时间
+    // pageMetricList.add(new Metric().setExpression("ga:timeOnPage")); // 会话总数 ---访客数
   }
 
   @Override
   protected void executeInternal(JobExecutionContext context)
       throws JobExecutionException { // TODO Auto-generated method stub
-    queryData(1, browseMetricList, browseDimensionList); // 浏览数据
-    sleep();
-    queryData(3, pageMetricList, new ArrayList<>()); // 页面数据
+    test();
+    // queryData(1, browseMetricList, browseDimensionList); // 浏览数据
+    // sleep();
+    // queryData(3, pageMetricList, new ArrayList<>()); // 页面数据
     // System.out.println("wdawdawdw");
+  }
+
+  public void test() {
+    for (PageRankingView pageRankingView : googleBrowseInfoDao.queryPageRanking(10)) {
+      System.out.println(pageRankingView);
+    }
+
   }
 
   public void queryData(int queryType, List<Metric> metric, List<Dimension> dimension) {
     Date date = new Date();
     boolean b = false; // 是否下一小时
     // 获取数据库里最后拉去数据的的日期
+    // String filter = "ga:pagePath==/";
     String filter = "ga:hostname=@shoestp.com";
     /*String startDateString = getLastDate(queryType);
     Date parse = null;
@@ -118,10 +130,10 @@ public class GoogleMetaData extends BaseSchedulers {
             dateRange.setEndDate("today");
       */
       /////////// 分段获取初始数据
-      dateRange.setStartDate("2018-01-01");
-      dateRange.setEndDate("2019-01-15");
-      /*dateRange.setStartDate("2019-05-10");
-      dateRange.setEndDate("today");*/
+      dateRange.setStartDate("2019-05-14");
+      /*dateRange.setEndDate("2019-01-15");
+      dateRange.setStartDate("2019-01-16");*/
+      dateRange.setEndDate("2019-05-15");
       /////////// 分段获取初始数据
       List<DimensionFilterClause> dimList = new ArrayList<>();
       DimensionFilterClause dim = new DimensionFilterClause();
@@ -133,8 +145,8 @@ public class GoogleMetaData extends BaseSchedulers {
               .setPageSize(500000)
               .setDateRanges(Arrays.asList(dateRange))
               .setMetrics(metric) // 10个
-              .setDimensions(dimension) // 7个
-              .setFiltersExpression(filter); // 过滤
+              .setDimensions(dimension); // 7个
+      // .setFiltersExpression(filter); // 过滤
 
       ArrayList<ReportRequest> requests = new ArrayList();
       requests.add(request);
@@ -197,14 +209,15 @@ public class GoogleMetaData extends BaseSchedulers {
         browse.setPagePath(dimensions.get(0));
         browse.setAccessTime(dimensions.get(1));
         browse.setCountry(dimensions.get(2));
-        browse.setProvince(dimensions.get(3));
-        browse.setPreviousPage(dimensions.get(4));
-        browse.setSourcePage(dimensions.get(5));
-        browse.setSystem(dimensions.get(6));
+        // browse.setProvince(dimensions.get(3));
+        browse.setPreviousPage(dimensions.get(3));
+        browse.setSourcePage(dimensions.get(4));
+        browse.setSystem(dimensions.get(5));
         browse.setSessions(values.get(0));
         browse.setBounceRate(values.get(1));
-        browse.setAvgTimeOnPage(values.get(2));
+        browse.setTimeOnPage(values.get(2));
         browse.setVisitor(values.get(3));
+        browse.setPageViews(values.get(4));
         browse.setCreateTime(date);
         googleBrowseInfoDao.save(browse);
         break;

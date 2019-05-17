@@ -28,6 +28,8 @@ public class InquiryInfo {
   @Column(name = "inquiry_id")
   private Integer inquiryId;
   /** * 来自于那个链接 */
+  private String url;
+  /** * 来自于那个页面 */
   private String referer;
   /** * 创建时间 */
   @Column(name = "create_time")

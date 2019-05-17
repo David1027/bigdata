@@ -1,7 +1,10 @@
 package com.shoestp.mains.dao;
 
 import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+
 import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -11,6 +14,10 @@ public abstract class BaseDao<T> {
 
   protected JPAQuery<?> getQuery() {
     return new JPAQuery<Void>(entityManager);
+  }
+
+  public JPAQueryFactory getQueryFactory() {
+      return new JPAQueryFactory(entityManager);
   }
 
   public abstract T find(T t);

@@ -6,6 +6,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import com.shoestp.mains.enums.flow.AccessTypeEnum;
+import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.pojo.MessageResult;
 import com.shoestp.mains.service.DataView.FlowService;
 
@@ -133,6 +134,52 @@ public class FlowController {
         .code(1)
         .msg("Hello")
         .result(flowService.getFlowSourcePage(startDate, endDate))
+        .build();
+  }
+
+  /**
+   * 根据流量来源，来源渠道名称，时间，获取来源渠道时段分析(小时)
+   *
+   * @author: lingjian @Date: 2019/5/17 16:22
+   * @param date
+   * @param sourceType
+   * @param sourcePage
+   * @return
+   */
+  @PostMapping(value = "/flowsourcepagebyhour")
+  public Object getFlowSourcePageByHour(
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
+      SourceTypeEnum sourceType,
+      String sourcePage) {
+    logger.debug(date);
+    return MessageResult.builder()
+        .code(1)
+        .msg("Hello")
+        .result(flowService.getFlowSourcePageByHour(date, sourceType, sourcePage))
+        .build();
+  }
+
+  /**
+   * 根据流量来源，来源渠道名称，时间，获取来源渠道时段分析(天)
+   *
+   * @author: lingjian @Date: 2019/5/17 16:29
+   * @param date
+   * @param sourceType
+   * @param sourcePage
+   * @param num
+   * @return
+   */
+  @PostMapping(value = "/flowsourcepagebyday")
+  public Object getFlowSourcePageByDay(
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
+      SourceTypeEnum sourceType,
+      String sourcePage,
+      int num) {
+    logger.debug(date);
+    return MessageResult.builder()
+        .code(1)
+        .msg("Hello")
+        .result(flowService.getFlowSourcePageByDay(num, date, sourceType, sourcePage))
         .build();
   }
 

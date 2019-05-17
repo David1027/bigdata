@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.shoestp.mains.enums.flow.AccessTypeEnum;
+import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.views.DataView.flow.AccessView;
 import com.shoestp.mains.views.DataView.flow.FlowDeviceView;
 import com.shoestp.mains.views.DataView.flow.PageParameterView;
@@ -54,7 +55,7 @@ public interface FlowService {
    * @param date
    * @return
    */
-  Map<String, Map> getFlowSourceTypeTimeByDay(int num,Date date);
+  Map<String, Map> getFlowSourceTypeTimeByDay(int num, Date date);
   /**
    * 根据时间获取来源渠道
    *
@@ -64,6 +65,30 @@ public interface FlowService {
    * @return Map<String, List>
    */
   Map<String, List> getFlowSourcePage(Date startDate, Date endDate);
+
+  /**
+   * 根据流量来源，来源渠道名称，时间，获取来源渠道时段分析(小时)
+   *
+   * @author: lingjian @Date: 2019/5/17 16:22
+   * @param date
+   * @param sourceType
+   * @param sourcePage
+   * @return
+   */
+  Map<String, Map> getFlowSourcePageByHour(Date date, SourceTypeEnum sourceType, String sourcePage);
+
+  /**
+   * 根据流量来源，来源渠道名称，时间，获取来源渠道时段分析(天)
+   *
+   * @author: lingjian @Date: 2019/5/17 16:30
+   * @param num
+   * @param date
+   * @param sourceType
+   * @param sourcePage
+   * @return
+   */
+  Map<String, Map> getFlowSourcePageByDay(
+      int num, Date date, SourceTypeEnum sourceType, String sourcePage);
 
   /**
    * 根据时间获取页面分析

@@ -11,9 +11,11 @@ import com.shoestp.mains.dao.DataView.flow.FlowPageDao;
 import com.shoestp.mains.enums.flow.AccessTypeEnum;
 import com.shoestp.mains.enums.flow.DeviceTypeEnum;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
+import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
 import com.shoestp.mains.service.DataView.FlowService;
 import com.shoestp.mains.utils.dateUtils.DateTimeUtil;
 import com.shoestp.mains.views.DataView.flow.*;
+import com.shoestp.mains.views.DataView.inquiry.InquiryRankView;
 import com.shoestp.mains.views.DataView.real.RealView;
 import com.sun.org.apache.xerces.internal.xs.StringList;
 
@@ -273,6 +275,151 @@ public class FlowServiceImpl implements FlowService {
               .collect(Collectors.toList()));
     }
     return flowViewMap;
+  }
+
+  /**
+   * 根据来源类型，来源渠道，时间，获取来源渠道的访客数
+   *
+   * @param sourceType
+   * @param sourcePage
+   * @param date
+   * @param start
+   * @param end
+   * @return
+   */
+  public List<FlowSourcePageView> getSourcePage(
+      SourceTypeEnum sourceType, String sourcePage, Date date, int start, int end) {
+    return flowDao
+        .findAllBySourceTypeAndSourcePage(
+            sourceType,
+            sourcePage,
+            DateTimeUtil.getTimesOfDay(date, start),
+            DateTimeUtil.getTimesOfDay(date, end))
+        .stream()
+        .map(
+            bean -> {
+              FlowSourcePageView flowSourcePageView = new FlowSourcePageView();
+              flowSourcePageView.setSourcePage(bean.get(0, String.class));
+              flowSourcePageView.setVisitorCount(bean.get(1, Integer.class));
+              return flowSourcePageView;
+            })
+        .collect(Collectors.toList());
+  }
+
+  /**
+   * 获取24小时每个小时的来源渠道的访客数
+   *
+   * @author: lingjian @Date: 2019/5/17 16:22
+   * @param sourceType
+   * @param sourcePage
+   * @param date
+   * @return
+   */
+  public int[] getEveryHourBySourcePage(SourceTypeEnum sourceType, String sourcePage, Date date) {
+    int[] arr = new int[24];
+    for (int i = 0; i < arr.length; i++) {
+      if (!getSourcePage(sourceType, sourcePage, date, i, i + 1).isEmpty()) {
+        arr[i] = getSourcePage(sourceType, sourcePage, date, i, i + 1).get(0).getVisitorCount();
+      }
+    }
+    return arr;
+  }
+
+  /**
+   * 获取num天每天的来源渠道的访客数
+   *
+   * @author: lingjian @Date: 2019/5/17 16:31
+   * @param num
+   * @param sourceType
+   * @param sourcePage
+   * @param date
+   * @return
+   */
+  public int[] getEveryDayBySourcePage(
+      int num, SourceTypeEnum sourceType, String sourcePage, Date date) {
+    int[] arr = new int[num];
+    for (int i = 0; i < arr.length; i++) {
+      if (!getSourcePage(
+              sourceType, sourcePage, DateTimeUtil.getDayFromNum(date, num - i - 1), 0, 24)
+          .isEmpty()) {
+        arr[i] =
+            getSourcePage(
+                    sourceType, sourcePage, DateTimeUtil.getDayFromNum(date, num - i - 1), 0, 24)
+                .get(0)
+                .getVisitorCount();
+      }
+    }
+    return arr;
+  }
+
+  /**
+   * 根据流量来源，来源渠道名称，时间，获取来源渠道时段分析(小时)
+   *
+   * @author: lingjian @Date: 2019/5/17 16:22
+   * @param sourceType
+   * @param sourcePage
+   * @param date
+   * @return
+   */
+  public Map<String, int[]> getSourcePageHourMap(
+      SourceTypeEnum sourceType, String sourcePage, Date date) {
+    Map<String, int[]> sourcePageMap = new HashMap<>();
+    sourcePageMap.put("visitorCount", getEveryHourBySourcePage(sourceType, sourcePage, date));
+    return sourcePageMap;
+  }
+
+  /**
+   * 根据流量来源，来源渠道名称，时间，获取来源渠道时段分析(天)
+   *
+   * @author: lingjian @Date: 2019/5/17 16:30
+   * @param num
+   * @param sourceType
+   * @param sourcePage
+   * @param date
+   * @return
+   */
+  public Map<String, int[]> getSourcePageDayMap(
+      int num, SourceTypeEnum sourceType, String sourcePage, Date date) {
+    Map<String, int[]> sourcePageMap = new HashMap<>();
+    sourcePageMap.put("visitorCount", getEveryDayBySourcePage(num, sourceType, sourcePage, date));
+    return sourcePageMap;
+  }
+
+  /**
+   * 根据流量来源，来源渠道名称，时间，获取来源渠道时段分析(小时)+横坐标(小时)
+   *
+   * @author: lingjian @Date: 2019/5/17 16:22
+   * @param date
+   * @param sourceType
+   * @param sourcePage
+   * @return
+   */
+  @Override
+  public Map<String, Map> getFlowSourcePageByHour(
+      Date date, SourceTypeEnum sourceType, String sourcePage) {
+    Map<String, Map> sourcePageMap = new HashMap<>();
+    sourcePageMap.put("abscissa", DateTimeUtil.getHourAbscissa(1));
+    sourcePageMap.put("hour", getSourcePageHourMap(sourceType, sourcePage, date));
+    return sourcePageMap;
+  }
+
+  /**
+   * 根据流量来源，来源渠道名称，时间，获取来源渠道时段分析(天)+横坐标(日期)
+   *
+   * @author: lingjian @Date: 2019/5/17 16:30
+   * @param num
+   * @param date
+   * @param sourceType
+   * @param sourcePage
+   * @return
+   */
+  @Override
+  public Map<String, Map> getFlowSourcePageByDay(
+      int num, Date date, SourceTypeEnum sourceType, String sourcePage) {
+    Map<String, Map> sourcePageMap = new HashMap<>();
+    sourcePageMap.put("abscissa", DateTimeUtil.getDayAbscissa(num, date));
+    sourcePageMap.put("hour", getSourcePageDayMap(num, sourceType, sourcePage, date));
+    return sourcePageMap;
   }
 
   /**

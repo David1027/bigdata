@@ -84,11 +84,10 @@ public class GoogleMetaData extends BaseSchedulers {
   protected void executeInternal(JobExecutionContext context)
       throws JobExecutionException { // TODO Auto-generated method stub
     // test();
-    sleep(5000);
+    // sleep(5000);
     queryData(1, browseMetricList, browseDimensionList); // 浏览数据
     // sleep();
     // queryData(3, pageMetricList, new ArrayList<>()); // 页面数据
-    // System.out.println("wdawdawdw");
   }
 
   public void test() {
@@ -135,16 +134,10 @@ public class GoogleMetaData extends BaseSchedulers {
       System.setProperty("https.proxyHost", "127.0.0.1");
       System.setProperty("https.proxyPort", String.valueOf(1080));
       DateRange dateRange = new DateRange();
-      // dateRange.setStartDate(startDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-      /*dateRange.setStartDate(startDateString.substring(0, 10));
-            dateRange.setEndDate("today");
-      */
-      /////////// 分段获取初始数据
-      dateRange.setStartDate("2019-05-15");
+      dateRange.setStartDate(startDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
       /*dateRange.setEndDate("2019-01-15");
       dateRange.setStartDate("2019-01-16");*/
-      dateRange.setEndDate("2019-05-16");
-      /////////// 分段获取初始数据
+      dateRange.setEndDate("today");
       List<DimensionFilterClause> dimList = new ArrayList<>();
       DimensionFilterClause dim = new DimensionFilterClause();
       // dim.set

@@ -4,9 +4,11 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -59,15 +61,6 @@ public class DataConver extends BaseSchedulers {
   private static List<String> PC =
       Arrays.asList("(not set)", "Chrome OS", "Linux", "Macintosh", "Windows");
   private static List<String> MOBILE = Arrays.asList("Android", "IOS");
-  /*private static List<String> PAGES =
-  Arrays.asList(
-      "/activity/html/ds/",
-      "/activity/html/jn/",
-      "/activity/html/leatherShoes/",
-      "/activity/html/shoes/",
-      "/activity/html/romania/",
-      "/m/landing/leather",
-      "/m/landing/wmShoes");*/
 
   private static Map<String, List<String>> sourcePage = new HashMap<>(); // 来源渠道
 
@@ -106,12 +99,12 @@ public class DataConver extends BaseSchedulers {
     sourcePage.put("展豪着陆页", Arrays.asList("/activity/html/romania/zhanhao/index.html"));
   }
 
-  protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
+  /* protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
     try {
-      /*getClickNum(
+      getClickNum(
       AccessTypeEnum.INDEX,
       new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2018-01-01 00:00:00"),
-      new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2019-05-18 00:00:00"));*/
+      new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2019-05-18 00:00:00"));
       getInquiry(
           SourceTypeEnum.OTHER,
           "爱莱发着陆页",
@@ -120,10 +113,9 @@ public class DataConver extends BaseSchedulers {
     } catch (ParseException e) { // TODO Auto-generated catch block
       e.printStackTrace();
     }
-    // System.out.println(555);
-  }
+  }*/
 
-  /*  @Override
+  @Override
   protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
     try {
 
@@ -140,6 +132,12 @@ public class DataConver extends BaseSchedulers {
             new SimpleDateFormat("yyyyMMddHHmm")
                     .format(flowDao.getFlowTopOne().get().getCreateTime())
                 + "00";
+        LocalDateTime finallyLocaDateTime =
+            UDateToLocalDateTime(flowDao.getFlowTopOne().get().getCreateTime());
+        Duration duration = Duration.between(date, finallyLocaDateTime);
+        if (duration.toHours() == 0) {
+          return;
+        }
       } else {
         Duration duration =
             Duration.between(
@@ -159,6 +157,9 @@ public class DataConver extends BaseSchedulers {
                   plusDays.format(ofPattern), plusDays2.format(ofPattern));
           startDate = plusDays;
           endDate = plusDays2;
+          if (i - 1 == day) {
+            endDate = date;
+          }
           if (!browseInfoList.isEmpty()) {
             filtration(
                 browseInfoList, LocalDateTimeToUdate(startDate), LocalDateTimeToUdate(endDate));
@@ -183,7 +184,7 @@ public class DataConver extends BaseSchedulers {
       e.printStackTrace();
       // TODO: handle exception
     }
-  }*/
+  }
 
   public SourceTypeEnum judgeSource(String source) {
     if (source.indexOf("google") != -1) {
@@ -264,6 +265,12 @@ public class DataConver extends BaseSchedulers {
     return Date.from(instant);
   }
 
+  public LocalDateTime UDateToLocalDateTime(Date date) {
+    Instant instant = date.toInstant();
+    ZoneId zone = ZoneId.systemDefault();
+    return LocalDateTime.ofInstant(instant, zone);
+  }
+
   /**
    * -过滤数据
    *
@@ -305,7 +312,7 @@ public class DataConver extends BaseSchedulers {
             infos.stream()
                 .filter(
                     bean -> {
-                      if (bean.getVisitor().equals("1")) {
+                      if (Integer.parseInt(bean.getVisitor()) > 0) {
                         return true;
                       }
                       return false;
@@ -332,19 +339,17 @@ public class DataConver extends BaseSchedulers {
         double sumStayTime = 0; // 总停留时长
         DecimalFormat df = new DecimalFormat("#.00");
         for (GoogleBrowseInfo item : entry.getValue()) {
+          viewCount += Integer.parseInt(item.getPageViews());
           if (!item.getSessions().equals("0")) {
-            viewCount += countNum(item.getSessions());
-            sessionNum += countNum(item.getSessions());
+            sessionNum += Integer.parseInt(item.getSessions());
             bounceRateNum += countBounce(item.getBounceRate(), item.getSessions());
-          } else {
-            viewCount++;
           }
           if (!item.getVisitor().equals("0")) {
-            visitorCount += countNum(item.getVisitor());
+            visitorCount += Integer.parseInt(item.getVisitor());
           }
           if (!item.getPreviousPage().equals("(entrance)")
               && !item.getPagePath().equals(item.getPreviousPage())) {
-            clickCount += countNum(item.getVisitor());
+            clickCount += Integer.parseInt(item.getVisitor());
           }
           sumStayTime += Double.parseDouble(item.getTimeOnPage());
         }
@@ -356,7 +361,9 @@ public class DataConver extends BaseSchedulers {
         flowPage.setJumpRate(
             sessionNum == 0 ? 0 : Double.parseDouble(df.format(bounceRateNum / sessionNum)));
         flowPage.setAverageStayTime(
-            sessionNum == 0 ? 0 : Double.parseDouble(df.format(sumStayTime / sessionNum)));
+            viewCount == 0 ? 0 : Double.parseDouble(df.format(sumStayTime / viewCount)));
+        flowPage.setClickRate(
+            viewCount == 0 ? 0 : Double.parseDouble(df.format(clickCount / viewCount)));
         flowPage.setCreateTime(endTime);
         flowPageDao.save(flowPage);
       }
@@ -408,7 +415,7 @@ public class DataConver extends BaseSchedulers {
     if (i > 1) {
       return i - 1;
     } else {
-      return 1;
+      return 0;
     }
   }
 

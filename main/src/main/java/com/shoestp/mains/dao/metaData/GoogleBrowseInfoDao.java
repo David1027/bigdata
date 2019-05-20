@@ -1,18 +1,15 @@
 package com.shoestp.mains.dao.metaData;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import javax.annotation.Resource;
-
-import org.springframework.stereotype.Component;
-
 import com.shoestp.mains.dao.BaseDao;
 import com.shoestp.mains.entitys.MetaData.GoogleBrowseInfo;
 import com.shoestp.mains.repositorys.metaData.GoogleBrowseInfoRepository;
 import com.shoestp.mains.views.DataView.metaData.PageRankingView;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import javax.annotation.Resource;
+import org.springframework.stereotype.Component;
 
 @Component
 public class GoogleBrowseInfoDao extends BaseDao<GoogleBrowseInfo> {
@@ -63,9 +60,6 @@ public class GoogleBrowseInfoDao extends BaseDao<GoogleBrowseInfo> {
     return googleBrowseInfoRepository.findTopByOrderByCreateTimeDesc();
   }
 
-  //    ELECT page_path as pagePath,sum(page_views) as taotalPageViews,SUM(sessions) as
-  // taotalSession,sum(time_on_page) as totalTime FROM `google_browse_info` "
-  //            + "GROUP BY pagePath ORDER BY taotalPageViews desc LIMIT ?1
   public List<PageRankingView> queryPageRanking(Integer limit) {
     List result = new ArrayList();
     for (Object o : googleBrowseInfoRepository.queryPageRanking(limit)) {

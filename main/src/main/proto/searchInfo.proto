@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+option java_multiple_files = false;
+option java_package = "com.shoestp.mains.rpc.shoestp.pojo";
+option java_outer_classname = "GRPC_SendDataProto";
+option objc_class_prefix = "SearchInfo";
+import "result.proto";
+service SendDataUtil {
+  rpc sendSearch (stream  SearchInfo) returns (stream  Result);
+  rpc sendViewInfo (stream  ViewInfo) returns (stream  Result);
+  rpc sendInquiry (stream  Inquiry) returns (stream  Result);
+
+}
+
+message SearchInfo {
+  string keyword = 1;
+  string ip = 2;
+  uint32 userId = 3;
+}
+message ViewInfo {
+  string url = 1;
+  string useragent = 2;
+  string ip = 3;
+  uint32 userId = 4;
+  string referer = 5;
+  string visitName=6;
+}
+message Inquiry {
+  uint32 type = 1;
+  uint32 inquiryId = 2;
+  string referer = 3;
+  string url=4;
+}

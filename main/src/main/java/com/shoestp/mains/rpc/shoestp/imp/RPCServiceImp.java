@@ -1,14 +1,5 @@
 package com.shoestp.mains.rpc.shoestp.imp;
 
-import java.util.Date;
-
-import javax.annotation.Resource;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.shoestp.mains.dao.shoestpData.InquiryInfoDao;
 import com.shoestp.mains.dao.shoestpData.SearchDao;
 import com.shoestp.mains.dao.shoestpData.WebVisitInfoDao;
@@ -20,8 +11,13 @@ import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
 import com.shoestp.mains.rpc.shoestp.pojo.GRPC_ResultProto;
 import com.shoestp.mains.rpc.shoestp.pojo.GRPC_SendDataProto;
 import com.shoestp.mains.rpc.shoestp.pojo.SendDataUtilGrpc;
-
 import io.grpc.stub.StreamObserver;
+import java.util.Date;
+import javax.annotation.Resource;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /** Created by IntelliJ IDEA. User: lijie@shoestp.cn Date: 2019/5/14 Time: 15:00 */
 @Component
@@ -40,8 +36,8 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
     return new StreamObserver<GRPC_SendDataProto.SearchInfo>() {
       @Override
       public void onNext(GRPC_SendDataProto.SearchInfo searchInfo) {
-        System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-        System.out.println(searchInfo);
+        logger.debug("++++++++++++++++++++++++++++++++++++++++++");
+        logger.debug(searchInfo);
         SearchWordInfo searchWordInfo = new SearchWordInfo();
         searchWordInfo.setIp(searchInfo.getIp());
         searchWordInfo.setKeyword(searchInfo.getKeyword());
@@ -68,8 +64,8 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
     return new StreamObserver<GRPC_SendDataProto.ViewInfo>() {
       @Override
       public void onNext(GRPC_SendDataProto.ViewInfo viewInfo) {
-        System.out.println("++++++++++++++++++++++++++++++++++++++++++");
-        System.out.println(viewInfo);
+        logger.debug("++++++++++++++++++++++++++++++++++++++++++");
+        logger.debug(viewInfo);
         WebVisitInfo webVisitInfo = new WebVisitInfo();
         webVisitInfo.setUrl(viewInfo.getUrl());
         webVisitInfo.setUserAgent(viewInfo.getUseragent());
@@ -98,8 +94,7 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
     return new StreamObserver<GRPC_SendDataProto.Inquiry>() {
       @Override
       public void onNext(GRPC_SendDataProto.Inquiry inquiry) {
-        System.out.println("》》》》》》》》》》》》》》》》》》》》》》》");
-        System.out.println(inquiry);
+        logger.debug(inquiry);
         InquiryInfo inquiryInfo = new InquiryInfo();
         boolean b = true;
         switch (inquiry.getType()) {

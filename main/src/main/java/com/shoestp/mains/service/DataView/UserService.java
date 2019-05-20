@@ -22,7 +22,7 @@ public interface UserService {
    * @param date
    * @return List<DataViewUserView>
    */
-  DataViewUserView getUserOverview(Date date,String type);
+  DataViewUserView getUserOverview(Date date, String type);
 
   /**
    * 获取用户概况中的时段分布(小时)
@@ -39,25 +39,25 @@ public interface UserService {
    * @param date
    * @return
    */
-  Map<String, Map> getUserTimeByDay(Date date,Integer day);
+  Map<String, Map> getUserTimeByDay(Date date, Integer day);
 
   /**
    * 根据时间获取用户性别数量
    *
    * @author: lingjian @Date: 2019/5/13 16:13
-   * @param startDate
-   * @param endDate
+   * @param date
+   * @param type
    * @return List<DataViewUserSexView>
    */
-  List<DataViewUserSexView> getUserSex(Date startDate, Date endDate);
+  List<DataViewUserSexView> getUserSex(Date date, String type);
 
   /**
    * 根据时间获取用户地域分布
    *
    * @author: lingjian @Date: 2019/5/13 16:35
-   * @param startDate
-   * @param endDate
+   * @param date
+   * @param type
    * @return List<DataViewUserAreaView>
    */
-  List<DataViewUserAreaView> getUserArea(Date startDate, Date endDate);
+  List<DataViewUserAreaView> getUserArea(Date date, String type);
 }

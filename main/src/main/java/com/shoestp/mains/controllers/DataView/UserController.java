@@ -72,19 +72,18 @@ public class UserController {
    * 根据时间获取用户性别数量
    *
    * @author: lingjian @Date: 2019/5/13 16:12
-   * @param startDate
-   * @param endDate
+   * @param date
+   * @param type
    * @return
    */
   @PostMapping(value = "/usersex")
   public Object getUserSex(
-      @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
-      @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
-    logger.debug(startDate);
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,String type) {
+    logger.debug(date);
     return MessageResult.builder()
         .code(1)
         .msg("Hello")
-        .result(userService.getUserSex(startDate, endDate))
+        .result(userService.getUserSex(date, type))
         .build();
   }
 
@@ -92,19 +91,18 @@ public class UserController {
    * 根据时间获取用户地域分布
    *
    * @author: lingjian @Date: 2019/5/13 16:34
-   * @param startDate
-   * @param endDate
+   * @param date
+   * @param type
    * @return
    */
   @PostMapping(value = "/userarea")
   public Object getUserArea(
-      @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
-      @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
-    logger.debug(startDate);
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,String type) {
+    logger.debug(date);
     return MessageResult.builder()
         .code(1)
         .msg("Hello")
-        .result(userService.getUserArea(startDate, endDate))
+        .result(userService.getUserArea(date, type))
         .build();
   }
 }

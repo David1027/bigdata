@@ -197,47 +197,114 @@ public class UserServiceImpl implements UserService {
    * 根据时间获取用户性别数量
    *
    * @author: lingjian @Date: 2019/5/13 16:13
-   * @param startDate
-   * @param endDate
+   * @param date
+   * @param type
    * @return List<DataViewUserSexView>
    */
   @Override
-  public List<DataViewUserSexView> getUserSex(Date startDate, Date endDate) {
-    return userSexDao
-        .findUserSexByCreateTimeBetween(
-            DateTimeUtil.getTimesOfDay(startDate, 0), DateTimeUtil.getTimesOfDay(endDate, 24))
-        .stream()
-        .map(
-            bean -> {
-              DataViewUserSexView dataViewUserSexView = new DataViewUserSexView();
-              dataViewUserSexView.setSex(bean.get(0, String.class));
-              dataViewUserSexView.setSexCount(bean.get(1, Integer.class));
-              return dataViewUserSexView;
-            })
-        .collect(Collectors.toList());
+  public List<DataViewUserSexView> getUserSex(Date date, String type) {
+    List<DataViewUserSexView> list = null;
+    if ("week".equals(type)) {
+      list =
+          userSexDao
+              .findUserSexByCreateTimeBetween(
+                  DateTimeUtil.getTimesOfDay(DateTimeUtil.getDayFromNum(date, 7), 0),
+                  DateTimeUtil.getTimesOfDay(date, 24))
+              .stream()
+              .map(
+                  bean -> {
+                    DataViewUserSexView dataViewUserSexView = new DataViewUserSexView();
+                    dataViewUserSexView.setSex(bean.get(0, String.class));
+                    dataViewUserSexView.setSexCount(bean.get(1, Integer.class));
+                    return dataViewUserSexView;
+                  })
+              .collect(Collectors.toList());
+    } else if ("month".equals(type)) {
+      list =
+          userSexDao
+              .findUserSexByCreateTimeBetween(
+                  DateTimeUtil.getTimesOfDay(DateTimeUtil.getDayFromNum(date, 30), 0),
+                  DateTimeUtil.getTimesOfDay(date, 24))
+              .stream()
+              .map(
+                  bean -> {
+                    DataViewUserSexView dataViewUserSexView = new DataViewUserSexView();
+                    dataViewUserSexView.setSex(bean.get(0, String.class));
+                    dataViewUserSexView.setSexCount(bean.get(1, Integer.class));
+                    return dataViewUserSexView;
+                  })
+              .collect(Collectors.toList());
+    } else {
+      list =
+          userSexDao
+              .findUserSexByCreateTimeBetween(
+                  DateTimeUtil.getTimesOfDay(date, 0), DateTimeUtil.getTimesOfDay(date, 24))
+              .stream()
+              .map(
+                  bean -> {
+                    DataViewUserSexView dataViewUserSexView = new DataViewUserSexView();
+                    dataViewUserSexView.setSex(bean.get(0, String.class));
+                    dataViewUserSexView.setSexCount(bean.get(1, Integer.class));
+                    return dataViewUserSexView;
+                  })
+              .collect(Collectors.toList());
+    }
+    return list;
   }
 
   /**
    * 根据时间获取用户地域分布
    *
    * @author: lingjian @Date: 2019/5/13 16:35
-   * @param startDate
-   * @param endDate
+   * @param date
+   * @param type
    * @return List<DataViewUserAreaView>
    */
   @Override
-  public List<DataViewUserAreaView> getUserArea(Date startDate, Date endDate) {
-    return userAreaDao
-        .findUserAreaByCreateTimeBetween(
-            DateTimeUtil.getTimesOfDay(startDate, 0), DateTimeUtil.getTimesOfDay(endDate, 24))
-        .stream()
-        .map(
-            bean -> {
-              DataViewUserAreaView dataViewUserAreaView = new DataViewUserAreaView();
-              dataViewUserAreaView.setArea(bean.get(0, String.class));
-              dataViewUserAreaView.setAreaCount(bean.get(1, Integer.class));
-              return dataViewUserAreaView;
-            })
-        .collect(Collectors.toList());
+  public List<DataViewUserAreaView> getUserArea(Date date, String type) {
+    List<DataViewUserAreaView> list = null;
+    if ("week".equals(type)) {
+      list = userAreaDao
+          .findUserAreaByCreateTimeBetween(
+              DateTimeUtil.getTimesOfDay(DateTimeUtil.getDayFromNum(date, 7), 0),
+              DateTimeUtil.getTimesOfDay(date, 24))
+          .stream()
+          .map(
+              bean -> {
+                DataViewUserAreaView dataViewUserAreaView = new DataViewUserAreaView();
+                dataViewUserAreaView.setArea(bean.get(0, String.class));
+                dataViewUserAreaView.setAreaCount(bean.get(1, Integer.class));
+                return dataViewUserAreaView;
+              })
+          .collect(Collectors.toList());
+    } else if ("month".equals(type)) {
+      list = userAreaDao
+          .findUserAreaByCreateTimeBetween(
+              DateTimeUtil.getTimesOfDay(DateTimeUtil.getDayFromNum(date, 30), 0),
+              DateTimeUtil.getTimesOfDay(date, 24))
+          .stream()
+          .map(
+              bean -> {
+                DataViewUserAreaView dataViewUserAreaView = new DataViewUserAreaView();
+                dataViewUserAreaView.setArea(bean.get(0, String.class));
+                dataViewUserAreaView.setAreaCount(bean.get(1, Integer.class));
+                return dataViewUserAreaView;
+              })
+          .collect(Collectors.toList());
+    } else {
+      list = userAreaDao
+          .findUserAreaByCreateTimeBetween(
+              DateTimeUtil.getTimesOfDay(date, 0), DateTimeUtil.getTimesOfDay(date, 24))
+          .stream()
+          .map(
+              bean -> {
+                DataViewUserAreaView dataViewUserAreaView = new DataViewUserAreaView();
+                dataViewUserAreaView.setArea(bean.get(0, String.class));
+                dataViewUserAreaView.setAreaCount(bean.get(1, Integer.class));
+                return dataViewUserAreaView;
+              })
+          .collect(Collectors.toList());
+    }
+    return list;
   }
 }

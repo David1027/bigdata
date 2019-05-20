@@ -1,9 +1,5 @@
 package com.shoestp.mains.rpc.shoestp.imp;
 
-import com.shoestp.mains.dao.shoestpData.InquiryInfoDao;
-import com.shoestp.mains.dao.shoestpData.SearchDao;
-import com.shoestp.mains.dao.shoestpData.WebVisitInfoDao;
-import com.shoestp.mains.dao.shoestpData.impl.WebVisitInfoDaoImpl;
 import com.shoestp.mains.entitys.MetaData.InquiryInfo;
 import com.shoestp.mains.entitys.MetaData.SearchWordInfo;
 import com.shoestp.mains.entitys.MetaData.WebVisitInfo;
@@ -11,12 +7,14 @@ import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
 import com.shoestp.mains.rpc.shoestp.pojo.GRPC_ResultProto;
 import com.shoestp.mains.rpc.shoestp.pojo.GRPC_SendDataProto;
 import com.shoestp.mains.rpc.shoestp.pojo.SendDataUtilGrpc;
+import com.shoestp.mains.service.metaData.InquiryInfoService;
+import com.shoestp.mains.service.metaData.SearchWordInfoService;
+import com.shoestp.mains.service.metaData.WebVisitInfoService;
 import io.grpc.stub.StreamObserver;
 import java.util.Date;
 import javax.annotation.Resource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /** Created by IntelliJ IDEA. User: lijie@shoestp.cn Date: 2019/5/14 Time: 15:00 */
@@ -24,11 +22,10 @@ import org.springframework.stereotype.Component;
 public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
 
   private static final Logger logger = LogManager.getLogger(RPCServiceImp.class);
-  @Autowired private SearchDao searchDao;
-  @Autowired private WebVisitInfoDao webVisitInfoRepository;
+  @Resource private WebVisitInfoService webVisitInfoService;
 
-  @Resource private WebVisitInfoDaoImpl viewInfoDao;
-  @Autowired private InquiryInfoDao inquiryDao;
+  @Resource private SearchWordInfoService searchWordInfoService;
+  @Resource private InquiryInfoService inquiryInfoService;
 
   @Override
   public StreamObserver<GRPC_SendDataProto.SearchInfo> sendSearch(
@@ -43,7 +40,7 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
         searchWordInfo.setKeyword(searchInfo.getKeyword());
         searchWordInfo.setUserId(searchInfo.getUserId());
         searchWordInfo.setCreateTime(new Date());
-        searchDao.save(searchWordInfo);
+        searchWordInfoService.save(searchWordInfo);
       }
 
       @Override
@@ -73,7 +70,7 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
         webVisitInfo.setIp(viewInfo.getIp());
         webVisitInfo.setUserId(viewInfo.getUserId());
         webVisitInfo.setCreateTime(new Date());
-        webVisitInfoRepository.save(webVisitInfo);
+        webVisitInfoService.save(webVisitInfo);
       }
 
       @Override
@@ -118,7 +115,7 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
         inquiryInfo.setId(inquiry.getInquiryId());
         inquiryInfo.setReferer(inquiry.getReferer());
         inquiryInfo.setCreateTime(new Date());
-        inquiryDao.save(inquiryInfo);
+        inquiryInfoService.save(inquiryInfo);
       }
 
       @Override

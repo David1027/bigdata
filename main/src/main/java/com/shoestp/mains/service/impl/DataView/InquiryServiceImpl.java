@@ -1,9 +1,6 @@
 package com.shoestp.mains.service.impl.DataView;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -14,10 +11,12 @@ import com.shoestp.mains.dao.DataView.inquiry.InquiryRankDao;
 import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
 import com.shoestp.mains.service.DataView.InquiryService;
 import com.shoestp.mains.utils.dateUtils.DateTimeUtil;
+import com.shoestp.mains.utils.dateUtils.KeyValueViewUtil;
 import com.shoestp.mains.views.DataView.inquiry.InquiryRankView;
 import com.shoestp.mains.views.DataView.inquiry.InquiryTypeView;
 import com.shoestp.mains.views.DataView.inquiry.InquiryView;
 import com.shoestp.mains.views.DataView.user.DataViewUserView;
+import com.shoestp.mains.views.DataView.utils.KeyValue;
 
 import org.springframework.stereotype.Service;
 
@@ -328,21 +327,30 @@ public class InquiryServiceImpl implements InquiryService {
    * @param date
    * @return
    */
-  public Map<String, int[]> getInquiryTimeHourMap(
+  public Map<String, List> getInquiryTimeHourMap(
       InquiryTypeEnum inquiryType, String inquiryName, Date date) {
-    Map<String, int[]> inquiryTimeMap = new HashMap<>();
-    inquiryTimeMap.put(
-        "visitorCount", getEveryHourByInquiryName(inquiryType, inquiryName, date, "visitorCount"));
-    inquiryTimeMap.put(
-        "viewCount", getEveryHourByInquiryName(inquiryType, inquiryName, date, "viewCount"));
-    inquiryTimeMap.put(
-        "inquiryCount", getEveryHourByInquiryName(inquiryType, inquiryName, date, "inquiryCount"));
-    inquiryTimeMap.put(
-        "inquiryNumber",
-        getEveryHourByInquiryName(inquiryType, inquiryName, date, "inquiryNumber"));
-    inquiryTimeMap.put(
-        "inquiryAmount",
-        getEveryHourByInquiryName(inquiryType, inquiryName, date, "inquiryAmount"));
+    List<KeyValue> keyValue = new ArrayList<>();
+    keyValue.add(
+        KeyValueViewUtil.getFlowKeyValue(
+            "visitorCount",
+            getEveryHourByInquiryName(inquiryType, inquiryName, date, "visitorCount")));
+    keyValue.add(
+        KeyValueViewUtil.getFlowKeyValue(
+            "viewCount", getEveryHourByInquiryName(inquiryType, inquiryName, date, "viewCount")));
+    keyValue.add(
+        KeyValueViewUtil.getFlowKeyValue(
+            "inquiryCount",
+            getEveryHourByInquiryName(inquiryType, inquiryName, date, "inquiryCount")));
+    keyValue.add(
+        KeyValueViewUtil.getFlowKeyValue(
+            "inquiryNumber",
+            getEveryHourByInquiryName(inquiryType, inquiryName, date, "inquiryNumber")));
+    keyValue.add(
+        KeyValueViewUtil.getFlowKeyValue(
+            "inquiryAmount",
+            getEveryHourByInquiryName(inquiryType, inquiryName, date, "inquiryAmount")));
+    Map<String, List> inquiryTimeMap = new HashMap<>();
+    inquiryTimeMap.put("hour", keyValue);
     return inquiryTimeMap;
   }
 
@@ -359,7 +367,7 @@ public class InquiryServiceImpl implements InquiryService {
       InquiryTypeEnum inquiryType, String inquiryName) {
     Map<String, Map> inquiryTimeMap = new HashMap<>();
     inquiryTimeMap.put("abscissa", DateTimeUtil.getHourAbscissa(1));
-    inquiryTimeMap.put("hour", getInquiryTimeHourMap(inquiryType, inquiryName, new Date()));
+    inquiryTimeMap.put("inquiryTime", getInquiryTimeHourMap(inquiryType, inquiryName, new Date()));
     return inquiryTimeMap;
   }
 

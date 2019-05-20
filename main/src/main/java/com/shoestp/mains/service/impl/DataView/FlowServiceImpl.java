@@ -1,9 +1,6 @@
 package com.shoestp.mains.service.impl.DataView;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -19,14 +16,9 @@ import com.shoestp.mains.enums.flow.DeviceTypeEnum;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.service.DataView.FlowService;
 import com.shoestp.mains.utils.dateUtils.DateTimeUtil;
-import com.shoestp.mains.views.DataView.flow.AccessPageView;
-import com.shoestp.mains.views.DataView.flow.AccessView;
-import com.shoestp.mains.views.DataView.flow.FlowDeviceView;
-import com.shoestp.mains.views.DataView.flow.FlowSourcePageView;
-import com.shoestp.mains.views.DataView.flow.FlowSourceView;
-import com.shoestp.mains.views.DataView.flow.PageParameterView;
-import com.shoestp.mains.views.DataView.flow.PageView;
-import com.shoestp.mains.views.DataView.flow.PageViewObject;
+import com.shoestp.mains.utils.dateUtils.KeyValueViewUtil;
+import com.shoestp.mains.views.DataView.flow.*;
+import com.shoestp.mains.views.DataView.utils.KeyValue;
 
 /**
  * @description: 流量-服务层实现类
@@ -197,12 +189,19 @@ public class FlowServiceImpl implements FlowService {
    * @param date
    * @return
    */
-  public Map<String, int[]> getFlowSourceTypeTimeByHourMap(Date date) {
-    Map<String, int[]> flowTimeHourMap = new HashMap<>();
-    flowTimeHourMap.put("BAIDU", getEveryHour(date, SourceTypeEnum.BAIDU));
-    flowTimeHourMap.put("GOOGLE", getEveryHour(date, SourceTypeEnum.GOOGLE));
-    flowTimeHourMap.put("INTERVIEW", getEveryHour(date, SourceTypeEnum.INTERVIEW));
-    flowTimeHourMap.put("OTHER", getEveryHour(date, SourceTypeEnum.OTHER));
+  public Map<String, List> getFlowSourceTypeTimeByHourMap(Date date) {
+    List<KeyValue> keyValues = new ArrayList<>();
+    keyValues.add(
+        KeyValueViewUtil.getFlowKeyValue("BAIDU", getEveryHour(date, SourceTypeEnum.BAIDU)));
+    keyValues.add(
+        KeyValueViewUtil.getFlowKeyValue("GOOGLE", getEveryHour(date, SourceTypeEnum.GOOGLE)));
+    keyValues.add(
+        KeyValueViewUtil.getFlowKeyValue(
+            "INTERVIEW", getEveryHour(date, SourceTypeEnum.INTERVIEW)));
+    keyValues.add(
+        KeyValueViewUtil.getFlowKeyValue("OTHER", getEveryHour(date, SourceTypeEnum.OTHER)));
+    Map<String, List> flowTimeHourMap = new HashMap<>();
+    flowTimeHourMap.put("hour", keyValues);
     return flowTimeHourMap;
   }
 
@@ -214,12 +213,19 @@ public class FlowServiceImpl implements FlowService {
    * @param date
    * @return
    */
-  public Map<String, int[]> getFlowSourceTypeTimeByDayMap(int num, Date date) {
-    Map<String, int[]> flowTimeDayMap = new HashMap<>();
-    flowTimeDayMap.put("BAIDU", getEveryDay(num, date, SourceTypeEnum.BAIDU));
-    flowTimeDayMap.put("GOOGLE", getEveryDay(num, date, SourceTypeEnum.GOOGLE));
-    flowTimeDayMap.put("INTERVIEW", getEveryDay(num, date, SourceTypeEnum.INTERVIEW));
-    flowTimeDayMap.put("OTHER", getEveryDay(num, date, SourceTypeEnum.OTHER));
+  public Map<String, List> getFlowSourceTypeTimeByDayMap(int num, Date date) {
+    List<KeyValue> keyValues = new ArrayList<>();
+    keyValues.add(
+        KeyValueViewUtil.getFlowKeyValue("BAIDU", getEveryDay(num, date, SourceTypeEnum.BAIDU)));
+    keyValues.add(
+        KeyValueViewUtil.getFlowKeyValue("GOOGLE", getEveryDay(num, date, SourceTypeEnum.GOOGLE)));
+    keyValues.add(
+        KeyValueViewUtil.getFlowKeyValue(
+            "INTERVIEW", getEveryDay(num, date, SourceTypeEnum.INTERVIEW)));
+    keyValues.add(
+        KeyValueViewUtil.getFlowKeyValue("OTHER", getEveryDay(num, date, SourceTypeEnum.OTHER)));
+    Map<String, List> flowTimeDayMap = new HashMap<>();
+    flowTimeDayMap.put("day", keyValues);
     return flowTimeDayMap;
   }
 
@@ -234,7 +240,7 @@ public class FlowServiceImpl implements FlowService {
   public Map<String, Map> getFlowSourceTypeTimeByHour(Date date) {
     Map<String, Map> flowTimeHourMap = new HashMap<>();
     flowTimeHourMap.put("abscissa", DateTimeUtil.getHourAbscissa(1));
-    flowTimeHourMap.put("hour", getFlowSourceTypeTimeByHourMap(date));
+    flowTimeHourMap.put("sourcetype", getFlowSourceTypeTimeByHourMap(date));
     return flowTimeHourMap;
   }
 
@@ -249,7 +255,7 @@ public class FlowServiceImpl implements FlowService {
   public Map<String, Map> getFlowSourceTypeTimeByDay(int num, Date date) {
     Map<String, Map> flowTimeDayMap = new HashMap<>();
     flowTimeDayMap.put("abscissa", DateTimeUtil.getDayAbscissa(num, date));
-    flowTimeDayMap.put("day", getFlowSourceTypeTimeByDayMap(num, date));
+    flowTimeDayMap.put("sourcetype", getFlowSourceTypeTimeByDayMap(num, date));
     return flowTimeDayMap;
   }
 
@@ -262,11 +268,10 @@ public class FlowServiceImpl implements FlowService {
    * @return Map<String, List>
    */
   @Override
-  public Map<String, List> getFlowSourcePage(Date startDate, Date endDate) {
-    Map<String, List> flowViewMap = new HashMap<>();
+  public List getFlowSourcePage(Date startDate, Date endDate) {
+    List<FlowSourcePageView> list = new ArrayList<>();
     for (SourceTypeEnum source : SourceTypeEnum.values()) {
-      flowViewMap.put(
-          source.name(),
+      list.addAll(
           flowDao
               .findAllBySourcePage(
                   source,
@@ -276,13 +281,14 @@ public class FlowServiceImpl implements FlowService {
               .map(
                   bean -> {
                     FlowSourcePageView flowSourcePageView = new FlowSourcePageView();
-                    flowSourcePageView.setSourcePage(bean.get(0, String.class));
-                    flowSourcePageView.setVisitorCount(bean.get(1, Integer.class));
+                    flowSourcePageView.setSourceType(bean.get(0, String.class));
+                    flowSourcePageView.setSourcePage(bean.get(1, String.class));
+                    flowSourcePageView.setVisitorCount(bean.get(2, Integer.class));
                     return flowSourcePageView;
                   })
               .collect(Collectors.toList()));
     }
-    return flowViewMap;
+    return list;
   }
 
   /**
@@ -369,10 +375,14 @@ public class FlowServiceImpl implements FlowService {
    * @param date
    * @return
    */
-  public Map<String, int[]> getSourcePageHourMap(
+  public Map<String, List> getSourcePageHourMap(
       SourceTypeEnum sourceType, String sourcePage, Date date) {
-    Map<String, int[]> sourcePageMap = new HashMap<>();
-    sourcePageMap.put("visitorCount", getEveryHourBySourcePage(sourceType, sourcePage, date));
+    List<KeyValue> keyValues = new ArrayList<>();
+    keyValues.add(
+        KeyValueViewUtil.getFlowKeyValue(
+            "visitorCount", getEveryHourBySourcePage(sourceType, sourcePage, date)));
+    Map<String, List> sourcePageMap = new HashMap<>();
+    sourcePageMap.put("hour", keyValues);
     return sourcePageMap;
   }
 
@@ -386,10 +396,14 @@ public class FlowServiceImpl implements FlowService {
    * @param date
    * @return
    */
-  public Map<String, int[]> getSourcePageDayMap(
+  public Map<String, List> getSourcePageDayMap(
       int num, SourceTypeEnum sourceType, String sourcePage, Date date) {
-    Map<String, int[]> sourcePageMap = new HashMap<>();
-    sourcePageMap.put("visitorCount", getEveryDayBySourcePage(num, sourceType, sourcePage, date));
+    List<KeyValue> keyValues = new ArrayList<>();
+    keyValues.add(
+        KeyValueViewUtil.getFlowKeyValue(
+            "visitorCount", getEveryDayBySourcePage(num, sourceType, sourcePage, date)));
+    Map<String, List> sourcePageMap = new HashMap<>();
+    sourcePageMap.put("day", keyValues);
     return sourcePageMap;
   }
 
@@ -407,7 +421,7 @@ public class FlowServiceImpl implements FlowService {
       Date date, SourceTypeEnum sourceType, String sourcePage) {
     Map<String, Map> sourcePageMap = new HashMap<>();
     sourcePageMap.put("abscissa", DateTimeUtil.getHourAbscissa(1));
-    sourcePageMap.put("hour", getSourcePageHourMap(sourceType, sourcePage, date));
+    sourcePageMap.put("sourcepage", getSourcePageHourMap(sourceType, sourcePage, date));
     return sourcePageMap;
   }
 
@@ -426,7 +440,7 @@ public class FlowServiceImpl implements FlowService {
       int num, Date date, SourceTypeEnum sourceType, String sourcePage) {
     Map<String, Map> sourcePageMap = new HashMap<>();
     sourcePageMap.put("abscissa", DateTimeUtil.getDayAbscissa(num, date));
-    sourcePageMap.put("hour", getSourcePageDayMap(num, sourceType, sourcePage, date));
+    sourcePageMap.put("sourcepage", getSourcePageDayMap(num, sourceType, sourcePage, date));
     return sourcePageMap;
   }
 
@@ -684,15 +698,27 @@ public class FlowServiceImpl implements FlowService {
    * @param access
    * @return
    */
-  public Map<String, double[]> getFlowPageAnalysisByHourMap(Date date, AccessTypeEnum access) {
-    Map<String, double[]> analysisHourMap = new HashMap<>();
-    analysisHourMap.put("visitorCount", getAccessHour(date, access, "visitorCount"));
-    analysisHourMap.put("viewCount", getAccessHour(date, access, "viewCount"));
-    analysisHourMap.put("clickCount", getAccessHour(date, access, "clickCount"));
-    analysisHourMap.put("clickNumber", getAccessHour(date, access, "clickNumber"));
-    analysisHourMap.put("clickRate", getAccessHour(date, access, "clickRate"));
-    analysisHourMap.put("jumpRate", getAccessHour(date, access, "jumpRate"));
-    analysisHourMap.put("averageStayTime", getAccessHour(date, access, "averageStayTime"));
+  public Map<String, List> getFlowPageAnalysisByHourMap(Date date, AccessTypeEnum access) {
+    List<KeyValue> keyValues = new ArrayList<>();
+    keyValues.add(
+        KeyValueViewUtil.getFlowKeyValue(
+            "visitorCount", getAccessHour(date, access, "visitorCount")));
+    keyValues.add(
+        KeyValueViewUtil.getFlowKeyValue("viewCount", getAccessHour(date, access, "viewCount")));
+    keyValues.add(
+        KeyValueViewUtil.getFlowKeyValue("clickCount", getAccessHour(date, access, "clickCount")));
+    keyValues.add(
+        KeyValueViewUtil.getFlowKeyValue(
+            "clickNumber", getAccessHour(date, access, "clickNumber")));
+    keyValues.add(
+        KeyValueViewUtil.getFlowKeyValue("clickRate", getAccessHour(date, access, "clickRate")));
+    keyValues.add(
+        KeyValueViewUtil.getFlowKeyValue("jumpRate", getAccessHour(date, access, "jumpRate")));
+    keyValues.add(
+        KeyValueViewUtil.getFlowKeyValue(
+            "averageStayTime", getAccessHour(date, access, "averageStayTime")));
+    Map<String, List> analysisHourMap = new HashMap<>();
+    analysisHourMap.put("hour", keyValues);
     return analysisHourMap;
   }
 
@@ -705,16 +731,30 @@ public class FlowServiceImpl implements FlowService {
    * @param access
    * @return
    */
-  public Map<String, double[]> getFlowPageAnalysisByDayMap(
-      int num, Date date, AccessTypeEnum access) {
-    Map<String, double[]> analysisDayMap = new HashMap<>();
-    analysisDayMap.put("visitorCount", getAccessDay(num, date, access, "visitorCount"));
-    analysisDayMap.put("viewCount", getAccessDay(num, date, access, "viewCount"));
-    analysisDayMap.put("clickCount", getAccessDay(num, date, access, "clickCount"));
-    analysisDayMap.put("clickNumber", getAccessDay(num, date, access, "clickNumber"));
-    analysisDayMap.put("clickRate", getAccessDay(num, date, access, "clickRate"));
-    analysisDayMap.put("jumpRate", getAccessDay(num, date, access, "jumpRate"));
-    analysisDayMap.put("averageStayTime", getAccessDay(num, date, access, "averageStayTime"));
+  public Map<String, List> getFlowPageAnalysisByDayMap(int num, Date date, AccessTypeEnum access) {
+    List<KeyValue> keyValues = new ArrayList<>();
+    keyValues.add(
+        KeyValueViewUtil.getFlowKeyValue(
+            "visitorCount", getAccessDay(num, date, access, "visitorCount")));
+    keyValues.add(
+        KeyValueViewUtil.getFlowKeyValue(
+            "viewCount", getAccessDay(num, date, access, "viewCount")));
+    keyValues.add(
+        KeyValueViewUtil.getFlowKeyValue(
+            "clickCount", getAccessDay(num, date, access, "clickCount")));
+    keyValues.add(
+        KeyValueViewUtil.getFlowKeyValue(
+            "clickNumber", getAccessDay(num, date, access, "clickNumber")));
+    keyValues.add(
+        KeyValueViewUtil.getFlowKeyValue(
+            "clickRate", getAccessDay(num, date, access, "clickRate")));
+    keyValues.add(
+        KeyValueViewUtil.getFlowKeyValue("jumpRate", getAccessDay(num, date, access, "jumpRate")));
+    keyValues.add(
+        KeyValueViewUtil.getFlowKeyValue(
+            "averageStayTime", getAccessDay(num, date, access, "averageStayTime")));
+    Map<String, List> analysisDayMap = new HashMap<>();
+    analysisDayMap.put("day", keyValues);
     return analysisDayMap;
   }
 
@@ -730,7 +770,7 @@ public class FlowServiceImpl implements FlowService {
   public Map<String, Map> getFlowPageAnalysisByHour(Date date, AccessTypeEnum access) {
     Map<String, Map> analysisHourMap = new HashMap<>();
     analysisHourMap.put("abscissa", DateTimeUtil.getHourAbscissa(1));
-    analysisHourMap.put("hour", getFlowPageAnalysisByHourMap(date, access));
+    analysisHourMap.put("analysis", getFlowPageAnalysisByHourMap(date, access));
     return analysisHourMap;
   }
 
@@ -912,11 +952,17 @@ public class FlowServiceImpl implements FlowService {
    * @param date
    * @return
    */
-  public Map<String, double[]> getFlowPageByMonthMap(int num, Date date) {
-    Map<String, double[]> flowPageMonthMap = new HashMap<>();
-    flowPageMonthMap.put("viewAvgCount", getEveryPage(num, date, "viewAvgCount"));
-    flowPageMonthMap.put("jumpRate", getEveryPage(num, date, "jumpRate"));
-    flowPageMonthMap.put("averageStayTime", getEveryPage(num, date, "averageStayTime"));
+  public Map<String, List> getFlowPageByMonthMap(int num, Date date) {
+    List<KeyValue> keyValues = new ArrayList<>();
+    keyValues.add(
+        KeyValueViewUtil.getFlowKeyValue("viewAvgCount", getEveryPage(num, date, "viewAvgCount")));
+    keyValues.add(
+        KeyValueViewUtil.getFlowKeyValue("jumpRate", getEveryPage(num, date, "jumpRate")));
+    keyValues.add(
+        KeyValueViewUtil.getFlowKeyValue(
+            "averageStayTime", getEveryPage(num, date, "averageStayTime")));
+    Map<String, List> flowPageMonthMap = new HashMap<>();
+    flowPageMonthMap.put("month", keyValues);
     return flowPageMonthMap;
   }
 
@@ -931,7 +977,7 @@ public class FlowServiceImpl implements FlowService {
   public Map<String, Map> getFlowPageByMonth(Date date) {
     Map<String, Map> flowPageMonthMap = new HashMap<>();
     flowPageMonthMap.put("abscissa", DateTimeUtil.getDayAbscissa(30, date));
-    flowPageMonthMap.put("month", getFlowPageByMonthMap(30, date));
+    flowPageMonthMap.put("flowpage", getFlowPageByMonthMap(30, date));
     return flowPageMonthMap;
   }
 
@@ -939,7 +985,7 @@ public class FlowServiceImpl implements FlowService {
    * -获取访问页面排行 按页面浏览量排行
    *
    * @author xiayan
-   * @param date 返回条数
+   * @param
    * @return
    */
   public List<com.shoestp.mains.views.DataView.metaData.PageRankingView> getPageRanking(

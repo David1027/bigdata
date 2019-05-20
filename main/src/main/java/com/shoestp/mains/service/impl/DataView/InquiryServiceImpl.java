@@ -15,12 +15,14 @@ import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
 import com.shoestp.mains.service.DataView.InquiryService;
 import com.shoestp.mains.utils.dateUtils.DateTimeUtil;
 import com.shoestp.mains.views.DataView.inquiry.InquiryRankView;
+import com.shoestp.mains.views.DataView.inquiry.InquiryTypeView;
 import com.shoestp.mains.views.DataView.inquiry.InquiryView;
 import com.shoestp.mains.views.DataView.user.DataViewUserView;
 
 import org.springframework.stereotype.Service;
 
 import static com.shoestp.mains.utils.dateUtils.DateTimeUtil.DATE_FARMAT_10;
+import static com.shoestp.mains.utils.dateUtils.DateTimeUtil.getTimesnight;
 
 /**
  * @description: 询盘-服务层实现类
@@ -359,5 +361,38 @@ public class InquiryServiceImpl implements InquiryService {
     inquiryTimeMap.put("abscissa", DateTimeUtil.getHourAbscissa(1));
     inquiryTimeMap.put("hour", getInquiryTimeHourMap(inquiryType, inquiryName, new Date()));
     return inquiryTimeMap;
+  }
+
+  /**
+   * 根据搜索名称，日期，实时类型获取询盘搜索
+   *
+   * @author: lingjian @Date: 2019/5/20 9:35
+   * @param inquirySearch
+   * @param date
+   * @param type
+   * @return
+   */
+  @Override
+  public List getInquirySearch(String inquirySearch, Date date, String type) {
+    return inquiryRankDao
+        .findInquiryByInquiryName(
+            inquirySearch,
+            type,
+            DateTimeUtil.getTimesOfDay(date, 0),
+            DateTimeUtil.getTimesOfDay(date, 24))
+        .stream()
+        .map(
+            bean -> {
+              InquiryTypeView inquiryTypeView = new InquiryTypeView();
+              inquiryTypeView.setInquiryType(bean.getInquiryType());
+              inquiryTypeView.setInquiryName(bean.getInquiryName());
+              inquiryTypeView.setVisitorCount(bean.getVisitorCount());
+              inquiryTypeView.setViewCount(bean.getViewCount());
+              inquiryTypeView.setInquiryCount(bean.getInquiryCount());
+              inquiryTypeView.setInquiryNumber(bean.getInquiryNumber());
+              inquiryTypeView.setInquiryAmount(bean.getInquiryAmount());
+              return inquiryTypeView;
+            })
+        .collect(Collectors.toList());
   }
 }

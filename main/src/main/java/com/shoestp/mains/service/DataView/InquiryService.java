@@ -67,4 +67,15 @@ public interface InquiryService {
    * @return
    */
   Map<String, Map> getInquiryRealRankByHour(InquiryTypeEnum inquiryType, String inquiryName);
+
+  /**
+   * 根据搜索名称获取询盘搜索
+   *
+   * @author: lingjian @Date: 2019/5/20 9:35
+   * @param inquirySearch
+   * @param date
+   * @param type
+   * @return
+   */
+  List getInquirySearch(String inquirySearch, Date date, String type);
 }

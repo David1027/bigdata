@@ -131,4 +131,24 @@ public class InquiryController {
         .result(inquiryService.getInquiryRealRankByHour(inquiryType, inquiryName))
         .build();
   }
+
+  /**
+   * 根据搜索名称获取询盘搜索
+   *
+   * @author: lingjian @Date: 2019/5/20 9:37
+   * @param inquirySearch
+   * @param date
+   * @param type
+   * @return
+   */
+  @PostMapping(value = "/inquirysearch")
+  public Object getInquirySearch(
+      String inquirySearch, @DateTimeFormat(pattern = "yyyy-MM-dd") Date date, String type) {
+    logger.debug(inquirySearch);
+    return MessageResult.builder()
+        .code(1)
+        .msg("Hello")
+        .result(inquiryService.getInquirySearch(inquirySearch, date, type))
+        .build();
+  }
 }

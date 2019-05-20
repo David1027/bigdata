@@ -2,6 +2,9 @@ package com.shoestp.mains.views.DataView.flow;
 
 import javax.persistence.Column;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.shoestp.mains.utils.dateUtils.CustomDoubleSerialize;
+
 import lombok.Data;
 
 /**
@@ -22,9 +25,12 @@ public class AccessPageView {
   /** 点击人数 */
   private Integer clickNumber;
   /** 点击率 */
+  @JsonSerialize(using = CustomDoubleSerialize.class)
   private Double clickRate;
   /** 跳失率 */
+  @JsonSerialize(using = CustomDoubleSerialize.class)
   private Double jumpRate;
   /** 平均停留时长 */
+  @JsonSerialize(using = CustomDoubleSerialize.class)
   private Double averageStayTime;
 }

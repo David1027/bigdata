@@ -1,5 +1,8 @@
 package com.shoestp.mains.views.DataView.flow;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.shoestp.mains.utils.dateUtils.CustomDoubleSerialize;
+
 import lombok.Data;
 
 /**
@@ -9,9 +12,12 @@ import lombok.Data;
 @Data
 public class PageView {
   /** 平均浏览量 */
+  @JsonSerialize(using = CustomDoubleSerialize.class)
   private Double viewAvgCount;
   /** 跳失率 */
+  @JsonSerialize(using = CustomDoubleSerialize.class)
   private Double jumpRate;
   /** 平均停留时长 */
+  @JsonSerialize(using = CustomDoubleSerialize.class)
   private Double averageStayTime;
 }

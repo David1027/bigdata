@@ -1,10 +1,12 @@
 package com.shoestp.mains.service.impl.DataView;
 
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.querydsl.core.Tuple;
 import com.shoestp.mains.dao.DataView.flow.FlowDao;
 import com.shoestp.mains.dao.DataView.flow.FlowPageDao;
@@ -13,6 +15,7 @@ import com.shoestp.mains.enums.flow.DeviceTypeEnum;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
 import com.shoestp.mains.service.DataView.FlowService;
+import com.shoestp.mains.utils.dateUtils.CustomDoubleSerialize;
 import com.shoestp.mains.utils.dateUtils.DateTimeUtil;
 import com.shoestp.mains.views.DataView.flow.*;
 import com.shoestp.mains.views.DataView.inquiry.InquiryRankView;
@@ -254,11 +257,10 @@ public class FlowServiceImpl implements FlowService {
    * @return Map<String, List>
    */
   @Override
-  public Map<String, List> getFlowSourcePage(Date startDate, Date endDate) {
-    Map<String, List> flowViewMap = new HashMap<>();
+  public List<FlowSourcePageView> getFlowSourcePage(Date startDate, Date endDate) {
+    List<FlowSourcePageView> list = new LinkedList<>();
     for (SourceTypeEnum source : SourceTypeEnum.values()) {
-      flowViewMap.put(
-          source.name(),
+      list.addAll(
           flowDao
               .findAllBySourcePage(
                   source,
@@ -268,13 +270,14 @@ public class FlowServiceImpl implements FlowService {
               .map(
                   bean -> {
                     FlowSourcePageView flowSourcePageView = new FlowSourcePageView();
-                    flowSourcePageView.setSourcePage(bean.get(0, String.class));
-                    flowSourcePageView.setVisitorCount(bean.get(1, Integer.class));
+                    flowSourcePageView.setSourceType(bean.get(0, String.class));
+                    flowSourcePageView.setSourcePage(bean.get(1, String.class));
+                    flowSourcePageView.setVisitorCount(bean.get(2, Integer.class));
                     return flowSourcePageView;
                   })
               .collect(Collectors.toList()));
     }
-    return flowViewMap;
+    return list;
   }
 
   /**

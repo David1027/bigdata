@@ -1,5 +1,6 @@
 package com.shoestp.mains.views.DataView.inquiry;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
 
 import lombok.Data;

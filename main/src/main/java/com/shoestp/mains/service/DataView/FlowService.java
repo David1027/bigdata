@@ -8,6 +8,7 @@ import com.shoestp.mains.enums.flow.AccessTypeEnum;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.views.DataView.flow.AccessView;
 import com.shoestp.mains.views.DataView.flow.FlowDeviceView;
+import com.shoestp.mains.views.DataView.flow.FlowSourcePageView;
 import com.shoestp.mains.views.DataView.flow.PageParameterView;
 
 /**
@@ -64,7 +65,7 @@ public interface FlowService {
    * @param endDate
    * @return Map<String, List>
    */
-  Map<String, List> getFlowSourcePage(Date startDate, Date endDate);
+  List getFlowSourcePage(Date startDate, Date endDate);
 
   /**
    * 根据流量来源，来源渠道名称，时间，获取来源渠道时段分析(小时)

@@ -1,4 +1,4 @@
-package com.shoestp.mains.schedulers.googleApi;
+package com.shoestp.mains.views.DataView.metaData;
 
 import com.shoestp.mains.enums.flow.DeviceTypeEnum;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;

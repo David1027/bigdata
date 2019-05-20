@@ -1,10 +1,13 @@
 package org.start2do.utils.classUtils;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashSet;
+import java.util.Set;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.reflections.Reflections;
+import org.reflections.scanners.SubTypesScanner;
 
 public class ClassUtils {
   private static final Logger logger = LogManager.getLogger(ClassUtils.class);
@@ -68,5 +71,21 @@ public class ClassUtils {
     }
 
     return cl;
+  }
+
+  public static Set<Class<?>> getPackageClass(String path, Class annotatedClass) {
+    Reflections reflections = new Reflections(path, new SubTypesScanner(false));
+    if (annotatedClass == null) {
+      Set<Class<?>> result = new HashSet<>();
+      for (String allType : reflections.getAllTypes()) {
+        try {
+          result.add(Class.forName(allType));
+        } catch (ClassNotFoundException e) {
+          e.printStackTrace();
+        }
+      }
+      return result;
+    }
+    return reflections.getTypesAnnotatedWith(annotatedClass);
   }
 }

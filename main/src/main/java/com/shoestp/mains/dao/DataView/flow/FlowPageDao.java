@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.springframework.stereotype.Repository;
+
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.shoestp.mains.dao.BaseDao;
@@ -12,10 +14,7 @@ import com.shoestp.mains.entitys.DataView.flow.DataViewFlowPage;
 import com.shoestp.mains.entitys.DataView.flow.QDataViewFlowPage;
 import com.shoestp.mains.enums.flow.AccessTypeEnum;
 import com.shoestp.mains.repositorys.DataView.flow.FlowPageRepository;
-import com.shoestp.mains.views.DataView.flow.PageView;
 import com.shoestp.mains.views.DataView.flow.PageViewObject;
-
-import org.springframework.stereotype.Repository;
 
 /**
  * @description: 流量-数据层
@@ -136,5 +135,9 @@ public class FlowPageDao extends BaseDao<DataViewFlowPage> {
   @Override
   public int removeByIds(Integer... id) {
     return 0;
+  }
+
+  public void save(DataViewFlowPage flowPage) {
+    flowPageRepository.save(flowPage);
   }
 }

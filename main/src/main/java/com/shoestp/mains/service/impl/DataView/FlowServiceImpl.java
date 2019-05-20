@@ -1,28 +1,32 @@
 package com.shoestp.mains.service.impl.DataView;
 
-import java.text.DecimalFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.querydsl.core.Tuple;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.shoestp.mains.dao.DataView.flow.FlowDao;
 import com.shoestp.mains.dao.DataView.flow.FlowPageDao;
+import com.shoestp.mains.dao.metaData.GoogleBrowseInfoDao;
 import com.shoestp.mains.enums.flow.AccessTypeEnum;
 import com.shoestp.mains.enums.flow.DeviceTypeEnum;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
-import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
 import com.shoestp.mains.service.DataView.FlowService;
-import com.shoestp.mains.utils.dateUtils.CustomDoubleSerialize;
 import com.shoestp.mains.utils.dateUtils.DateTimeUtil;
-import com.shoestp.mains.views.DataView.flow.*;
-import com.shoestp.mains.views.DataView.inquiry.InquiryRankView;
-import com.shoestp.mains.views.DataView.real.RealView;
-import com.sun.org.apache.xerces.internal.xs.StringList;
-
-import org.springframework.stereotype.Service;
+import com.shoestp.mains.views.DataView.flow.AccessPageView;
+import com.shoestp.mains.views.DataView.flow.AccessView;
+import com.shoestp.mains.views.DataView.flow.FlowDeviceView;
+import com.shoestp.mains.views.DataView.flow.FlowSourcePageView;
+import com.shoestp.mains.views.DataView.flow.FlowSourceView;
+import com.shoestp.mains.views.DataView.flow.PageParameterView;
+import com.shoestp.mains.views.DataView.flow.PageView;
+import com.shoestp.mains.views.DataView.flow.PageViewObject;
 
 /**
  * @description: 流量-服务层实现类
@@ -33,6 +37,7 @@ public class FlowServiceImpl implements FlowService {
 
   @Resource private FlowDao flowDao;
   @Resource private FlowPageDao flowPageDao;
+  @Autowired private GoogleBrowseInfoDao googleBrowseInfoDao;
 
   /**
    * 获取实时来源
@@ -257,10 +262,11 @@ public class FlowServiceImpl implements FlowService {
    * @return Map<String, List>
    */
   @Override
-  public List<FlowSourcePageView> getFlowSourcePage(Date startDate, Date endDate) {
-    List<FlowSourcePageView> list = new LinkedList<>();
+  public Map<String, List> getFlowSourcePage(Date startDate, Date endDate) {
+    Map<String, List> flowViewMap = new HashMap<>();
     for (SourceTypeEnum source : SourceTypeEnum.values()) {
-      list.addAll(
+      flowViewMap.put(
+          source.name(),
           flowDao
               .findAllBySourcePage(
                   source,
@@ -270,14 +276,13 @@ public class FlowServiceImpl implements FlowService {
               .map(
                   bean -> {
                     FlowSourcePageView flowSourcePageView = new FlowSourcePageView();
-                    flowSourcePageView.setSourceType(bean.get(0, String.class));
-                    flowSourcePageView.setSourcePage(bean.get(1, String.class));
-                    flowSourcePageView.setVisitorCount(bean.get(2, Integer.class));
+                    flowSourcePageView.setSourcePage(bean.get(0, String.class));
+                    flowSourcePageView.setVisitorCount(bean.get(1, Integer.class));
                     return flowSourcePageView;
                   })
               .collect(Collectors.toList()));
     }
-    return list;
+    return flowViewMap;
   }
 
   /**
@@ -928,5 +933,17 @@ public class FlowServiceImpl implements FlowService {
     flowPageMonthMap.put("abscissa", DateTimeUtil.getDayAbscissa(30, date));
     flowPageMonthMap.put("month", getFlowPageByMonthMap(30, date));
     return flowPageMonthMap;
+  }
+
+  /**
+   * -获取访问页面排行 按页面浏览量排行
+   *
+   * @author xiayan
+   * @param date 返回条数
+   * @return
+   */
+  public List<com.shoestp.mains.views.DataView.metaData.PageRankingView> getPageRanking(
+      Integer limit) {
+    return googleBrowseInfoDao.queryPageRanking(limit);
   }
 }

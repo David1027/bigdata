@@ -28,19 +28,17 @@ public class UserController {
    * 获取用户概况
    *
    * @author: lingjian @Date: 2019/5/13 14:48
-   * @param startDate
-   * @param endDate
+   * @param date
    * @return
    */
   @PostMapping(value = "/useroverview")
   public Object getUserOverview(
-      @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
-      @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
-    logger.debug(startDate+"======="+endDate);
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,String type) {
+    logger.debug(date);
     return MessageResult.builder()
         .code(1)
         .msg("Hello")
-        .result(userService.getUserOverview(startDate, endDate))
+        .result(userService.getUserOverview(date,type))
         .build();
   }
 

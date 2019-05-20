@@ -29,19 +29,18 @@ public class InquiryController {
    * 根据时间获取询盘概况
    *
    * @author: lingjian @Date: 2019/5/14 10:07
-   * @param startDate
-   * @param endDate
+   * @param date
+   * @param type
    * @return
    */
   @PostMapping(value = "/inquiryoverview")
   public Object getInquiryOverview(
-      @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
-      @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
-    logger.debug(startDate);
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,String type) {
+    logger.debug(date);
     return MessageResult.builder()
         .code(1)
         .msg("Hello")
-        .result(inquiryService.getInquiryOverview(startDate, endDate))
+        .result(inquiryService.getInquiryOverview(date, type))
         .build();
   }
 

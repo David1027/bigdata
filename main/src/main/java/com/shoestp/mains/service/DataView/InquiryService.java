@@ -18,11 +18,11 @@ public interface InquiryService {
    * 根据时间获取询盘概况
    *
    * @author: lingjian @Date: 2019/5/14 10:08
-   * @param startDate
-   * @param endDate
+   * @param date
+   * @param type
    * @return List<InquiryView>
    */
-  InquiryView getInquiryOverview(Date startDate, Date endDate);
+  InquiryView getInquiryOverview(Date date, String type);
 
   /**
    * 获取询盘概况中的时段分布(一天24小时)

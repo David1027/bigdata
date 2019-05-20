@@ -19,11 +19,10 @@ public interface UserService {
    * 获取用户概况
    *
    * @author: lingjian @Date: 2019/5/13 14:49
-   * @param startDate
-   * @param endDate
+   * @param date
    * @return List<DataViewUserView>
    */
-  DataViewUserView getUserOverview(Date startDate, Date endDate);
+  DataViewUserView getUserOverview(Date date,String type);
 
   /**
    * 获取用户概况中的时段分布(小时)

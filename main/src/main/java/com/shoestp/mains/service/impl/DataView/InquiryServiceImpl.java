@@ -53,18 +53,37 @@ public class InquiryServiceImpl implements InquiryService {
    * 根据时间获取询盘概况
    *
    * @author: lingjian @Date: 2019/5/14 10:08
-   * @param startDate
-   * @param endDate
+   * @param date
+   * @param type
    * @return
    */
   @Override
-  public InquiryView getInquiryOverview(Date startDate, Date endDate) {
-    InquiryView inquiry =
-        isNullTo(
-            inquiryDao.findAllByCreateTimeObject(
-                DateTimeUtil.getTimesOfDay(startDate, 0), DateTimeUtil.getTimesOfDay(endDate, 24)));
-    inquiry.setTotalInquiryCount(
-        inquiryDao.findAllByInquiry().isEmpty() ? 0 : inquiryDao.findAllByInquiry().get(0));
+  public InquiryView getInquiryOverview(Date date, String type) {
+    InquiryView inquiry = null;
+    if ("week".equals(type)) {
+      inquiry =
+          isNullTo(
+              inquiryDao.findAllByCreateTimeObject(
+                  DateTimeUtil.getTimesOfDay(DateTimeUtil.getDayFromNum(date, 7), 0),
+                  DateTimeUtil.getTimesOfDay(date, 24)));
+      inquiry.setTotalInquiryCount(
+          inquiryDao.findAllByInquiry().isEmpty() ? 0 : inquiryDao.findAllByInquiry().get(0));
+    } else if ("month".equals(type)) {
+      inquiry =
+          isNullTo(
+              inquiryDao.findAllByCreateTimeObject(
+                  DateTimeUtil.getTimesOfDay(DateTimeUtil.getDayFromNum(date, 30), 0),
+                  DateTimeUtil.getTimesOfDay(date, 24)));
+      inquiry.setTotalInquiryCount(
+          inquiryDao.findAllByInquiry().isEmpty() ? 0 : inquiryDao.findAllByInquiry().get(0));
+    } else {
+      inquiry =
+          isNullTo(
+              inquiryDao.findAllByCreateTimeObject(
+                  DateTimeUtil.getTimesOfDay(date, 0), DateTimeUtil.getTimesOfDay(date, 24)));
+      inquiry.setTotalInquiryCount(
+          inquiryDao.findAllByInquiry().isEmpty() ? 0 : inquiryDao.findAllByInquiry().get(0));
+    }
     return inquiry;
   }
 

@@ -46,19 +46,18 @@ public class FlowController {
    * 根据时间获取设备来源
    *
    * @author: lingjian @Date: 2019/5/13 9:58
-   * @param startDate
-   * @param endDate
+   * @param date
+   * @param type
    * @return
    */
   @PostMapping(value = "/flowdevice")
   public Object getFlowDevice(
-      @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
-      @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
-    logger.debug(startDate);
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,String type) {
+    logger.debug(date);
     return MessageResult.builder()
         .code(1)
         .msg("Hello")
-        .result(flowService.getFlowDevice(startDate, endDate))
+        .result(flowService.getFlowDevice(date, type))
         .build();
   }
 
@@ -66,19 +65,18 @@ public class FlowController {
    * 根据时间获取流量来源
    *
    * @author: lingjian @Date: 2019/5/14 14:11
-   * @param startDate
-   * @param endDate
+   * @param date
+   * @param type
    * @return
    */
   @PostMapping(value = "/flowsourcetype")
   public Object getFlowSourceType(
-      @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
-      @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
-    logger.debug(startDate);
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,String type) {
+    logger.debug(date);
     return MessageResult.builder()
         .code(1)
         .msg("Hello")
-        .result(flowService.getFlowSourceType(startDate, endDate))
+        .result(flowService.getFlowSourceType(date, type))
         .build();
   }
 
@@ -121,19 +119,18 @@ public class FlowController {
    * 根据时间获取来源渠道
    *
    * @author: lingjian @Date: 2019/5/14 14:25
-   * @param startDate
-   * @param endDate
+   * @param date
+   * @param type
    * @return
    */
   @PostMapping(value = "/flowsourcepage")
   public Object getFlowSourcePage(
-      @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
-      @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
-    logger.debug(startDate);
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,String type) {
+    logger.debug(date);
     return MessageResult.builder()
         .code(1)
         .msg("Hello")
-        .result(flowService.getFlowSourcePage(startDate, endDate))
+        .result(flowService.getFlowSourcePage(date, type))
         .build();
   }
 
@@ -187,19 +184,18 @@ public class FlowController {
    * 根据时间获取页面分析
    *
    * @author: lingjian @Date: 2019/5/14 16:26
-   * @param startDate
-   * @param endDate
+   * @param date
+   * @param type
    * @return
    */
   @PostMapping(value = "/flowpageanalysis")
   public Object getFlowPageAnalysis(
-      @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
-      @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
-    logger.debug(startDate + "====" + endDate);
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,String type) {
+    logger.debug(date);
     return MessageResult.builder()
         .code(1)
         .msg("Hello")
-        .result(flowService.getFlowPageAnalysis(startDate, endDate))
+        .result(flowService.getFlowPageAnalysis(date, type))
         .build();
   }
 

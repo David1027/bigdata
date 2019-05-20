@@ -27,20 +27,20 @@ public interface FlowService {
    * 根据时间获取设备来源
    *
    * @author: lingjian @Date: 2019/5/13 9:55
-   * @param startDate
-   * @param endDate
+   * @param date
+   * @param type
    * @return List<FlowDeviceView>
    */
-  List<FlowDeviceView> getFlowDevice(Date startDate, Date endDate);
+  List<FlowDeviceView> getFlowDevice(Date date, String type);
   /**
    * 根据时间获取流量来源
    *
    * @author: lingjian @Date: 2019/5/14 14:12
-   * @param startDate
-   * @param endDate
+   * @param date
+   * @param type
    * @return List
    */
-  List getFlowSourceType(Date startDate, Date endDate);
+  List getFlowSourceType(Date date, String type);
   /**
    * 根据时间获取流量概况(小时)
    *
@@ -61,11 +61,11 @@ public interface FlowService {
    * 根据时间获取来源渠道
    *
    * @author: lingjian @Date: 2019/5/14 14:27
-   * @param startDate
-   * @param endDate
+   * @param date
+   * @param type
    * @return Map<String, List>
    */
-  List getFlowSourcePage(Date startDate, Date endDate);
+  List getFlowSourcePage(Date date, String type);
 
   /**
    * 根据流量来源，来源渠道名称，时间，获取来源渠道时段分析(小时)
@@ -95,11 +95,11 @@ public interface FlowService {
    * 根据时间获取页面分析
    *
    * @author: lingjian @Date: 2019/5/14 16:26
-   * @param startDate
-   * @param endDate
+   * @param date
+   * @param type
    * @return List
    */
-  Map<String, List<AccessView>> getFlowPageAnalysis(Date startDate, Date endDate);
+  Map<String, List<AccessView>> getFlowPageAnalysis(Date date, String type);
 
   /**
    * 根据时间和页面分类，获取页面分析时段分析(小时)

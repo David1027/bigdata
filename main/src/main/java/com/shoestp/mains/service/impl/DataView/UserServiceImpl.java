@@ -50,15 +50,32 @@ public class UserServiceImpl implements UserService {
    * 获取用户概况
    *
    * @author: lingjian @Date: 2019/5/13 14:50
-   * @param startDate
-   * @param endDate
+   * @param date
    * @return DataViewUserView
    */
   @Override
-  public DataViewUserView getUserOverview(Date startDate, Date endDate) {
-    return isNullTo(
-        userDao.findUserByCreateTimeBetweenObject(
-            DateTimeUtil.getTimesOfDay(startDate, 0), DateTimeUtil.getTimesOfDay(endDate, 24)));
+  public DataViewUserView getUserOverview(Date date, String type) {
+    DataViewUserView user = null;
+    if ("week".equals(type)) {
+      user =
+          isNullTo(
+              userDao.findUserByCreateTimeBetweenObject(
+                  DateTimeUtil.getTimesOfDay(DateTimeUtil.getDayFromNum(date, 7), 0),
+                  DateTimeUtil.getTimesOfDay(date, 24)));
+    } else if ("month".equals(type)) {
+      user =
+          isNullTo(
+              userDao.findUserByCreateTimeBetweenObject(
+                  DateTimeUtil.getTimesOfDay(DateTimeUtil.getDayFromNum(date, 30), 0),
+                  DateTimeUtil.getTimesOfDay(date, 24)));
+    } else {
+      user =
+          isNullTo(
+              userDao.findUserByCreateTimeBetweenObject(
+                  DateTimeUtil.getTimesOfDay(date, 0), DateTimeUtil.getTimesOfDay(date, 24)));
+    }
+
+    return user;
   }
 
   /**

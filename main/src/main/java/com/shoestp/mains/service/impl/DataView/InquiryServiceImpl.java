@@ -50,7 +50,24 @@ public class InquiryServiceImpl implements InquiryService {
   }
 
   /**
-   * 根据时间获取询盘概况
+   * 根据开始时间和结束时间获取询盘概况
+   *
+   * @author: lingjian @Date: 2019/5/20 16:35
+   * @param startDate
+   * @param endDate
+   * @return
+   */
+  public InquiryView getInquiryOverviewByDate(Date startDate, Date endDate) {
+    InquiryView inquiry =
+        isNullTo(
+            inquiryDao.findAllByCreateTimeObject(
+                DateTimeUtil.getTimesOfDay(startDate, 0), DateTimeUtil.getTimesOfDay(endDate, 24)));
+    inquiry.setTotalInquiryCount(
+        inquiryDao.findAllByInquiry().isEmpty() ? 0 : inquiryDao.findAllByInquiry().get(0));
+    return inquiry;
+  }
+  /**
+   * 根据时间,日期类型获取询盘概况
    *
    * @author: lingjian @Date: 2019/5/14 10:08
    * @param date
@@ -59,32 +76,13 @@ public class InquiryServiceImpl implements InquiryService {
    */
   @Override
   public InquiryView getInquiryOverview(Date date, String type) {
-    InquiryView inquiry = null;
     if ("week".equals(type)) {
-      inquiry =
-          isNullTo(
-              inquiryDao.findAllByCreateTimeObject(
-                  DateTimeUtil.getTimesOfDay(DateTimeUtil.getDayFromNum(date, 7), 0),
-                  DateTimeUtil.getTimesOfDay(date, 24)));
-      inquiry.setTotalInquiryCount(
-          inquiryDao.findAllByInquiry().isEmpty() ? 0 : inquiryDao.findAllByInquiry().get(0));
+      return getInquiryOverviewByDate(DateTimeUtil.getDayFromNum(date, 7), date);
     } else if ("month".equals(type)) {
-      inquiry =
-          isNullTo(
-              inquiryDao.findAllByCreateTimeObject(
-                  DateTimeUtil.getTimesOfDay(DateTimeUtil.getDayFromNum(date, 30), 0),
-                  DateTimeUtil.getTimesOfDay(date, 24)));
-      inquiry.setTotalInquiryCount(
-          inquiryDao.findAllByInquiry().isEmpty() ? 0 : inquiryDao.findAllByInquiry().get(0));
+      return getInquiryOverviewByDate(DateTimeUtil.getDayFromNum(date, 30), date);
     } else {
-      inquiry =
-          isNullTo(
-              inquiryDao.findAllByCreateTimeObject(
-                  DateTimeUtil.getTimesOfDay(date, 0), DateTimeUtil.getTimesOfDay(date, 24)));
-      inquiry.setTotalInquiryCount(
-          inquiryDao.findAllByInquiry().isEmpty() ? 0 : inquiryDao.findAllByInquiry().get(0));
+      return getInquiryOverviewByDate(date, date);
     }
-    return inquiry;
   }
 
   /**

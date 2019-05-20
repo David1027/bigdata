@@ -1,25 +1,20 @@
 package com.shoestp.mains.schedulers.googleApi;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import org.quartz.JobBuilder;
-import org.quartz.JobDetail;
+import com.shoestp.mains.dao.metaData.GoogleBrowseInfoDao;
+import com.shoestp.mains.repositorys.metaData.GooglePagePropertyInfoRepository;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.SimpleScheduleBuilder;
-import org.quartz.Trigger;
-import org.quartz.TriggerBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
 import com.google.api.services.analyticsreporting.v4.AnalyticsReporting;
 import com.google.api.services.analyticsreporting.v4.model.ColumnHeader;
@@ -33,20 +28,16 @@ import com.google.api.services.analyticsreporting.v4.model.MetricHeaderEntry;
 import com.google.api.services.analyticsreporting.v4.model.Report;
 import com.google.api.services.analyticsreporting.v4.model.ReportRequest;
 import com.google.api.services.analyticsreporting.v4.model.ReportRow;
-import com.shoestp.mains.dao.metaData.GoogleBrowseInfoDao;
 import com.shoestp.mains.entitys.MetaData.GoogleBrowseInfo;
 import com.shoestp.mains.entitys.MetaData.GooglePageProperty;
-import com.shoestp.mains.repositorys.metaData.GooglePagePropertyInfoRepository;
+import com.shoestp.mains.entitys.MetaData.QGoogleBrowseInfo;
 import com.shoestp.mains.schedulers.BaseSchedulers;
-import com.shoestp.mains.views.DataView.metaData.PageRankingView;
 
-// @Component
+//@Component
 public class GoogleMetaData extends BaseSchedulers {
 
   public GoogleMetaData() {
-    super(
-        SimpleScheduleBuilder.simpleSchedule().withIntervalInMinutes(timing).repeatForever(),
-        GoogleMetaData.class.getName());
+    super(SimpleScheduleBuilder.simpleSchedule().withIntervalInMinutes(timing).repeatForever());
     // TODO Auto-generated constructor stub
   }
 
@@ -83,9 +74,8 @@ public class GoogleMetaData extends BaseSchedulers {
   @Override
   protected void executeInternal(JobExecutionContext context)
       throws JobExecutionException { // TODO Auto-generated method stub
-    // test();
-    sleep(5000);
-    queryData(1, browseMetricList, browseDimensionList); // 浏览数据
+    test();
+    // queryData(1, browseMetricList, browseDimensionList); // 浏览数据
     // sleep();
     // queryData(3, pageMetricList, new ArrayList<>()); // 页面数据
     // System.out.println("wdawdawdw");
@@ -95,6 +85,7 @@ public class GoogleMetaData extends BaseSchedulers {
     for (PageRankingView pageRankingView : googleBrowseInfoDao.queryPageRanking(10)) {
       System.out.println(pageRankingView);
     }
+
   }
 
   public void queryData(int queryType, List<Metric> metric, List<Dimension> dimension) {
@@ -103,7 +94,7 @@ public class GoogleMetaData extends BaseSchedulers {
     // 获取数据库里最后拉去数据的的日期
     // String filter = "ga:pagePath==/";
     String filter = "ga:hostname=@shoestp.com";
-    String startDateString = getLastDate(queryType);
+    /*String startDateString = getLastDate(queryType);
     Date parse = null;
     try {
       parse = new SimpleDateFormat("yyyy-MM-dd HH").parse(startDateString);
@@ -117,16 +108,15 @@ public class GoogleMetaData extends BaseSchedulers {
       return;
     }
     Integer minute = Integer.parseInt(startDate.format(DateTimeFormatter.ofPattern("mm")));
-    if (!startDateString.equals("2018-11-18 00:00:00")) {
-      filter +=
-          ",ga:dateHourMinute=@" + startDate.format(DateTimeFormatter.ofPattern("yyyyMMddHH"));
+    if (!startDateString.equals("2018-01-01 00:00:00")) {
+      filter += ",ga:dateHourMinute=@" + startDate.format(DateTimeFormatter.ofPattern("yyyyMMddHH"));
       if (minute <= timing) {
         b = true;
         LocalDateTime newStartDate = startDate.plusHours(1);
         filter +=
             ",ga:dateHourMinute=@" + newStartDate.format(DateTimeFormatter.ofPattern("yyyyMMddHH"));
       }
-    }
+    }*/
     try {
       // 本地测试用开启代理
       System.setProperty("http.proxySet", "true");
@@ -140,10 +130,10 @@ public class GoogleMetaData extends BaseSchedulers {
             dateRange.setEndDate("today");
       */
       /////////// 分段获取初始数据
-      dateRange.setStartDate("2019-05-15");
+      dateRange.setStartDate("2019-05-14");
       /*dateRange.setEndDate("2019-01-15");
       dateRange.setStartDate("2019-01-16");*/
-      dateRange.setEndDate("2019-05-16");
+      dateRange.setEndDate("2019-05-15");
       /////////// 分段获取初始数据
       List<DimensionFilterClause> dimList = new ArrayList<>();
       DimensionFilterClause dim = new DimensionFilterClause();
@@ -155,8 +145,8 @@ public class GoogleMetaData extends BaseSchedulers {
               .setPageSize(500000)
               .setDateRanges(Arrays.asList(dateRange))
               .setMetrics(metric) // 10个
-              .setDimensions(dimension) // 7个
-              .setFiltersExpression(filter); // 过滤
+              .setDimensions(dimension); // 7个
+      // .setFiltersExpression(filter); // 过滤
 
       ArrayList<ReportRequest> requests = new ArrayList();
       requests.add(request);
@@ -176,7 +166,7 @@ public class GoogleMetaData extends BaseSchedulers {
         for (ReportRow row : rows) {
           List<String> dimensions = row.getDimensions();
           List<String> values = row.getMetrics().get(0).getValues();
-          save(queryType, dimensions, values, date, minute, b, parse);
+          save(queryType, dimensions, values, date, 0, b, null);
         }
       }
     } catch (IOException e) {
@@ -192,30 +182,29 @@ public class GoogleMetaData extends BaseSchedulers {
       int minute,
       boolean b,
       Date startDate) {
-    Date parse = null;
+    /* Date parse = null;
     Date parse2 = null;
     if (type == 1 || type == 2) {
       SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHH");
       String format = simpleDateFormat.format(startDate);
-      String substring = dimensions.get(1).substring(0, 10);
+      String substring = dimensions.get(2).substring(0, 10);
       try {
         parse = simpleDateFormat.parse(substring);
         parse2 = simpleDateFormat.parse(format);
       } catch (ParseException e) { // TODO Auto-generated catch block
         e.printStackTrace();
       }
-    }
+    }*/
     switch (type) {
       case 1:
-        String subStr =
-            dimensions.get(1).substring(dimensions.get(1).length() - 2, dimensions.get(1).length());
-        if (Integer.parseInt(subStr) < minute && !b) {
+        /*  String subStr = dimensions.get(2).substring(dimensions.get(2).length()-2, dimensions.get(2).length());
+        if (Integer.parseInt(dimensions.get(5)) < minute && !b) {
           break;
-        } else if (Integer.parseInt(subStr) < minute && b) {
+        } else if (Integer.parseInt(dimensions.get(5)) < minute && b) {
           if (parse.compareTo(parse2) == 0) {
             break;
           }
-        }
+        }*/
         GoogleBrowseInfo browse = new GoogleBrowseInfo();
         browse.setPagePath(dimensions.get(0));
         browse.setAccessTime(dimensions.get(1));
@@ -233,21 +222,21 @@ public class GoogleMetaData extends BaseSchedulers {
         googleBrowseInfoDao.save(browse);
         break;
       case 3:
-        /* GooglePageProperty page = new GooglePageProperty();
+        GooglePageProperty page = new GooglePageProperty();
         page.setBounceRate(values.get(0));
         page.setPageViews(values.get(1));
         page.setAvgTimeOnPage(values.get(2));
         page.setCreateTime(date);
-        googlePagePropertyInfoDao.save(page);*/
+        googlePagePropertyInfoDao.save(page);
         break;
       default:
         break;
     }
   }
 
-  public void sleep(Integer time) {
+  public void sleep() {
     try {
-      Thread.sleep(time);
+      Thread.sleep(2000);
     } catch (InterruptedException e) { // TODO Auto-generated catch block
       e.printStackTrace();
     }
@@ -255,7 +244,7 @@ public class GoogleMetaData extends BaseSchedulers {
 
   public String getLastDate(int type) {
     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    String defaultDate = "2018-11-18 00:00:00";
+    String defaultDate = "2018-01-01 00:00:00";
     switch (type) {
       case 1:
         Optional<GoogleBrowseInfo> browseInfo =
@@ -285,23 +274,5 @@ public class GoogleMetaData extends BaseSchedulers {
     System.out.println(plusHours.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));*/
     String s = "2019-9-9213";
     System.out.println(s.substring(s.length() - 2, s.length()));
-  }
-
-  @Bean(name = "GoogleMetaData")
-  public JobDetail JobDetail() {
-    return JobBuilder.newJob(this.getClass()).withIdentity(getJobNmae()).storeDurably().build();
-  }
-
-  public void defaults() {
-    SimpleScheduleBuilder.simpleSchedule().withIntervalInMinutes(5).repeatForever();
-  }
-
-  @Bean(name = "GoogleMetaDataTrigger")
-  public Trigger sampleJobTrigger() {
-    return TriggerBuilder.newTrigger()
-        .forJob(JobDetail())
-        .withIdentity(getJobNmae() + "Trigger")
-        .withSchedule(getScheduleBuilder())
-        .build();
   }
 }

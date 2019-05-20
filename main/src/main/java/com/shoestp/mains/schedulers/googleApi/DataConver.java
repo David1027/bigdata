@@ -4,11 +4,9 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -18,12 +16,21 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import org.quartz.JobBuilder;
+import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.SimpleScheduleBuilder;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
 import com.shoestp.mains.dao.DataView.flow.FlowDao;
+import com.shoestp.mains.dao.DataView.flow.FlowPageDao;
+import com.shoestp.mains.dao.shoestpData.InquiryInfoDao;
+import com.shoestp.mains.dao.shoestpData.WebVisitInfoDao;
 import com.shoestp.mains.entitys.DataView.flow.DataViewFlow;
 import com.shoestp.mains.entitys.DataView.flow.DataViewFlowPage;
 import com.shoestp.mains.entitys.MetaData.GoogleBrowseInfo;
@@ -32,16 +39,21 @@ import com.shoestp.mains.enums.flow.DeviceTypeEnum;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.repositorys.metaData.GoogleBrowseInfoRepository;
 import com.shoestp.mains.schedulers.BaseSchedulers;
+import com.shoestp.mains.views.DataView.metaData.DataView;
 
-// @Component
+@Component
 public class DataConver extends BaseSchedulers {
-
   public DataConver() {
-    super(SimpleScheduleBuilder.simpleSchedule().withIntervalInMinutes(timing).repeatForever());
+    super(
+        SimpleScheduleBuilder.simpleSchedule().withIntervalInMinutes(timing).repeatForever(),
+        DataConver.class.getName());
   }
 
   @Autowired private FlowDao flowDao;
+  @Autowired private FlowPageDao flowPageDao;
   @Autowired private GoogleBrowseInfoRepository googleBrowseInfoDao;
+  @Autowired private WebVisitInfoDao webDao;
+  @Autowired private InquiryInfoDao inquiryInfoDao;
 
   private static int timing = 60; // 定时60分钟
   private static List<String> PC =
@@ -60,8 +72,14 @@ public class DataConver extends BaseSchedulers {
   private static Map<String, List<String>> sourcePage = new HashMap<>(); // 来源渠道
 
   static {
-    sourcePage.put("迪盛着陆页", Arrays.asList("/activity/html/ds/", "/m/disheng"));
-    sourcePage.put("巨纳着陆页", Arrays.asList("/activity/html/jn/", "/m/juna"));
+    sourcePage.put(
+        "迪盛着陆页",
+        Arrays.asList(
+            "/activity/html/ds/", "/m/disheng", "/activity/html/romania/disheng/index.html"));
+    sourcePage.put(
+        "巨纳着陆页",
+        Arrays.asList("/activity/html/jn/", "/m/juna", "/activity/html/romania/juna/index.html"));
+    sourcePage.put("耐瑞着陆页", Arrays.asList("/activity/html/ny/index.html"));
     sourcePage.put(
         "shoestp着陆页",
         Arrays.asList(
@@ -72,58 +90,100 @@ public class DataConver extends BaseSchedulers {
             "/m/landing/nomalFoot",
             "/m/landing/leather",
             "/m/landing/wmShoes"));
-    sourcePage.put("罗马尼亚相关着陆页", Arrays.asList("/activity/html/romania/"));
+    // sourcePage.put("罗马尼亚相关着陆页", Arrays.asList("/activity/html/romania/"));
+    sourcePage.put("爱莱发着陆页", Arrays.asList("/activity/html/romania/allaifa/index.html"));
+    sourcePage.put("乔奈着陆页", Arrays.asList("/activity/html/romania/baoluopate/index.html"));
+    sourcePage.put("丰盛着陆页", Arrays.asList("/activity/html/romania/fengsheng/index.html"));
+    sourcePage.put("华利欧着陆页", Arrays.asList("/activity/html/romania/hualiou/index.html"));
+    sourcePage.put("华友着陆页", Arrays.asList("/activity/html/romania/huayou/index.html"));
+    sourcePage.put("剑鲨着陆页", Arrays.asList("/activity/html/romania/jiansha/index.html"));
+    sourcePage.put("杰克巴乔着陆页", Arrays.asList("/activity/html/romania/jiekebaqiao/index.html"));
+    sourcePage.put("康睿着陆页", Arrays.asList("/activity/html/romania/kangrui/index.html"));
+    sourcePage.put("康益达着陆页", Arrays.asList("/activity/html/romania/kangyida/index.html"));
+    sourcePage.put("千百梦着陆页", Arrays.asList("/activity/html/romania/qianbaimeng/index.html"));
+    sourcePage.put("新纪元着陆页", Arrays.asList("/activity/html/romania/xinjiyuan/index.html"));
+    sourcePage.put("亿力洲着陆页", Arrays.asList("/activity/html/romania/yilizhou/index.html"));
+    sourcePage.put("展豪着陆页", Arrays.asList("/activity/html/romania/zhanhao/index.html"));
   }
 
-  @Override
   protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
-    DateTimeFormatter ofPattern = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
-    SimpleDateFormat sim = new SimpleDateFormat("yyyyMMddHHmmss");
-    LocalDateTime date = LocalDateTime.now();
-    Date createTime = LocalDateTimeToUdate(date);
-    String startTime = "20181119000000";
-    long day = 0; // 天数差
-    String endTime = date.format(ofPattern) + "00";
-    if (flowDao.getFlowTopOne().isPresent()) {
-      // startTime = date.plusHours(-1).format(ofPattern) + "00";
-      startTime =
-          new SimpleDateFormat("yyyyMMddHHmm").format(flowDao.getFlowTopOne().get().getCreateTime())
-              + "00";
-    } else {
-      Duration duration =
-          Duration.between(
-              date, LocalDateTime.parse(startTime, DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
-      day = duration.toDays();
+    try {
+      /*getClickNum(
+      AccessTypeEnum.INDEX,
+      new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2018-01-01 00:00:00"),
+      new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2019-05-18 00:00:00"));*/
+      getInquiry(
+          SourceTypeEnum.OTHER,
+          "爱莱发着陆页",
+          new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2018-01-01 00:00:00"),
+          new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2019-05-18 00:00:00"));
+    } catch (ParseException e) { // TODO Auto-generated catch block
+      e.printStackTrace();
     }
-    if (day < 0) {
-      // 之前的数据按天插入
-      LocalDateTime startDate = LocalDateTime.parse("201811180000", ofPattern);
-      LocalDateTime endDate = LocalDateTime.parse("201811182359", ofPattern);
-      for (int i = 0; i > day; i--) {
-        LocalDateTime plusDays = startDate.plusDays(1);
-        LocalDateTime plusDays2 = endDate.plusDays(1);
-        List<GoogleBrowseInfo> browseInfoList =
-            googleBrowseInfoDao.queryByStartTimeAndEndTime(
-                plusDays.format(ofPattern), plusDays2.format(ofPattern));
-        startDate = plusDays;
-        endDate = plusDays2;
-        if (!browseInfoList.isEmpty()) {
-          filtration(
-              browseInfoList, LocalDateTimeToUdate(startDate), LocalDateTimeToUdate(endDate));
-        }
-      }
-    } else {
-      List<GoogleBrowseInfo> browseInfoList =
-          googleBrowseInfoDao.queryByStartTimeAndEndTime(startTime, endTime);
-      if (!browseInfoList.isEmpty()) {
-        try {
-          filtration(browseInfoList, sim.parse(startTime), sim.parse(endTime));
-        } catch (ParseException e) {
-          e.printStackTrace();
-        }
-      }
-    }
+    // System.out.println(555);
   }
+
+  /*  @Override
+  protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
+    try {
+
+      DateTimeFormatter ofPattern = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
+      SimpleDateFormat sim = new SimpleDateFormat("yyyyMMddHHmmss");
+      LocalDateTime date = LocalDateTime.now();
+      // Date createTime = LocalDateTimeToUdate(date);
+      String startTime = "20181119000000";
+      long day = 0; // 天数差
+      String endTime = date.format(ofPattern) + "00";
+      if (flowDao.getFlowTopOne().isPresent()) {
+        // startTime = date.plusHours(-1).format(ofPattern) + "00";
+        startTime =
+            new SimpleDateFormat("yyyyMMddHHmm")
+                    .format(flowDao.getFlowTopOne().get().getCreateTime())
+                + "00";
+      } else {
+        Duration duration =
+            Duration.between(
+                date,
+                LocalDateTime.parse(startTime, DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
+        day = duration.toDays();
+      }
+      if (day < 0) {
+        // 之前的数据按天插入
+        LocalDateTime startDate = LocalDateTime.parse("201811180000", ofPattern);
+        LocalDateTime endDate = LocalDateTime.parse("201811182359", ofPattern);
+        for (int i = 0; i > day; i--) {
+          LocalDateTime plusDays = startDate.plusDays(1);
+          LocalDateTime plusDays2 = endDate.plusDays(1);
+          List<GoogleBrowseInfo> browseInfoList =
+              googleBrowseInfoDao.queryByStartTimeAndEndTime(
+                  plusDays.format(ofPattern), plusDays2.format(ofPattern));
+          startDate = plusDays;
+          endDate = plusDays2;
+          if (!browseInfoList.isEmpty()) {
+            filtration(
+                browseInfoList, LocalDateTimeToUdate(startDate), LocalDateTimeToUdate(endDate));
+          } else {
+            continue;
+          }
+        }
+      } else {
+        List<GoogleBrowseInfo> browseInfoList =
+            googleBrowseInfoDao.queryByStartTimeAndEndTime(startTime, endTime);
+        if (!browseInfoList.isEmpty()) {
+          try {
+            filtration(browseInfoList, sim.parse(startTime), sim.parse(endTime));
+          } catch (ParseException e) {
+            e.printStackTrace();
+          }
+        } else {
+          return;
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+      // TODO: handle exception
+    }
+  }*/
 
   public SourceTypeEnum judgeSource(String source) {
     if (source.indexOf("google") != -1) {
@@ -168,19 +228,32 @@ public class DataConver extends BaseSchedulers {
     if (pagePath.equals("/") || pagePath.equals("/m/")) {
       // 首页
       return AccessTypeEnum.INDEX;
+    } else if (pagePath.startsWith("/home/usr_UsrConsult_publishView")
+        || pagePath.startsWith("/m/RFQ")) {
+      // RFQ
+      return AccessTypeEnum.RFQ;
     } else if ((pagePath.indexOf("_p") != -1 && pagePath.endsWith(".html"))
         || pagePath.indexOf("/m/product/prodetail") != -1) {
       // 产品详情页
       return AccessTypeEnum.DETAIL;
-    } else if (pagePath.indexOf("/home/pdt_PdtProduct") != -1
+    } else if (pagePath.startsWith("/home/pdt_PdtProduct")
         || pagePath.indexOf("/m/product/prolist") != -1) {
-      // 搜索页
-      return AccessTypeEnum.SEARCH;
-    } else if (pagePath.indexOf("/html/SVS/svs.jsp") != -1 || pagePath.indexOf("/m/SVS") != -1) {
-      // svs专题页
-      return AccessTypeEnum.SVS;
+      // 产品列表页
+      return AccessTypeEnum.LIST;
+    } else if (pagePath.startsWith("/home/usr_UsrConsult_productPublishView")
+        || pagePath.startsWith("/m/product/inquery")) {
+      // 商品询盘
+      return AccessTypeEnum.INQUIRY;
+    } else if (pagePath.startsWith("/home/rfq_RFQConsult_ExpoRivaSchuhshow")
+        || pagePath.startsWith("/home/rfq_RFQConsult_exhibitionshow")
+        || pagePath.startsWith("/home/rfq_RFQConsult_guangjiaohuishow")) {
+      // DON‘TMISS
+      return AccessTypeEnum.DONTMISS;
+    } else if (pagePath.startsWith("/home/usr_UsrPurchase_userIndex")
+        || pagePath.startsWith("/m/setting")) {
+      // 个人中心首页
+      return AccessTypeEnum.MYCENTER;
     } else {
-      // 其他页
       return AccessTypeEnum.OTHER;
     }
   }
@@ -244,6 +317,7 @@ public class DataConver extends BaseSchedulers {
         flow.setSourcePage(t.getSourcePage());
         flow.setSourceType(t.getSourceType());
         flow.setVisitorCount(df.intValue());
+        flow.setInquiryCount(getInquiry(t.getSourceType(), t.getSourcePage(), startTime, endTime));
         flowDao.save(flow);
       }
       for (Entry<AccessTypeEnum, List<GoogleBrowseInfo>> entry : mapPage.entrySet()) {
@@ -279,27 +353,48 @@ public class DataConver extends BaseSchedulers {
         flowPage.setVisitorCount(visitorCount);
         flowPage.setClickCount(clickCount);
         flowPage.setClickNumber((double) getClickNum(entry.getKey(), startTime, endTime));
-        flowPage.setJumpRate(Double.parseDouble(df.format(bounceRateNum / sessionNum)));
-        flowPage.setAverageStayTime(Double.parseDouble(df.format(sumStayTime / sessionNum)));
+        flowPage.setJumpRate(
+            sessionNum == 0 ? 0 : Double.parseDouble(df.format(bounceRateNum / sessionNum)));
+        flowPage.setAverageStayTime(
+            sessionNum == 0 ? 0 : Double.parseDouble(df.format(sumStayTime / sessionNum)));
         flowPage.setCreateTime(endTime);
+        flowPageDao.save(flowPage);
       }
     }
   }
 
   public int getClickNum(AccessTypeEnum acc, Date startTime, Date endTime) {
     if (acc.equals(AccessTypeEnum.INDEX)) {
-      // 首页
-
+      return webDao.getClikeNum(startTime, endTime, "/home/usr_UsrPurchase");
+    } else if (acc.equals(AccessTypeEnum.RFQ)) {
+      // rfq
+      return webDao.getClikeNum(startTime, endTime, "/home/usr_UsrConsult_publishView");
     } else if (acc.equals(AccessTypeEnum.DETAIL)) {
-      // 详情
-    } else if (acc.equals(AccessTypeEnum.SEARCH)) {
-      // 搜索
-    } else if (acc.equals(AccessTypeEnum.SVS)) {
-      // svs
-    } else {
-      // 其他
+      // 商品详情
+      return webDao.getClikeNum(startTime, endTime, "/home/pdt_PdtProduct_gtProductsInfo");
+    } else if (acc.equals(AccessTypeEnum.LIST)) {
+      // 商品列表
+      return webDao.getClikeNum(startTime, endTime, "/home/pdt_PdtProduct");
+    } else if (acc.equals(AccessTypeEnum.INQUIRY)) {
+      // 商品询盘
+      return webDao.getClikeNum(startTime, endTime, "/home/usr_UsrConsult_productPublishView");
+    } else if (acc.equals(AccessTypeEnum.DONTMISS)) {
+      // dontmiss
+      return webDao.getClikeNum(
+          startTime,
+          endTime,
+          "/home/rfq_RFQConsult_ExpoRivaSchuhshow",
+          "/home/rfq_RFQConsult_exhibitionshow",
+          "/home/rfq_RFQConsult_guangjiaohuishow");
+    } else if (acc.equals(AccessTypeEnum.MYCENTER)) {
+      // 个人中心
+      return webDao.getClikeNum(startTime, endTime, "/home/usr_UsrPurchase_userIndex");
     }
     return 0;
+  }
+
+  public int getInquiry(SourceTypeEnum souType, String source, Date startTime, Date endTime) {
+    return inquiryInfoDao.queryInquiryCount(startTime, endTime, souType, source);
   }
 
   /**
@@ -316,9 +411,6 @@ public class DataConver extends BaseSchedulers {
       return 1;
     }
   }
-
-  /** -按浏览量排行 */
-  public void pageRanking() {}
 
   public static int countBounce(String bounceRate, String sessions) {
     BigDecimal b = new BigDecimal(bounceRate);
@@ -347,7 +439,31 @@ public class DataConver extends BaseSchedulers {
     // System.out.println(0.5 * 2 % (int) (0.5 * 2) > 0 ? (int) (0.5 * 2) + 1 : (0.5 * 2));
     // System.out.println(Double.parseDouble("66.66666".));
     // System.out.println(countBounce("0.0", "10"));
-    Date d = new SimpleDateFormat("yyyyMMddHHmmss").parse("20190516180300");
-    System.out.println(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(d));
+    /*Date d = new SimpleDateFormat("yyyyMMddHHmmss").parse("20190516180300");
+    System.out.println(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(d));*/
+    Double d = 28.0;
+    Double a = 32.0;
+    DecimalFormat df = new DecimalFormat("#.00");
+    String format = df.format(d / a);
+    double parseDouble = Double.parseDouble(format);
+    System.out.println(parseDouble);
+  }
+
+  @Bean(name = "DataConver")
+  public JobDetail JobDetail() {
+    return JobBuilder.newJob(this.getClass()).withIdentity(getJobNmae()).storeDurably().build();
+  }
+
+  public void defaults() {
+    SimpleScheduleBuilder.simpleSchedule().withIntervalInMinutes(5).repeatForever();
+  }
+
+  @Bean(name = "DataConverTrigger")
+  public Trigger sampleJobTrigger() {
+    return TriggerBuilder.newTrigger()
+        .forJob(JobDetail())
+        .withIdentity(getJobNmae() + "Trigger")
+        .withSchedule(getScheduleBuilder())
+        .build();
   }
 }

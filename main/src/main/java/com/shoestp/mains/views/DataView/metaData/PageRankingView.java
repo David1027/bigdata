@@ -1,4 +1,4 @@
-package com.shoestp.mains.schedulers.googleApi;
+package com.shoestp.mains.views.DataView.metaData;
 
 import java.math.BigDecimal;
 

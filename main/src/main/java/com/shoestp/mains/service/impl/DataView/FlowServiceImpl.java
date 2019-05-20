@@ -1,22 +1,29 @@
 package com.shoestp.mains.service.impl.DataView;
 
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
-import com.querydsl.core.Tuple;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.shoestp.mains.dao.DataView.flow.FlowDao;
 import com.shoestp.mains.dao.DataView.flow.FlowPageDao;
+import com.shoestp.mains.dao.metaData.GoogleBrowseInfoDao;
 import com.shoestp.mains.enums.flow.AccessTypeEnum;
 import com.shoestp.mains.enums.flow.DeviceTypeEnum;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.service.DataView.FlowService;
 import com.shoestp.mains.utils.dateUtils.DateTimeUtil;
-import com.shoestp.mains.views.DataView.flow.*;
-import com.sun.org.apache.xerces.internal.xs.StringList;
-
-import org.springframework.stereotype.Service;
+import com.shoestp.mains.views.DataView.flow.AccessPageView;
+import com.shoestp.mains.views.DataView.flow.FlowDeviceView;
+import com.shoestp.mains.views.DataView.flow.FlowSourcePageView;
+import com.shoestp.mains.views.DataView.flow.FlowSourceView;
+import com.shoestp.mains.views.DataView.flow.PageView;
 
 /**
  * @description: 流量-服务层实现类
@@ -27,6 +34,7 @@ public class FlowServiceImpl implements FlowService {
 
   @Resource private FlowDao flowDao;
   @Resource private FlowPageDao flowPageDao;
+  @Autowired private GoogleBrowseInfoDao googleBrowseInfoDao;
 
   /** 获取当天0:0:0 */
   private Date start = DateTimeUtil.getTimesmorning();
@@ -590,5 +598,17 @@ public class FlowServiceImpl implements FlowService {
     flowPageMonthMap.put("jumpRate", getEveryPage(date, "jumpRate"));
     flowPageMonthMap.put("averageStayTime", getEveryPage(date, "averageStayTime"));
     return flowPageMonthMap;
+  }
+
+  /**
+   * -获取访问页面排行 按页面浏览量排行
+   *
+   * @author xiayan
+   * @param date 返回条数
+   * @return
+   */
+  public List<com.shoestp.mains.views.DataView.metaData.PageRankingView> getPageRanking(
+      Integer limit) {
+    return googleBrowseInfoDao.queryPageRanking(limit);
   }
 }

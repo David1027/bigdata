@@ -5,14 +5,14 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.springframework.stereotype.Repository;
+
 import com.querydsl.core.Tuple;
 import com.shoestp.mains.dao.BaseDao;
 import com.shoestp.mains.entitys.DataView.flow.DataViewFlowPage;
 import com.shoestp.mains.entitys.DataView.flow.QDataViewFlowPage;
 import com.shoestp.mains.enums.flow.AccessTypeEnum;
 import com.shoestp.mains.repositorys.DataView.flow.FlowPageRepository;
-
-import org.springframework.stereotype.Repository;
 
 /**
  * @description: 流量-数据层
@@ -51,19 +51,19 @@ public class FlowPageDao extends BaseDao<DataViewFlowPage> {
   public List<Tuple> findAllByAccess(AccessTypeEnum access, Date start, Date end) {
     QDataViewFlowPage qDataViewFlowPage = QDataViewFlowPage.dataViewFlowPage;
     return getQuery()
-            .select(
-                    qDataViewFlowPage.accessType.stringValue(),
-                    qDataViewFlowPage.visitorCount.sum(),
-                    qDataViewFlowPage.viewCount.sum(),
-                    qDataViewFlowPage.clickRate.avg(),
-                    qDataViewFlowPage.jumpRate.avg(),
-                    qDataViewFlowPage.averageStayTime.avg())
-            .from(qDataViewFlowPage)
-            .where(qDataViewFlowPage.accessType.eq(access))
-            .where(qDataViewFlowPage.createTime.between(start, end))
-            .groupBy(qDataViewFlowPage.accessType)
-            .fetchResults()
-            .getResults();
+        .select(
+            qDataViewFlowPage.accessType.stringValue(),
+            qDataViewFlowPage.visitorCount.sum(),
+            qDataViewFlowPage.viewCount.sum(),
+            qDataViewFlowPage.clickRate.avg(),
+            qDataViewFlowPage.jumpRate.avg(),
+            qDataViewFlowPage.averageStayTime.avg())
+        .from(qDataViewFlowPage)
+        .where(qDataViewFlowPage.accessType.eq(access))
+        .where(qDataViewFlowPage.createTime.between(start, end))
+        .groupBy(qDataViewFlowPage.accessType)
+        .fetchResults()
+        .getResults();
   }
 
   /**
@@ -116,5 +116,9 @@ public class FlowPageDao extends BaseDao<DataViewFlowPage> {
   @Override
   public int removeByIds(Integer... id) {
     return 0;
+  }
+
+  public void save(DataViewFlowPage flowPage) {
+    flowPageRepository.save(flowPage);
   }
 }

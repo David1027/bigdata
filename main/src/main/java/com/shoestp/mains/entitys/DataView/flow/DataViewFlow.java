@@ -2,7 +2,13 @@ package com.shoestp.mains.entitys.DataView.flow;
 
 import java.util.Date;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 import com.shoestp.mains.enums.flow.DeviceTypeEnum;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
@@ -33,6 +39,9 @@ public class DataViewFlow {
   /** 访客数 */
   @Column(name = "visitor_count")
   private Integer visitorCount;
+  /** 询盘数 */
+  @Column(name = "inquiry_count")
+  private Integer inquiryCount;
   /** 创建时间 */
   @Column(name = "create_time")
   private Date createTime;

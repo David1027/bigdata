@@ -2,7 +2,13 @@ package com.shoestp.mains.entitys.DataView.flow;
 
 import java.util.Date;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 import com.shoestp.mains.enums.flow.AccessTypeEnum;
 
@@ -18,7 +24,7 @@ import lombok.Data;
 @Table(name = "data_view_flow_page")
 public class DataViewFlowPage {
   @Id @GeneratedValue private Integer id;
-  /** 页面类型：INDEX-首页, DETAIL-商品详情页, SEARCH-搜索结果页, SVS-SVS专题页, CATEGORY-商品分类页, OTHER-其他页 */
+
   @Enumerated(EnumType.STRING)
   @Column(name = "access_type")
   private AccessTypeEnum accessType;

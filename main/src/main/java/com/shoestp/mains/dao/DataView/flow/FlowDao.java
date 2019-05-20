@@ -6,9 +6,11 @@ import java.util.Optional;
 
 import javax.annotation.Resource;
 
+import jdk.nashorn.internal.objects.annotations.Where;
 import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.Tuple;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.shoestp.mains.dao.BaseDao;
 import com.shoestp.mains.entitys.DataView.flow.DataViewFlow;
 import com.shoestp.mains.entitys.DataView.flow.QDataViewFlow;
@@ -116,7 +118,6 @@ public class FlowDao extends BaseDao<DataViewFlow> {
    * 根据当天时间，来源类型，来源渠道分组获取访客数
    *
    * @author: lingjian @Date: 2019/5/14 14:28
-   * @param source
    * @param start
    * @param end
    * @return
@@ -124,7 +125,10 @@ public class FlowDao extends BaseDao<DataViewFlow> {
   public List<Tuple> findAllBySourcePage(SourceTypeEnum source, Date start, Date end) {
     QDataViewFlow dataViewFlow = QDataViewFlow.dataViewFlow;
     return getQuery()
-        .select(dataViewFlow.sourcePage.stringValue(), dataViewFlow.visitorCount.sum())
+        .select(
+            dataViewFlow.sourceType.stringValue(),
+            dataViewFlow.sourcePage.stringValue(),
+            dataViewFlow.visitorCount.sum())
         .from(dataViewFlow)
         .where(dataViewFlow.sourceType.eq(source))
         .where(dataViewFlow.createTime.between(start, end))

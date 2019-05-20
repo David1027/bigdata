@@ -8,11 +8,13 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Projections;
 import com.shoestp.mains.dao.BaseDao;
 import com.shoestp.mains.entitys.DataView.flow.DataViewFlowPage;
 import com.shoestp.mains.entitys.DataView.flow.QDataViewFlowPage;
 import com.shoestp.mains.enums.flow.AccessTypeEnum;
 import com.shoestp.mains.repositorys.DataView.flow.FlowPageRepository;
+import com.shoestp.mains.views.DataView.flow.PageViewObject;
 
 /**
  * @description: 流量-数据层
@@ -24,30 +26,30 @@ public class FlowPageDao extends BaseDao<DataViewFlowPage> {
   @Resource private FlowPageRepository flowPageRepository;
 
   /**
-   * 根据页面类型，当前时间获取数据记录
+   * 根据时间获取总访客数
    *
-   * @author: lingjian @Date: 2019/5/14 16:28
+   * @author: lingjian @Date: 2019/5/17 11:40
    * @param start
    * @param end
    * @return
    */
-  public List<Tuple> findAllByAccessPage(Date start, Date end) {
+  public Integer findAllByAccessTotal(Date start, Date end) {
     QDataViewFlowPage qDataViewFlowPage = QDataViewFlowPage.dataViewFlowPage;
     return getQuery()
-        .select(
-            qDataViewFlowPage.accessType.stringValue(),
-            qDataViewFlowPage.visitorCount.sum(),
-            qDataViewFlowPage.viewCount.sum(),
-            qDataViewFlowPage.clickRate.avg(),
-            qDataViewFlowPage.jumpRate.avg(),
-            qDataViewFlowPage.averageStayTime.avg())
+        .select(qDataViewFlowPage.visitorCount.sum())
         .from(qDataViewFlowPage)
         .where(qDataViewFlowPage.createTime.between(start, end))
-        .groupBy(qDataViewFlowPage.accessType)
-        .fetchResults()
-        .getResults();
+        .fetchFirst();
   }
 
+  /**
+   * 根据页面类型，当前时间获取访客数
+   *
+   * @param access
+   * @param start
+   * @param end
+   * @return
+   */
   public List<Tuple> findAllByAccess(AccessTypeEnum access, Date start, Date end) {
     QDataViewFlowPage qDataViewFlowPage = QDataViewFlowPage.dataViewFlowPage;
     return getQuery()
@@ -55,6 +57,8 @@ public class FlowPageDao extends BaseDao<DataViewFlowPage> {
             qDataViewFlowPage.accessType.stringValue(),
             qDataViewFlowPage.visitorCount.sum(),
             qDataViewFlowPage.viewCount.sum(),
+            qDataViewFlowPage.clickCount.sum(),
+            qDataViewFlowPage.clickNumber.sum(),
             qDataViewFlowPage.clickRate.avg(),
             qDataViewFlowPage.jumpRate.avg(),
             qDataViewFlowPage.averageStayTime.avg())
@@ -66,8 +70,23 @@ public class FlowPageDao extends BaseDao<DataViewFlowPage> {
         .getResults();
   }
 
+  public PageViewObject findAllByCreateTimeObject(Date start, Date end) {
+    QDataViewFlowPage qDataViewFlowPage = QDataViewFlowPage.dataViewFlowPage;
+    return getQuery()
+        .select(
+            Projections.bean(
+                PageViewObject.class,
+                qDataViewFlowPage.visitorCount.sum().as("visitorCount"),
+                qDataViewFlowPage.viewCount.sum().as("viewCount"),
+                qDataViewFlowPage.jumpRate.avg().as("jumpRate"),
+                qDataViewFlowPage.averageStayTime.avg().as("averageStayTime")))
+        .from(qDataViewFlowPage)
+        .where(qDataViewFlowPage.createTime.between(start, end))
+        .fetchFirst();
+  }
+
   /**
-   * 根据时间获取跳失率，访客数，浏览量，平均停留时长
+   * 根据时间获取跳失率，访客数，浏览量，平均停留时长,返回集合
    *
    * @author: lingjian @Date: 2019/5/14 16:47
    * @param start

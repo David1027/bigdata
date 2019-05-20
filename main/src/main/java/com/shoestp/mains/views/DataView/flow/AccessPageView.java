@@ -5,7 +5,7 @@ import javax.persistence.Column;
 import lombok.Data;
 
 /**
- * @description: 页面分析前端展示类
+ * @description: 页面分析时段分布前端展示类
  * @author: lingjian
  * @Date: 2019/5/14 15:35
  */
@@ -17,6 +17,10 @@ public class AccessPageView {
   private Integer visitorCount;
   /** 浏览量 */
   private Integer viewCount;
+  /** 点击次数 */
+  private Integer clickCount;
+  /** 点击人数 */
+  private Integer clickNumber;
   /** 点击率 */
   private Double clickRate;
   /** 跳失率 */

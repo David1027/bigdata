@@ -47,6 +47,8 @@ public final class DateTimeUtil {
   /** 24小时组成的横坐标名称 */
   public static final String HOUR = "hour";
 
+  public static final String EVERY_DAY = "everyday";
+
   /** 数据库存储的date类型字段转成JAVA的String类型为2006-06-11 03:35:13.0，需要去掉后面的.0 */
   private static final String DATE_STRING_EXTRA = ".0";
 
@@ -72,21 +74,6 @@ public final class DateTimeUtil {
     }
 
     return dateStr;
-  }
-
-  /**
-   * 将date型日期转换为想要的字符格式 <一句话功能简述> <功能详细描述>
-   *
-   * @param date date日期
-   * @param dateFormat 日期格式：如yyyy-MM-dd HH:mm:ss
-   * @return String
-   */
-  public static String formatDateToString(Date date, String dateFormat) {
-    if (date == null) {
-      return "";
-    }
-    SimpleDateFormat format = new SimpleDateFormat(dateFormat);
-    return format.format(date);
   }
 
   /**
@@ -208,6 +195,21 @@ public final class DateTimeUtil {
   }
 
   /** =================================大数据使用中================================= */
+
+  /**
+   * 将date型日期转换为想要的字符格式 <一句话功能简述> <功能详细描述>
+   *
+   * @param date date日期
+   * @param dateFormat 日期格式：如yyyy-MM-dd HH:mm:ss
+   * @return String
+   */
+  public static String formatDateToString(Date date, String dateFormat) {
+    if (date == null) {
+      return "";
+    }
+    SimpleDateFormat format = new SimpleDateFormat(dateFormat);
+    return format.format(date);
+  }
 
   /**
    * 获取某天0点时间
@@ -344,6 +346,23 @@ public final class DateTimeUtil {
     }
     Map<String, String[]> arrMap = new HashMap<>();
     arrMap.put(HOUR, arr);
+    return arrMap;
+  }
+
+  /**
+   * 获取日期分布的横坐标-num天
+   *
+   * @param num
+   * @param date
+   * @return
+   */
+  public static Map<String, String[]> getDayAbscissa(int num, Date date) {
+    String[] arr = new String[num];
+    for (int i = 0; i < arr.length; i++) {
+      arr[i] = formatDateToString(getDayFromNum(date, num - i - 1), DATE_FARMAT_10);
+    }
+    Map<String, String[]> arrMap = new HashMap<>();
+    arrMap.put(EVERY_DAY, arr);
     return arrMap;
   }
 

@@ -46,53 +46,37 @@ public class InquiryController {
   }
 
   /**
-   * 获取询盘概况中的时段分布(一天24小时)
+   * 获取询盘概况中的时段分布(小时)
    *
    * @author: lingjian @Date: 2019/5/14 11:02
    * @param date
    * @return
    */
-  @PostMapping(value = "/inquirytimebyday")
-  public Object getInquiryTimeByDay(@DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
+  @PostMapping(value = "/inquirytimebyhour")
+  public Object getInquiryTimeByHour(@DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
     logger.debug(date);
     return MessageResult.builder()
         .code(1)
         .msg("Hello")
-        .result(inquiryService.getInquiryTimeByDay(date))
+        .result(inquiryService.getInquiryTimeByHour(date))
         .build();
   }
 
   /**
-   * 获取询盘概况中的时段分布(一周七天)
+   * 获取询盘概况中的时段分布(天)
    *
    * @author: lingjian @Date: 2019/5/16 11:23
    * @param date
    * @return
    */
-  @PostMapping(value = "/inquirytimebyweek")
-  public Object getInquiryTimeByWeek(@DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
+  @PostMapping(value = "/inquirytimebyday")
+  public Object getInquiryTimeByDay(
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date, Integer day) {
     logger.debug(date);
     return MessageResult.builder()
         .code(1)
         .msg("Hello")
-        .result(inquiryService.getInquiryTimeByWeek(date))
-        .build();
-  }
-
-  /**
-   * 获取询盘概况中的时段分布(一个月三十天)
-   *
-   * @author: lingjian @Date: 2019/5/16 11:29
-   * @param date
-   * @return
-   */
-  @PostMapping(value = "/inquirytimebymonth")
-  public Object getInquiryTimeByMonth(@DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
-    logger.debug(date);
-    return MessageResult.builder()
-        .code(1)
-        .msg("Hello")
-        .result(inquiryService.getInquiryTimeByMonth(date))
+        .result(inquiryService.getInquiryTimeByDay(date, day))
         .build();
   }
 
@@ -131,20 +115,40 @@ public class InquiryController {
   }
 
   /**
-   * 根据询盘类型，询盘名称获取实时排行时段分析(一天24小时)
+   * 根据询盘类型，询盘名称获取实时排行时段分析(小时)
    *
    * @author: lingjian @Date: 2019/5/16 14:44
    * @param inquiryType
    * @param inquiryName
    * @return
    */
-  @PostMapping(value = "/inquiryrealrankbyday")
-  public Object getInquiryRealRankByDay(InquiryTypeEnum inquiryType, String inquiryName) {
+  @PostMapping(value = "/inquiryrealrankbyhour")
+  public Object getInquiryRealRankByHour(InquiryTypeEnum inquiryType, String inquiryName) {
     logger.debug(inquiryType);
     return MessageResult.builder()
         .code(1)
         .msg("Hello")
-        .result(inquiryService.getInquiryRealRankByDay(inquiryType, inquiryName))
+        .result(inquiryService.getInquiryRealRankByHour(inquiryType, inquiryName))
+        .build();
+  }
+
+  /**
+   * 根据搜索名称获取询盘搜索
+   *
+   * @author: lingjian @Date: 2019/5/20 9:37
+   * @param inquirySearch
+   * @param date
+   * @param type
+   * @return
+   */
+  @PostMapping(value = "/inquirysearch")
+  public Object getInquirySearch(
+      String inquirySearch, @DateTimeFormat(pattern = "yyyy-MM-dd") Date date, String type) {
+    logger.debug(inquirySearch);
+    return MessageResult.builder()
+        .code(1)
+        .msg("Hello")
+        .result(inquiryService.getInquirySearch(inquirySearch, date, type))
         .build();
   }
 }

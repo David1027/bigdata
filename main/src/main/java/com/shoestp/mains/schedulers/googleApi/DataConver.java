@@ -324,7 +324,7 @@ public class DataConver extends BaseSchedulers {
         DataViewFlowPage flowPage = new DataViewFlowPage();
         Integer viewCount = 0; // 浏览量
         Integer visitorCount = 0; // 访客数
-        double clickCount = 0; // 点击量
+        Integer clickCount = 0; // 点击量
         // double jumpRate = 0; // 跳失率
         // double averageStayTime = 0; // 平均停留时长
         double sessionNum = 0; // 会话人数
@@ -352,7 +352,7 @@ public class DataConver extends BaseSchedulers {
         flowPage.setViewCount(viewCount);
         flowPage.setVisitorCount(visitorCount);
         flowPage.setClickCount(clickCount);
-        flowPage.setClickNumber((double) getClickNum(entry.getKey(), startTime, endTime));
+        flowPage.setClickNumber(getClickNum(entry.getKey(), startTime, endTime));
         flowPage.setJumpRate(
             sessionNum == 0 ? 0 : Double.parseDouble(df.format(bounceRateNum / sessionNum)));
         flowPage.setAverageStayTime(

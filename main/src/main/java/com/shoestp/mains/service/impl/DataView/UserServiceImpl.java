@@ -1,7 +1,6 @@
 package com.shoestp.mains.service.impl.DataView;
 
 import java.util.*;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -15,10 +14,7 @@ import com.shoestp.mains.views.DataView.user.DataViewUserAreaView;
 import com.shoestp.mains.views.DataView.user.DataViewUserSexView;
 import com.shoestp.mains.views.DataView.user.DataViewUserView;
 
-import org.ehcache.impl.internal.classes.commonslang.ArrayUtils;
 import org.springframework.stereotype.Service;
-
-import static com.shoestp.mains.utils.dateUtils.DateTimeUtil.DATE_FARMAT_10;
 
 /**
  * @description: 用户-服务层实现类
@@ -32,6 +28,25 @@ public class UserServiceImpl implements UserService {
   @Resource private UserAreaDao userAreaDao;
 
   /**
+   * 判断是否为空处理
+   *
+   * @author: lingjian @Date: 2019/5/17 9:02
+   * @param user
+   * @return
+   */
+  public DataViewUserView isNullTo(DataViewUserView user) {
+    if (user.getVisitorCount() == null) {
+      user.setVisitorCount(0);
+      user.setNewVisitorCount(0);
+      user.setOldVisitorCount(0);
+      user.setRegisterCount(0);
+      user.setPurchaseCount(0);
+      user.setSupplierCount(0);
+    }
+    return user;
+  }
+
+  /**
    * 获取用户概况
    *
    * @author: lingjian @Date: 2019/5/13 14:50
@@ -41,8 +56,9 @@ public class UserServiceImpl implements UserService {
    */
   @Override
   public DataViewUserView getUserOverview(Date startDate, Date endDate) {
-    return userDao.findUserByCreateTimeBetweenObject(
-        DateTimeUtil.getTimesOfDay(startDate, 0), DateTimeUtil.getTimesOfDay(endDate, 24));
+    return isNullTo(
+        userDao.findUserByCreateTimeBetweenObject(
+            DateTimeUtil.getTimesOfDay(startDate, 0), DateTimeUtil.getTimesOfDay(endDate, 24)));
   }
 
   /**
@@ -54,7 +70,7 @@ public class UserServiceImpl implements UserService {
    * @param end
    * @return
    */
-  public List<DataViewUserView> getUserTimeByHour(Date date, int start, int end) {
+  public List<DataViewUserView> getUserTime(Date date, int start, int end) {
     return userDao
         .findUserByCreateTimeBetween(
             DateTimeUtil.getTimesOfDay(date, start), DateTimeUtil.getTimesOfDay(date, end))
@@ -76,56 +92,13 @@ public class UserServiceImpl implements UserService {
    * @return
    */
   public int[] getEveryHour(Date date) {
-    int[] arr = new int[23];
+    int[] arr = new int[24];
     for (int i = 0; i < arr.length; i++) {
-      if (!getUserTimeByHour(date, i, i + 1).isEmpty()) {
-        arr[i] = getUserTimeByHour(date, i, i + 1).get(0).getVisitorCount().intValue();
+      if (!getUserTime(date, i, i + 1).isEmpty()) {
+        arr[i] = getUserTime(date, i, i + 1).get(0).getVisitorCount();
       }
     }
     return arr;
-  }
-
-  /**
-   * 获取用户概况中的时段分布(一天24小时)
-   *
-   * @author: lingjian @Date: 2019/5/16 9:33
-   * @param date
-   * @return
-   */
-  public Map<String, int[]> getUserTime(Date date) {
-    Map<String, int[]> userTimeMap = new HashMap<>();
-    userTimeMap.put("visitor", getEveryHour(date));
-    return userTimeMap;
-  }
-
-  /**
-   * 获取用户概况中的时段分布的横坐标-24小时
-   *
-   * @author: lingjian @Date: 2019/5/16 9:34
-   * @return
-   */
-  public Map<String, String[]> getHourAbscissa() {
-    String[] arr = new String[24];
-    for (int i = 0; i < arr.length; i++) {
-      arr[i] = i + 1 + "";
-    }
-    Map<String, String[]> arrMap = new HashMap<>();
-    arrMap.put("hour", arr);
-    return arrMap;
-  }
-
-  /**
-   * 获取用户概况中的时段分布(一天24小时)+小时横坐标
-   *
-   * @author: lingjian @Date: 2019/5/13 15:53
-   * @return Map<String, int[]>
-   */
-  @Override
-  public Map<String, Map> getUserTimeByDay(Date date) {
-    Map<String, Map> userTimeMap = new HashMap<>();
-    userTimeMap.put("abscissa", getHourAbscissa());
-    userTimeMap.put("day", getUserTime(date));
-    return userTimeMap;
   }
 
   /**
@@ -139,34 +112,29 @@ public class UserServiceImpl implements UserService {
   public int[] getEveryDay(int num, Date date) {
     int[] arr = new int[num];
     for (int i = 0; i < arr.length; i++) {
-      if (!getUserTimeByHour(DateTimeUtil.getDayFromNum(date, i), 0, 24).isEmpty()) {
+      if (!getUserTime(DateTimeUtil.getDayFromNum(date, num - i - 1), 0, 24).isEmpty()) {
         arr[i] =
-            getUserTimeByHour(DateTimeUtil.getDayFromNum(date, i), 0, 24)
+            getUserTime(DateTimeUtil.getDayFromNum(date, num - i - 1), 0, 24)
                 .get(0)
-                .getVisitorCount()
-                .intValue();
+                .getVisitorCount();
       }
     }
     return arr;
   }
 
   /**
-   * 获取用户概况中的时段分布的横坐标-num天
+   * 获取用户概况中的时段分布(一天24小时)
    *
-   * @author: lingjian @Date: 2019/5/16 10:20
-   * @param num
+   * @author: lingjian @Date: 2019/5/16 9:33
    * @param date
    * @return
    */
-  public Map<String, String[]> getDayAbscissa(int num, Date date) {
-    String[] arr = new String[num];
-    for (int i = 0; i < arr.length; i++) {
-      arr[i] = DateTimeUtil.formatDateToString(DateTimeUtil.getDayFromNum(date, i), DATE_FARMAT_10);
-    }
-    Map<String, String[]> arrMap = new HashMap<>();
-    arrMap.put("everyday", arr);
-    return arrMap;
+  public Map<String, int[]> getUserTimeHourMap(Date date) {
+    Map<String, int[]> userTimeHourMap = new HashMap<>();
+    userTimeHourMap.put("visitor", getEveryHour(date));
+    return userTimeHourMap;
   }
+
   /**
    * 获取用户概况中的时段分布(num天)
    *
@@ -174,38 +142,37 @@ public class UserServiceImpl implements UserService {
    * @return
    */
   public Map<String, int[]> getUserTimeDayMap(int num, Date date) {
-    Map<String, int[]> userTimeWeekMap = new HashMap<>();
-    userTimeWeekMap.put("visitor", getEveryDay(num, date));
-    return userTimeWeekMap;
+    Map<String, int[]> userTimeDayMap = new HashMap<>();
+    userTimeDayMap.put("visitor", getEveryDay(num, date));
+    return userTimeDayMap;
   }
 
   /**
-   * 根据时间获取用户概况中的时段分布(一周7天)+横坐标(一周)
+   * 获取用户概况中的时段分布(一天24小时)+小时横坐标
+   *
+   * @author: lingjian @Date: 2019/5/13 15:53
+   * @return Map<String, int[]>
+   */
+  @Override
+  public Map<String, Map> getUserTimeByHour(Date date) {
+    Map<String, Map> userTimeMap = new HashMap<>();
+    userTimeMap.put("abscissa", DateTimeUtil.getHourAbscissa(1));
+    userTimeMap.put("hour", getUserTimeHourMap(date));
+    return userTimeMap;
+  }
+
+  /**
+   * 根据时间获取用户概况中的时段分布(天)+日期横坐标
    *
    * @author: lingjian @Date: 2019/5/16 10:13
    * @param date
    * @return
    */
   @Override
-  public Map<String, Map> getUserTimeByWeek(Date date) {
+  public Map<String, Map> getUserTimeByDay(Date date, Integer day) {
     Map<String, Map> userTimeMap = new HashMap<>();
-    userTimeMap.put("abscissa", getDayAbscissa(7, date));
-    userTimeMap.put("week", getUserTimeDayMap(7, date));
-    return userTimeMap;
-  }
-
-  /**
-   * 根据时间获取用户概况中的时段分布(一个月30天)
-   *
-   * @author: lingjian @Date: 2019/5/16 10:40
-   * @param date
-   * @return
-   */
-  @Override
-  public Map<String, Map> getUserTimeByMonth(Date date) {
-    Map<String, Map> userTimeMap = new HashMap<>();
-    userTimeMap.put("abscissa", getDayAbscissa(30, date));
-    userTimeMap.put("week", getUserTimeDayMap(30, date));
+    userTimeMap.put("abscissa", DateTimeUtil.getDayAbscissa(day, date));
+    userTimeMap.put("day", getUserTimeDayMap(day, date));
     return userTimeMap;
   }
 
@@ -226,9 +193,8 @@ public class UserServiceImpl implements UserService {
         .map(
             bean -> {
               DataViewUserSexView dataViewUserSexView = new DataViewUserSexView();
-              dataViewUserSexView.setManSexCount(bean.get(0, Integer.class));
-              dataViewUserSexView.setWomanSexCount(bean.get(1, Integer.class));
-              dataViewUserSexView.setUnknownSexCount(bean.get(2, Integer.class));
+              dataViewUserSexView.setSex(bean.get(0, String.class));
+              dataViewUserSexView.setSexCount(bean.get(1, Integer.class));
               return dataViewUserSexView;
             })
         .collect(Collectors.toList());

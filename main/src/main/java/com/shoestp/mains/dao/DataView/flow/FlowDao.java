@@ -12,8 +12,11 @@ import com.querydsl.core.Tuple;
 import com.shoestp.mains.dao.BaseDao;
 import com.shoestp.mains.entitys.DataView.flow.DataViewFlow;
 import com.shoestp.mains.entitys.DataView.flow.QDataViewFlow;
+import com.shoestp.mains.entitys.DataView.inquiry.DataViewInquiryRank;
+import com.shoestp.mains.entitys.DataView.inquiry.QDataViewInquiryRank;
 import com.shoestp.mains.enums.flow.DeviceTypeEnum;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
+import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
 import com.shoestp.mains.repositorys.DataView.flow.FlowRepository;
 
 /**
@@ -124,6 +127,30 @@ public class FlowDao extends BaseDao<DataViewFlow> {
         .select(dataViewFlow.sourcePage.stringValue(), dataViewFlow.visitorCount.sum())
         .from(dataViewFlow)
         .where(dataViewFlow.sourceType.eq(source))
+        .where(dataViewFlow.createTime.between(start, end))
+        .groupBy(dataViewFlow.sourcePage)
+        .fetchResults()
+        .getResults();
+  }
+
+  /**
+   * 根据来源类型，来源渠道，时间，获取来源渠道的访客数
+   *
+   * @author: lingjian @Date: 2019/5/17 16:24
+   * @param sourceType
+   * @param sourcePage
+   * @param start
+   * @param end
+   * @return
+   */
+  public List<Tuple> findAllBySourceTypeAndSourcePage(
+      SourceTypeEnum sourceType, String sourcePage, Date start, Date end) {
+    QDataViewFlow dataViewFlow = QDataViewFlow.dataViewFlow;
+    return getQuery()
+        .select(dataViewFlow.sourcePage.stringValue(), dataViewFlow.visitorCount.sum())
+        .from(dataViewFlow)
+        .where(dataViewFlow.sourceType.eq(sourceType))
+        .where(dataViewFlow.sourcePage.eq(sourcePage))
         .where(dataViewFlow.createTime.between(start, end))
         .groupBy(dataViewFlow.sourcePage)
         .fetchResults()

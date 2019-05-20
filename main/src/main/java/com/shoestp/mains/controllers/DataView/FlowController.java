@@ -6,6 +6,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import com.shoestp.mains.enums.flow.AccessTypeEnum;
+import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.pojo.MessageResult;
 import com.shoestp.mains.service.DataView.FlowService;
 
@@ -82,53 +83,37 @@ public class FlowController {
   }
 
   /**
-   * 获取某一天24个小时每个小时的流量概况
+   * 根据时间获取流量概况(小时)
    *
    * @author: lingjian @Date: 2019/5/14 15:05
    * @param date
    * @return
    */
-  @PostMapping(value = "/flowsourcetypetimebyday")
-  public Object getFlowSourceTypeTimeByDay(@DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
+  @PostMapping(value = "/flowsourcetypetimebyhour")
+  public Object getFlowSourceTypeTimeByHour(@DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
     logger.debug(date);
     return MessageResult.builder()
         .code(1)
         .msg("Hello")
-        .result(flowService.getFlowSourceTypeTimeByDay(date))
+        .result(flowService.getFlowSourceTypeTimeByHour(date))
         .build();
   }
 
   /**
-   * 获取某一天开始的前一周的每一天的流量概况
+   * 根据时间获取流量概况(天)
    *
    * @author: lingjian @Date: 2019/5/15 11:45
    * @param date
    * @return
    */
-  @PostMapping(value = "/flowsourcetypetimebyweek")
-  public Object getFlowSourceTypeTimeByWeek(@DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
+  @PostMapping(value = "/flowsourcetypetimebyday")
+  public Object getFlowSourceTypeTimeByDay(
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date, int num) {
     logger.debug(date);
     return MessageResult.builder()
         .code(1)
         .msg("Hello")
-        .result(flowService.getFlowSourceTypeTimeByWeek(date))
-        .build();
-  }
-
-  /**
-   * 获取某一天开始的一个月三十天每一天的流量概况
-   *
-   * @author: lingjian @Date: 2019/5/15 13:37
-   * @param date
-   * @return
-   */
-  @PostMapping(value = "/flowsourcetypetimebymonth")
-  public Object getFlowSourceTypeTimeByMonth(@DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
-    logger.debug(date);
-    return MessageResult.builder()
-        .code(1)
-        .msg("Hello")
-        .result(flowService.getFlowSourceTypeTimeByMonth(date))
+        .result(flowService.getFlowSourceTypeTimeByDay(num, date))
         .build();
   }
 
@@ -153,6 +138,52 @@ public class FlowController {
   }
 
   /**
+   * 根据流量来源，来源渠道名称，时间，获取来源渠道时段分析(小时)
+   *
+   * @author: lingjian @Date: 2019/5/17 16:22
+   * @param date
+   * @param sourceType
+   * @param sourcePage
+   * @return
+   */
+  @PostMapping(value = "/flowsourcepagebyhour")
+  public Object getFlowSourcePageByHour(
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
+      SourceTypeEnum sourceType,
+      String sourcePage) {
+    logger.debug(date);
+    return MessageResult.builder()
+        .code(1)
+        .msg("Hello")
+        .result(flowService.getFlowSourcePageByHour(date, sourceType, sourcePage))
+        .build();
+  }
+
+  /**
+   * 根据流量来源，来源渠道名称，时间，获取来源渠道时段分析(天)
+   *
+   * @author: lingjian @Date: 2019/5/17 16:29
+   * @param date
+   * @param sourceType
+   * @param sourcePage
+   * @param num
+   * @return
+   */
+  @PostMapping(value = "/flowsourcepagebyday")
+  public Object getFlowSourcePageByDay(
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
+      SourceTypeEnum sourceType,
+      String sourcePage,
+      int num) {
+    logger.debug(date);
+    return MessageResult.builder()
+        .code(1)
+        .msg("Hello")
+        .result(flowService.getFlowSourcePageByDay(num, date, sourceType, sourcePage))
+        .build();
+  }
+
+  /**
    * 根据时间获取页面分析
    *
    * @author: lingjian @Date: 2019/5/14 16:26
@@ -173,59 +204,40 @@ public class FlowController {
   }
 
   /**
-   * 根据时间和页面分类，获取一天24小时每个小时的页面参数
+   * 根据时间和页面分类，获取页面分析时段分析(小时)
    *
    * @author: lingjian @Date: 2019/5/15 15:13
    * @param date
    * @param access
    * @return
    */
-  @PostMapping(value = "/flowpageanalysisbyday")
-  public Object getFlowPageAnalysisByDay(
+  @PostMapping(value = "/flowpageanalysisbyhour")
+  public Object getFlowPageAnalysisByHour(
       @DateTimeFormat(pattern = "yyyy-MM-dd") Date date, AccessTypeEnum access) {
     logger.debug(date);
     return MessageResult.builder()
         .code(1)
         .msg("Hello")
-        .result(flowService.getFlowPageAnalysisByDay(date, access))
+        .result(flowService.getFlowPageAnalysisByHour(date, access))
         .build();
   }
 
   /**
-   * 根据时间和页面，获取一周七天每一天的页面参数
+   * 根据时间和页面分类，获取页面分析时段分析(天)
    *
    * @author: lingjian @Date: 2019/5/15 15:30
    * @param date
    * @param access
    * @return
    */
-  @PostMapping(value = "/flowpageanalysisbyweek")
-  public Object getFlowPageAnalysisByWeek(
-      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date, AccessTypeEnum access) {
+  @PostMapping(value = "/flowpageanalysisbyday")
+  public Object getFlowPageAnalysisByDay(
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date, AccessTypeEnum access, int num) {
     logger.debug(date);
     return MessageResult.builder()
         .code(1)
         .msg("Hello")
-        .result(flowService.getFlowPageAnalysisByWeek(date, access))
-        .build();
-  }
-
-  /**
-   * 根据时间和页面，获取一个月三十天每一天的页面参数
-   *
-   * @author: lingjian @Date: 2019/5/15 15:35
-   * @param date
-   * @param access
-   * @return
-   */
-  @PostMapping(value = "/flowpageanalysisbymonth")
-  public Object getFlowPageAnalysisByMonth(
-      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date, AccessTypeEnum access) {
-    logger.debug(date);
-    return MessageResult.builder()
-        .code(1)
-        .msg("Hello")
-        .result(flowService.getFlowPageAnalysisByMonth(date, access))
+        .result(flowService.getFlowPageAnalysisByDay(num, date, access))
         .build();
   }
 

@@ -1,6 +1,10 @@
 package com.shoestp.mains.views.DataView.user;
 
 import javax.persistence.Column;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+
+import com.shoestp.mains.enums.user.SexEnum;
 
 import lombok.Data;
 
@@ -11,13 +15,8 @@ import lombok.Data;
  */
 @Data
 public class DataViewUserSexView {
-  /** 男性人数 */
-  @Column(name = "man_sex_count")
-  private Integer manSexCount;
-  /** 女性人数 */
-  @Column(name = "woman_sex_count")
-  private Integer womanSexCount;
-  /** 未知人数 */
-  @Column(name = "unknown_sex_count")
-  private Integer unknownSexCount;
+  /** 性别类型：MAN-男，WOMAN-女，UNKNOWN-未知 */
+  private String sex;
+  /** 性别人数 */
+  private Integer sexCount;
 }

@@ -18,8 +18,7 @@ import org.springframework.stereotype.Repository;
 
 /**
  * @description: 用户性别-数据层
- * @author: lingjian
- * @Date: 2019/5/13 15:59
+ * @author: lingjian @Date: 2019/5/13 15:59
  */
 @Repository
 public class UserSexDao extends BaseDao<DataViewUserSex> {
@@ -36,13 +35,13 @@ public class UserSexDao extends BaseDao<DataViewUserSex> {
    */
   public List<Tuple> findUserSexByCreateTimeBetween(Date start, Date end) {
     QDataViewUserSex qDataViewUserSex = QDataViewUserSex.dataViewUserSex;
-    return getQuery().select(
-            qDataViewUserSex.manSexCount.sum(),
-            qDataViewUserSex.womanSexCount.sum(),
-            qDataViewUserSex.unknownSexCount.sum()
-    ).from(qDataViewUserSex).where(qDataViewUserSex.createTime.between(start,
-            end)).fetchResults().getResults();
-
+    return getQuery()
+        .select(qDataViewUserSex.sex.stringValue(), qDataViewUserSex.sexCount.sum())
+        .from(qDataViewUserSex)
+        .where(qDataViewUserSex.createTime.between(start, end))
+        .groupBy(qDataViewUserSex.sex)
+        .fetchResults()
+        .getResults();
   }
 
   @Override

@@ -6,10 +6,12 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Projections;
 import com.shoestp.mains.dao.BaseDao;
 import com.shoestp.mains.entitys.DataView.inquiry.DataViewInquiry;
 import com.shoestp.mains.entitys.DataView.inquiry.QDataViewInquiry;
 import com.shoestp.mains.repositorys.DataView.inquory.InquiryRepository;
+import com.shoestp.mains.views.DataView.inquiry.InquiryView;
 
 import org.springframework.stereotype.Repository;
 
@@ -23,7 +25,7 @@ public class InquiryDao extends BaseDao<DataViewInquiry> {
   @Resource private InquiryRepository inquiryRepository;
 
   /**
-   * 根据时间获取访客数，询盘数，询盘人数
+   * 根据时间获取访客数，询盘数，询盘人数,返回集合
    *
    * @author: lingjian @Date: 2019/5/14 10:10
    * @param start
@@ -44,19 +46,40 @@ public class InquiryDao extends BaseDao<DataViewInquiry> {
   }
 
   /**
+   * 根据时间获取访客数，询盘数，询盘人数,返回对象
+   *
+   * @author: lingjian @Date: 2019/5/17 9:55
+   * @param start
+   * @param end
+   * @return
+   */
+  public InquiryView findAllByCreateTimeObject(Date start, Date end) {
+    QDataViewInquiry qDataViewInquiry = QDataViewInquiry.dataViewInquiry;
+    return getQuery()
+        .select(
+            Projections.bean(
+                InquiryView.class,
+                qDataViewInquiry.visitorCount.sum().as("visitorCount"),
+                qDataViewInquiry.inquiryNumber.sum().as("inquiryNumber"),
+                qDataViewInquiry.inquiryCount.sum().as("inquiryCount")))
+        .from(qDataViewInquiry)
+        .where(qDataViewInquiry.createTime.between(start, end))
+        .fetchFirst();
+  }
+
+  /**
    * 获取所有的总询盘数
    *
    * @author: lingjian @Date: 2019/5/14 10:10
    * @return
    */
-  public Integer findAllByInquiry() {
+  public List<Integer> findAllByInquiry() {
     QDataViewInquiry qDataViewInquiry = QDataViewInquiry.dataViewInquiry;
     return getQuery()
         .select(qDataViewInquiry.inquiryCount.sum().as("totalInquiryCount"))
         .from(qDataViewInquiry)
         .fetchResults()
-        .getResults()
-        .get(0);
+        .getResults();
   }
 
   @Override

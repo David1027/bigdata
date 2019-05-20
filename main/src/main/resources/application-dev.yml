@@ -1,7 +1,7 @@
 server:
   address: 0.0.0.0
-  #  http2:
-  #    enabled: true
+  http2:
+    enabled: true
   port: 80
 spring:
   cache:
@@ -33,6 +33,9 @@ spring:
   messages: lang
   quartz:
     job-store-type: memory
+application:
+  errorCode-path:
+    com.shoestp.mains.utils.errorCode.langs
 rpc:
   host: 0.0.0.0
   port: 888

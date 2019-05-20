@@ -1,9 +1,9 @@
 package com.shoestp.mains.utils.errorCode;
 
-import com.shoestp.mains.utils.errorCode.langs.BaseLangs;
 import javax.annotation.Resource;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+import org.start2do.utils.classUtils.ClassUtils;
 
 @Component
 public class ErrorCodeUtils {
@@ -11,8 +11,11 @@ public class ErrorCodeUtils {
 
   @Resource private Environment environment;
 
-  public String getResultMessage(int code, String lang) {
-//      environment.getProperty()
-      return null;
+  public String getResultMessage(int code) {
+    for (Class<?> packageClass :
+        ClassUtils.getPackageClass(environment.getProperty("application.errorCode-path"), null)) {
+      if (BaseLangs.class.isAssignableFrom(packageClass)) {}
+    }
+    return null;
   }
 }

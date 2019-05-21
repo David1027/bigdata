@@ -85,7 +85,10 @@ public class FlowDao extends BaseDao<DataViewFlow> {
   public List<Tuple> findAllBySourceType(Date start, Date end) {
     QDataViewFlow dataViewFlow = QDataViewFlow.dataViewFlow;
     return getQuery()
-        .select(dataViewFlow.sourceType.stringValue(), dataViewFlow.visitorCount.sum())
+        .select(
+            dataViewFlow.sourceType.stringValue(),
+            dataViewFlow.visitorCount.sum(),
+            dataViewFlow.inquiryCount.sum())
         .from(dataViewFlow)
         .where(dataViewFlow.createTime.between(start, end))
         .groupBy(dataViewFlow.sourceType)
@@ -127,7 +130,8 @@ public class FlowDao extends BaseDao<DataViewFlow> {
     return getQuery()
         .select(
             dataViewFlow.sourcePage.stringValue(),
-            dataViewFlow.visitorCount.sum())
+            dataViewFlow.visitorCount.sum(),
+            dataViewFlow.inquiryCount.sum())
         .from(dataViewFlow)
         .where(dataViewFlow.sourceType.eq(source))
         .where(dataViewFlow.createTime.between(start, end))

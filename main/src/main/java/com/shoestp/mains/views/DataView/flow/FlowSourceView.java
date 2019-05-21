@@ -17,4 +17,6 @@ public class FlowSourceView {
   private String sourceType;
   /** 访客数 */
   private Integer visitorCount;
+  /** 询盘数 */
+  private Integer inquiryCount;
 }

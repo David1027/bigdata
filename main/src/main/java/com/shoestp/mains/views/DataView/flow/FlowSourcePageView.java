@@ -8,10 +8,10 @@ import lombok.Data;
  */
 @Data
 public class FlowSourcePageView {
-//  /** 流量类型 */
-//  private String sourceType;
   /** 来源渠道 */
   private String sourcePage;
   /** 访客数 */
   private Integer visitorCount;
+  /** 询盘数 */
+  private Integer inquiryCount;
 }

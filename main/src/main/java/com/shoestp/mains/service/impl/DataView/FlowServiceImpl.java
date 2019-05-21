@@ -103,6 +103,7 @@ public class FlowServiceImpl implements FlowService {
               FlowSourceView flowSourceView = new FlowSourceView();
               flowSourceView.setSourceType(bean.get(0, String.class));
               flowSourceView.setVisitorCount(bean.get(1, Integer.class));
+              flowSourceView.setInquiryCount(bean.get(2, Integer.class));
               return flowSourceView;
             })
         .collect(Collectors.toList());
@@ -298,6 +299,7 @@ public class FlowServiceImpl implements FlowService {
                     FlowSourcePageView flowSourcePageView = new FlowSourcePageView();
                     flowSourcePageView.setSourcePage(bean.get(0, String.class));
                     flowSourcePageView.setVisitorCount(bean.get(1, Integer.class));
+                    flowSourcePageView.setInquiryCount(bean.get(2, Integer.class));
                     return flowSourcePageView;
                   })
               .collect(Collectors.toList());

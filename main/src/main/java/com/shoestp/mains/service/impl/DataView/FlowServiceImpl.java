@@ -1,5 +1,6 @@
 package com.shoestp.mains.service.impl.DataView;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -15,6 +16,7 @@ import com.shoestp.mains.enums.flow.AccessTypeEnum;
 import com.shoestp.mains.enums.flow.DeviceTypeEnum;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.service.DataView.FlowService;
+import com.shoestp.mains.utils.dateUtils.CustomDoubleSerialize;
 import com.shoestp.mains.utils.dateUtils.DateTimeUtil;
 import com.shoestp.mains.utils.dateUtils.KeyValueViewUtil;
 import com.shoestp.mains.views.DataView.flow.*;
@@ -513,7 +515,9 @@ public class FlowServiceImpl implements FlowService {
                           DateTimeUtil.getTimesOfDay(endDate, 24));
                   accessView.setAccessType(bean.get(0, String.class));
                   accessView.setVisitorCount(bean.get(1, Integer.class));
-                  accessView.setVisitorRate(getCompareRate(bean.get(1, Integer.class), i));
+                  accessView.setVisitorRate(
+                      CustomDoubleSerialize.setDouble(
+                          getCompareRate(bean.get(1, Integer.class), i)));
                   return accessView;
                 })
             .collect(Collectors.toList());
@@ -561,9 +565,12 @@ public class FlowServiceImpl implements FlowService {
               accessPageView.setViewCount(bean.get(2, Integer.class));
               accessPageView.setClickCount(bean.get(3, Integer.class));
               accessPageView.setClickNumber(bean.get(4, Integer.class));
-              accessPageView.setClickRate(bean.get(5, Double.class));
-              accessPageView.setJumpRate(bean.get(6, Double.class));
-              accessPageView.setAverageStayTime(bean.get(7, Double.class));
+              accessPageView.setClickRate(
+                  CustomDoubleSerialize.setDouble(bean.get(5, Double.class)));
+              accessPageView.setJumpRate(
+                  CustomDoubleSerialize.setDouble(bean.get(6, Double.class)));
+              accessPageView.setAverageStayTime(
+                  CustomDoubleSerialize.setDouble(bean.get(7, Double.class)));
               return accessPageView;
             })
         .collect(Collectors.toList());
@@ -899,10 +906,12 @@ public class FlowServiceImpl implements FlowService {
               PageView pageView = new PageView();
               if (bean.get(0, Integer.class) != null && bean.get(1, Integer.class) != null) {
                 pageView.setViewAvgCount(
-                    getCompare(bean.get(0, Integer.class), bean.get(1, Integer.class)));
+                    CustomDoubleSerialize.setDouble(
+                        getCompare(bean.get(0, Integer.class), bean.get(1, Integer.class))));
               }
-              pageView.setJumpRate(bean.get(2, Double.class));
-              pageView.setAverageStayTime(bean.get(3, Double.class));
+              pageView.setJumpRate(CustomDoubleSerialize.setDouble(bean.get(2, Double.class)));
+              pageView.setAverageStayTime(
+                  CustomDoubleSerialize.setDouble(bean.get(3, Double.class)));
               return pageView;
             })
         .collect(Collectors.toList());
@@ -919,20 +928,20 @@ public class FlowServiceImpl implements FlowService {
   public double[] getEveryPage(int num, Date date, String parameter) {
     double[] arr = new double[num];
     for (int i = 0; i < arr.length; i++) {
-      if (!getFlowPageParameter(DateTimeUtil.getDayFromNum(date, num - i - 1)).isEmpty()
-          && "viewAvgCount".equals(parameter)) {
+      if ("viewAvgCount".equals(parameter)
+          && !getFlowPageParameter(DateTimeUtil.getDayFromNum(date, num - i - 1)).isEmpty()) {
         arr[i] =
             getFlowPageParameter(DateTimeUtil.getDayFromNum(date, num - i - 1))
                 .get(0)
                 .getViewAvgCount();
-      } else if (!getFlowPageParameter(DateTimeUtil.getDayFromNum(date, num - i - 1)).isEmpty()
-          && "jumpRate".equals(parameter)) {
+      } else if ("jumpRate".equals(parameter)
+          && !getFlowPageParameter(DateTimeUtil.getDayFromNum(date, num - i - 1)).isEmpty()) {
         arr[i] =
             getFlowPageParameter(DateTimeUtil.getDayFromNum(date, num - i - 1))
                 .get(0)
                 .getJumpRate();
-      } else if (!getFlowPageParameter(DateTimeUtil.getDayFromNum(date, num - i - 1)).isEmpty()
-          && "averageStayTime".equals(parameter)) {
+      } else if ("averageStayTime".equals(parameter)
+          && !getFlowPageParameter(DateTimeUtil.getDayFromNum(date, num - i - 1)).isEmpty()) {
         arr[i] =
             getFlowPageParameter(DateTimeUtil.getDayFromNum(date, num - i - 1))
                 .get(0)

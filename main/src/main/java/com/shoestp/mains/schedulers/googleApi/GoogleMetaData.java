@@ -1,26 +1,5 @@
 package com.shoestp.mains.schedulers.googleApi;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-
-import org.quartz.JobBuilder;
-import org.quartz.JobDetail;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.quartz.SimpleScheduleBuilder;
-import org.quartz.Trigger;
-import org.quartz.TriggerBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-
 import com.google.api.services.analyticsreporting.v4.AnalyticsReporting;
 import com.google.api.services.analyticsreporting.v4.model.ColumnHeader;
 import com.google.api.services.analyticsreporting.v4.model.DateRange;
@@ -38,46 +17,85 @@ import com.shoestp.mains.entitys.MetaData.GoogleBrowseInfo;
 import com.shoestp.mains.entitys.MetaData.GooglePageProperty;
 import com.shoestp.mains.repositorys.metaData.GooglePagePropertyInfoRepository;
 import com.shoestp.mains.schedulers.BaseSchedulers;
-import com.shoestp.mains.views.DataView.metaData.PageRankingView;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.quartz.JobBuilder;
+import org.quartz.JobDetail;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+import org.quartz.SimpleScheduleBuilder;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 
 // @Component
 public class GoogleMetaData extends BaseSchedulers {
+  private static final Logger logger = LogManager.getLogger(GoogleMetaData.class);
 
   public GoogleMetaData() {
     super(
         SimpleScheduleBuilder.simpleSchedule().withIntervalInMinutes(timing).repeatForever(),
         GoogleMetaData.class.getName());
-    // TODO Auto-generated constructor stub
   }
 
   @Autowired private AnalyticsReporting ar;
   @Autowired private GoogleBrowseInfoDao googleBrowseInfoDao;
   @Autowired private GooglePagePropertyInfoRepository googlePagePropertyInfoDao;
 
-  private static int timing = 20; // 定时5分钟
+  /** * 定时5分钟 */
+  private static int timing = 20;
+
   private static List<Dimension> browseDimensionList = new ArrayList<>();
   private static List<Metric> browseMetricList = new ArrayList<>();
   private static List<Metric> pageMetricList = new ArrayList<>();
 
   static {
-    browseDimensionList.add(new Dimension().setName("ga:pagePath")); // 下级目录
-    /*browseDimensionList.add(new Dimension().setName("ga:hostname")); // 域名 */
-    browseDimensionList.add(new Dimension().setName("ga:dateHourMinute")); // 时间
-    browseDimensionList.add(new Dimension().setName("ga:country")); // 访问国家
-    // browseDimensionList.add(new Dimension().setName("ga:region")); // 省份
-    browseDimensionList.add(new Dimension().setName("ga:previousPagePath")); // 上一个访问地址
-    browseDimensionList.add(new Dimension().setName("ga:source")); // 访问源
-    browseDimensionList.add(new Dimension().setName("ga:operatingSystem")); // 系统设备
+    // 下级目录
+    browseDimensionList.add(new Dimension().setName("ga:pagePath"));
+    // 域名
+    /*browseDimensionList.add(new Dimension().setName("ga:hostname")); */
+    // 时间
+    browseDimensionList.add(new Dimension().setName("ga:dateHourMinute"));
+    // 访问国家
+    browseDimensionList.add(new Dimension().setName("ga:country"));
+    // 省份
+    // browseDimensionList.add(new Dimension().setName("ga:region"));
+    // 上一个访问地址
+    browseDimensionList.add(new Dimension().setName("ga:previousPagePath"));
+    // 访问源
+    browseDimensionList.add(new Dimension().setName("ga:source"));
+    // 系统设备
+    browseDimensionList.add(new Dimension().setName("ga:operatingSystem"));
     /*browseDimensionList.add(new Dimension().setName("ga:minute")); // 分钟 */
-    browseMetricList.add(new Metric().setExpression("ga:sessions")); // 会话总数 ---访客数
-    browseMetricList.add(new Metric().setExpression("ga:bounceRate")); // 跳失率
-    browseMetricList.add(new Metric().setExpression("ga:timeOnPage")); // 平均停留时间
-    browseMetricList.add(new Metric().setExpression("ga:uniquePageviews")); // 页面唯一访问数
-    browseMetricList.add(new Metric().setExpression("ga:pageviews")); // 总浏览数
-    pageMetricList.add(new Metric().setExpression("ga:bounceRate")); // 跳失率
-    pageMetricList.add(new Metric().setExpression("ga:pageviews")); // 总浏览数
-    pageMetricList.add(new Metric().setExpression("ga:avgTimeOnPage")); // 平均停留时间
-    // pageMetricList.add(new Metric().setExpression("ga:timeOnPage")); // 会话总数 ---访客数
+    // 会话总数 ---访客数
+    browseMetricList.add(new Metric().setExpression("ga:sessions"));
+    // 跳失率
+    browseMetricList.add(new Metric().setExpression("ga:bounceRate"));
+    // 平均停留时间
+    browseMetricList.add(new Metric().setExpression("ga:timeOnPage"));
+    // 页面唯一访问数
+    browseMetricList.add(new Metric().setExpression("ga:uniquePageviews"));
+    // 总浏览数
+    browseMetricList.add(new Metric().setExpression("ga:pageviews"));
+    // 跳失率
+    pageMetricList.add(new Metric().setExpression("ga:bounceRate"));
+    // 总浏览数
+    pageMetricList.add(new Metric().setExpression("ga:pageviews"));
+    // 平均停留时间
+    pageMetricList.add(new Metric().setExpression("ga:avgTimeOnPage"));
+    // 会话总数 ---访客数
+    // pageMetricList.add(new Metric().setExpression("ga:timeOnPage"));
   }
 
   @Override
@@ -90,15 +108,10 @@ public class GoogleMetaData extends BaseSchedulers {
     // queryData(3, pageMetricList, new ArrayList<>()); // 页面数据
   }
 
-  public void test() {
-    for (PageRankingView pageRankingView : googleBrowseInfoDao.queryPageRanking(10)) {
-      System.out.println(pageRankingView);
-    }
-  }
-
   public void queryData(int queryType, List<Metric> metric, List<Dimension> dimension) {
     Date date = new Date();
-    boolean b = false; // 是否下一小时
+    // 是否下一小时
+    boolean b = false;
     // 获取数据库里最后拉去数据的的日期
     // String filter = "ga:pagePath==/";
     String filter = "ga:hostname=@shoestp.com";
@@ -116,7 +129,7 @@ public class GoogleMetaData extends BaseSchedulers {
       return;
     }
     Integer minute = Integer.parseInt(startDate.format(DateTimeFormatter.ofPattern("mm")));
-    if (!startDateString.equals("2018-11-18 00:00:00")) {
+    if (!"2018-11-18 00:00:00".equals(startDateString)) {
       filter +=
           ",ga:dateHourMinute=@" + startDate.format(DateTimeFormatter.ofPattern("yyyyMMddHH"));
       if (minute <= timing) {
@@ -135,21 +148,20 @@ public class GoogleMetaData extends BaseSchedulers {
       System.setProperty("https.proxyPort", String.valueOf(1080));
       DateRange dateRange = new DateRange();
       dateRange.setStartDate(startDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-      /*dateRange.setEndDate("2019-01-15");
-      dateRange.setStartDate("2019-01-16");*/
       dateRange.setEndDate("today");
       List<DimensionFilterClause> dimList = new ArrayList<>();
       DimensionFilterClause dim = new DimensionFilterClause();
-      // dim.set
-
       ReportRequest request =
           new ReportRequest()
               .setViewId("185165418")
               .setPageSize(500000)
               .setDateRanges(Arrays.asList(dateRange))
-              .setMetrics(metric) // 10个
-              .setDimensions(dimension) // 7个
-              .setFiltersExpression(filter); // 过滤
+              // 10个
+              .setMetrics(metric)
+              // 7个
+              .setDimensions(dimension)
+              // 过滤
+              .setFiltersExpression(filter);
 
       ArrayList<ReportRequest> requests = new ArrayList();
       requests.add(request);
@@ -157,15 +169,13 @@ public class GoogleMetaData extends BaseSchedulers {
       GetReportsResponse response = ar.reports().batchGet(getReport).execute();
       for (Report report : response.getReports()) {
         ColumnHeader header = report.getColumnHeader();
-        //                List<String> dimensionHeaders = header.getDimensions();
         List<MetricHeaderEntry> metricHeaders = header.getMetricHeader().getMetricHeaderEntries();
         List<ReportRow> rows = report.getData().getRows();
         if (rows == null) {
-          System.out.println("No data found");
+          logger.debug("No data found");
           return;
         }
-        // System.out.println(rows);
-        System.out.println(rows.size());
+        logger.debug("Google Meta Data Rows {}", rows.size());
         for (ReportRow row : rows) {
           List<String> dimensions = row.getDimensions();
           List<String> values = row.getMetrics().get(0).getValues();
@@ -173,6 +183,7 @@ public class GoogleMetaData extends BaseSchedulers {
         }
       }
     } catch (IOException e) {
+      logger.error(e);
       e.printStackTrace();
     }
   }
@@ -194,7 +205,7 @@ public class GoogleMetaData extends BaseSchedulers {
       try {
         parse = simpleDateFormat.parse(substring);
         parse2 = simpleDateFormat.parse(format);
-      } catch (ParseException e) { // TODO Auto-generated catch block
+      } catch (ParseException e) {
         e.printStackTrace();
       }
     }
@@ -241,7 +252,8 @@ public class GoogleMetaData extends BaseSchedulers {
   public void sleep(Integer time) {
     try {
       Thread.sleep(time);
-    } catch (InterruptedException e) { // TODO Auto-generated catch block
+    } catch (InterruptedException e) {
+      logger.error(e);
       e.printStackTrace();
     }
   }
@@ -272,27 +284,15 @@ public class GoogleMetaData extends BaseSchedulers {
     return defaultDate;
   }
 
-  public static void main(String[] args) {
-    /*  LocalDateTime today = LocalDateTime.now();
-    LocalDateTime plusHours = today.plusHours(1);
-    System.out.println(plusHours.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));*/
-    String s = "2019-9-9213";
-    System.out.println(s.substring(s.length() - 2, s.length()));
-  }
-
   @Bean(name = "GoogleMetaData")
-  public JobDetail JobDetail() {
+  public JobDetail jobDetail() {
     return JobBuilder.newJob(this.getClass()).withIdentity(getJobNmae()).storeDurably().build();
-  }
-
-  public void defaults() {
-    SimpleScheduleBuilder.simpleSchedule().withIntervalInMinutes(5).repeatForever();
   }
 
   @Bean(name = "GoogleMetaDataTrigger")
   public Trigger sampleJobTrigger() {
     return TriggerBuilder.newTrigger()
-        .forJob(JobDetail())
+        .forJob(jobDetail())
         .withIdentity(getJobNmae() + "Trigger")
         .withSchedule(getScheduleBuilder())
         .build();

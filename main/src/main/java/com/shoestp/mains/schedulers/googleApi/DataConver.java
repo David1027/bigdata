@@ -1,5 +1,18 @@
 package com.shoestp.mains.schedulers.googleApi;
 
+import com.shoestp.mains.dao.DataView.flow.FlowDao;
+import com.shoestp.mains.dao.DataView.flow.FlowPageDao;
+import com.shoestp.mains.dao.shoestpData.InquiryInfoDao;
+import com.shoestp.mains.dao.shoestpData.WebVisitInfoDao;
+import com.shoestp.mains.entitys.DataView.flow.DataViewFlow;
+import com.shoestp.mains.entitys.DataView.flow.DataViewFlowPage;
+import com.shoestp.mains.entitys.MetaData.GoogleBrowseInfo;
+import com.shoestp.mains.enums.flow.AccessTypeEnum;
+import com.shoestp.mains.enums.flow.DeviceTypeEnum;
+import com.shoestp.mains.enums.flow.SourceTypeEnum;
+import com.shoestp.mains.repositorys.metaData.GoogleBrowseInfoRepository;
+import com.shoestp.mains.schedulers.BaseSchedulers;
+import com.shoestp.mains.views.DataView.metaData.DataView;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -17,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
-
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
@@ -28,20 +40,6 @@ import org.quartz.TriggerBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
-
-import com.shoestp.mains.dao.DataView.flow.FlowDao;
-import com.shoestp.mains.dao.DataView.flow.FlowPageDao;
-import com.shoestp.mains.dao.shoestpData.InquiryInfoDao;
-import com.shoestp.mains.dao.shoestpData.WebVisitInfoDao;
-import com.shoestp.mains.entitys.DataView.flow.DataViewFlow;
-import com.shoestp.mains.entitys.DataView.flow.DataViewFlowPage;
-import com.shoestp.mains.entitys.MetaData.GoogleBrowseInfo;
-import com.shoestp.mains.enums.flow.AccessTypeEnum;
-import com.shoestp.mains.enums.flow.DeviceTypeEnum;
-import com.shoestp.mains.enums.flow.SourceTypeEnum;
-import com.shoestp.mains.repositorys.metaData.GoogleBrowseInfoRepository;
-import com.shoestp.mains.schedulers.BaseSchedulers;
-import com.shoestp.mains.views.DataView.metaData.DataView;
 
 @Component
 public class DataConver extends BaseSchedulers {
@@ -57,12 +55,14 @@ public class DataConver extends BaseSchedulers {
   @Autowired private WebVisitInfoDao webDao;
   @Autowired private InquiryInfoDao inquiryInfoDao;
 
-  private static int timing = 60; // 定时60分钟
+  // 定时60分钟
+  private static int timing = 60;
   private static List<String> PC =
       Arrays.asList("(not set)", "Chrome OS", "Linux", "Macintosh", "Windows");
   private static List<String> MOBILE = Arrays.asList("Android", "IOS");
 
-  private static Map<String, List<String>> sourcePage = new HashMap<>(); // 来源渠道
+  // 来源渠道
+  private static Map<String, List<String>> sourcePage = new HashMap<>();
 
   static {
     sourcePage.put(

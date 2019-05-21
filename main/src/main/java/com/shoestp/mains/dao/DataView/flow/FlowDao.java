@@ -154,7 +154,10 @@ public class FlowDao extends BaseDao<DataViewFlow> {
       SourceTypeEnum sourceType, String sourcePage, Date start, Date end) {
     QDataViewFlow dataViewFlow = QDataViewFlow.dataViewFlow;
     return getQuery()
-        .select(dataViewFlow.sourcePage.stringValue(), dataViewFlow.visitorCount.sum())
+        .select(
+            dataViewFlow.sourcePage.stringValue(),
+            dataViewFlow.visitorCount.sum(),
+            dataViewFlow.inquiryCount.sum())
         .from(dataViewFlow)
         .where(dataViewFlow.sourceType.eq(sourceType))
         .where(dataViewFlow.sourcePage.eq(sourcePage))

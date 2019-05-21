@@ -349,6 +349,7 @@ public class FlowServiceImpl implements FlowService {
               FlowSourcePageView flowSourcePageView = new FlowSourcePageView();
               flowSourcePageView.setSourcePage(bean.get(0, String.class));
               flowSourcePageView.setVisitorCount(bean.get(1, Integer.class));
+              flowSourcePageView.setInquiryCount(bean.get(2, Integer.class));
               return flowSourcePageView;
             })
         .collect(Collectors.toList());
@@ -363,11 +364,16 @@ public class FlowServiceImpl implements FlowService {
    * @param date
    * @return
    */
-  public int[] getEveryHourBySourcePage(SourceTypeEnum sourceType, String sourcePage, Date date) {
+  public int[] getEveryHourBySourcePage(
+      SourceTypeEnum sourceType, String sourcePage, Date date, String parameter) {
     int[] arr = new int[24];
     for (int i = 0; i < arr.length; i++) {
-      if (!getSourcePage(sourceType, sourcePage, date, i, i + 1).isEmpty()) {
+      if ("visitorCount".equals(parameter)
+          && !getSourcePage(sourceType, sourcePage, date, i, i + 1).isEmpty()) {
         arr[i] = getSourcePage(sourceType, sourcePage, date, i, i + 1).get(0).getVisitorCount();
+      } else if ("inquiryCount".equals(parameter)
+          && !getSourcePage(sourceType, sourcePage, date, i, i + 1).isEmpty()) {
+        arr[i] = getSourcePage(sourceType, sourcePage, date, i, i + 1).get(0).getInquiryCount();
       }
     }
     return arr;
@@ -384,17 +390,27 @@ public class FlowServiceImpl implements FlowService {
    * @return
    */
   public int[] getEveryDayBySourcePage(
-      int num, SourceTypeEnum sourceType, String sourcePage, Date date) {
+      int num, SourceTypeEnum sourceType, String sourcePage, Date date, String parameter) {
     int[] arr = new int[num];
     for (int i = 0; i < arr.length; i++) {
-      if (!getSourcePage(
-              sourceType, sourcePage, DateTimeUtil.getDayFromNum(date, num - i - 1), 0, 24)
-          .isEmpty()) {
+      if ("visitorCount".equals(parameter)
+          && !getSourcePage(
+                  sourceType, sourcePage, DateTimeUtil.getDayFromNum(date, num - i - 1), 0, 24)
+              .isEmpty()) {
         arr[i] =
             getSourcePage(
                     sourceType, sourcePage, DateTimeUtil.getDayFromNum(date, num - i - 1), 0, 24)
                 .get(0)
                 .getVisitorCount();
+      } else if ("inquiryCount".equals(parameter)
+          && !getSourcePage(
+                  sourceType, sourcePage, DateTimeUtil.getDayFromNum(date, num - i - 1), 0, 24)
+              .isEmpty()) {
+        arr[i] =
+            getSourcePage(
+                    sourceType, sourcePage, DateTimeUtil.getDayFromNum(date, num - i - 1), 0, 24)
+                .get(0)
+                .getInquiryCount();
       }
     }
     return arr;
@@ -414,7 +430,12 @@ public class FlowServiceImpl implements FlowService {
     List<KeyValue> keyValues = new ArrayList<>();
     keyValues.add(
         KeyValueViewUtil.getFlowKeyValue(
-            "visitorCount", getEveryHourBySourcePage(sourceType, sourcePage, date)));
+            "visitorCount",
+            getEveryHourBySourcePage(sourceType, sourcePage, date, "visitorCount")));
+    keyValues.add(
+        KeyValueViewUtil.getFlowKeyValue(
+            "inquiryCount",
+            getEveryHourBySourcePage(sourceType, sourcePage, date, "inquiryCount")));
     Map<String, List> sourcePageMap = new HashMap<>();
     sourcePageMap.put("day", keyValues);
     return sourcePageMap;
@@ -435,7 +456,12 @@ public class FlowServiceImpl implements FlowService {
     List<KeyValue> keyValues = new ArrayList<>();
     keyValues.add(
         KeyValueViewUtil.getFlowKeyValue(
-            "visitorCount", getEveryDayBySourcePage(num, sourceType, sourcePage, date)));
+            "visitorCount",
+            getEveryDayBySourcePage(num, sourceType, sourcePage, date, "visitorCount")));
+    keyValues.add(
+        KeyValueViewUtil.getFlowKeyValue(
+            "inquiryCount",
+            getEveryDayBySourcePage(num, sourceType, sourcePage, date, "inquiryCount")));
     Map<String, List> sourcePageMap = new HashMap<>();
     sourcePageMap.put("day", keyValues);
     return sourcePageMap;

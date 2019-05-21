@@ -66,7 +66,6 @@ public class FlowPageDao extends BaseDao<DataViewFlowPage> {
         .from(qDataViewFlowPage)
         .where(qDataViewFlowPage.accessType.eq(access))
         .where(qDataViewFlowPage.createTime.between(start, end))
-        .groupBy(qDataViewFlowPage.accessType)
         .fetchResults()
         .getResults();
   }

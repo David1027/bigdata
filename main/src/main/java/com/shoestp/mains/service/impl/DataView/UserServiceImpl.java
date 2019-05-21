@@ -172,7 +172,7 @@ public class UserServiceImpl implements UserService {
   public Map<String, Map> getUserTimeByHour(Date date) {
     Map<String, Map> userTimeMap = new HashMap<>();
     userTimeMap.put("abscissa", DateTimeUtil.getHourAbscissa(1));
-    userTimeMap.put("hour", getUserTimeHourMap(date));
+    userTimeMap.put("day", getUserTimeHourMap(date));
     return userTimeMap;
   }
 

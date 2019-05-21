@@ -298,32 +298,32 @@ public class InquiryServiceImpl implements InquiryService {
       InquiryTypeEnum inquiryType, String inquiryName, Date date, String parameter) {
     int[] arr = new int[24];
     for (int i = 0; i < arr.length; i++) {
-      if (!getInquiryRealRankByHour(inquiryType, inquiryName, date, i, i + 1).isEmpty()
-          && "visitorCount".equals(parameter)) {
+      if ("visitorCount".equals(parameter)
+          && !getInquiryRealRankByHour(inquiryType, inquiryName, date, i, i + 1).isEmpty()) {
         arr[i] =
             getInquiryRealRankByHour(inquiryType, inquiryName, date, i, i + 1)
                 .get(0)
                 .getVisitorCount();
-      } else if (!getInquiryRealRankByHour(inquiryType, inquiryName, date, i, i + 1).isEmpty()
-          && "viewCount".equals(parameter)) {
+      } else if ("viewCount".equals(parameter)
+          && !getInquiryRealRankByHour(inquiryType, inquiryName, date, i, i + 1).isEmpty()) {
         arr[i] =
             getInquiryRealRankByHour(inquiryType, inquiryName, date, i, i + 1)
                 .get(0)
                 .getViewCount();
-      } else if (!getInquiryRealRankByHour(inquiryType, inquiryName, date, i, i + 1).isEmpty()
-          && "inquiryCount".equals(parameter)) {
+      } else if ("inquiryCount".equals(parameter)
+          && !getInquiryRealRankByHour(inquiryType, inquiryName, date, i, i + 1).isEmpty()) {
         arr[i] =
             getInquiryRealRankByHour(inquiryType, inquiryName, date, i, i + 1)
                 .get(0)
                 .getInquiryCount();
-      } else if (!getInquiryRealRankByHour(inquiryType, inquiryName, date, i, i + 1).isEmpty()
-          && "inquiryNumber".equals(parameter)) {
+      } else if ("inquiryNumber".equals(parameter)
+          && !getInquiryRealRankByHour(inquiryType, inquiryName, date, i, i + 1).isEmpty()) {
         arr[i] =
             getInquiryRealRankByHour(inquiryType, inquiryName, date, i, i + 1)
                 .get(0)
                 .getInquiryNumber();
-      } else if (!getInquiryRealRankByHour(inquiryType, inquiryName, date, i, i + 1).isEmpty()
-          && "inquiryAmount".equals(parameter)) {
+      } else if ("inquiryAmount".equals(parameter)
+          && !getInquiryRealRankByHour(inquiryType, inquiryName, date, i, i + 1).isEmpty()) {
         arr[i] =
             getInquiryRealRankByHour(inquiryType, inquiryName, date, i, i + 1)
                 .get(0)
@@ -365,7 +365,7 @@ public class InquiryServiceImpl implements InquiryService {
             "inquiryAmount",
             getEveryHourByInquiryName(inquiryType, inquiryName, date, "inquiryAmount")));
     Map<String, List> inquiryTimeMap = new HashMap<>();
-    inquiryTimeMap.put("hour", keyValue);
+    inquiryTimeMap.put("day", keyValue);
     return inquiryTimeMap;
   }
 
@@ -398,10 +398,7 @@ public class InquiryServiceImpl implements InquiryService {
   public List getInquirySearch(String inquirySearch, String type) {
     return inquiryRankDao
         .findInquiryByInquiryName(
-            inquirySearch,
-            type,
-            DateTimeUtil.getTimesmorning(),
-            DateTimeUtil.getTimesnight())
+            inquirySearch, type, DateTimeUtil.getTimesmorning(), DateTimeUtil.getTimesnight())
         .stream()
         .map(
             bean -> {

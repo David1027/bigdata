@@ -215,7 +215,7 @@ public class FlowServiceImpl implements FlowService {
     keyValues.add(
         KeyValueViewUtil.getFlowKeyValue("OTHER", getEveryHour(date, SourceTypeEnum.OTHER)));
     Map<String, List> flowTimeHourMap = new HashMap<>();
-    flowTimeHourMap.put("hour", keyValues);
+    flowTimeHourMap.put("day", keyValues);
     return flowTimeHourMap;
   }
 
@@ -412,7 +412,7 @@ public class FlowServiceImpl implements FlowService {
         KeyValueViewUtil.getFlowKeyValue(
             "visitorCount", getEveryHourBySourcePage(sourceType, sourcePage, date)));
     Map<String, List> sourcePageMap = new HashMap<>();
-    sourcePageMap.put("hour", keyValues);
+    sourcePageMap.put("day", keyValues);
     return sourcePageMap;
   }
 
@@ -547,34 +547,26 @@ public class FlowServiceImpl implements FlowService {
    * @param end
    * @return
    */
-  public Map<String, List<AccessPageView>> getFlowPageAnalysisByAccess(
-      Date date, int start, int end) {
-    Map<String, List<AccessPageView>> accessPageMap = new HashMap<>();
-    for (AccessTypeEnum access : AccessTypeEnum.values()) {
-      accessPageMap.put(
-          access.name(),
-          flowPageDao
-              .findAllByAccess(
-                  access,
-                  DateTimeUtil.getTimesOfDay(date, start),
-                  DateTimeUtil.getTimesOfDay(date, end))
-              .stream()
-              .map(
-                  bean -> {
-                    AccessPageView accessPageView = new AccessPageView();
-                    accessPageView.setAccessType(bean.get(0, String.class));
-                    accessPageView.setVisitorCount(bean.get(1, Integer.class));
-                    accessPageView.setViewCount(bean.get(2, Integer.class));
-                    accessPageView.setClickCount(bean.get(3, Integer.class));
-                    accessPageView.setClickNumber(bean.get(4, Integer.class));
-                    accessPageView.setClickRate(bean.get(5, Double.class));
-                    accessPageView.setJumpRate(bean.get(6, Double.class));
-                    accessPageView.setAverageStayTime(bean.get(7, Double.class));
-                    return accessPageView;
-                  })
-              .collect(Collectors.toList()));
-    }
-    return accessPageMap;
+  public List<AccessPageView> getFlowPageAnalysisByAccess(
+      AccessTypeEnum access, Date date, int start, int end) {
+    return flowPageDao
+        .findAllByAccess(
+            access, DateTimeUtil.getTimesOfDay(date, start), DateTimeUtil.getTimesOfDay(date, end))
+        .stream()
+        .map(
+            bean -> {
+              AccessPageView accessPageView = new AccessPageView();
+              accessPageView.setAccessType(bean.get(0, String.class));
+              accessPageView.setVisitorCount(bean.get(1, Integer.class));
+              accessPageView.setViewCount(bean.get(2, Integer.class));
+              accessPageView.setClickCount(bean.get(3, Integer.class));
+              accessPageView.setClickNumber(bean.get(4, Integer.class));
+              accessPageView.setClickRate(bean.get(5, Double.class));
+              accessPageView.setJumpRate(bean.get(6, Double.class));
+              accessPageView.setAverageStayTime(bean.get(7, Double.class));
+              return accessPageView;
+            })
+        .collect(Collectors.toList());
   }
 
   /**
@@ -590,55 +582,26 @@ public class FlowServiceImpl implements FlowService {
     double[] arr = new double[24];
     for (int i = 0; i < arr.length; i++) {
       if ("visitorCount".equals(parameter)
-          && !getFlowPageAnalysisByAccess(date, i, i + 1).get(access.toString()).isEmpty()) {
-        arr[i] =
-            getFlowPageAnalysisByAccess(date, i, i + 1)
-                .get(access.toString())
-                .get(0)
-                .getVisitorCount()
-                .doubleValue();
+          && !getFlowPageAnalysisByAccess(access, date, i, i + 1).isEmpty()) {
+        arr[i] = getFlowPageAnalysisByAccess(access, date, i, i + 1).get(0).getVisitorCount();
       } else if ("viewCount".equals(parameter)
-          && !getFlowPageAnalysisByAccess(date, i, i + 1).get(access.toString()).isEmpty()) {
-        arr[i] =
-            getFlowPageAnalysisByAccess(date, i, i + 1)
-                .get(access.toString())
-                .get(0)
-                .getViewCount()
-                .doubleValue();
+          && !getFlowPageAnalysisByAccess(access, date, i, i + 1).isEmpty()) {
+        arr[i] = getFlowPageAnalysisByAccess(access, date, i, i + 1).get(0).getViewCount();
       } else if ("clickCount".equals(parameter)
-          && !getFlowPageAnalysisByAccess(date, i, i + 1).get(access.toString()).isEmpty()) {
-        arr[i] =
-            getFlowPageAnalysisByAccess(date, i, i + 1)
-                .get(access.toString())
-                .get(0)
-                .getClickCount()
-                .doubleValue();
+          && !getFlowPageAnalysisByAccess(access, date, i, i + 1).isEmpty()) {
+        arr[i] = getFlowPageAnalysisByAccess(access, date, i, i + 1).get(0).getClickCount();
       } else if ("clickNumber".equals(parameter)
-          && !getFlowPageAnalysisByAccess(date, i, i + 1).get(access.toString()).isEmpty()) {
-        arr[i] =
-            getFlowPageAnalysisByAccess(date, i, i + 1)
-                .get(access.toString())
-                .get(0)
-                .getClickNumber()
-                .doubleValue();
+          && !getFlowPageAnalysisByAccess(access, date, i, i + 1).isEmpty()) {
+        arr[i] = getFlowPageAnalysisByAccess(access, date, i, i + 1).get(0).getClickNumber();
       } else if ("clickRate".equals(parameter)
-          && !getFlowPageAnalysisByAccess(date, i, i + 1).get(access.toString()).isEmpty()) {
-        arr[i] =
-            getFlowPageAnalysisByAccess(date, i, i + 1)
-                .get(access.toString())
-                .get(0)
-                .getClickRate();
+          && !getFlowPageAnalysisByAccess(access, date, i, i + 1).isEmpty()) {
+        arr[i] = getFlowPageAnalysisByAccess(access, date, i, i + 1).get(0).getClickRate();
       } else if ("jumpRate".equals(parameter)
-          && !getFlowPageAnalysisByAccess(date, i, i + 1).get(access.toString()).isEmpty()) {
-        arr[i] =
-            getFlowPageAnalysisByAccess(date, i, i + 1).get(access.toString()).get(0).getJumpRate();
+          && !getFlowPageAnalysisByAccess(access, date, i, i + 1).isEmpty()) {
+        arr[i] = getFlowPageAnalysisByAccess(access, date, i, i + 1).get(0).getJumpRate();
       } else if ("averageStayTime".equals(parameter)
-          && !getFlowPageAnalysisByAccess(date, i, i + 1).get(access.toString()).isEmpty()) {
-        arr[i] =
-            getFlowPageAnalysisByAccess(date, i, i + 1)
-                .get(access.toString())
-                .get(0)
-                .getAverageStayTime();
+          && !getFlowPageAnalysisByAccess(access, date, i, i + 1).isEmpty()) {
+        arr[i] = getFlowPageAnalysisByAccess(access, date, i, i + 1).get(0).getAverageStayTime();
       }
     }
     return arr;
@@ -658,70 +621,66 @@ public class FlowServiceImpl implements FlowService {
     double[] arr = new double[num];
     for (int i = 0; i < arr.length; i++) {
       if ("visitorCount".equals(parameter)
-          && !getFlowPageAnalysisByAccess(DateTimeUtil.getDayFromNum(date, num - i - 1), 0, 24)
-              .get(access.toString())
+          && !getFlowPageAnalysisByAccess(
+                  access, DateTimeUtil.getDayFromNum(date, num - i - 1), 0, 24)
               .isEmpty()) {
         arr[i] =
-            getFlowPageAnalysisByAccess(DateTimeUtil.getDayFromNum(date, num - i - 1), 0, 24)
-                .get(access.toString())
+            getFlowPageAnalysisByAccess(
+                    access, DateTimeUtil.getDayFromNum(date, num - i - 1), 0, 24)
                 .get(0)
-                .getVisitorCount()
-                .doubleValue();
+                .getVisitorCount();
       } else if ("viewCount".equals(parameter)
-          && !getFlowPageAnalysisByAccess(DateTimeUtil.getDayFromNum(date, num - i - 1), 0, 24)
-              .get(access.toString())
+          && !getFlowPageAnalysisByAccess(
+                  access, DateTimeUtil.getDayFromNum(date, num - i - 1), 0, 24)
               .isEmpty()) {
         arr[i] =
-            getFlowPageAnalysisByAccess(DateTimeUtil.getDayFromNum(date, num - i - 1), 0, 24)
-                .get(access.toString())
+            getFlowPageAnalysisByAccess(
+                    access, DateTimeUtil.getDayFromNum(date, num - i - 1), 0, 24)
                 .get(0)
-                .getViewCount()
-                .doubleValue();
+                .getViewCount();
       } else if ("clickCount".equals(parameter)
-          && !getFlowPageAnalysisByAccess(DateTimeUtil.getDayFromNum(date, num - i - 1), 0, 24)
-              .get(access.toString())
+          && !getFlowPageAnalysisByAccess(
+                  access, DateTimeUtil.getDayFromNum(date, num - i - 1), 0, 24)
               .isEmpty()) {
         arr[i] =
-            getFlowPageAnalysisByAccess(DateTimeUtil.getDayFromNum(date, num - i - 1), 0, 24)
-                .get(access.toString())
+            getFlowPageAnalysisByAccess(
+                    access, DateTimeUtil.getDayFromNum(date, num - i - 1), 0, 24)
                 .get(0)
-                .getClickCount()
-                .doubleValue();
+                .getClickCount();
       } else if ("clickNumber".equals(parameter)
-          && !getFlowPageAnalysisByAccess(DateTimeUtil.getDayFromNum(date, num - i - 1), 0, 24)
-              .get(access.toString())
+          && !getFlowPageAnalysisByAccess(
+                  access, DateTimeUtil.getDayFromNum(date, num - i - 1), 0, 24)
               .isEmpty()) {
         arr[i] =
-            getFlowPageAnalysisByAccess(DateTimeUtil.getDayFromNum(date, num - i - 1), 0, 24)
-                .get(access.toString())
+            getFlowPageAnalysisByAccess(
+                    access, DateTimeUtil.getDayFromNum(date, num - i - 1), 0, 24)
                 .get(0)
-                .getClickNumber()
-                .doubleValue();
+                .getClickNumber();
       } else if ("clickRate".equals(parameter)
-          && !getFlowPageAnalysisByAccess(DateTimeUtil.getDayFromNum(date, num - i - 1), 0, 24)
-              .get(access.toString())
+          && !getFlowPageAnalysisByAccess(
+                  access, DateTimeUtil.getDayFromNum(date, num - i - 1), 0, 24)
               .isEmpty()) {
         arr[i] =
-            getFlowPageAnalysisByAccess(DateTimeUtil.getDayFromNum(date, num - i - 1), 0, 24)
-                .get(access.toString())
+            getFlowPageAnalysisByAccess(
+                    access, DateTimeUtil.getDayFromNum(date, num - i - 1), 0, 24)
                 .get(0)
                 .getClickRate();
       } else if ("jumpRate".equals(parameter)
-          && !getFlowPageAnalysisByAccess(DateTimeUtil.getDayFromNum(date, num - i - 1), 0, 24)
-              .get(access.toString())
+          && !getFlowPageAnalysisByAccess(
+                  access, DateTimeUtil.getDayFromNum(date, num - i - 1), 0, 24)
               .isEmpty()) {
         arr[i] =
-            getFlowPageAnalysisByAccess(DateTimeUtil.getDayFromNum(date, num - i - 1), 0, 24)
-                .get(access.toString())
+            getFlowPageAnalysisByAccess(
+                    access, DateTimeUtil.getDayFromNum(date, num - i - 1), 0, 24)
                 .get(0)
                 .getJumpRate();
       } else if ("averageStayTime".equals(parameter)
-          && !getFlowPageAnalysisByAccess(DateTimeUtil.getDayFromNum(date, num - i - 1), 0, 24)
-              .get(access.toString())
+          && !getFlowPageAnalysisByAccess(
+                  access, DateTimeUtil.getDayFromNum(date, num - i - 1), 0, 24)
               .isEmpty()) {
         arr[i] =
-            getFlowPageAnalysisByAccess(DateTimeUtil.getDayFromNum(date, num - i - 1), 0, 24)
-                .get(access.toString())
+            getFlowPageAnalysisByAccess(
+                    access, DateTimeUtil.getDayFromNum(date, num - i - 1), 0, 24)
                 .get(0)
                 .getAverageStayTime();
       }
@@ -757,7 +716,7 @@ public class FlowServiceImpl implements FlowService {
         KeyValueViewUtil.getFlowKeyValue(
             "averageStayTime", getAccessHour(date, access, "averageStayTime")));
     Map<String, List> analysisHourMap = new HashMap<>();
-    analysisHourMap.put("hour", keyValues);
+    analysisHourMap.put("day", keyValues);
     return analysisHourMap;
   }
 
@@ -825,7 +784,7 @@ public class FlowServiceImpl implements FlowService {
   public Map<String, Map> getFlowPageAnalysisByDay(int num, Date date, AccessTypeEnum access) {
     Map<String, Map> analysisDayMap = new HashMap<>();
     analysisDayMap.put("abscissa", DateTimeUtil.getDayAbscissa(num, date));
-    analysisDayMap.put("hour", getFlowPageAnalysisByDayMap(num, date, access));
+    analysisDayMap.put("analysis", getFlowPageAnalysisByDayMap(num, date, access));
     return analysisDayMap;
   }
 

@@ -353,7 +353,7 @@ public final class DateTimeUtil {
       arr[i] = i * num + num + "";
     }
     Map<String, String[]> arrMap = new HashMap<>();
-    arrMap.put(HOUR, arr);
+    arrMap.put(EVERY_DAY, arr);
     return arrMap;
   }
 

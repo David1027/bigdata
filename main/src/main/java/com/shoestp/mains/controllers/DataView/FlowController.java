@@ -46,18 +46,19 @@ public class FlowController {
    * 根据时间获取设备来源
    *
    * @author: lingjian @Date: 2019/5/13 9:58
-   * @param date
-   * @param type
+   * @param startDate
+   * @param endDate
    * @return
    */
   @PostMapping(value = "/flowdevice")
   public Object getFlowDevice(
-      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,String type) {
-    logger.debug(date);
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
+    logger.debug(startDate+"=="+endDate);
     return MessageResult.builder()
         .code(1)
         .msg("Hello")
-        .result(flowService.getFlowDevice(date, type))
+        .result(flowService.getFlowDevice(startDate, endDate))
         .build();
   }
 
@@ -66,17 +67,16 @@ public class FlowController {
    *
    * @author: lingjian @Date: 2019/5/14 14:11
    * @param date
-   * @param type
+   * @param num
    * @return
    */
   @PostMapping(value = "/flowsourcetype")
-  public Object getFlowSourceType(
-      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,String type) {
+  public Object getFlowSourceType(@DateTimeFormat(pattern = "yyyy-MM-dd") Date date, Integer num) {
     logger.debug(date);
     return MessageResult.builder()
         .code(1)
         .msg("Hello")
-        .result(flowService.getFlowSourceType(date, type))
+        .result(flowService.getFlowSourceType(date, num))
         .build();
   }
 
@@ -124,8 +124,7 @@ public class FlowController {
    * @return
    */
   @PostMapping(value = "/flowsourcepage")
-  public Object getFlowSourcePage(
-      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,String type) {
+  public Object getFlowSourcePage(@DateTimeFormat(pattern = "yyyy-MM-dd") Date date, String type) {
     logger.debug(date);
     return MessageResult.builder()
         .code(1)
@@ -185,17 +184,17 @@ public class FlowController {
    *
    * @author: lingjian @Date: 2019/5/14 16:26
    * @param date
-   * @param type
+   * @param num
    * @return
    */
   @PostMapping(value = "/flowpageanalysis")
   public Object getFlowPageAnalysis(
-      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,String type) {
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date, Integer num) {
     logger.debug(date);
     return MessageResult.builder()
         .code(1)
         .msg("Hello")
-        .result(flowService.getFlowPageAnalysis(date, type))
+        .result(flowService.getFlowPageAnalysis(date, num))
         .build();
   }
 

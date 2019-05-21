@@ -52,7 +52,7 @@ public class InquiryServiceImpl implements InquiryService {
   /**
    * 根据开始时间和结束时间获取询盘概况
    *
-   * @author: lingjian @Date: 2019/5/20 16:35
+   * @author: lingjian @Date: 2019/5/20 16:50
    * @param startDate
    * @param endDate
    * @return
@@ -71,15 +71,13 @@ public class InquiryServiceImpl implements InquiryService {
    *
    * @author: lingjian @Date: 2019/5/14 10:08
    * @param date
-   * @param type
+   * @param num
    * @return
    */
   @Override
-  public InquiryView getInquiryOverview(Date date, String type) {
-    if ("week".equals(type)) {
-      return getInquiryOverviewByDate(DateTimeUtil.getDayFromNum(date, 7), date);
-    } else if ("month".equals(type)) {
-      return getInquiryOverviewByDate(DateTimeUtil.getDayFromNum(date, 30), date);
+  public InquiryView getInquiryOverview(Date date, Integer num) {
+    if (num != null) {
+      return getInquiryOverviewByDate(DateTimeUtil.getDayFromNum(date, num), date);
     } else {
       return getInquiryOverviewByDate(date, date);
     }
@@ -195,10 +193,10 @@ public class InquiryServiceImpl implements InquiryService {
    * @return
    */
   @Override
-  public Map<String, Map> getInquiryTimeByDay(Date date, Integer day) {
+  public Map<String, Map> getInquiryTimeByDay(Date date, Integer num) {
     Map<String, Map> inquiryTimeMap = new HashMap<>();
-    inquiryTimeMap.put("abscissa", DateTimeUtil.getDayAbscissa(day, date));
-    inquiryTimeMap.put("day", getInquiryTimeDayMap(day, date));
+    inquiryTimeMap.put("abscissa", DateTimeUtil.getDayAbscissa(num, date));
+    inquiryTimeMap.put("day", getInquiryTimeDayMap(num, date));
     return inquiryTimeMap;
   }
 

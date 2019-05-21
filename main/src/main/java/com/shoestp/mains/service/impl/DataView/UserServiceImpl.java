@@ -68,11 +68,9 @@ public class UserServiceImpl implements UserService {
    * @return DataViewUserView
    */
   @Override
-  public DataViewUserView getUserOverview(Date date, String type) {
-    if ("week".equals(type)) {
-      return getUserOverviewByDate(DateTimeUtil.getDayFromNum(date, 7), date);
-    } else if ("month".equals(type)) {
-      return getUserOverviewByDate(DateTimeUtil.getDayFromNum(date, 30), date);
+  public DataViewUserView getUserOverview(Date date, Integer num) {
+    if (num != null) {
+      return getUserOverviewByDate(DateTimeUtil.getDayFromNum(date, num), date);
     } else {
       return getUserOverviewByDate(date, date);
     }
@@ -186,10 +184,10 @@ public class UserServiceImpl implements UserService {
    * @return
    */
   @Override
-  public Map<String, Map> getUserTimeByDay(Date date, Integer day) {
+  public Map<String, Map> getUserTimeByDay(Date date, Integer num) {
     Map<String, Map> userTimeMap = new HashMap<>();
-    userTimeMap.put("abscissa", DateTimeUtil.getDayAbscissa(day, date));
-    userTimeMap.put("day", getUserTimeDayMap(day, date));
+    userTimeMap.put("abscissa", DateTimeUtil.getDayAbscissa(num, date));
+    userTimeMap.put("day", getUserTimeDayMap(num, date));
     return userTimeMap;
   }
 
@@ -221,20 +219,26 @@ public class UserServiceImpl implements UserService {
    *
    * @author: lingjian @Date: 2019/5/13 16:13
    * @param date
-   * @param type
+   * @param num
    * @return List<DataViewUserSexView>
    */
   @Override
-  public List<DataViewUserSexView> getUserSex(Date date, String type) {
-    if ("week".equals(type)) {
-      return getUserSexByDate(DateTimeUtil.getDayFromNum(date, 7), date);
-    } else if ("month".equals(type)) {
-      return getUserSexByDate(DateTimeUtil.getDayFromNum(date, 30), date);
+  public List<DataViewUserSexView> getUserSex(Date date, Integer num) {
+    if (num != null) {
+      return getUserSexByDate(DateTimeUtil.getDayFromNum(date, num), date);
     } else {
       return getUserSexByDate(date, date);
     }
   }
 
+  /**
+   * 根据时间获取用户地域分布
+   *
+   * @author: lingjian @Date: 2019/5/21 9:38
+   * @param startDate
+   * @param endDate
+   * @return
+   */
   public List<DataViewUserAreaView> getUserAreaByDate(Date startDate, Date endDate) {
     return userAreaDao
         .findUserAreaByCreateTimeBetween(
@@ -251,21 +255,19 @@ public class UserServiceImpl implements UserService {
   }
 
   /**
-   * 根据时间获取用户地域分布
+   * 根据时间，天数获取用户地域分布
    *
    * @author: lingjian @Date: 2019/5/13 16:35
    * @param date
-   * @param type
+   * @param num
    * @return List<DataViewUserAreaView>
    */
   @Override
-  public List<DataViewUserAreaView> getUserArea(Date date, String type) {
-    if ("week".equals(type)) {
-      return getUserAreaByDate(DateTimeUtil.getDayFromNum(date, 7), date);
-    } else if ("month".equals(type)) {
-      return getUserAreaByDate(DateTimeUtil.getDayFromNum(date, 7), date);
+  public List<DataViewUserAreaView> getUserArea(Date date, Integer num) {
+    if (num != null) {
+      return getUserAreaByDate(DateTimeUtil.getDayFromNum(date, num), date);
     } else {
-      return getUserAreaByDate(DateTimeUtil.getDayFromNum(date, 7), date);
+      return getUserAreaByDate(date, date);
     }
   }
 }

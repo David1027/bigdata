@@ -30,17 +30,17 @@ public class InquiryController {
    *
    * @author: lingjian @Date: 2019/5/14 10:07
    * @param date
-   * @param type
+   * @param num
    * @return
    */
   @PostMapping(value = "/inquiryoverview")
   public Object getInquiryOverview(
-      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,String type) {
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,Integer num) {
     logger.debug(date);
     return MessageResult.builder()
         .code(1)
         .msg("Hello")
-        .result(inquiryService.getInquiryOverview(date, type))
+        .result(inquiryService.getInquiryOverview(date, num))
         .build();
   }
 
@@ -70,12 +70,12 @@ public class InquiryController {
    */
   @PostMapping(value = "/inquirytimebyday")
   public Object getInquiryTimeByDay(
-      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date, Integer day) {
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date, Integer num) {
     logger.debug(date);
     return MessageResult.builder()
         .code(1)
         .msg("Hello")
-        .result(inquiryService.getInquiryTimeByDay(date, day))
+        .result(inquiryService.getInquiryTimeByDay(date, num))
         .build();
   }
 

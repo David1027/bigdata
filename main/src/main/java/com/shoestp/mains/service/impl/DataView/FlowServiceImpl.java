@@ -62,12 +62,13 @@ public class FlowServiceImpl implements FlowService {
   /**
    * 根据时间获取设备来源
    *
-   * @author: lingjian @Date: 2019/5/20 16:34
+   * @author: lingjian @Date: 2019/5/13 9:56
    * @param startDate
    * @param endDate
-   * @return
+   * @return List<FlowDeviceView>
    */
-  public List<FlowDeviceView> getFlowDeviceByDate(Date startDate, Date endDate) {
+  @Override
+  public List<FlowDeviceView> getFlowDevice(Date startDate, Date endDate) {
     return flowDao
         .findAllByDeviceCount(
             DateTimeUtil.getTimesOfDay(startDate, 0), DateTimeUtil.getTimesOfDay(endDate, 24))
@@ -80,25 +81,6 @@ public class FlowServiceImpl implements FlowService {
               return flowDeviceView;
             })
         .collect(Collectors.toList());
-  }
-
-  /**
-   * 根据时间,日期类型获取设备来源
-   *
-   * @author: lingjian @Date: 2019/5/13 9:56
-   * @param date
-   * @param type
-   * @return List<FlowDeviceView>
-   */
-  @Override
-  public List<FlowDeviceView> getFlowDevice(Date date, String type) {
-    if ("week".equals(type)) {
-      return getFlowDeviceByDate(DateTimeUtil.getDayFromNum(date, 7), date);
-    } else if ("month".equals(type)) {
-      return getFlowDeviceByDate(DateTimeUtil.getDayFromNum(date, 30), date);
-    } else {
-      return getFlowDeviceByDate(date, date);
-    }
   }
 
   /**
@@ -125,19 +107,17 @@ public class FlowServiceImpl implements FlowService {
   }
 
   /**
-   * 根据时间,日期类型获取流量来源
+   * 根据时间,天数获取流量来源
    *
    * @author: lingjian @Date: 2019/5/14 14:12
    * @param date
-   * @param type
+   * @param num
    * @return
    */
   @Override
-  public List<FlowSourceView> getFlowSourceType(Date date, String type) {
-    if ("week".equals(type)) {
-      return getFlowSourceTypeByDate(DateTimeUtil.getDayFromNum(date, 7), date);
-    } else if ("month".equals(type)) {
-      return getFlowSourceTypeByDate(DateTimeUtil.getDayFromNum(date, 30), date);
+  public List<FlowSourceView> getFlowSourceType(Date date, Integer num) {
+    if (num != null) {
+      return getFlowSourceTypeByDate(DateTimeUtil.getDayFromNum(date, num), date);
     } else {
       return getFlowSourceTypeByDate(date, date);
     }
@@ -521,32 +501,21 @@ public class FlowServiceImpl implements FlowService {
    */
   public Map<String, List<AccessView>> getFlowPageAnalysisByDate(Date startDate, Date endDate) {
     Map<String, List<AccessView>> accessPageMap = new HashMap<>();
-    for (AccessTypeEnum access : AccessTypeEnum.values()) {
-      if (!access.equals(AccessTypeEnum.OTHER)) {
-        accessPageMap.put(
-            access.name(),
-            flowPageDao
-                .findAllByAccess(
-                    access,
-                    DateTimeUtil.getTimesOfDay(startDate, 0),
-                    DateTimeUtil.getTimesOfDay(endDate, 24))
-                .stream()
-                .map(
-                    bean -> {
-                      AccessView accessView = new AccessView();
-                      accessView.setAccessType(bean.get(0, String.class));
-                      accessView.setVisitorCount(bean.get(1, Integer.class));
-                      Integer accessTotal =
-                          flowPageDao.findAllByAccessTotal(
-                              DateTimeUtil.getTimesOfDay(startDate, 0),
-                              DateTimeUtil.getTimesOfDay(endDate, 24));
-                      accessView.setVisitorRate(
-                          getCompareRate(bean.get(1, Integer.class), accessTotal));
-                      return accessView;
-                    })
-                .collect(Collectors.toList()));
-      }
-    }
+    List<AccessView> list = flowPageDao
+        .findAllByAccessBy(
+            DateTimeUtil.getTimesOfDay(startDate, 0), DateTimeUtil.getTimesOfDay(endDate, 24))
+        .stream()
+        .map(bean -> {
+          AccessView accessView = new AccessView();
+          Integer i = flowPageDao.findAllByAccessTotal(DateTimeUtil.getTimesOfDay(startDate, 0),
+                  DateTimeUtil.getTimesOfDay(endDate, 24));
+          accessView.setAccessType(bean.get(0,String.class));
+          accessView.setVisitorCount(bean.get(1,Integer.class));
+          accessView.setVisitorRate(getCompareRate(bean.get(1,Integer.class),i));
+          return accessView;
+        })
+        .collect(Collectors.toList());
+    accessPageMap.put("access",list);
     return accessPageMap;
   }
 
@@ -555,15 +524,13 @@ public class FlowServiceImpl implements FlowService {
    *
    * @author: lingjian @Date: 2019/5/14 16:26
    * @param date
-   * @param type
+   * @param num
    * @return Map<String, List<AccessView>>
    */
   @Override
-  public Map<String, List<AccessView>> getFlowPageAnalysis(Date date, String type) {
-    if ("week".equals(type)) {
-      return getFlowPageAnalysisByDate(DateTimeUtil.getDayFromNum(date, 7), date);
-    } else if ("month".equals(type)) {
-      return getFlowPageAnalysisByDate(DateTimeUtil.getDayFromNum(date, 30), date);
+  public Map<String, List<AccessView>> getFlowPageAnalysis(Date date, Integer num) {
+    if (num != null) {
+      return getFlowPageAnalysisByDate(DateTimeUtil.getDayFromNum(date, num), date);
     } else {
       return getFlowPageAnalysisByDate(date, date);
     }

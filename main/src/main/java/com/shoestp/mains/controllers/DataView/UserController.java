@@ -33,12 +33,12 @@ public class UserController {
    */
   @PostMapping(value = "/useroverview")
   public Object getUserOverview(
-      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,String type) {
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,Integer num) {
     logger.debug(date);
     return MessageResult.builder()
         .code(1)
         .msg("Hello")
-        .result(userService.getUserOverview(date,type))
+        .result(userService.getUserOverview(date,num))
         .build();
   }
 
@@ -63,9 +63,9 @@ public class UserController {
    * @return
    */
   @PostMapping(value = "/usertimebyday")
-  public Object getUserTimeByDay(@DateTimeFormat(pattern = "yyyy-MM-dd") Date date,Integer day) {
+  public Object getUserTimeByDay(@DateTimeFormat(pattern = "yyyy-MM-dd") Date date,Integer num) {
     logger.debug(date);
-    return MessageResult.builder().code(1).msg("Hello").result(userService.getUserTimeByDay(date,day)).build();
+    return MessageResult.builder().code(1).msg("Hello").result(userService.getUserTimeByDay(date,num)).build();
   }
 
   /**
@@ -73,17 +73,17 @@ public class UserController {
    *
    * @author: lingjian @Date: 2019/5/13 16:12
    * @param date
-   * @param type
+   * @param num
    * @return
    */
   @PostMapping(value = "/usersex")
   public Object getUserSex(
-      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,String type) {
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,Integer num) {
     logger.debug(date);
     return MessageResult.builder()
         .code(1)
         .msg("Hello")
-        .result(userService.getUserSex(date, type))
+        .result(userService.getUserSex(date, num))
         .build();
   }
 
@@ -92,17 +92,17 @@ public class UserController {
    *
    * @author: lingjian @Date: 2019/5/13 16:34
    * @param date
-   * @param type
+   * @param num
    * @return
    */
   @PostMapping(value = "/userarea")
   public Object getUserArea(
-      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,String type) {
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,Integer num) {
     logger.debug(date);
     return MessageResult.builder()
         .code(1)
         .msg("Hello")
-        .result(userService.getUserArea(date, type))
+        .result(userService.getUserArea(date, num))
         .build();
   }
 }

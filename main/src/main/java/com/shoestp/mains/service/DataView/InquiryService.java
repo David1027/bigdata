@@ -73,9 +73,8 @@ public interface InquiryService {
    *
    * @author: lingjian @Date: 2019/5/20 9:35
    * @param inquirySearch
-   * @param date
    * @param type
    * @return
    */
-  List getInquirySearch(String inquirySearch, Date date, String type);
+  List getInquirySearch(String inquirySearch, String type);
 }

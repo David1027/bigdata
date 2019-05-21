@@ -34,8 +34,7 @@ public class InquiryController {
    * @return
    */
   @PostMapping(value = "/inquiryoverview")
-  public Object getInquiryOverview(
-      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,Integer num) {
+  public Object getInquiryOverview(@DateTimeFormat(pattern = "yyyy-MM-dd") Date date, Integer num) {
     logger.debug(date);
     return MessageResult.builder()
         .code(1)
@@ -136,18 +135,16 @@ public class InquiryController {
    *
    * @author: lingjian @Date: 2019/5/20 9:37
    * @param inquirySearch
-   * @param date
    * @param type
    * @return
    */
   @PostMapping(value = "/inquirysearch")
-  public Object getInquirySearch(
-      String inquirySearch, @DateTimeFormat(pattern = "yyyy-MM-dd") Date date, String type) {
+  public Object getInquirySearch(String inquirySearch, String type) {
     logger.debug(inquirySearch);
     return MessageResult.builder()
         .code(1)
         .msg("Hello")
-        .result(inquiryService.getInquirySearch(inquirySearch, date, type))
+        .result(inquiryService.getInquirySearch(inquirySearch, type))
         .build();
   }
 }

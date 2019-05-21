@@ -391,18 +391,17 @@ public class InquiryServiceImpl implements InquiryService {
    *
    * @author: lingjian @Date: 2019/5/20 9:35
    * @param inquirySearch
-   * @param date
    * @param type
    * @return
    */
   @Override
-  public List getInquirySearch(String inquirySearch, Date date, String type) {
+  public List getInquirySearch(String inquirySearch, String type) {
     return inquiryRankDao
         .findInquiryByInquiryName(
             inquirySearch,
             type,
-            DateTimeUtil.getTimesOfDay(date, 0),
-            DateTimeUtil.getTimesOfDay(date, 24))
+            DateTimeUtil.getTimesmorning(),
+            DateTimeUtil.getTimesnight())
         .stream()
         .map(
             bean -> {

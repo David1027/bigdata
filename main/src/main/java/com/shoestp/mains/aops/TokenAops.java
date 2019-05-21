@@ -1,6 +1,6 @@
-package com.shoestp.mains.apos;
+package com.shoestp.mains.aops;
 
-import com.shoestp.mains.apos.pojo.TokenCheck;
+import com.shoestp.mains.aops.pojo.TokenCheck;
 import com.shoestp.mains.pojo.MessageResult;
 import javax.servlet.http.HttpServletRequest;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -30,7 +30,9 @@ public class TokenAops {
             .UA(request.getHeader("user-agent"))
             .IMME(request.getParameter("IMME"))
             .build(),
-        token)) return MessageResult.builder().code(-1).build();
+        token)) {
+      return MessageResult.builder().code(-1).build();
+    }
     return joinPoint.proceed();
   }
 }

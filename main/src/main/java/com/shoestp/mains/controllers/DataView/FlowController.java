@@ -120,16 +120,16 @@ public class FlowController {
    *
    * @author: lingjian @Date: 2019/5/14 14:25
    * @param date
-   * @param type
+   * @param num
    * @return
    */
   @PostMapping(value = "/flowsourcepage")
-  public Object getFlowSourcePage(@DateTimeFormat(pattern = "yyyy-MM-dd") Date date, String type) {
+  public Object getFlowSourcePage(@DateTimeFormat(pattern = "yyyy-MM-dd") Date date, Integer num) {
     logger.debug(date);
     return MessageResult.builder()
         .code(1)
         .msg("Hello")
-        .result(flowService.getFlowSourcePage(date, type))
+        .result(flowService.getFlowSourcePage(date, num))
         .build();
   }
 

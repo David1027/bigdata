@@ -126,7 +126,6 @@ public class FlowDao extends BaseDao<DataViewFlow> {
     QDataViewFlow dataViewFlow = QDataViewFlow.dataViewFlow;
     return getQuery()
         .select(
-            dataViewFlow.sourceType.stringValue(),
             dataViewFlow.sourcePage.stringValue(),
             dataViewFlow.visitorCount.sum())
         .from(dataViewFlow)

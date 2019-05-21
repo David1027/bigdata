@@ -281,10 +281,11 @@ public class FlowServiceImpl implements FlowService {
    * @param endDate
    * @return
    */
-  public List getFlowSourcePageByDate(Date startDate, Date endDate) {
-    List<FlowSourcePageView> list = new ArrayList<>();
+  public List<KeyValue> getFlowSourcePageByDate(
+      Date startDate, Date endDate) {
+    List<KeyValue> list = new ArrayList<>();
     for (SourceTypeEnum source : SourceTypeEnum.values()) {
-      list.addAll(
+      List<FlowSourcePageView> collect =
           flowDao
               .findAllBySourcePage(
                   source,
@@ -294,12 +295,12 @@ public class FlowServiceImpl implements FlowService {
               .map(
                   bean -> {
                     FlowSourcePageView flowSourcePageView = new FlowSourcePageView();
-                    flowSourcePageView.setSourceType(bean.get(0, String.class));
-                    flowSourcePageView.setSourcePage(bean.get(1, String.class));
-                    flowSourcePageView.setVisitorCount(bean.get(2, Integer.class));
+                    flowSourcePageView.setSourcePage(bean.get(0, String.class));
+                    flowSourcePageView.setVisitorCount(bean.get(1, Integer.class));
                     return flowSourcePageView;
                   })
-              .collect(Collectors.toList()));
+              .collect(Collectors.toList());
+      list.add(KeyValueViewUtil.getFlowKeyValue(source.name(),collect));
     }
     return list;
   }
@@ -309,15 +310,13 @@ public class FlowServiceImpl implements FlowService {
    *
    * @author: lingjian @Date: 2019/5/14 14:27
    * @param date
-   * @param type
+   * @param num
    * @return Map<String, List>
    */
   @Override
-  public List getFlowSourcePage(Date date, String type) {
-    if ("week".equals(type)) {
-      return getFlowSourcePageByDate(DateTimeUtil.getDayFromNum(date, 7), date);
-    } else if ("month".equals(type)) {
-      return getFlowSourcePageByDate(DateTimeUtil.getDayFromNum(date, 30), date);
+  public List<KeyValue> getFlowSourcePage(Date date, Integer num) {
+    if (num != null) {
+      return getFlowSourcePageByDate(DateTimeUtil.getDayFromNum(date, num), date);
     } else {
       return getFlowSourcePageByDate(date, date);
     }
@@ -501,21 +500,25 @@ public class FlowServiceImpl implements FlowService {
    */
   public Map<String, List<AccessView>> getFlowPageAnalysisByDate(Date startDate, Date endDate) {
     Map<String, List<AccessView>> accessPageMap = new HashMap<>();
-    List<AccessView> list = flowPageDao
-        .findAllByAccessBy(
-            DateTimeUtil.getTimesOfDay(startDate, 0), DateTimeUtil.getTimesOfDay(endDate, 24))
-        .stream()
-        .map(bean -> {
-          AccessView accessView = new AccessView();
-          Integer i = flowPageDao.findAllByAccessTotal(DateTimeUtil.getTimesOfDay(startDate, 0),
-                  DateTimeUtil.getTimesOfDay(endDate, 24));
-          accessView.setAccessType(bean.get(0,String.class));
-          accessView.setVisitorCount(bean.get(1,Integer.class));
-          accessView.setVisitorRate(getCompareRate(bean.get(1,Integer.class),i));
-          return accessView;
-        })
-        .collect(Collectors.toList());
-    accessPageMap.put("access",list);
+    List<AccessView> list =
+        flowPageDao
+            .findAllByAccessBy(
+                DateTimeUtil.getTimesOfDay(startDate, 0), DateTimeUtil.getTimesOfDay(endDate, 24))
+            .stream()
+            .map(
+                bean -> {
+                  AccessView accessView = new AccessView();
+                  Integer i =
+                      flowPageDao.findAllByAccessTotal(
+                          DateTimeUtil.getTimesOfDay(startDate, 0),
+                          DateTimeUtil.getTimesOfDay(endDate, 24));
+                  accessView.setAccessType(bean.get(0, String.class));
+                  accessView.setVisitorCount(bean.get(1, Integer.class));
+                  accessView.setVisitorRate(getCompareRate(bean.get(1, Integer.class), i));
+                  return accessView;
+                })
+            .collect(Collectors.toList());
+    accessPageMap.put("access", list);
     return accessPageMap;
   }
 

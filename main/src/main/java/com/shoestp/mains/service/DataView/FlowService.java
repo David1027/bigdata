@@ -10,6 +10,7 @@ import com.shoestp.mains.views.DataView.flow.AccessView;
 import com.shoestp.mains.views.DataView.flow.FlowDeviceView;
 import com.shoestp.mains.views.DataView.flow.FlowSourcePageView;
 import com.shoestp.mains.views.DataView.flow.PageParameterView;
+import com.shoestp.mains.views.DataView.utils.KeyValue;
 
 /**
  * @description: 流量-服务层接口
@@ -62,10 +63,10 @@ public interface FlowService {
    *
    * @author: lingjian @Date: 2019/5/14 14:27
    * @param date
-   * @param type
+   * @param num
    * @return Map<String, List>
    */
-  List getFlowSourcePage(Date date, String type);
+  List<KeyValue> getFlowSourcePage(Date date, Integer num);
 
   /**
    * 根据流量来源，来源渠道名称，时间，获取来源渠道时段分析(小时)

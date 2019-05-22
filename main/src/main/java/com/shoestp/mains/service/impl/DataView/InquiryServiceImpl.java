@@ -207,8 +207,9 @@ public class InquiryServiceImpl implements InquiryService {
    * @return List<InquiryRankView>
    */
   @Override
-  public List<InquiryRankView> getInquiryRank(InquiryTypeEnum inquiryType) {
-    return inquiryRankDao.findAllByInquiryType(inquiryType, DateTimeUtil.getTimesmorning()).stream()
+  public List<InquiryRankView> getInquiryRank(InquiryTypeEnum inquiryType, int page, int pageSize) {
+    return inquiryRankDao
+        .findAllByInquiryType(inquiryType, DateTimeUtil.getTimesmorning(), page, pageSize).stream()
         .map(
             bean -> {
               InquiryRankView inquiryRankView = new InquiryRankView();
@@ -231,10 +232,15 @@ public class InquiryServiceImpl implements InquiryService {
    * @return
    */
   @Override
-  public List<InquiryRankView> getInquiryRealRank(InquiryTypeEnum inquiryType) {
+  public List<InquiryRankView> getInquiryRealRank(
+      InquiryTypeEnum inquiryType, int page, int pageSize) {
     return inquiryRankDao
         .findAllByInquiryTypeBetween(
-            inquiryType, DateTimeUtil.getTimesmorning(), DateTimeUtil.getTimesnight())
+            inquiryType,
+            DateTimeUtil.getTimesmorning(),
+            DateTimeUtil.getTimesnight(),
+            page,
+            pageSize)
         .stream()
         .map(
             bean -> {
@@ -394,10 +400,15 @@ public class InquiryServiceImpl implements InquiryService {
    * @return
    */
   @Override
-  public List getInquirySearch(String inquirySearch, String type) {
+  public List getInquirySearch(String inquirySearch, String type, int page, int pageSize) {
     return inquiryRankDao
         .findInquiryByInquiryName(
-            inquirySearch, type, DateTimeUtil.getTimesmorning(), DateTimeUtil.getTimesnight())
+            inquirySearch,
+            type,
+            DateTimeUtil.getTimesmorning(),
+            DateTimeUtil.getTimesnight(),
+            page,
+            pageSize)
         .stream()
         .map(
             bean -> {

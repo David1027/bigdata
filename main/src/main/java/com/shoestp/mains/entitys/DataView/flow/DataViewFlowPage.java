@@ -24,7 +24,7 @@ import lombok.Data;
 @Table(name = "data_view_flow_page")
 public class DataViewFlowPage {
   @Id @GeneratedValue private Integer id;
-
+  /** 页面类型 */
   @Enumerated(EnumType.STRING)
   @Column(name = "access_type")
   private AccessTypeEnum accessType;

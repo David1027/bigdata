@@ -86,29 +86,29 @@ public class InquiryController {
    * @return
    */
   @PostMapping(value = "/inquiryrank")
-  public Object getInquiryRank(InquiryTypeEnum inquiryType) {
+  public Object getInquiryRank(InquiryTypeEnum inquiryType, int page, int pageSize) {
     logger.debug(inquiryType);
     return MessageResult.builder()
         .code(1)
         .msg("Hello")
-        .result(inquiryService.getInquiryRank(inquiryType))
+        .result(inquiryService.getInquiryRank(inquiryType, page, pageSize))
         .build();
   }
 
   /**
-   * 根据询盘类型获取实时询盘排行
+   * 根据询盘类型获取询盘排行(实时)
    *
    * @author: lingjian @Date: 2019/5/16 14:15
    * @param inquiryType
    * @return
    */
   @PostMapping(value = "/inquiryrealrank")
-  public Object getInquiryRealRank(InquiryTypeEnum inquiryType) {
+  public Object getInquiryRealRank(InquiryTypeEnum inquiryType, int page, int pageSize) {
     logger.debug(inquiryType);
     return MessageResult.builder()
         .code(1)
         .msg("Hello")
-        .result(inquiryService.getInquiryRealRank(inquiryType))
+        .result(inquiryService.getInquiryRealRank(inquiryType, page, pageSize))
         .build();
   }
 
@@ -139,12 +139,12 @@ public class InquiryController {
    * @return
    */
   @PostMapping(value = "/inquirysearch")
-  public Object getInquirySearch(String inquirySearch, String type) {
+  public Object getInquirySearch(String inquirySearch, String type, int page, int pageSize) {
     logger.debug(inquirySearch);
     return MessageResult.builder()
         .code(1)
         .msg("Hello")
-        .result(inquiryService.getInquirySearch(inquirySearch, type))
+        .result(inquiryService.getInquirySearch(inquirySearch, type, page, pageSize))
         .build();
   }
 }

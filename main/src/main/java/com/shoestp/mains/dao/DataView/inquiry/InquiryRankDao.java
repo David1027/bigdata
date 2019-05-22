@@ -30,7 +30,8 @@ public class InquiryRankDao extends BaseDao<DataViewInquiryRank> {
    * @param date
    * @return
    */
-  public List<DataViewInquiryRank> findAllByInquiryType(InquiryTypeEnum inquiryType, Date date) {
+  public List<DataViewInquiryRank> findAllByInquiryType(
+      InquiryTypeEnum inquiryType, Date date, int page, int pageSize) {
     QDataViewInquiryRank qDataViewInquiryRank = QDataViewInquiryRank.dataViewInquiryRank;
     return getQuery()
         .select(qDataViewInquiryRank)
@@ -38,7 +39,8 @@ public class InquiryRankDao extends BaseDao<DataViewInquiryRank> {
         .where(qDataViewInquiryRank.createTime.before(date))
         .where(qDataViewInquiryRank.inquiryType.eq(inquiryType))
         .orderBy(qDataViewInquiryRank.inquiryCount.desc())
-        .limit(50)
+        .offset(page)
+        .limit(pageSize)
         .fetchResults()
         .getResults();
   }
@@ -53,7 +55,7 @@ public class InquiryRankDao extends BaseDao<DataViewInquiryRank> {
    * @return
    */
   public List<DataViewInquiryRank> findAllByInquiryTypeBetween(
-      InquiryTypeEnum inquiryType, Date startDate, Date endDate) {
+      InquiryTypeEnum inquiryType, Date startDate, Date endDate, int page, int pageSize) {
     QDataViewInquiryRank qDataViewInquiryRank = QDataViewInquiryRank.dataViewInquiryRank;
     return getQuery()
         .select(qDataViewInquiryRank)
@@ -61,7 +63,8 @@ public class InquiryRankDao extends BaseDao<DataViewInquiryRank> {
         .where(qDataViewInquiryRank.createTime.between(startDate, endDate))
         .where(qDataViewInquiryRank.inquiryType.eq(inquiryType))
         .orderBy(qDataViewInquiryRank.inquiryCount.desc())
-        .limit(50)
+        .offset(page)
+        .limit(pageSize)
         .fetchResults()
         .getResults();
   }
@@ -77,7 +80,7 @@ public class InquiryRankDao extends BaseDao<DataViewInquiryRank> {
    * @return
    */
   public List<DataViewInquiryRank> findInquiryByInquiryName(
-      String inquiryName, String type, Date startDate, Date endDate) {
+      String inquiryName, String type, Date startDate, Date endDate, int page, int pageSize) {
     QDataViewInquiryRank qDataViewInquiryRank = QDataViewInquiryRank.dataViewInquiryRank;
     JPAQuery<DataViewInquiryRank> quiry =
         getQuery()
@@ -91,7 +94,8 @@ public class InquiryRankDao extends BaseDao<DataViewInquiryRank> {
     }
     return quiry
         .orderBy(qDataViewInquiryRank.inquiryCount.desc())
-        .limit(50)
+        .offset(page)
+        .limit(pageSize)
         .fetchResults()
         .getResults();
   }

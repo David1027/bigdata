@@ -48,7 +48,7 @@ public interface InquiryService {
    * @param inquiryType
    * @return List<InquiryRankView>
    */
-  List<InquiryRankView> getInquiryRank(InquiryTypeEnum inquiryType);
+  List<InquiryRankView> getInquiryRank(InquiryTypeEnum inquiryType, int page, int pageSize);
 
   /**
    * 根据询盘类型获取实时询盘排行
@@ -56,7 +56,7 @@ public interface InquiryService {
    * @param inquiryType
    * @return
    */
-  List<InquiryRankView> getInquiryRealRank(InquiryTypeEnum inquiryType);
+  List<InquiryRankView> getInquiryRealRank(InquiryTypeEnum inquiryType, int page, int pageSize);
 
   /**
    * 根据询盘类型，询盘名称获取实时排行时段分析(小时)
@@ -76,5 +76,5 @@ public interface InquiryService {
    * @param type
    * @return
    */
-  List getInquirySearch(String inquirySearch, String type);
+  List getInquirySearch(String inquirySearch, String type, int page, int pageSize);
 }

@@ -54,7 +54,7 @@ public class FlowController {
   public Object getFlowDevice(
       @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
       @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
-    logger.debug(startDate+"=="+endDate);
+    logger.debug(startDate + "==" + endDate);
     return MessageResult.builder()
         .code(1)
         .msg("Hello")

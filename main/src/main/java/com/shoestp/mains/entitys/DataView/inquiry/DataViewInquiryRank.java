@@ -46,6 +46,7 @@ public class DataViewInquiryRank {
   @Column(name = "inquiry_amount")
   private double inquiryAmount;
   /** 商家或商品pkey */
+  @Column(name = "pkey")
   private Integer pkey;
   /** 创建时间 */
   @Column(name = "create_time")

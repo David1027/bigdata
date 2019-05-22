@@ -22,6 +22,7 @@ import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
 import com.google.api.services.analyticsreporting.v4.AnalyticsReporting;
 import com.google.api.services.analyticsreporting.v4.model.ColumnHeader;
@@ -56,7 +57,7 @@ public class GoogleMetaData extends BaseSchedulers {
   @Autowired private GooglePagePropertyInfoRepository googlePagePropertyInfoDao;
 
   /** * 定时5分钟 */
-  private static int timing = 20;
+  private static int timing = 5;
 
   private static List<Dimension> browseDimensionList = new ArrayList<>();
   private static List<Metric> browseMetricList = new ArrayList<>();
@@ -104,7 +105,7 @@ public class GoogleMetaData extends BaseSchedulers {
   protected void executeInternal(JobExecutionContext context)
       throws JobExecutionException { // TODO Auto-generated method stub
     // test();
-    // sleep(5000);
+    sleep(5000);
     queryData(1, browseMetricList, browseDimensionList); // 浏览数据
     // sleep();
     // queryData(3, pageMetricList, new ArrayList<>()); // 页面数据

@@ -7,7 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import lombok.Builder;
+
 import lombok.Data;
 
 /**
@@ -38,6 +38,21 @@ public class DataViewCountry {
   /** 总访客数 */
   @Column(name = "visitor_count")
   private Integer visitorCount;
+  /** 浏览数 */
+  @Column(name = "page_views_count")
+  private Integer pageViewsCount;
+  /** 注册量 */
+  @Column(name = "register_count")
+  private Integer registerCount;
+  /** 询盘数 */
+  @Column(name = "inquiry_count")
+  private Integer inquiryCount;
+  /** rfq数 */
+  @Column(name = "rfq_count")
+  private Integer rfqCount;
+  /** 用户数 */
+  @Column(name = "user_count")
+  private Integer userCount;
   /** 创建时间 */
   @Column(name = "create_time")
   private Date createTime;

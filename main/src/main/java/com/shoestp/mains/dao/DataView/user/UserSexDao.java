@@ -5,16 +5,13 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.springframework.stereotype.Repository;
+
 import com.querydsl.core.Tuple;
 import com.shoestp.mains.dao.BaseDao;
-import com.shoestp.mains.entitys.DataView.user.DataViewUser;
 import com.shoestp.mains.entitys.DataView.user.DataViewUserSex;
-import com.shoestp.mains.entitys.DataView.user.QDataViewUser;
 import com.shoestp.mains.entitys.DataView.user.QDataViewUserSex;
-import com.shoestp.mains.repositorys.DataView.user.UserRepository;
 import com.shoestp.mains.repositorys.DataView.user.UserSexRepository;
-
-import org.springframework.stereotype.Repository;
 
 /**
  * @description: 用户性别-数据层
@@ -72,5 +69,9 @@ public class UserSexDao extends BaseDao<DataViewUserSex> {
   @Override
   public int removeByIds(Integer... id) {
     return 0;
+  }
+
+  public void save(DataViewUserSex userSex) {
+    userSexRepository.save(userSex);
   }
 }

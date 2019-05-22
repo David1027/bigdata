@@ -5,11 +5,11 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.springframework.stereotype.Repository;
+
 import com.shoestp.mains.dao.BaseDao;
 import com.shoestp.mains.entitys.DataView.country.DataViewCountry;
 import com.shoestp.mains.repositorys.DataView.country.CountryRepository;
-
-import org.springframework.stereotype.Repository;
 
 /**
  * @description: 国家-数据层
@@ -60,5 +60,9 @@ public class CountryDao extends BaseDao<DataViewCountry> {
   @Override
   public int removeByIds(Integer... id) {
     return 0;
+  }
+
+  public void save(DataViewCountry country) {
+    countryRepository.save(country);
   }
 }

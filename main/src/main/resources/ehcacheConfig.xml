@@ -11,7 +11,7 @@
         <ehcache:expiry>
             <ehcache:none/>
         </ehcache:expiry>
-        <ehcache:heap unit="entries">200</ehcache:heap>
+        <ehcache:heap unit="entries">300</ehcache:heap>
     </ehcache:cache-template>
 
     <ehcache:cache alias="default" uses-template="DefaultTemplate">
@@ -19,6 +19,12 @@
             <ehcache:tti unit="seconds">10</ehcache:tti>
         </ehcache:expiry>
     </ehcache:cache>
-
+    
+    <ehcache:cache alias="month" uses-template="DefaultTemplate">
+        <ehcache:expiry>
+            <ehcache:tti unit="minutes">43200</ehcache:tti>
+        </ehcache:expiry>
+    </ehcache:cache>
+    
 </ehcache:config>
 

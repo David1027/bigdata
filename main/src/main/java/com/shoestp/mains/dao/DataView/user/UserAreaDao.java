@@ -5,13 +5,13 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.springframework.stereotype.Repository;
+
 import com.querydsl.core.Tuple;
 import com.shoestp.mains.dao.BaseDao;
 import com.shoestp.mains.entitys.DataView.user.DataViewUserArea;
 import com.shoestp.mains.entitys.DataView.user.QDataViewUserArea;
 import com.shoestp.mains.repositorys.DataView.user.UserAreaRepository;
-
-import org.springframework.stereotype.Repository;
 
 /**
  * @description: 用户性别-数据层
@@ -69,5 +69,9 @@ public class UserAreaDao extends BaseDao<DataViewUserArea> {
   @Override
   public int removeByIds(Integer... id) {
     return 0;
+  }
+
+  public void save(DataViewUserArea area) {
+    userAreaRepository.save(area);
   }
 }

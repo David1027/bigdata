@@ -9,7 +9,7 @@ service SendDataUtil {
   rpc sendSearch (stream  SearchInfo) returns (stream  Result);
   rpc sendViewInfo (stream  ViewInfo) returns (stream  Result);
   rpc sendInquiry (stream  Inquiry) returns (stream  Result);
-
+  rpc sendUserInfo (stream  UserInfo) returns (stream  Result);
 }
 
 message SearchInfo {
@@ -30,4 +30,13 @@ message Inquiry {
   uint32 inquiryId = 2;
   string referer = 3;
   string url=4;
+  string name=5;
+  uint32 pkey=6;
+  double money=7;
+  string ip=8;
+}
+message UserInfo {
+  uint32 type = 1;
+  string country=2;
+  uint32 sex=4;
 }

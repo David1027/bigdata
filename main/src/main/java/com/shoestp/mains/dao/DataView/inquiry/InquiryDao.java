@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.springframework.stereotype.Repository;
+
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.shoestp.mains.dao.BaseDao;
@@ -12,8 +14,6 @@ import com.shoestp.mains.entitys.DataView.inquiry.DataViewInquiry;
 import com.shoestp.mains.entitys.DataView.inquiry.QDataViewInquiry;
 import com.shoestp.mains.repositorys.DataView.inquory.InquiryRepository;
 import com.shoestp.mains.views.DataView.inquiry.InquiryView;
-
-import org.springframework.stereotype.Repository;
 
 /**
  * @description: 询盘-数据层
@@ -110,5 +110,9 @@ public class InquiryDao extends BaseDao<DataViewInquiry> {
   @Override
   public int removeByIds(Integer... id) {
     return 0;
+  }
+
+  public void save(DataViewInquiry in) {
+    inquiryRepository.save(in);
   }
 }

@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.junit.platform.commons.util.StringUtils;
 import org.springframework.stereotype.Repository;
 
 import com.querydsl.jpa.impl.JPAQuery;
@@ -54,17 +53,17 @@ public class InquiryRankDao extends BaseDao<DataViewInquiryRank> {
    * @return
    */
   public List<DataViewInquiryRank> findAllByInquiryTypeBetween(
-          InquiryTypeEnum inquiryType, Date startDate, Date endDate) {
+      InquiryTypeEnum inquiryType, Date startDate, Date endDate) {
     QDataViewInquiryRank qDataViewInquiryRank = QDataViewInquiryRank.dataViewInquiryRank;
     return getQuery()
-            .select(qDataViewInquiryRank)
-            .from(qDataViewInquiryRank)
-            .where(qDataViewInquiryRank.createTime.between(startDate, endDate))
-            .where(qDataViewInquiryRank.inquiryType.eq(inquiryType))
-            .orderBy(qDataViewInquiryRank.inquiryCount.desc())
-            .limit(50)
-            .fetchResults()
-            .getResults();
+        .select(qDataViewInquiryRank)
+        .from(qDataViewInquiryRank)
+        .where(qDataViewInquiryRank.createTime.between(startDate, endDate))
+        .where(qDataViewInquiryRank.inquiryType.eq(inquiryType))
+        .orderBy(qDataViewInquiryRank.inquiryCount.desc())
+        .limit(50)
+        .fetchResults()
+        .getResults();
   }
 
   /**
@@ -149,5 +148,9 @@ public class InquiryRankDao extends BaseDao<DataViewInquiryRank> {
   @Override
   public int removeByIds(Integer... id) {
     return 0;
+  }
+
+  public void save(DataViewInquiryRank rank) {
+    inquiryRankRepository.save(rank);
   }
 }

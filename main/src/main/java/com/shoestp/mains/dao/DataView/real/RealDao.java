@@ -5,17 +5,14 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import com.querydsl.core.Tuple;
+import org.springframework.stereotype.Repository;
+
 import com.querydsl.core.types.Projections;
 import com.shoestp.mains.dao.BaseDao;
 import com.shoestp.mains.entitys.DataView.real.DataViewReal;
 import com.shoestp.mains.entitys.DataView.real.QDataViewReal;
-import com.shoestp.mains.entitys.QUser;
 import com.shoestp.mains.repositorys.DataView.real.RealRepository;
 import com.shoestp.mains.views.DataView.real.RealView;
-import com.shoestp.mains.views.DataView.user.DataViewUserView;
-
-import org.springframework.stereotype.Repository;
 
 /**
  * @description: 实时-数据层
@@ -76,5 +73,9 @@ public class RealDao extends BaseDao<DataViewReal> {
   @Override
   public int removeByIds(Integer... id) {
     return 0;
+  }
+
+  public void save(DataViewReal real) {
+    realRepository.save(real);
   }
 }

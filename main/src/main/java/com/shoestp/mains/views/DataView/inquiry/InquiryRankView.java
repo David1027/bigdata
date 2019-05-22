@@ -1,15 +1,10 @@
 package com.shoestp.mains.views.DataView.inquiry;
 
-import javax.persistence.*;
-
-import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
-
 import lombok.Data;
 
 /**
  * @description: 询盘排行前端展示类
- * @author: lingjian
- * @Date: 2019/5/14 11:28
+ * @author: lingjian @Date: 2019/5/14 11:28
  */
 @Data
 public class InquiryRankView {
@@ -24,5 +19,5 @@ public class InquiryRankView {
   /** 询盘人数 */
   private Integer inquiryNumber;
   /** 询盘金额 */
-  private Integer inquiryAmount;
+  private double inquiryAmount;
 }

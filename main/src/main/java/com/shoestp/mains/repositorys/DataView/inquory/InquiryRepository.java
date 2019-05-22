@@ -1,8 +1,8 @@
 package com.shoestp.mains.repositorys.DataView.inquory;
 
-import com.shoestp.mains.entitys.DataView.inquiry.DataViewInquiry;
-
 import org.springframework.data.repository.PagingAndSortingRepository;
+
+import com.shoestp.mains.entitys.DataView.inquiry.DataViewInquiry;
 
 /**
  * @description: 询盘-实现JPA接口

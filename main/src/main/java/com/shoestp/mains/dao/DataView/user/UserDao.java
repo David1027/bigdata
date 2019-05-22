@@ -101,4 +101,8 @@ public class UserDao extends BaseDao<DataViewUser> {
   public int removeByIds(Integer... id) {
     return 0;
   }
+
+  public void save(DataViewUser user) {
+    userRepository.save(user);
+  }
 }

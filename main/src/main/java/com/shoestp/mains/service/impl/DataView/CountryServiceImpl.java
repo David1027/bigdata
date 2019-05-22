@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
-import com.shoestp.mains.dao.DataView.country.CountryDao;
+import com.shoestp.mains.dao.DataView.realcountry.RealCountryDao;
 import com.shoestp.mains.service.DataView.CountryService;
 import com.shoestp.mains.utils.dateUtils.DateTimeUtil;
 import com.shoestp.mains.views.DataView.country.CountryView;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class CountryServiceImpl implements CountryService {
 
-  @Resource private CountryDao countryDao;
+  @Resource private RealCountryDao realCountryDao;
 
     /**
      * 获取国家地区访客数，时间=>当天
@@ -28,7 +28,7 @@ public class CountryServiceImpl implements CountryService {
   @Override
   public List<CountryView> getCountryArea() {
     List<CountryView> collect =
-        countryDao.findAllByCountry(DateTimeUtil.getTimesmorning(), DateTimeUtil.getTimesnight())
+        realCountryDao.findAllByCountry(DateTimeUtil.getTimesmorning(), DateTimeUtil.getTimesnight())
             .stream()
             .map(
                 bean -> {

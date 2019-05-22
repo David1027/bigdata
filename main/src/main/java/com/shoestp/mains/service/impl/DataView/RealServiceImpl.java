@@ -4,8 +4,7 @@ import java.util.*;
 
 import javax.annotation.Resource;
 
-import com.shoestp.mains.dao.DataView.real.RealDao;
-import com.shoestp.mains.entitys.DataView.real.DataViewReal;
+import com.shoestp.mains.dao.DataView.realcountry.RealCountryDao;
 import com.shoestp.mains.service.DataView.RealService;
 import com.shoestp.mains.utils.dateUtils.DateTimeUtil;
 import com.shoestp.mains.views.DataView.real.RealOverView;
@@ -20,7 +19,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class RealServiceImpl implements RealService {
 
-  @Resource private RealDao realDao;
+  @Resource private RealCountryDao realCountryDao;
 
   /**
    * 获取两个值的比较率
@@ -66,15 +65,15 @@ public class RealServiceImpl implements RealService {
     // 获取当天，昨天，上周同一天所有的累加值
     RealView today =
         isNullTo(
-            realDao.findAllByCreateTimeBetween(
+            realCountryDao.findAllByCreateTimeBetween(
                 DateTimeUtil.getTimesmorning(), DateTimeUtil.getTimesnight()));
     RealView yesterday =
         isNullTo(
-            realDao.findAllByCreateTimeBetween(
+            realCountryDao.findAllByCreateTimeBetween(
                 DateTimeUtil.getYesterdaymorning(), DateTimeUtil.getYesterdaynight()));
     RealView week =
         isNullTo(
-            realDao.findAllByCreateTimeBetween(
+            realCountryDao.findAllByCreateTimeBetween(
                 DateTimeUtil.getWeekmorning(), DateTimeUtil.getWeeknight()));
     // 创建返回前端对象
     RealOverView realOverView = new RealOverView();
@@ -112,7 +111,7 @@ public class RealServiceImpl implements RealService {
    */
   public RealView getAddByTime(Date date, int start, int end) {
     return isNullTo(
-        realDao.findAllByCreateTimeBetween(
+            realCountryDao.findAllByCreateTimeBetween(
             DateTimeUtil.getTimesOfDay(date, start), DateTimeUtil.getTimesOfDay(date, end)));
   }
 
@@ -127,13 +126,13 @@ public class RealServiceImpl implements RealService {
     int[] arr = new int[12];
     for (int i = 0; i < arr.length; i++) {
       if ("visitorCount".equals(parameter)) {
-        arr[i] = getAddByTime(date, i*2, i*2 + 2).getVisitorCount();
+        arr[i] = getAddByTime(date, i * 2, i * 2 + 2).getVisitorCount();
       } else if ("viewCount".equals(parameter)) {
-        arr[i] = getAddByTime(date, i*2, i*2 + 2).getViewCount();
+        arr[i] = getAddByTime(date, i * 2, i * 2 + 2).getViewCount();
       } else if ("registerCount".equals(parameter)) {
-        arr[i] = getAddByTime(date, i*2, i*2 + 2).getRegisterCount();
+        arr[i] = getAddByTime(date, i * 2, i * 2 + 2).getRegisterCount();
       } else if ("inquiryCount".equals(parameter)) {
-        arr[i] = getAddByTime(date, i*2, i*2 + 2).getInquiryCount();
+        arr[i] = getAddByTime(date, i * 2, i * 2 + 2).getInquiryCount();
       }
     }
     return arr;

@@ -1,6 +1,7 @@
 package com.shoestp.mains.service.impl.DataView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -423,5 +424,30 @@ public class InquiryServiceImpl implements InquiryService {
               return inquiryTypeView;
             })
         .collect(Collectors.toList());
+  }
+
+  @Override
+  public List<KeyValue> getRanking(String type, Date endTime, Integer num, int start, int limit) {
+    if (endTime == null) {
+      endTime = new Date();
+    }
+    Date startTime = null;
+    if (num.equals(7) || num.equals(30)) {
+      num -= num * 2;
+      startTime = DateTimeUtil.countDate(endTime, Calendar.DAY_OF_YEAR, num);
+    } else {
+      startTime = DateTimeUtil.getTimesOfDay(endTime);
+      endTime = DateTimeUtil.getTimesnight(endTime);
+    }
+    List<Object> ranking = inquiryRankDao.getRanking(type, startTime, endTime, start, limit);
+    List<KeyValue> kv = new ArrayList<>();
+    for (Object item : ranking) {
+      Object[] o = (Object[]) item;
+      KeyValue k = new KeyValue();
+      k.setKey(o[0].toString());
+      k.setValue(o[1].toString());
+      kv.add(k);
+    }
+    return kv;
   }
 }

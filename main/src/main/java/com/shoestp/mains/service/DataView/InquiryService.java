@@ -7,6 +7,7 @@ import java.util.Map;
 import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
 import com.shoestp.mains.views.DataView.inquiry.InquiryRankView;
 import com.shoestp.mains.views.DataView.inquiry.InquiryView;
+import com.shoestp.mains.views.DataView.utils.KeyValue;
 
 /**
  * @description: 询盘-服务层接口
@@ -77,4 +78,6 @@ public interface InquiryService {
    * @return
    */
   List getInquirySearch(String inquirySearch, String type, int page, int pageSize);
+
+  List<KeyValue> getRanking(String type, Date endTime, Integer num, int start, int limit);
 }

@@ -3,16 +3,19 @@ package com.shoestp.mains.controllers.DataView;
 import java.util.Date;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
-import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
-import com.shoestp.mains.pojo.MessageResult;
-import com.shoestp.mains.service.DataView.InquiryService;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
+import com.shoestp.mains.pojo.MessageResult;
+import com.shoestp.mains.service.DataView.InquiryService;
 
 /**
  * @description: 询盘-控制器
@@ -146,5 +149,39 @@ public class InquiryController {
         .msg("Hello")
         .result(inquiryService.getInquirySearch(inquirySearch, type, page, pageSize))
         .build();
+  }
+
+  @GetMapping(value = "/getSupRanking")
+  public Object getSupRanking(
+      Date endTime,
+      Integer num,
+      @RequestParam(defaultValue = "0") int start,
+      @RequestParam(defaultValue = "10") int limit) {
+    return MessageResult.builder()
+        .code(1)
+        .msg("Hello")
+        .result(
+            inquiryService.getRanking(
+                InquiryTypeEnum.SUPPLIER.toString(), endTime, num, start, limit))
+        .build();
+  }
+
+  @GetMapping(value = "/getPdtRanking")
+  public Object getPdtRanking(
+      Date endTime,
+      Integer num,
+      @RequestParam(defaultValue = "0") int start,
+      @RequestParam(defaultValue = "10") int limit) {
+    return MessageResult.builder()
+        .code(1)
+        .msg("Hello")
+        .result(
+            inquiryService.getRanking(
+                InquiryTypeEnum.COMMODITY.toString(), endTime, num, start, limit))
+        .build();
+  }
+
+  public static void main(String[] args) {
+    System.out.println(new Date());
   }
 }

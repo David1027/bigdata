@@ -236,6 +236,21 @@ public final class DateTimeUtil {
   }
 
   /**
+   * 获得某天23:59:59点时间
+   *
+   * @return
+   */
+  public static Date getTimesnight(Date date) {
+    Calendar cal = Calendar.getInstance();
+    cal.setTime(date);
+    cal.set(Calendar.HOUR_OF_DAY, 23);
+    cal.set(Calendar.SECOND, 59);
+    cal.set(Calendar.MINUTE, 59);
+    cal.set(Calendar.MILLISECOND, 999);
+    return cal.getTime();
+  }
+
+  /**
    * 获得某一天某点时间
    *
    * @param date 某天
@@ -613,5 +628,20 @@ public final class DateTimeUtil {
       str = "刚刚";
     }
     return str;
+  }
+
+  /**
+   * -时间加减
+   *
+   * @param date
+   * @param type 年月日类型
+   * @param num 数量
+   * @return
+   */
+  public static Date countDate(Date date, int type, int num) {
+    Calendar rightNow = Calendar.getInstance();
+    rightNow.setTime(date);
+    rightNow.add(type, num);
+    return rightNow.getTime();
   }
 }

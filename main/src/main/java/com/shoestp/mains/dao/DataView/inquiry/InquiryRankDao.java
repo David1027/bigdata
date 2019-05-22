@@ -157,4 +157,8 @@ public class InquiryRankDao extends BaseDao<DataViewInquiryRank> {
   public void save(DataViewInquiryRank rank) {
     inquiryRankRepository.save(rank);
   }
+
+  public List<Object> getRanking(String type, Date startTime, Date endTime, int start, int limit) {
+    return inquiryRankRepository.getRanking(type, startTime, endTime, start, limit);
+  }
 }

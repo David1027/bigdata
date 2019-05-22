@@ -5,14 +5,14 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.springframework.stereotype.Repository;
+
 import com.querydsl.core.types.Projections;
 import com.shoestp.mains.dao.BaseDao;
 import com.shoestp.mains.entitys.DataView.country.DataViewCountry;
 import com.shoestp.mains.entitys.DataView.country.QDataViewCountry;
 import com.shoestp.mains.repositorys.DataView.realcountry.RealCountryRepository;
 import com.shoestp.mains.views.DataView.real.RealView;
-
-import org.springframework.stereotype.Repository;
 
 /**
  * @description: 国家-数据层
@@ -87,5 +87,9 @@ public class RealCountryDao extends BaseDao<DataViewCountry> {
   @Override
   public int removeByIds(Integer... id) {
     return 0;
+  }
+
+  public void save(DataViewCountry country) {
+    realCountryRepository.save(country);
   }
 }

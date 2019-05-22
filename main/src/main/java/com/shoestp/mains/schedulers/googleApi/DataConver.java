@@ -30,12 +30,11 @@ import org.quartz.TriggerBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 
-import com.shoestp.mains.dao.DataView.country.CountryDao;
 import com.shoestp.mains.dao.DataView.flow.FlowDao;
 import com.shoestp.mains.dao.DataView.flow.FlowPageDao;
 import com.shoestp.mains.dao.DataView.inquiry.InquiryDao;
 import com.shoestp.mains.dao.DataView.inquiry.InquiryRankDao;
-import com.shoestp.mains.dao.DataView.real.RealDao;
+import com.shoestp.mains.dao.DataView.realcountry.RealCountryDao;
 import com.shoestp.mains.dao.DataView.user.UserAreaDao;
 import com.shoestp.mains.dao.DataView.user.UserDao;
 import com.shoestp.mains.dao.DataView.user.UserSexDao;
@@ -48,7 +47,6 @@ import com.shoestp.mains.entitys.DataView.flow.DataViewFlow;
 import com.shoestp.mains.entitys.DataView.flow.DataViewFlowPage;
 import com.shoestp.mains.entitys.DataView.inquiry.DataViewInquiry;
 import com.shoestp.mains.entitys.DataView.inquiry.DataViewInquiryRank;
-import com.shoestp.mains.entitys.DataView.real.DataViewReal;
 import com.shoestp.mains.entitys.DataView.user.DataViewUser;
 import com.shoestp.mains.entitys.DataView.user.DataViewUserArea;
 import com.shoestp.mains.entitys.DataView.user.DataViewUserSex;
@@ -100,8 +98,7 @@ public class DataConver extends BaseSchedulers {
   @Autowired private GoogleBrowseInfoDao googleDao;
   @Autowired private InquiryRankDao inquiryRankDao;
   @Autowired private UserInfoDao userInfoDao;
-  @Autowired private CountryDao countryDao;
-  @Autowired private RealDao realDao;
+  @Autowired private RealCountryDao countryDao;
   @Autowired private UserDao userDao;
   @Autowired private UserAreaDao userAreaDao;
   @Autowired private UserSexDao userSexDao;
@@ -638,14 +635,6 @@ public class DataConver extends BaseSchedulers {
       countryDao.save(value);
       userAreaConver(key.getCountryName(), c, startTime, endTime);
     }
-    DataViewReal real = new DataViewReal();
-    real.setCreateTime(endTime);
-    real.setInquiryCount(inquiryCount);
-    real.setRegisterCount(registerCount);
-    real.setRfqCount(rfqCount);
-    real.setViewCount(viewCount);
-    real.setVisitorCount(visitorCount);
-    realConver(real);
   }
 
   public void flowConver(Map<DataView, List<GoogleBrowseInfo>> map, Date startTime, Date endTime) {
@@ -778,10 +767,6 @@ public class DataConver extends BaseSchedulers {
       rank.setCreateTime(endTime);
       inquiryRankDao.save(rank);
     }
-  }
-
-  public void realConver(DataViewReal rael) {
-    realDao.save(rael);
   }
 
   public void userConver(Integer visitCount, Integer registerCount, Date startTime, Date endTime) {

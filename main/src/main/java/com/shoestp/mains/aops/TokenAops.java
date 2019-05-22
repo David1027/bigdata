@@ -14,7 +14,7 @@ import org.start2do.utils.tokenUtils.pojo.CheckTokenPojo;
 
 @Aspect
 public class TokenAops {
-  @Pointcut("execution(* org.start2do.mains.controllers.*.*()) &")
+  @Pointcut("execution(* com.shoestp.mains.controllers.*.*())")
   public void tokencheck() {}
 
   @Before(value = " @annotation(tokencheck))")
@@ -31,7 +31,7 @@ public class TokenAops {
             .IMME(request.getParameter("IMME"))
             .build(),
         token)) {
-      return MessageResult.builder().code(-1).build();
+      return MessageResult.builder().code(-1).msg("").build();
     }
     return joinPoint.proceed();
   }

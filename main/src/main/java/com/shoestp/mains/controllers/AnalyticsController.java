@@ -32,7 +32,6 @@ public class AnalyticsController extends BaseController {
     logger.info("Pojo Info =>{}", webVisitInfoView);
     webVisitInfoService.save(
         webVisitInfoView, getIpByHeader(httpRequest), getUserAgentByHeader(httpRequest));
-
     return MessageResult.builder().code(1).build();
   }
 }

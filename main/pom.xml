@@ -222,6 +222,7 @@
       </exclusions>
     </dependency>
 
+
     <!--GPRC-->
     <dependency>
       <groupId>io.grpc</groupId>
@@ -248,6 +249,24 @@
       <artifactId>grpc-netty</artifactId>
       <version>${grpc.version}</version>
     </dependency>
+    <!--Shiro-->
+    <dependency>
+      <groupId>org.apache.shiro</groupId>
+      <artifactId>shiro-core</artifactId>
+      <version>1.4.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.shiro</groupId>
+      <artifactId>shiro-web</artifactId>
+      <version>1.4.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.shiro</groupId>
+      <artifactId>shiro-spring-boot-starter</artifactId>
+      <version>1.4.1</version>
+    </dependency>
+
+
   </dependencies>
   <build>
     <extensions>

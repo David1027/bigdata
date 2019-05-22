@@ -1,4 +1,4 @@
-package com.shoestp.mains.config;
+package com.shoestp.mains.config.exceptionHandles;
 
 import com.shoestp.mains.pojo.MessageResult;
 import javax.servlet.http.HttpServletRequest;

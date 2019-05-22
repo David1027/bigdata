@@ -6,7 +6,6 @@
             <jcache:cache name="default" template="DefaultTemplate"/>
         </jcache:defaults>
     </ehcache:service>
-    <ehcache:default-copiers></ehcache:default-copiers>
     <ehcache:cache-template name="DefaultTemplate">
         <ehcache:expiry>
             <ehcache:none/>

@@ -65,7 +65,9 @@ public class WebVisitInfoServiceImpl implements WebVisitInfoService {
                       {
                         setDate(bean.getCreateTime());
                         setId(bean.getId());
-                        setLoation(bean.getUrl());
+                        setLoation(bean.getLocation());
+                        setPage(bean.getUrl());
+                        setName(bean.getVisitName());
                         if (bean.getReferer().indexOf("google.com") != -1) {
                           setSource("Google");
                         } else if (bean.getReferer().indexOf("baidu.com") != -1) {

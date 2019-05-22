@@ -112,7 +112,7 @@ public class DataConver extends BaseSchedulers {
   private static SimpleDateFormat ydms = new SimpleDateFormat("yyyyMMddHHmm");
 
   private static int timing = 60; // 定时60分钟
-  private static List<String> PC =
+  public static List<String> PC =
       Arrays.asList("(not set)", "Chrome OS", "Linux", "Macintosh", "Windows");
 
   private static List<String> MOBILE =
@@ -175,7 +175,6 @@ public class DataConver extends BaseSchedulers {
           "爱莱发着陆页",
           new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2018-01-01 00:00:00"),
           new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2019-05-18 00:00:00"));
-    } catch (ParseException e) { // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }*/
@@ -211,7 +210,7 @@ public class DataConver extends BaseSchedulers {
         // 之前的数据按天插入
         LocalDateTime startDate = LocalDateTime.parse("201811180000", ofPattern);
         LocalDateTime endDate = LocalDateTime.parse("201811182359", ofPattern);
-        for (int i = 0; i > day; i--) {
+        for (int i = 0; i >= day; i--) {
           LocalDateTime plusDays = startDate.plusDays(1);
           LocalDateTime plusDays2 = endDate.plusDays(1);
           List<GoogleBrowseInfo> browseInfoList =
@@ -225,28 +224,37 @@ public class DataConver extends BaseSchedulers {
           if (i - 1 == day) {
             endDate = date;
           }
+          Date s = LocalDateTimeToUdate(startDate);
+          Date e = LocalDateTimeToUdate(endDate);
           if (!browseInfoList.isEmpty()) {
-            filtration(
-                browseInfoList, LocalDateTimeToUdate(startDate), LocalDateTimeToUdate(endDate));
+            filtration(browseInfoList, s, e);
           }
-          if (!InquiryInfoList.isEmpty()) {}
+          if (!InquiryInfoList.isEmpty()) {
+            inquiryRankConver(InquiryInfoList, s, e);
+          }
+          inquiryConver(s, e);
+          countryConver(s, e);
+          userSexConver(s, e);
         }
       } else {
+        Date s = sim.parse(startTime);
+        Date e = sim.parse(endTime);
         List<GoogleBrowseInfo> browseInfoList =
             googleDao.queryByStartTimeAndEndTime(startTime, endTime);
+        List<InquiryInfo> InquiryInfoList = inquiryInfoDao.findByCreateTimeBetween(s, e);
         if (!browseInfoList.isEmpty()) {
-          try {
-            filtration(browseInfoList, sim.parse(startTime), sim.parse(endTime));
-          } catch (ParseException e) {
-            e.printStackTrace();
-          }
-        } else {
-          return;
+          filtration(browseInfoList, s, e);
         }
+        if (!InquiryInfoList.isEmpty()) {
+          inquiryRankConver(InquiryInfoList, s, e);
+        }
+        inquiryConver(s, e);
+        countryConver(s, e);
+        userSexConver(s, e);
       }
     } catch (Exception e) {
       e.printStackTrace();
-      // TODO: handle exception
+      // TODO
     }
   }
 
@@ -485,7 +493,7 @@ public class DataConver extends BaseSchedulers {
     m.put(s, 1);
     // m.
     System.out.println(m.containsKey(b));*/
-    Map<DataViewCountry, DataViewCountry> map = new HashMap<>();
+    /*Map<DataViewCountry, DataViewCountry> map = new HashMap<>();
     DataViewCountry d = new DataViewCountry();
     DataViewCountry a = new DataViewCountry();
     DataViewCountry w = new DataViewCountry();
@@ -499,25 +507,27 @@ public class DataConver extends BaseSchedulers {
     s.setCountryName("aa");
     map.put(d, a);
     map.put(w, a);
-    System.out.println(map.containsKey(w));
+    System.out.println(map.containsKey(w));*/
+    System.out.println(Integer.parseInt("2"));
   }
 
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  // TODO
   public void countryConver(Date startTime, Date endTime) {
     Map<DataViewCountry, DataViewCountry> map = new HashMap<>();
-    StringBuffer sql = new StringBuffer("");
+    /* StringBuffer sql = new StringBuffer("");
     for (int i = 0; i < MOBILE.size(); i++) {
-      sql.append("system = ");
       sql.append("'");
       sql.append(MOBILE.get(i));
       sql.append("'");
       if (i != MOBILE.size() - 1) {
-        sql.append(" || ");
+        sql.append(",");
       }
-    }
+    }*/
     // 访客 浏览量
     List<Object> objGoogle =
         googleDao.getPageViewsAndSessionsGrupByCountrty(
-            sql.toString(), ydms.format(startTime), ydms.format(endTime));
+            2, ydms.format(startTime), ydms.format(endTime));
     if (objGoogle.size() > 0) {
       for (Object item : objGoogle) {
         Object[] o = (Object[]) item;
@@ -526,9 +536,12 @@ public class DataConver extends BaseSchedulers {
         String[] getCountry = getCountry("en", (String) o[0]);
         country.setCountryEnglishName(getCountry[0]);
         country.setCountryName(getCountry[1]);
-        Integer views = (int) o[1];
-        Integer sessions = (int) o[2];
-        Integer phone = (int) o[3];
+        Integer views = Double.valueOf(o[1].toString()).intValue();
+        Integer sessions = Double.valueOf(o[2].toString()).intValue();
+        Integer phone = 0;
+        if (o[3] != null && !"null".equals(o[3])) {
+          phone = Double.valueOf(o[3].toString()).intValue();
+        }
         Integer pc = sessions - phone;
         count.setPageViewsCount(views);
         count.setVisitorCountPc(pc);
@@ -549,14 +562,14 @@ public class DataConver extends BaseSchedulers {
         country.setCountryName(getCountry[1]);
         if (map.containsKey(country)) {
           count = map.get(country);
-          count.setRegisterCount((int) o[1]);
+          count.setRegisterCount(Double.valueOf(o[1].toString()).intValue());
           map.put(country, count);
         } else {
           count.setPageViewsCount(0);
           count.setVisitorCountPc(0);
           count.setVisitorCountWap(0);
           count.setVisitorCount(0);
-          count.setRegisterCount((int) o[1]);
+          count.setRegisterCount(Double.valueOf(o[1].toString()).intValue());
           map.put(country, count);
         }
       }
@@ -573,7 +586,7 @@ public class DataConver extends BaseSchedulers {
         country.setCountryName(getCountry[1]);
         if (map.containsKey(country)) {
           count = map.get(country);
-          count.setInquiryCount((int) o[1]);
+          count.setInquiryCount(Double.valueOf(o[1].toString()).intValue());
           map.put(country, count);
         } else {
           count.setPageViewsCount(0);
@@ -581,7 +594,7 @@ public class DataConver extends BaseSchedulers {
           count.setVisitorCountWap(0);
           count.setVisitorCount(0);
           count.setRegisterCount(0);
-          count.setInquiryCount((int) o[1]);
+          count.setInquiryCount(Double.valueOf(o[1].toString()).intValue());
           map.put(country, count);
         }
       }
@@ -598,7 +611,7 @@ public class DataConver extends BaseSchedulers {
         country.setCountryName(getCountry[1]);
         if (map.containsKey(country)) {
           count = map.get(country);
-          count.setRfqCount((int) o[1]);
+          count.setRfqCount(Double.valueOf(o[1].toString()).intValue());
           map.put(country, count);
         } else {
           count.setPageViewsCount(0);
@@ -607,7 +620,7 @@ public class DataConver extends BaseSchedulers {
           count.setVisitorCount(0);
           count.setRegisterCount(0);
           count.setInquiryCount(0);
-          count.setRfqCount((int) o[1]);
+          count.setRfqCount(Double.valueOf(o[1].toString()).intValue());
           map.put(country, count);
         }
       }
@@ -624,15 +637,17 @@ public class DataConver extends BaseSchedulers {
       DataViewCountry value = item.getValue();
       value.setCountryEnglishName(key.getCountryEnglishName());
       value.setCountryName(key.getCountryName());
-      int c = (int) userInfoDao.countByCountryLikeCreateTimeLessThan(key.getCountryName(), endTime);
+      int c =
+          (int) userInfoDao.countByCountryLikeAndCreateTimeLessThan(key.getCountryName(), endTime);
       value.setUserCount(c);
       value.setCreateTime(endTime);
       visitorCount += value.getVisitorCount();
-      viewCount += value.getPageViewsCount();
+      // viewCount += value.getPageViewsCount();
       registerCount += value.getRegisterCount();
-      inquiryCount += value.getInquiryCount();
-      rfqCount += value.getRfqCount();
+      // inquiryCount += value.getInquiryCount();
+      // rfqCount += value.getRfqCount();
       countryDao.save(value);
+      userConver(visitorCount, registerCount, startTime, endTime);
       userAreaConver(key.getCountryName(), c, startTime, endTime);
     }
   }
@@ -711,12 +726,11 @@ public class DataConver extends BaseSchedulers {
   }
 
   public void inquiryConver(Date startTime, Date endTime) {
-    // TODO 开始时间与结束时间未判断
     DataViewInquiry in = new DataViewInquiry();
     in.setVisitorCount(0);
-    in.setInquiryCount((int) inquiryInfoDao.count());
-    in.setInquiryNumber(inquiryInfoDao.getPeopleNum().size());
-    in.setCreateTime(new Date());
+    in.setInquiryCount((int) inquiryInfoDao.countByCreateTimeBetween(startTime, endTime));
+    in.setInquiryNumber(inquiryInfoDao.getPeopleNum(startTime, endTime).size());
+    in.setCreateTime(endTime);
     inquiryDao.save(in);
   }
 
@@ -787,13 +801,10 @@ public class DataConver extends BaseSchedulers {
     }
     user.setNewVisitorCount(newVisitorCount);
     user.setOldVisitorCount(oldVisitorCount);
-    List<Object> userCount =
-        userInfoDao.getCount(
-            RegisterTypeEnum.PURCHASE.toString(), RegisterTypeEnum.SUPPLIER.toString(), endTime);
-    Object[] object = (Object[]) userCount.get(0);
-    Object[] object1 = (Object[]) userCount.get(1);
-    user.setPurchaseCount((int) object[0]);
-    user.setSupplierCount((int) object1[0]);
+    user.setPurchaseCount(
+        (int) userInfoDao.countByTypeAndCreateTimeLessThan(RegisterTypeEnum.PURCHASE, endTime));
+    user.setSupplierCount(
+        (int) userInfoDao.countByTypeAndCreateTimeLessThan(RegisterTypeEnum.SUPPLIER, endTime));
     user.setCreateTime(endTime);
     userDao.save(user);
   }

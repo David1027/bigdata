@@ -78,7 +78,7 @@ public class WebVisitInfoDaoImpl {
     } else if (source == 3) {
       // 自主访问
       selectFrom.where(qweb.referer.eq(""));
-    } else {
+    } else if (source == 4) {
       // 社交访问
       selectFrom.where(qweb.referer.ne(""));
       selectFrom.where(qweb.referer.notLike("%google.com%"));
@@ -93,7 +93,7 @@ public class WebVisitInfoDaoImpl {
       selectFrom.where(qweb.location.like("%" + country + "%"));
     }
     map.put("count", selectFrom.fetchCount());
-    map.put("list", selectFrom.offset(start).limit(limit));
+    map.put("list", selectFrom.offset(start).limit(limit).fetch());
     return map;
   }
 }

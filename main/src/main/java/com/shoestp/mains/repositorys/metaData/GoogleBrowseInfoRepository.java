@@ -42,9 +42,10 @@ public interface GoogleBrowseInfoRepository extends JpaRepository<GoogleBrowseIn
 
   @Query(
       value =
-          "SELECT country,sum(page_views) as pageViews,sum(sessions) as sessions,IF(?1,SUM(sessions),0) as phone FROM `google_browse_info` "
+          "SELECT country as co,sum(page_views) as pageViews,sum(sessions) as sessions,"
+              + " ( SELECT SUM( sessions )  FROM `google_browse_info`  WHERE access_time > ?2  AND access_time < ?3  AND  sys_type = ?1  and country = co )  "
+              + " FROM `google_browse_info` "
               + "where access_time > ?2 AND access_time <= ?3 GROUP BY country ",
       nativeQuery = true)
-  List<Object> getPageViewsAndSessionsGrupByCountrty(
-      String param, String startTime, String endTime);
+  List<Object> getPageViewsAndSessionsGrupByCountrty(int param, String startTime, String endTime);
 }

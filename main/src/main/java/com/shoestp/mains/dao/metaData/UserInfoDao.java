@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.shoestp.mains.entitys.MetaData.UserInfo;
+import com.shoestp.mains.enums.user.RegisterTypeEnum;
 import com.shoestp.mains.enums.user.SexEnum;
 
 public interface UserInfoDao extends JpaRepository<UserInfo, Integer> {
@@ -17,15 +18,9 @@ public interface UserInfoDao extends JpaRepository<UserInfo, Integer> {
       nativeQuery = true)
   public List<Object> getCountryAndCount(Date startTime, Date endTime);
 
-  public long countByCountryLikeCreateTimeLessThan(String country, Date createTime);
+  public long countByCountryLikeAndCreateTimeLessThan(String country, Date createTime);
 
-  @Query(
-      value =
-          "SELECT count(*) FROM `user_info` WHERE type = ?1 and create_time < ?3"
-              + "UNION "
-              + "SELECT count(*) FROM `user_info` WHERE type = ?2 and create_time < ?3 ",
-      nativeQuery = true)
-  public List<Object> getCount(String purchase, String supplier, Date endTime);
+  public long countByTypeAndCreateTimeLessThan(RegisterTypeEnum type, Date endTime);
 
   public long countBySexAndCreateTimeLessThan(SexEnum sex, Date createTime);
 }

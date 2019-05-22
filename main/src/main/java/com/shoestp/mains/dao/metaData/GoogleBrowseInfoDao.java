@@ -106,7 +106,7 @@ public class GoogleBrowseInfoDao extends BaseDao<GoogleBrowseInfo> {
   }
 
   public List<Object> getPageViewsAndSessionsGrupByCountrty(
-      String param, String startTime, String endTime) {
+      int param, String startTime, String endTime) {
     List<Object> obj =
         googleBrowseInfoRepository.getPageViewsAndSessionsGrupByCountrty(param, startTime, endTime);
     return obj;

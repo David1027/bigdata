@@ -81,11 +81,7 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
         webVisitInfo.setUserId(viewInfo.getUserId());
         webVisitInfo.setVisitName(viewInfo.getVisitName());
         String[] str = City.find(viewInfo.getIp());
-        if (str.length == 1) {
-          webVisitInfo.setLocation(str.toString());
-        } else {
-          webVisitInfo.setLocation(String.join("-", str));
-        }
+        webVisitInfo.setLocation(str[0].toString());
         webVisitInfo.setCreateTime(new Date());
         webVisitInfoService.save(webVisitInfo);
       }
@@ -112,6 +108,10 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
         InquiryInfo inquiryInfo = new InquiryInfo();
         boolean b = true;
         switch (inquiry.getType()) {
+          case 1:
+            inquiryInfo.setType(InquiryTypeEnum.RFQ);
+            b = false;
+            break;
           case 2:
             inquiryInfo.setType(InquiryTypeEnum.COMMODITY);
             b = false;
@@ -181,6 +181,7 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
         } else {
           userInfo.setType(RegisterTypeEnum.SUPPLIER);
         }
+        userInfo.setCreateTime(new Date());
         userInfoDao.save(userInfo);
       }
 

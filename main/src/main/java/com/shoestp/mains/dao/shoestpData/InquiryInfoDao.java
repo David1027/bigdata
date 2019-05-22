@@ -13,10 +13,13 @@ public interface InquiryInfoDao extends JpaRepository<InquiryInfo, Integer> {
 
   public int queryInquiryCount(Date startDate, Date endDate, SourceTypeEnum souType, String sou);
 
-  public long count();
+  public long countByCreateTimeBetween(Date startTime, Date endTime);
 
-  @Query(value = "SELECT count(*) FROM inquiry_info  GROUP BY  ip", nativeQuery = true)
-  public List getPeopleNum();
+  @Query(
+      value =
+          "SELECT count(*) FROM inquiry_info where create_time > ?1 AND create_time <= ?2 GROUP BY  ip",
+      nativeQuery = true)
+  public List getPeopleNum(Date startTime, Date endTime);
 
   public List<InquiryInfo> findByCreateTimeBetween(Date startTime, Date endTime);
 

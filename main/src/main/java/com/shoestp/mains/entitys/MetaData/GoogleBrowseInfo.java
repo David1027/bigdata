@@ -76,6 +76,10 @@ public class GoogleBrowseInfo {
   @Column(length = 50)
   private String pageViews;
 
+  // 1PC 2手机
+  @Column(name = "sys_type", length = 1000)
+  private Integer sysType;
+
   // 创建时间
   @Column(name = "create_time")
   private Date createTime;

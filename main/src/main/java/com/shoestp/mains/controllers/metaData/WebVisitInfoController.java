@@ -19,17 +19,17 @@ public class WebVisitInfoController {
    * -获取实时访客接口
    *
    * @param visitType 访客类型 数字1：注册会员
-   * @param sourceType 流量来源 数字1：google 2：百度 3：自主访问 4：社交访问
+   * @param sourceType 流量来源 数字1：google 2：百度 3：自主访问 4：社交访问 0：全部
    * @param page 访问页面 空字符表示不限
    * @param country 国家名称字符
    * @param start 起始条数
    * @param limit 返回条数
    * @return
    */
-  @GetMapping(value = "/getVisitInfo")
+  @GetMapping(value = "/getRealVisitInfo")
   public Object getVisitInfo(
-      int visitType,
-      int sourceType,
+      @RequestParam(defaultValue = "1") int visitType,
+      @RequestParam(defaultValue = "0") int sourceType,
       String page,
       String country,
       @RequestParam(defaultValue = "0") int start,

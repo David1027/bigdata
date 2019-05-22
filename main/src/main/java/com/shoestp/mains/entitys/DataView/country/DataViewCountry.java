@@ -7,7 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import lombok.Builder;
+
 import lombok.Data;
 
 /**
@@ -56,4 +56,15 @@ public class DataViewCountry {
   /** 创建时间 */
   @Column(name = "create_time")
   private Date createTime;
+
+  public DataViewCountry() {
+    this.visitorCountPc = 0;
+    this.visitorCountWap = 0;
+    this.visitorCount = 0;
+    this.pageViewsCount = 0;
+    this.registerCount = 0;
+    this.inquiryCount = 0;
+    this.rfqCount = 0;
+    this.userCount = 0;
+  }
 }

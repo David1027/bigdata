@@ -1,6 +1,5 @@
 package com.shoestp.mains.views.DataView.inquiry;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
 
 import lombok.Data;
@@ -24,5 +23,5 @@ public class InquiryTypeView {
   /** 询盘人数 */
   private Integer inquiryNumber;
   /** 询盘金额 */
-  private Integer inquiryAmount;
+  private double inquiryAmount;
 }

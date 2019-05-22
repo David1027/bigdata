@@ -31,6 +31,16 @@ public class InquiryInfo {
   private String url;
   /** * 来自于那个页面 */
   private String referer;
+  /** * 名称 */
+  private String name;
+  /** * 商家或商品pkey */
+  private Integer pkey;
+  /** * 金额 */
+  private double money;
+  /** * ip */
+  private String ip;
+  /** 国家 */
+  private String country;
   /** * 创建时间 */
   @Column(name = "create_time")
   private Date createTime;

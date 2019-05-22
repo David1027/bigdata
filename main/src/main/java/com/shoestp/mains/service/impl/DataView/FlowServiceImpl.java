@@ -1,17 +1,18 @@
 package com.shoestp.mains.service.impl.DataView;
 
-import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.shoestp.mains.dao.DataView.flow.FlowDao;
 import com.shoestp.mains.dao.DataView.flow.FlowPageDao;
-import com.shoestp.mains.dao.metaData.GoogleBrowseInfoDao;
 import com.shoestp.mains.enums.flow.AccessTypeEnum;
 import com.shoestp.mains.enums.flow.DeviceTypeEnum;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
@@ -19,7 +20,14 @@ import com.shoestp.mains.service.DataView.FlowService;
 import com.shoestp.mains.utils.dateUtils.CustomDoubleSerialize;
 import com.shoestp.mains.utils.dateUtils.DateTimeUtil;
 import com.shoestp.mains.utils.dateUtils.KeyValueViewUtil;
-import com.shoestp.mains.views.DataView.flow.*;
+import com.shoestp.mains.views.DataView.flow.AccessPageView;
+import com.shoestp.mains.views.DataView.flow.AccessView;
+import com.shoestp.mains.views.DataView.flow.FlowDeviceView;
+import com.shoestp.mains.views.DataView.flow.FlowSourcePageView;
+import com.shoestp.mains.views.DataView.flow.FlowSourceView;
+import com.shoestp.mains.views.DataView.flow.PageParameterView;
+import com.shoestp.mains.views.DataView.flow.PageView;
+import com.shoestp.mains.views.DataView.flow.PageViewObject;
 import com.shoestp.mains.views.DataView.utils.KeyValue;
 
 /**
@@ -31,7 +39,6 @@ public class FlowServiceImpl implements FlowService {
 
   @Resource private FlowDao flowDao;
   @Resource private FlowPageDao flowPageDao;
-  @Autowired private GoogleBrowseInfoDao googleBrowseInfoDao;
 
   /**
    * 获取实时来源
@@ -1014,17 +1021,5 @@ public class FlowServiceImpl implements FlowService {
     flowPageMonthMap.put("abscissa", DateTimeUtil.getDayAbscissa(30, date));
     flowPageMonthMap.put("flowpage", getFlowPageByMonthMap(30, date));
     return flowPageMonthMap;
-  }
-
-  /**
-   * -获取访问页面排行 按页面浏览量排行
-   *
-   * @author xiayan
-   * @param
-   * @return
-   */
-  public List<com.shoestp.mains.views.DataView.metaData.PageRankingView> getPageRanking(
-      Integer limit) {
-    return googleBrowseInfoDao.queryPageRanking(limit);
   }
 }

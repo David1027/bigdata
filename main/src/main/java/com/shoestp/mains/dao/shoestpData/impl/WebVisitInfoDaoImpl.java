@@ -1,7 +1,9 @@
 package com.shoestp.mains.dao.shoestpData.impl;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
@@ -13,6 +15,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.shoestp.mains.entitys.MetaData.QWebVisitInfo;
+import com.shoestp.mains.entitys.MetaData.WebVisitInfo;
 import com.shoestp.mains.views.DataView.metaData.queryView;
 
 public class WebVisitInfoDaoImpl {
@@ -55,5 +58,42 @@ public class WebVisitInfoDaoImpl {
       l += (Long) t.getQueryField();
     }
     return l;
+  }
+
+  public Map<String, Object> queryList(
+      int type, int source, String page, String country, int start, int limit) {
+    QWebVisitInfo qweb = QWebVisitInfo.webVisitInfo;
+    JPAQuery<WebVisitInfo> selectFrom = queryFactory.selectFrom(qweb);
+    Map<String, Object> map = new HashMap<>();
+    if (type == 1) {
+      // 登录用户
+      selectFrom.where(qweb.userId.gt(-1));
+    }
+    if (source == 1) {
+      // google
+      selectFrom.where(qweb.referer.like("%google.com%"));
+    } else if (source == 2) {
+      // baidu
+      selectFrom.where(qweb.referer.like("%baidu.com%"));
+    } else if (source == 3) {
+      // 自主访问
+      selectFrom.where(qweb.referer.eq(""));
+    } else {
+      // 社交访问
+      selectFrom.where(qweb.referer.ne(""));
+      selectFrom.where(qweb.referer.notLike("%google.com%"));
+      selectFrom.where(qweb.referer.notLike("%baidu.com%"));
+    }
+    if (page != null && !"".equals(page)) {
+      // 筛选页面
+      selectFrom.where(qweb.url.like("%" + page + "%"));
+    }
+    if (country != null && !"".equals(country)) {
+      // 筛选国家
+      selectFrom.where(qweb.location.like("%" + country + "%"));
+    }
+    map.put("count", selectFrom.fetchCount());
+    map.put("list", selectFrom.offset(start).limit(limit));
+    return map;
   }
 }

@@ -1,18 +1,5 @@
 package com.shoestp.mains.schedulers.googleApi;
 
-import com.shoestp.mains.dao.DataView.flow.FlowDao;
-import com.shoestp.mains.dao.DataView.flow.FlowPageDao;
-import com.shoestp.mains.dao.shoestpData.InquiryInfoDao;
-import com.shoestp.mains.dao.shoestpData.WebVisitInfoDao;
-import com.shoestp.mains.entitys.DataView.flow.DataViewFlow;
-import com.shoestp.mains.entitys.DataView.flow.DataViewFlowPage;
-import com.shoestp.mains.entitys.MetaData.GoogleBrowseInfo;
-import com.shoestp.mains.enums.flow.AccessTypeEnum;
-import com.shoestp.mains.enums.flow.DeviceTypeEnum;
-import com.shoestp.mains.enums.flow.SourceTypeEnum;
-import com.shoestp.mains.repositorys.metaData.GoogleBrowseInfoRepository;
-import com.shoestp.mains.schedulers.BaseSchedulers;
-import com.shoestp.mains.views.DataView.metaData.DataView;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -30,6 +17,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
+
+import javax.annotation.Resource;
+
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
@@ -39,9 +29,44 @@ import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
 
-@Component
+import com.shoestp.mains.dao.DataView.country.CountryDao;
+import com.shoestp.mains.dao.DataView.flow.FlowDao;
+import com.shoestp.mains.dao.DataView.flow.FlowPageDao;
+import com.shoestp.mains.dao.DataView.inquiry.InquiryDao;
+import com.shoestp.mains.dao.DataView.inquiry.InquiryRankDao;
+import com.shoestp.mains.dao.DataView.real.RealDao;
+import com.shoestp.mains.dao.DataView.user.UserAreaDao;
+import com.shoestp.mains.dao.DataView.user.UserDao;
+import com.shoestp.mains.dao.DataView.user.UserSexDao;
+import com.shoestp.mains.dao.metaData.GoogleBrowseInfoDao;
+import com.shoestp.mains.dao.metaData.UserInfoDao;
+import com.shoestp.mains.dao.shoestpData.InquiryInfoDao;
+import com.shoestp.mains.dao.shoestpData.WebVisitInfoDao;
+import com.shoestp.mains.entitys.DataView.country.DataViewCountry;
+import com.shoestp.mains.entitys.DataView.flow.DataViewFlow;
+import com.shoestp.mains.entitys.DataView.flow.DataViewFlowPage;
+import com.shoestp.mains.entitys.DataView.inquiry.DataViewInquiry;
+import com.shoestp.mains.entitys.DataView.inquiry.DataViewInquiryRank;
+import com.shoestp.mains.entitys.DataView.real.DataViewReal;
+import com.shoestp.mains.entitys.DataView.user.DataViewUser;
+import com.shoestp.mains.entitys.DataView.user.DataViewUserArea;
+import com.shoestp.mains.entitys.DataView.user.DataViewUserSex;
+import com.shoestp.mains.entitys.MetaData.GoogleBrowseInfo;
+import com.shoestp.mains.entitys.MetaData.InquiryInfo;
+import com.shoestp.mains.entitys.MetaData.PltCountry;
+import com.shoestp.mains.entitys.MetaData.WebVisitInfo;
+import com.shoestp.mains.enums.flow.AccessTypeEnum;
+import com.shoestp.mains.enums.flow.DeviceTypeEnum;
+import com.shoestp.mains.enums.flow.SourceTypeEnum;
+import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
+import com.shoestp.mains.enums.user.RegisterTypeEnum;
+import com.shoestp.mains.enums.user.SexEnum;
+import com.shoestp.mains.schedulers.BaseSchedulers;
+import com.shoestp.mains.service.metaData.impl.CountryServiceImpl;
+import com.shoestp.mains.views.DataView.metaData.DataView;
+
+// @Component
 public class DataConver extends BaseSchedulers {
   public DataConver() {
     super(
@@ -49,17 +74,60 @@ public class DataConver extends BaseSchedulers {
         DataConver.class.getName());
   }
 
+  @Bean(name = "DataConver")
+  public JobDetail JobDetail() {
+    return JobBuilder.newJob(this.getClass()).withIdentity(getJobNmae()).storeDurably().build();
+  }
+
+  public void defaults() {
+    SimpleScheduleBuilder.simpleSchedule().withIntervalInMinutes(5).repeatForever();
+  }
+
+  @Bean(name = "DataConverTrigger")
+  public Trigger sampleJobTrigger() {
+    return TriggerBuilder.newTrigger()
+        .forJob(JobDetail())
+        .withIdentity(getJobNmae() + "Trigger")
+        .withSchedule(getScheduleBuilder())
+        .build();
+  }
+
   @Autowired private FlowDao flowDao;
   @Autowired private FlowPageDao flowPageDao;
-  @Autowired private GoogleBrowseInfoRepository googleBrowseInfoDao;
   @Autowired private WebVisitInfoDao webDao;
   @Autowired private InquiryInfoDao inquiryInfoDao;
+  @Autowired private InquiryDao inquiryDao;
+  @Autowired private GoogleBrowseInfoDao googleDao;
+  @Autowired private InquiryRankDao inquiryRankDao;
+  @Autowired private UserInfoDao userInfoDao;
+  @Autowired private CountryDao countryDao;
+  @Autowired private RealDao realDao;
+  @Autowired private UserDao userDao;
+  @Autowired private UserAreaDao userAreaDao;
+  @Autowired private UserSexDao userSexDao;
 
-  // 定时60分钟
-  private static int timing = 60;
+  @Resource(name = "pltCountryService")
+  private CountryServiceImpl countryServiceImpl;
+
+  private Integer session;
+  private List<PltCountry> countryList;
+
+  private static SimpleDateFormat ydms = new SimpleDateFormat("yyyyMMddHHmm");
+
+  private static int timing = 60; // 定时60分钟
   private static List<String> PC =
       Arrays.asList("(not set)", "Chrome OS", "Linux", "Macintosh", "Windows");
-  private static List<String> MOBILE = Arrays.asList("Android", "IOS");
+
+  private static List<String> MOBILE =
+      Arrays.asList(
+          "Android",
+          "IOS",
+          "BlackBerry",
+          "Firefox OS",
+          "Samsung",
+          "Tizen",
+          "Windows Phone",
+          "Xbox");
 
   // 来源渠道
   private static Map<String, List<String>> sourcePage = new HashMap<>();
@@ -118,7 +186,6 @@ public class DataConver extends BaseSchedulers {
   @Override
   protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
     try {
-
       DateTimeFormatter ofPattern = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
       SimpleDateFormat sim = new SimpleDateFormat("yyyyMMddHHmmss");
       LocalDateTime date = LocalDateTime.now();
@@ -126,12 +193,10 @@ public class DataConver extends BaseSchedulers {
       String startTime = "20181119000000";
       long day = 0; // 天数差
       String endTime = date.format(ofPattern) + "00";
+      countryList = countryServiceImpl.getCountryList();
       if (flowDao.getFlowTopOne().isPresent()) {
         // startTime = date.plusHours(-1).format(ofPattern) + "00";
-        startTime =
-            new SimpleDateFormat("yyyyMMddHHmm")
-                    .format(flowDao.getFlowTopOne().get().getCreateTime())
-                + "00";
+        startTime = ydms.format(flowDao.getFlowTopOne().get().getCreateTime()) + "00";
         LocalDateTime finallyLocaDateTime =
             UDateToLocalDateTime(flowDao.getFlowTopOne().get().getCreateTime());
         Duration duration = Duration.between(date, finallyLocaDateTime);
@@ -153,8 +218,11 @@ public class DataConver extends BaseSchedulers {
           LocalDateTime plusDays = startDate.plusDays(1);
           LocalDateTime plusDays2 = endDate.plusDays(1);
           List<GoogleBrowseInfo> browseInfoList =
-              googleBrowseInfoDao.queryByStartTimeAndEndTime(
+              googleDao.queryByStartTimeAndEndTime(
                   plusDays.format(ofPattern), plusDays2.format(ofPattern));
+          List<InquiryInfo> InquiryInfoList =
+              inquiryInfoDao.findByCreateTimeBetween(
+                  LocalDateTimeToUdate(startDate), LocalDateTimeToUdate(endDate));
           startDate = plusDays;
           endDate = plusDays2;
           if (i - 1 == day) {
@@ -163,13 +231,12 @@ public class DataConver extends BaseSchedulers {
           if (!browseInfoList.isEmpty()) {
             filtration(
                 browseInfoList, LocalDateTimeToUdate(startDate), LocalDateTimeToUdate(endDate));
-          } else {
-            continue;
           }
+          if (!InquiryInfoList.isEmpty()) {}
         }
       } else {
         List<GoogleBrowseInfo> browseInfoList =
-            googleBrowseInfoDao.queryByStartTimeAndEndTime(startTime, endTime);
+            googleDao.queryByStartTimeAndEndTime(startTime, endTime);
         if (!browseInfoList.isEmpty()) {
           try {
             filtration(browseInfoList, sim.parse(startTime), sim.parse(endTime));
@@ -305,68 +372,8 @@ public class DataConver extends BaseSchedulers {
           mapPage.put(accTypeEnum, infos);
         }
       }
-      for (Entry<DataView, List<GoogleBrowseInfo>> entry : map.entrySet()) {
-        DataView t = entry.getKey();
-        List<GoogleBrowseInfo> infos = entry.getValue();
-        Long df =
-            infos.stream()
-                .filter(
-                    bean -> {
-                      if (Integer.parseInt(bean.getVisitor()) > 0) {
-                        return true;
-                      }
-                      return false;
-                    })
-                .collect(Collectors.counting());
-        DataViewFlow flow = new DataViewFlow();
-        flow.setCreateTime(endTime);
-        flow.setDeviceType(t.getDeviceType());
-        flow.setSourcePage(t.getSourcePage());
-        flow.setSourceType(t.getSourceType());
-        flow.setVisitorCount(df.intValue());
-        flow.setInquiryCount(getInquiry(t.getSourceType(), t.getSourcePage(), startTime, endTime));
-        flowDao.save(flow);
-      }
-      for (Entry<AccessTypeEnum, List<GoogleBrowseInfo>> entry : mapPage.entrySet()) {
-        DataViewFlowPage flowPage = new DataViewFlowPage();
-        Integer viewCount = 0; // 浏览量
-        Integer visitorCount = 0; // 访客数
-        Integer clickCount = 0; // 点击量
-        // double jumpRate = 0; // 跳失率
-        // double averageStayTime = 0; // 平均停留时长
-        double sessionNum = 0; // 会话人数
-        double bounceRateNum = 0; // 跳失人数
-        double sumStayTime = 0; // 总停留时长
-        DecimalFormat df = new DecimalFormat("#.00");
-        for (GoogleBrowseInfo item : entry.getValue()) {
-          viewCount += Integer.parseInt(item.getPageViews());
-          if (!item.getSessions().equals("0")) {
-            sessionNum += Integer.parseInt(item.getSessions());
-            bounceRateNum += countBounce(item.getBounceRate(), item.getSessions());
-          }
-          if (!item.getVisitor().equals("0")) {
-            visitorCount += Integer.parseInt(item.getVisitor());
-          }
-          if (!item.getPreviousPage().equals("(entrance)")
-              && !item.getPagePath().equals(item.getPreviousPage())) {
-            clickCount += Integer.parseInt(item.getVisitor());
-          }
-          sumStayTime += Double.parseDouble(item.getTimeOnPage());
-        }
-        flowPage.setAccessType(entry.getKey());
-        flowPage.setViewCount(viewCount);
-        flowPage.setVisitorCount(visitorCount);
-        flowPage.setClickCount(clickCount);
-        flowPage.setClickNumber(getClickNum(entry.getKey(), startTime, endTime));
-        flowPage.setJumpRate(
-            sessionNum == 0 ? 0 : Double.parseDouble(df.format(bounceRateNum / sessionNum)));
-        flowPage.setAverageStayTime(
-            viewCount == 0 ? 0 : Double.parseDouble(df.format(sumStayTime / viewCount)));
-        flowPage.setClickRate(
-            viewCount == 0 ? 0 : Double.parseDouble(df.format(clickCount / viewCount)));
-        flowPage.setCreateTime(endTime);
-        flowPageDao.save(flowPage);
-      }
+      flowConver(map, startTime, endTime);
+      flowPageConver(mapPage, startTime, endTime);
     }
   }
 
@@ -432,7 +439,28 @@ public class DataConver extends BaseSchedulers {
     }
   }
 
-  public void save(Map<Integer, GoogleBrowseInfo> browseInfoMap) {}
+  public String[] getCountry(String lag, String data) {
+    String[] str = {"no set", "未知"};
+    if (data.equals("(not set)")) {
+      return str;
+    }
+    for (PltCountry item : countryList) {
+      if (lag.equals("en")) {
+        if (data.indexOf(item.getEngName()) != -1) {
+          str[0] = item.getEngName();
+          str[1] = item.getName();
+          return str;
+        }
+      } else {
+        if (data.indexOf(item.getName()) != -1) {
+          str[0] = item.getEngName();
+          str[1] = item.getName();
+          return str;
+        }
+      }
+    }
+    return str;
+  }
 
   public static void main(String[] args) throws ParseException {
     //    LocalDateTime date = LocalDateTime.now();
@@ -448,29 +476,369 @@ public class DataConver extends BaseSchedulers {
     // System.out.println(countBounce("0.0", "10"));
     /*Date d = new SimpleDateFormat("yyyyMMddHHmmss").parse("20190516180300");
     System.out.println(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(d));*/
-    Double d = 28.0;
+    /* Double d = 28.0;
     Double a = 32.0;
     DecimalFormat df = new DecimalFormat("#.00");
     String format = df.format(d / a);
     double parseDouble = Double.parseDouble(format);
-    System.out.println(parseDouble);
+    System.out.println(parseDouble);*/
+    /* String s = "a";
+    String b = "a";
+    Map<String, Integer> m = new HashMap<>();
+    m.put(s, 1);
+    // m.
+    System.out.println(m.containsKey(b));*/
+    Map<DataViewCountry, DataViewCountry> map = new HashMap<>();
+    DataViewCountry d = new DataViewCountry();
+    DataViewCountry a = new DataViewCountry();
+    DataViewCountry w = new DataViewCountry();
+    DataViewCountry s = new DataViewCountry();
+    d.setCountryEnglishName("zz");
+    d.setCountryName("aa");
+    a.setCountryImage("ad");
+    w.setCountryEnglishName("zz");
+    w.setCountryName("aa");
+    s.setCountryEnglishName("zz");
+    s.setCountryName("aa");
+    map.put(d, a);
+    map.put(w, a);
+    System.out.println(map.containsKey(w));
   }
 
-  @Bean(name = "DataConver")
-  public JobDetail JobDetail() {
-    return JobBuilder.newJob(this.getClass()).withIdentity(getJobNmae()).storeDurably().build();
+  public void countryConver(Date startTime, Date endTime) {
+    Map<DataViewCountry, DataViewCountry> map = new HashMap<>();
+    StringBuffer sql = new StringBuffer("");
+    for (int i = 0; i < MOBILE.size(); i++) {
+      sql.append("system = ");
+      sql.append("'");
+      sql.append(MOBILE.get(i));
+      sql.append("'");
+      if (i != MOBILE.size() - 1) {
+        sql.append(" || ");
+      }
+    }
+    // 访客 浏览量
+    List<Object> objGoogle =
+        googleDao.getPageViewsAndSessionsGrupByCountrty(
+            sql.toString(), ydms.format(startTime), ydms.format(endTime));
+    if (objGoogle.size() > 0) {
+      for (Object item : objGoogle) {
+        Object[] o = (Object[]) item;
+        DataViewCountry country = new DataViewCountry();
+        DataViewCountry count = new DataViewCountry();
+        String[] getCountry = getCountry("en", (String) o[0]);
+        country.setCountryEnglishName(getCountry[0]);
+        country.setCountryName(getCountry[1]);
+        Integer views = (int) o[1];
+        Integer sessions = (int) o[2];
+        Integer phone = (int) o[3];
+        Integer pc = sessions - phone;
+        count.setPageViewsCount(views);
+        count.setVisitorCountPc(pc);
+        count.setVisitorCountWap(phone);
+        count.setVisitorCount(sessions);
+        map.put(country, count);
+      }
+    }
+    // 注册量
+    List<Object> objUserInfo = userInfoDao.getCountryAndCount(startTime, endTime);
+    if (objUserInfo.size() > 0) {
+      for (Object item : objUserInfo) {
+        Object[] o = (Object[]) item;
+        String[] getCountry = getCountry("zh_CN", (String) o[0]);
+        DataViewCountry country = new DataViewCountry();
+        DataViewCountry count = new DataViewCountry();
+        country.setCountryEnglishName(getCountry[0]);
+        country.setCountryName(getCountry[1]);
+        if (map.containsKey(country)) {
+          count = map.get(country);
+          count.setRegisterCount((int) o[1]);
+          map.put(country, count);
+        } else {
+          count.setPageViewsCount(0);
+          count.setVisitorCountPc(0);
+          count.setVisitorCountWap(0);
+          count.setVisitorCount(0);
+          count.setRegisterCount((int) o[1]);
+          map.put(country, count);
+        }
+      }
+    }
+    // 询盘量
+    List<Object> objInquiryInfo = inquiryInfoDao.getCountGrupByCountry(startTime, endTime);
+    if (objInquiryInfo.size() > 0) {
+      for (Object item : objInquiryInfo) {
+        Object[] o = (Object[]) item;
+        String[] getCountry = getCountry("zh_CN", (String) o[0]);
+        DataViewCountry country = new DataViewCountry();
+        DataViewCountry count = new DataViewCountry();
+        country.setCountryEnglishName(getCountry[0]);
+        country.setCountryName(getCountry[1]);
+        if (map.containsKey(country)) {
+          count = map.get(country);
+          count.setInquiryCount((int) o[1]);
+          map.put(country, count);
+        } else {
+          count.setPageViewsCount(0);
+          count.setVisitorCountPc(0);
+          count.setVisitorCountWap(0);
+          count.setVisitorCount(0);
+          count.setRegisterCount(0);
+          count.setInquiryCount((int) o[1]);
+          map.put(country, count);
+        }
+      }
+    }
+    // RFQ数
+    List<Object> objInquiryInfoRfq = inquiryInfoDao.getRfqCountGrupByCountry(startTime, endTime);
+    if (objInquiryInfoRfq.size() > 0) {
+      for (Object item : objInquiryInfoRfq) {
+        Object[] o = (Object[]) item;
+        String[] getCountry = getCountry("zh_CN", (String) o[0]);
+        DataViewCountry country = new DataViewCountry();
+        DataViewCountry count = new DataViewCountry();
+        country.setCountryEnglishName(getCountry[0]);
+        country.setCountryName(getCountry[1]);
+        if (map.containsKey(country)) {
+          count = map.get(country);
+          count.setRfqCount((int) o[1]);
+          map.put(country, count);
+        } else {
+          count.setPageViewsCount(0);
+          count.setVisitorCountPc(0);
+          count.setVisitorCountWap(0);
+          count.setVisitorCount(0);
+          count.setRegisterCount(0);
+          count.setInquiryCount(0);
+          count.setRfqCount((int) o[1]);
+          map.put(country, count);
+        }
+      }
+    }
+
+    Integer visitorCount = 0;
+    Integer viewCount = 0;
+    Integer registerCount = 0;
+    Integer inquiryCount = 0;
+    Integer rfqCount = 0;
+
+    for (Entry<DataViewCountry, DataViewCountry> item : map.entrySet()) {
+      DataViewCountry key = item.getKey();
+      DataViewCountry value = item.getValue();
+      value.setCountryEnglishName(key.getCountryEnglishName());
+      value.setCountryName(key.getCountryName());
+      int c = (int) userInfoDao.countByCountryLikeCreateTimeLessThan(key.getCountryName(), endTime);
+      value.setUserCount(c);
+      value.setCreateTime(endTime);
+      visitorCount += value.getVisitorCount();
+      viewCount += value.getPageViewsCount();
+      registerCount += value.getRegisterCount();
+      inquiryCount += value.getInquiryCount();
+      rfqCount += value.getRfqCount();
+      countryDao.save(value);
+      userAreaConver(key.getCountryName(), c, startTime, endTime);
+    }
+    DataViewReal real = new DataViewReal();
+    real.setCreateTime(endTime);
+    real.setInquiryCount(inquiryCount);
+    real.setRegisterCount(registerCount);
+    real.setRfqCount(rfqCount);
+    real.setViewCount(viewCount);
+    real.setVisitorCount(visitorCount);
+    realConver(real);
   }
 
-  public void defaults() {
-    SimpleScheduleBuilder.simpleSchedule().withIntervalInMinutes(5).repeatForever();
+  public void flowConver(Map<DataView, List<GoogleBrowseInfo>> map, Date startTime, Date endTime) {
+    for (Entry<DataView, List<GoogleBrowseInfo>> entry : map.entrySet()) {
+      DataView t = entry.getKey();
+      List<GoogleBrowseInfo> infos = entry.getValue();
+      Long df =
+          infos.stream()
+              .filter(
+                  bean -> {
+                    if (Integer.parseInt(bean.getVisitor()) > 0) {
+                      return true;
+                    }
+                    return false;
+                  })
+              .collect(Collectors.counting());
+      DataViewFlow flow = new DataViewFlow();
+      flow.setCreateTime(endTime);
+      flow.setDeviceType(t.getDeviceType());
+      flow.setSourcePage(t.getSourcePage());
+      flow.setSourceType(t.getSourceType());
+      flow.setVisitorCount(df.intValue());
+      flow.setInquiryCount(getInquiry(t.getSourceType(), t.getSourcePage(), startTime, endTime));
+      flowDao.save(flow);
+    }
   }
 
-  @Bean(name = "DataConverTrigger")
-  public Trigger sampleJobTrigger() {
-    return TriggerBuilder.newTrigger()
-        .forJob(JobDetail())
-        .withIdentity(getJobNmae() + "Trigger")
-        .withSchedule(getScheduleBuilder())
-        .build();
+  public void flowPageConver(
+      Map<AccessTypeEnum, List<GoogleBrowseInfo>> mapPage, Date startTime, Date endTime) {
+    double sessionNum = 0; // 会话人数
+    for (Entry<AccessTypeEnum, List<GoogleBrowseInfo>> entry : mapPage.entrySet()) {
+      DataViewFlowPage flowPage = new DataViewFlowPage();
+      Integer viewCount = 0; // 浏览量
+      Integer visitorCount = 0; // 访客数
+      Integer clickCount = 0; // 点击量
+      // double jumpRate = 0; // 跳失率
+      // double averageStayTime = 0; // 平均停留时长
+
+      double bounceRateNum = 0; // 跳失人数
+      double sumStayTime = 0; // 总停留时长
+      DecimalFormat df = new DecimalFormat("#.00");
+      for (GoogleBrowseInfo item : entry.getValue()) {
+        viewCount += Integer.parseInt(item.getPageViews());
+        if (!item.getSessions().equals("0")) {
+          sessionNum += Integer.parseInt(item.getSessions());
+          bounceRateNum += countBounce(item.getBounceRate(), item.getSessions());
+        }
+        if (!item.getVisitor().equals("0")) {
+          visitorCount += Integer.parseInt(item.getVisitor());
+        }
+        if (!item.getPreviousPage().equals("(entrance)")
+            && !item.getPagePath().equals(item.getPreviousPage())) {
+          clickCount += Integer.parseInt(item.getVisitor());
+        }
+        sumStayTime += Double.parseDouble(item.getTimeOnPage());
+      }
+      flowPage.setAccessType(entry.getKey());
+      flowPage.setViewCount(viewCount);
+      flowPage.setVisitorCount(visitorCount);
+      flowPage.setClickCount(clickCount);
+      flowPage.setClickNumber(getClickNum(entry.getKey(), startTime, endTime));
+      flowPage.setJumpRate(
+          sessionNum == 0 ? 0 : Double.parseDouble(df.format(bounceRateNum / sessionNum)));
+      flowPage.setAverageStayTime(
+          viewCount == 0 ? 0 : Double.parseDouble(df.format(sumStayTime / viewCount)));
+      flowPage.setClickRate(
+          viewCount == 0
+              ? 0
+              : Double.parseDouble(df.format((double) clickCount / (double) viewCount)));
+      flowPage.setCreateTime(endTime);
+      flowPageDao.save(flowPage);
+    }
+    session = (int) sessionNum;
+  }
+
+  public void inquiryConver(Date startTime, Date endTime) {
+    // TODO 开始时间与结束时间未判断
+    DataViewInquiry in = new DataViewInquiry();
+    in.setVisitorCount(0);
+    in.setInquiryCount((int) inquiryInfoDao.count());
+    in.setInquiryNumber(inquiryInfoDao.getPeopleNum().size());
+    in.setCreateTime(new Date());
+    inquiryDao.save(in);
+  }
+
+  public void inquiryRankConver(List<InquiryInfo> InquiryInfoList, Date startTime, Date endTime) {
+    Map<DataViewInquiryRank, List<InquiryInfo>> map = new HashMap<>();
+    for (InquiryInfo item : InquiryInfoList) {
+      DataViewInquiryRank rank = new DataViewInquiryRank();
+      if (!item.getType().equals(InquiryTypeEnum.COMMODITY)
+          && !item.getType().equals(InquiryTypeEnum.SEARCHTERM)
+          && !item.getType().equals(InquiryTypeEnum.RFQ)) {
+        rank.setInquiryType(InquiryTypeEnum.SUPPLIER);
+      } else if (item.getType().equals(InquiryTypeEnum.COMMODITY)) {
+        rank.setInquiryType(InquiryTypeEnum.COMMODITY);
+      } else {
+        continue;
+      }
+      rank.setPkey(item.getPkey());
+      rank.setInquiryName(item.getName());
+      if (map.containsKey(rank)) {
+        map.get(rank).add(item);
+      } else {
+        List<InquiryInfo> infos = new ArrayList<>();
+        infos.add(item);
+        map.put(rank, infos);
+      }
+    }
+    for (Entry<DataViewInquiryRank, List<InquiryInfo>> item : map.entrySet()) {
+      DataViewInquiryRank rank = item.getKey();
+      Integer[] count = {0, 0};
+      if (rank.getInquiryType().equals(InquiryTypeEnum.COMMODITY)) {
+        // 商品
+        count =
+            googleDao.getPdtVisitCountAndPageViews(
+                rank.getPkey(), ydms.format(startTime), ydms.format(endTime));
+      } else {
+        // 商家
+        count =
+            googleDao.getSupVisitCountAndPageViews(
+                rank.getPkey(), ydms.format(startTime), ydms.format(endTime));
+      }
+      Map<String, List<InquiryInfo>> m =
+          item.getValue().stream().collect(Collectors.groupingBy(InquiryInfo::getIp));
+      rank.setInquiryNumber(m.size());
+      rank.setInquiryCount(item.getValue().size());
+      rank.setViewCount(count[0]);
+      rank.setVisitorCount(count[1]);
+      rank.setInquiryAmount(0);
+      rank.setCreateTime(endTime);
+      inquiryRankDao.save(rank);
+    }
+  }
+
+  public void realConver(DataViewReal rael) {
+    realDao.save(rael);
+  }
+
+  public void userConver(Integer visitCount, Integer registerCount, Date startTime, Date endTime) {
+    List<WebVisitInfo> list = webDao.findByCreateTimeBetween(startTime, endTime);
+    Map<String, List<WebVisitInfo>> m =
+        list.stream().collect(Collectors.groupingBy(WebVisitInfo::getIp));
+    DataViewUser user = new DataViewUser();
+    user.setVisitorCount(visitCount);
+    user.setRegisterCount(registerCount);
+    // 新用户
+    Integer newVisitorCount = m.size();
+    // 老用户
+    Integer oldVisitorCount = 0;
+    for (WebVisitInfo item : list) {
+      if (item.getUserId() > -1) {
+        oldVisitorCount++;
+      }
+    }
+    user.setNewVisitorCount(newVisitorCount);
+    user.setOldVisitorCount(oldVisitorCount);
+    List<Object> userCount =
+        userInfoDao.getCount(
+            RegisterTypeEnum.PURCHASE.toString(), RegisterTypeEnum.SUPPLIER.toString(), endTime);
+    Object[] object = (Object[]) userCount.get(0);
+    Object[] object1 = (Object[]) userCount.get(1);
+    user.setPurchaseCount((int) object[0]);
+    user.setSupplierCount((int) object1[0]);
+    user.setCreateTime(endTime);
+    userDao.save(user);
+  }
+
+  public void userAreaConver(String country, int userCount, Date startTime, Date endTime) {
+    DataViewUserArea area = new DataViewUserArea();
+    area.setAreaCount(userCount);
+    area.setArea(country);
+    area.setCreateTime(endTime);
+    userAreaDao.save(area);
+  }
+
+  public void userSexConver(Date startTime, Date endTime) {
+    long man = userInfoDao.countBySexAndCreateTimeLessThan(SexEnum.MAN, endTime);
+    long woman = userInfoDao.countBySexAndCreateTimeLessThan(SexEnum.WOMAN, endTime);
+    long unknown = userInfoDao.countBySexAndCreateTimeLessThan(SexEnum.UNKNOWN, endTime);
+    DataViewUserSex userMan = new DataViewUserSex();
+    DataViewUserSex userWoman = new DataViewUserSex();
+    DataViewUserSex userUnknown = new DataViewUserSex();
+    userMan.setSex(SexEnum.MAN);
+    userMan.setSexCount((int) man);
+    userMan.setCreateTime(endTime);
+    userWoman.setSex(SexEnum.WOMAN);
+    userWoman.setSexCount((int) woman);
+    userWoman.setCreateTime(endTime);
+    userUnknown.setSex(SexEnum.UNKNOWN);
+    userUnknown.setSexCount((int) unknown);
+    userUnknown.setCreateTime(endTime);
+    userSexDao.save(userMan);
+    userSexDao.save(userWoman);
+    userSexDao.save(userUnknown);
   }
 }

@@ -1,21 +1,31 @@
 package com.shoestp.mains.rpc.shoestp.imp;
 
+import java.util.Date;
+
+import javax.annotation.Resource;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.start2do.utils.ipUtils.City;
+
+import com.shoestp.mains.dao.metaData.UserInfoDao;
 import com.shoestp.mains.entitys.MetaData.InquiryInfo;
 import com.shoestp.mains.entitys.MetaData.SearchWordInfo;
 import com.shoestp.mains.entitys.MetaData.WebVisitInfo;
 import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
+import com.shoestp.mains.enums.user.RegisterTypeEnum;
+import com.shoestp.mains.enums.user.SexEnum;
 import com.shoestp.mains.rpc.shoestp.pojo.GRPC_ResultProto;
 import com.shoestp.mains.rpc.shoestp.pojo.GRPC_SendDataProto;
+import com.shoestp.mains.rpc.shoestp.pojo.GRPC_SendDataProto.UserInfo;
 import com.shoestp.mains.rpc.shoestp.pojo.SendDataUtilGrpc;
 import com.shoestp.mains.service.metaData.InquiryInfoService;
 import com.shoestp.mains.service.metaData.SearchWordInfoService;
 import com.shoestp.mains.service.metaData.WebVisitInfoService;
+
 import io.grpc.stub.StreamObserver;
-import java.util.Date;
-import javax.annotation.Resource;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.stereotype.Component;
 
 /** Created by IntelliJ IDEA. User: lijie@shoestp.cn Date: 2019/5/14 Time: 15:00 */
 @Component
@@ -23,9 +33,9 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
 
   private static final Logger logger = LogManager.getLogger(RPCServiceImp.class);
   @Resource private WebVisitInfoService webVisitInfoService;
-
   @Resource private SearchWordInfoService searchWordInfoService;
   @Resource private InquiryInfoService inquiryInfoService;
+  @Autowired private UserInfoDao userInfoDao;
 
   @Override
   public StreamObserver<GRPC_SendDataProto.SearchInfo> sendSearch(
@@ -69,6 +79,13 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
         webVisitInfo.setReferer(viewInfo.getReferer());
         webVisitInfo.setIp(viewInfo.getIp());
         webVisitInfo.setUserId(viewInfo.getUserId());
+        webVisitInfo.setVisitName(viewInfo.getVisitName());
+        String[] str = City.find(viewInfo.getIp());
+        if (str.length == 1) {
+          webVisitInfo.setLocation(str.toString());
+        } else {
+          webVisitInfo.setLocation(String.join("-", str));
+        }
         webVisitInfo.setCreateTime(new Date());
         webVisitInfoService.save(webVisitInfo);
       }
@@ -115,12 +132,61 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
         inquiryInfo.setId(inquiry.getInquiryId());
         inquiryInfo.setReferer(inquiry.getReferer());
         inquiryInfo.setCreateTime(new Date());
+        inquiryInfo.setName(inquiry.getName());
+        inquiryInfo.setPkey(inquiry.getPkey());
+        inquiryInfo.setMoney(inquiry.getMoney());
+        inquiryInfo.setIp(inquiry.getIp());
+        inquiryInfo.setCountry(City.find(inquiry.getIp())[0]);
         inquiryInfoService.save(inquiryInfo);
       }
 
       @Override
       public void onError(Throwable throwable) {
         logger.error(throwable);
+      }
+
+      @Override
+      public void onCompleted() {
+        responseObserver.onCompleted();
+      }
+    };
+  }
+
+  @Override
+  public StreamObserver<GRPC_SendDataProto.UserInfo> sendUserInfo(
+      StreamObserver<GRPC_ResultProto.Result> responseObserver) {
+    return new StreamObserver<GRPC_SendDataProto.UserInfo>() {
+
+      @Override
+      public void onNext(UserInfo info) {
+        com.shoestp.mains.entitys.MetaData.UserInfo userInfo =
+            new com.shoestp.mains.entitys.MetaData.UserInfo();
+        userInfo.setCountry(info.getCountry());
+        switch (info.getSex()) {
+          case 0:
+            userInfo.setSex(SexEnum.UNKNOWN);
+            break;
+          case 1:
+            userInfo.setSex(SexEnum.MAN);
+            break;
+          case 2:
+            userInfo.setSex(SexEnum.WOMAN);
+            break;
+          default:
+            userInfo.setSex(SexEnum.UNKNOWN);
+            break;
+        }
+        if (info.getType() == 0) {
+          userInfo.setType(RegisterTypeEnum.PURCHASE);
+        } else {
+          userInfo.setType(RegisterTypeEnum.SUPPLIER);
+        }
+        userInfoDao.save(userInfo);
+      }
+
+      @Override
+      public void onError(Throwable t) {
+        logger.error(t);
       }
 
       @Override

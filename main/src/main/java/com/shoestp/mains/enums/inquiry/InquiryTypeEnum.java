@@ -12,6 +12,8 @@ public enum InquiryTypeEnum {
   COMMODITY(2, "商品询盘"),
   /** 热门关键词 */
   SEARCHTERM(3, "热门关键词"),
+  /** RFQ */
+  RFQ(4, "RFQ"),
   /** 着陆页询盘 */
   DISHENG(298, "迪盛着陆页"),
   JUNA(295, "巨纳着陆页"),

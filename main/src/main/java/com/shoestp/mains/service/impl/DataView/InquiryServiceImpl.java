@@ -1,10 +1,15 @@
 package com.shoestp.mains.service.impl.DataView;
 
-import java.util.*;
-import java.util.stream.Collector;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
 
 import com.shoestp.mains.dao.DataView.inquiry.InquiryDao;
 import com.shoestp.mains.dao.DataView.inquiry.InquiryRankDao;
@@ -15,13 +20,7 @@ import com.shoestp.mains.utils.dateUtils.KeyValueViewUtil;
 import com.shoestp.mains.views.DataView.inquiry.InquiryRankView;
 import com.shoestp.mains.views.DataView.inquiry.InquiryTypeView;
 import com.shoestp.mains.views.DataView.inquiry.InquiryView;
-import com.shoestp.mains.views.DataView.user.DataViewUserView;
 import com.shoestp.mains.views.DataView.utils.KeyValue;
-
-import org.springframework.stereotype.Service;
-
-import static com.shoestp.mains.utils.dateUtils.DateTimeUtil.DATE_FARMAT_10;
-import static com.shoestp.mains.utils.dateUtils.DateTimeUtil.getTimesnight;
 
 /**
  * @description: 询盘-服务层实现类
@@ -294,9 +293,9 @@ public class InquiryServiceImpl implements InquiryService {
    * @param parameter
    * @return
    */
-  public int[] getEveryHourByInquiryName(
+  public double[] getEveryHourByInquiryName(
       InquiryTypeEnum inquiryType, String inquiryName, Date date, String parameter) {
-    int[] arr = new int[24];
+    double[] arr = new double[24];
     for (int i = 0; i < arr.length; i++) {
       if ("visitorCount".equals(parameter)
           && !getInquiryRealRankByHour(inquiryType, inquiryName, date, i, i + 1).isEmpty()) {

@@ -1,6 +1,7 @@
 package com.shoestp.mains.utils.dateUtils;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -23,5 +24,14 @@ public class CustomDoubleSerialize extends JsonSerializer<Double> {
         if(value != null) {
             gen.writeString(df.format(value));
         }
+    }
+
+    public static Double setDouble(Double d){
+        double df = 0.00;
+        if(d != null){
+            BigDecimal b = new BigDecimal(d);
+            df = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+        }
+        return df;
     }
 }

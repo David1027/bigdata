@@ -28,19 +28,17 @@ public class UserController {
    * 获取用户概况
    *
    * @author: lingjian @Date: 2019/5/13 14:48
-   * @param startDate
-   * @param endDate
+   * @param date
    * @return
    */
   @PostMapping(value = "/useroverview")
   public Object getUserOverview(
-      @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
-      @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
-    logger.debug(startDate+"======="+endDate);
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,Integer num) {
+    logger.debug(date);
     return MessageResult.builder()
         .code(1)
         .msg("Hello")
-        .result(userService.getUserOverview(startDate, endDate))
+        .result(userService.getUserOverview(date,num))
         .build();
   }
 
@@ -65,28 +63,27 @@ public class UserController {
    * @return
    */
   @PostMapping(value = "/usertimebyday")
-  public Object getUserTimeByDay(@DateTimeFormat(pattern = "yyyy-MM-dd") Date date,Integer day) {
+  public Object getUserTimeByDay(@DateTimeFormat(pattern = "yyyy-MM-dd") Date date,Integer num) {
     logger.debug(date);
-    return MessageResult.builder().code(1).msg("Hello").result(userService.getUserTimeByDay(date,day)).build();
+    return MessageResult.builder().code(1).msg("Hello").result(userService.getUserTimeByDay(date,num)).build();
   }
 
   /**
    * 根据时间获取用户性别数量
    *
    * @author: lingjian @Date: 2019/5/13 16:12
-   * @param startDate
-   * @param endDate
+   * @param date
+   * @param num
    * @return
    */
   @PostMapping(value = "/usersex")
   public Object getUserSex(
-      @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
-      @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
-    logger.debug(startDate);
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,Integer num) {
+    logger.debug(date);
     return MessageResult.builder()
         .code(1)
         .msg("Hello")
-        .result(userService.getUserSex(startDate, endDate))
+        .result(userService.getUserSex(date, num))
         .build();
   }
 
@@ -94,19 +91,18 @@ public class UserController {
    * 根据时间获取用户地域分布
    *
    * @author: lingjian @Date: 2019/5/13 16:34
-   * @param startDate
-   * @param endDate
+   * @param date
+   * @param num
    * @return
    */
   @PostMapping(value = "/userarea")
   public Object getUserArea(
-      @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
-      @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
-    logger.debug(startDate);
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,Integer num) {
+    logger.debug(date);
     return MessageResult.builder()
         .code(1)
         .msg("Hello")
-        .result(userService.getUserArea(startDate, endDate))
+        .result(userService.getUserArea(date, num))
         .build();
   }
 }

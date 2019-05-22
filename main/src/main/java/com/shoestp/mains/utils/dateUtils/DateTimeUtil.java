@@ -6,7 +6,11 @@ package com.shoestp.mains.utils.dateUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * 日期和时间工具类
@@ -148,7 +152,9 @@ public final class DateTimeUtil {
     SimpleDateFormat df = new SimpleDateFormat(DATE_FARMAT_3);
     Calendar c = Calendar.getInstance();
     int day_of_week = c.get(Calendar.DAY_OF_WEEK) - 1;
-    if (day_of_week == 0) day_of_week = 7;
+    if (day_of_week == 0) {
+      day_of_week = 7;
+    }
     c.add(Calendar.DATE, -day_of_week + 1);
     return df.format(c.getTime());
   }
@@ -162,7 +168,9 @@ public final class DateTimeUtil {
     SimpleDateFormat df = new SimpleDateFormat(DATE_FARMAT_3);
     Calendar c = Calendar.getInstance();
     int day_of_week = c.get(Calendar.DAY_OF_WEEK) - 1;
-    if (day_of_week == 0) day_of_week = 7;
+    if (day_of_week == 0) {
+      day_of_week = 7;
+    }
     c.add(Calendar.DATE, -day_of_week + 7);
     return df.format(c.getTime());
   }
@@ -345,7 +353,7 @@ public final class DateTimeUtil {
       arr[i] = i * num + num + "";
     }
     Map<String, String[]> arrMap = new HashMap<>();
-    arrMap.put(HOUR, arr);
+    arrMap.put(EVERY_DAY, arr);
     return arrMap;
   }
 
@@ -445,10 +453,15 @@ public final class DateTimeUtil {
     SimpleDateFormat shortSdf = new SimpleDateFormat("yyyy-MM-dd");
     Date now = null;
     try {
-      if (currentMonth >= 1 && currentMonth <= 3) c.set(Calendar.MONTH, 0);
-      else if (currentMonth >= 4 && currentMonth <= 6) c.set(Calendar.MONTH, 3);
-      else if (currentMonth >= 7 && currentMonth <= 9) c.set(Calendar.MONTH, 4);
-      else if (currentMonth >= 10 && currentMonth <= 12) c.set(Calendar.MONTH, 9);
+      if (currentMonth >= 1 && currentMonth <= 3) {
+        c.set(Calendar.MONTH, 0);
+      } else if (currentMonth >= 4 && currentMonth <= 6) {
+        c.set(Calendar.MONTH, 3);
+      } else if (currentMonth >= 7 && currentMonth <= 9) {
+        c.set(Calendar.MONTH, 4);
+      } else if (currentMonth >= 10 && currentMonth <= 12) {
+        c.set(Calendar.MONTH, 9);
+      }
       c.set(Calendar.DATE, 1);
       now = longSdf.parse(shortSdf.format(c.getTime()) + " 00:00:00");
     } catch (Exception e) {

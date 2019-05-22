@@ -14,6 +14,7 @@ import com.shoestp.mains.entitys.DataView.flow.DataViewFlowPage;
 import com.shoestp.mains.entitys.DataView.flow.QDataViewFlowPage;
 import com.shoestp.mains.enums.flow.AccessTypeEnum;
 import com.shoestp.mains.repositorys.DataView.flow.FlowPageRepository;
+import com.shoestp.mains.views.DataView.flow.AccessView;
 import com.shoestp.mains.views.DataView.flow.PageViewObject;
 
 /**
@@ -43,7 +44,7 @@ public class FlowPageDao extends BaseDao<DataViewFlowPage> {
   }
 
   /**
-   * 根据页面类型，当前时间获取访客数
+   * 根据页面类型，当前时间获取访客数，返回集合
    *
    * @param access
    * @param start
@@ -65,11 +66,39 @@ public class FlowPageDao extends BaseDao<DataViewFlowPage> {
         .from(qDataViewFlowPage)
         .where(qDataViewFlowPage.accessType.eq(access))
         .where(qDataViewFlowPage.createTime.between(start, end))
-        .groupBy(qDataViewFlowPage.accessType)
         .fetchResults()
         .getResults();
   }
 
+  /**
+   * 根据页面类型，当前时间获取访客数
+   *
+   * @author: lingjian @Date: 2019/5/21 9:46
+   * @param start
+   * @param end
+   * @return
+   */
+  public List<Tuple> findAllByAccessBy(Date start, Date end) {
+    QDataViewFlowPage qDataViewFlowPage = QDataViewFlowPage.dataViewFlowPage;
+    return getQuery()
+            .select(
+                    qDataViewFlowPage.accessType.stringValue(),
+                    qDataViewFlowPage.visitorCount.sum())
+            .from(qDataViewFlowPage)
+            .where(qDataViewFlowPage.createTime.between(start, end))
+            .groupBy(qDataViewFlowPage.accessType)
+            .fetchResults()
+            .getResults();
+  }
+
+  /**
+   * 根据时间获取跳失率，访客数，浏览量，平均停留时长,返回对象
+   *
+   * @author: lingjian @Date: 2019/5/21 9:47
+   * @param start
+   * @param end
+   * @return
+   */
   public PageViewObject findAllByCreateTimeObject(Date start, Date end) {
     QDataViewFlowPage qDataViewFlowPage = QDataViewFlowPage.dataViewFlowPage;
     return getQuery()

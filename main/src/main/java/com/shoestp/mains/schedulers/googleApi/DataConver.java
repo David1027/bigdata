@@ -115,7 +115,6 @@ public class DataConver extends BaseSchedulers {
   private static SimpleDateFormat ydms = new SimpleDateFormat("yyyyMMddHHmm");
 
   private static int timing = 60; // 定时60分钟
-
   private static List<String> PC =
       Arrays.asList("(not set)", "Chrome OS", "Linux", "Macintosh", "Windows");
 
@@ -130,7 +129,8 @@ public class DataConver extends BaseSchedulers {
           "Windows Phone",
           "Xbox");
 
-  private static Map<String, List<String>> sourcePage = new HashMap<>(); // 来源渠道
+  // 来源渠道
+  private static Map<String, List<String>> sourcePage = new HashMap<>();
 
   static {
     sourcePage.put(

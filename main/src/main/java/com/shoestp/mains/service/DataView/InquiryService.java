@@ -18,11 +18,11 @@ public interface InquiryService {
    * 根据时间获取询盘概况
    *
    * @author: lingjian @Date: 2019/5/14 10:08
-   * @param startDate
-   * @param endDate
+   * @param date
+   * @param num
    * @return List<InquiryView>
    */
-  InquiryView getInquiryOverview(Date startDate, Date endDate);
+  InquiryView getInquiryOverview(Date date, Integer num);
 
   /**
    * 获取询盘概况中的时段分布(一天24小时)
@@ -39,7 +39,7 @@ public interface InquiryService {
    * @param date
    * @return
    */
-  Map<String, Map> getInquiryTimeByDay(Date date, Integer day);
+  Map<String, Map> getInquiryTimeByDay(Date date, Integer num);
 
   /**
    * 根据询盘类型获取询盘排行
@@ -73,9 +73,8 @@ public interface InquiryService {
    *
    * @author: lingjian @Date: 2019/5/20 9:35
    * @param inquirySearch
-   * @param date
    * @param type
    * @return
    */
-  List getInquirySearch(String inquirySearch, Date date, String type);
+  List getInquirySearch(String inquirySearch, String type);
 }

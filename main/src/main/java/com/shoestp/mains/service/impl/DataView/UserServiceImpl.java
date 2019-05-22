@@ -47,18 +47,33 @@ public class UserServiceImpl implements UserService {
   }
 
   /**
-   * 获取用户概况
+   * 根据时间，日期类型获取用户概况
    *
-   * @author: lingjian @Date: 2019/5/13 14:50
+   * @author: lingjian @Date: 2019/5/20 16:44
    * @param startDate
    * @param endDate
-   * @return DataViewUserView
+   * @return
    */
-  @Override
-  public DataViewUserView getUserOverview(Date startDate, Date endDate) {
+  public DataViewUserView getUserOverviewByDate(Date startDate, Date endDate) {
     return isNullTo(
         userDao.findUserByCreateTimeBetweenObject(
             DateTimeUtil.getTimesOfDay(startDate, 0), DateTimeUtil.getTimesOfDay(endDate, 24)));
+  }
+
+  /**
+   * 根据时间，日期类型获取用户概况
+   *
+   * @author: lingjian @Date: 2019/5/13 14:50
+   * @param date
+   * @return DataViewUserView
+   */
+  @Override
+  public DataViewUserView getUserOverview(Date date, Integer num) {
+    if (num != null) {
+      return getUserOverviewByDate(DateTimeUtil.getDayFromNum(date, num), date);
+    } else {
+      return getUserOverviewByDate(date, date);
+    }
   }
 
   /**
@@ -157,7 +172,7 @@ public class UserServiceImpl implements UserService {
   public Map<String, Map> getUserTimeByHour(Date date) {
     Map<String, Map> userTimeMap = new HashMap<>();
     userTimeMap.put("abscissa", DateTimeUtil.getHourAbscissa(1));
-    userTimeMap.put("hour", getUserTimeHourMap(date));
+    userTimeMap.put("day", getUserTimeHourMap(date));
     return userTimeMap;
   }
 
@@ -169,23 +184,22 @@ public class UserServiceImpl implements UserService {
    * @return
    */
   @Override
-  public Map<String, Map> getUserTimeByDay(Date date, Integer day) {
+  public Map<String, Map> getUserTimeByDay(Date date, Integer num) {
     Map<String, Map> userTimeMap = new HashMap<>();
-    userTimeMap.put("abscissa", DateTimeUtil.getDayAbscissa(day, date));
-    userTimeMap.put("day", getUserTimeDayMap(day, date));
+    userTimeMap.put("abscissa", DateTimeUtil.getDayAbscissa(num, date));
+    userTimeMap.put("day", getUserTimeDayMap(num, date));
     return userTimeMap;
   }
 
   /**
    * 根据时间获取用户性别数量
    *
-   * @author: lingjian @Date: 2019/5/13 16:13
+   * @author: lingjian @Date: 2019/5/20 16:46
    * @param startDate
    * @param endDate
-   * @return List<DataViewUserSexView>
+   * @return
    */
-  @Override
-  public List<DataViewUserSexView> getUserSex(Date startDate, Date endDate) {
+  public List<DataViewUserSexView> getUserSexByDate(Date startDate, Date endDate) {
     return userSexDao
         .findUserSexByCreateTimeBetween(
             DateTimeUtil.getTimesOfDay(startDate, 0), DateTimeUtil.getTimesOfDay(endDate, 24))
@@ -201,15 +215,31 @@ public class UserServiceImpl implements UserService {
   }
 
   /**
-   * 根据时间获取用户地域分布
+   * 根据时间,日期类型获取用户性别数量
    *
-   * @author: lingjian @Date: 2019/5/13 16:35
-   * @param startDate
-   * @param endDate
-   * @return List<DataViewUserAreaView>
+   * @author: lingjian @Date: 2019/5/13 16:13
+   * @param date
+   * @param num
+   * @return List<DataViewUserSexView>
    */
   @Override
-  public List<DataViewUserAreaView> getUserArea(Date startDate, Date endDate) {
+  public List<DataViewUserSexView> getUserSex(Date date, Integer num) {
+    if (num != null) {
+      return getUserSexByDate(DateTimeUtil.getDayFromNum(date, num), date);
+    } else {
+      return getUserSexByDate(date, date);
+    }
+  }
+
+  /**
+   * 根据时间获取用户地域分布
+   *
+   * @author: lingjian @Date: 2019/5/21 9:38
+   * @param startDate
+   * @param endDate
+   * @return
+   */
+  public List<DataViewUserAreaView> getUserAreaByDate(Date startDate, Date endDate) {
     return userAreaDao
         .findUserAreaByCreateTimeBetween(
             DateTimeUtil.getTimesOfDay(startDate, 0), DateTimeUtil.getTimesOfDay(endDate, 24))
@@ -222,5 +252,22 @@ public class UserServiceImpl implements UserService {
               return dataViewUserAreaView;
             })
         .collect(Collectors.toList());
+  }
+
+  /**
+   * 根据时间，天数获取用户地域分布
+   *
+   * @author: lingjian @Date: 2019/5/13 16:35
+   * @param date
+   * @param num
+   * @return List<DataViewUserAreaView>
+   */
+  @Override
+  public List<DataViewUserAreaView> getUserArea(Date date, Integer num) {
+    if (num != null) {
+      return getUserAreaByDate(DateTimeUtil.getDayFromNum(date, num), date);
+    } else {
+      return getUserAreaByDate(date, date);
+    }
   }
 }

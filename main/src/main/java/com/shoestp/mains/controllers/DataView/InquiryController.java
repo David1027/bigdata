@@ -29,19 +29,17 @@ public class InquiryController {
    * 根据时间获取询盘概况
    *
    * @author: lingjian @Date: 2019/5/14 10:07
-   * @param startDate
-   * @param endDate
+   * @param date
+   * @param num
    * @return
    */
   @PostMapping(value = "/inquiryoverview")
-  public Object getInquiryOverview(
-      @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
-      @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
-    logger.debug(startDate);
+  public Object getInquiryOverview(@DateTimeFormat(pattern = "yyyy-MM-dd") Date date, Integer num) {
+    logger.debug(date);
     return MessageResult.builder()
         .code(1)
         .msg("Hello")
-        .result(inquiryService.getInquiryOverview(startDate, endDate))
+        .result(inquiryService.getInquiryOverview(date, num))
         .build();
   }
 
@@ -71,12 +69,12 @@ public class InquiryController {
    */
   @PostMapping(value = "/inquirytimebyday")
   public Object getInquiryTimeByDay(
-      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date, Integer day) {
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date, Integer num) {
     logger.debug(date);
     return MessageResult.builder()
         .code(1)
         .msg("Hello")
-        .result(inquiryService.getInquiryTimeByDay(date, day))
+        .result(inquiryService.getInquiryTimeByDay(date, num))
         .build();
   }
 
@@ -137,18 +135,16 @@ public class InquiryController {
    *
    * @author: lingjian @Date: 2019/5/20 9:37
    * @param inquirySearch
-   * @param date
    * @param type
    * @return
    */
   @PostMapping(value = "/inquirysearch")
-  public Object getInquirySearch(
-      String inquirySearch, @DateTimeFormat(pattern = "yyyy-MM-dd") Date date, String type) {
+  public Object getInquirySearch(String inquirySearch, String type) {
     logger.debug(inquirySearch);
     return MessageResult.builder()
         .code(1)
         .msg("Hello")
-        .result(inquiryService.getInquirySearch(inquirySearch, date, type))
+        .result(inquiryService.getInquirySearch(inquirySearch, type))
         .build();
   }
 }

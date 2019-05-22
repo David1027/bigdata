@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 @Builder
 public class TriggerPojo {
-    private String Key;
-    private String Secret;
+  private String key;
+  private String secret;
 }

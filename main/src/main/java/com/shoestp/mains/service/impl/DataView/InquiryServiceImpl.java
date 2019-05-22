@@ -49,15 +49,14 @@ public class InquiryServiceImpl implements InquiryService {
   }
 
   /**
-   * 根据时间获取询盘概况
+   * 根据开始时间和结束时间获取询盘概况
    *
-   * @author: lingjian @Date: 2019/5/14 10:08
+   * @author: lingjian @Date: 2019/5/20 16:50
    * @param startDate
    * @param endDate
    * @return
    */
-  @Override
-  public InquiryView getInquiryOverview(Date startDate, Date endDate) {
+  public InquiryView getInquiryOverviewByDate(Date startDate, Date endDate) {
     InquiryView inquiry =
         isNullTo(
             inquiryDao.findAllByCreateTimeObject(
@@ -65,6 +64,22 @@ public class InquiryServiceImpl implements InquiryService {
     inquiry.setTotalInquiryCount(
         inquiryDao.findAllByInquiry().isEmpty() ? 0 : inquiryDao.findAllByInquiry().get(0));
     return inquiry;
+  }
+  /**
+   * 根据时间,日期类型获取询盘概况
+   *
+   * @author: lingjian @Date: 2019/5/14 10:08
+   * @param date
+   * @param num
+   * @return
+   */
+  @Override
+  public InquiryView getInquiryOverview(Date date, Integer num) {
+    if (num != null) {
+      return getInquiryOverviewByDate(DateTimeUtil.getDayFromNum(date, num), date);
+    } else {
+      return getInquiryOverviewByDate(date, date);
+    }
   }
 
   /**
@@ -177,10 +192,10 @@ public class InquiryServiceImpl implements InquiryService {
    * @return
    */
   @Override
-  public Map<String, Map> getInquiryTimeByDay(Date date, Integer day) {
+  public Map<String, Map> getInquiryTimeByDay(Date date, Integer num) {
     Map<String, Map> inquiryTimeMap = new HashMap<>();
-    inquiryTimeMap.put("abscissa", DateTimeUtil.getDayAbscissa(day, date));
-    inquiryTimeMap.put("day", getInquiryTimeDayMap(day, date));
+    inquiryTimeMap.put("abscissa", DateTimeUtil.getDayAbscissa(num, date));
+    inquiryTimeMap.put("day", getInquiryTimeDayMap(num, date));
     return inquiryTimeMap;
   }
 
@@ -282,32 +297,32 @@ public class InquiryServiceImpl implements InquiryService {
       InquiryTypeEnum inquiryType, String inquiryName, Date date, String parameter) {
     double[] arr = new double[24];
     for (int i = 0; i < arr.length; i++) {
-      if (!getInquiryRealRankByHour(inquiryType, inquiryName, date, i, i + 1).isEmpty()
-          && "visitorCount".equals(parameter)) {
+      if ("visitorCount".equals(parameter)
+          && !getInquiryRealRankByHour(inquiryType, inquiryName, date, i, i + 1).isEmpty()) {
         arr[i] =
             getInquiryRealRankByHour(inquiryType, inquiryName, date, i, i + 1)
                 .get(0)
                 .getVisitorCount();
-      } else if (!getInquiryRealRankByHour(inquiryType, inquiryName, date, i, i + 1).isEmpty()
-          && "viewCount".equals(parameter)) {
+      } else if ("viewCount".equals(parameter)
+          && !getInquiryRealRankByHour(inquiryType, inquiryName, date, i, i + 1).isEmpty()) {
         arr[i] =
             getInquiryRealRankByHour(inquiryType, inquiryName, date, i, i + 1)
                 .get(0)
                 .getViewCount();
-      } else if (!getInquiryRealRankByHour(inquiryType, inquiryName, date, i, i + 1).isEmpty()
-          && "inquiryCount".equals(parameter)) {
+      } else if ("inquiryCount".equals(parameter)
+          && !getInquiryRealRankByHour(inquiryType, inquiryName, date, i, i + 1).isEmpty()) {
         arr[i] =
             getInquiryRealRankByHour(inquiryType, inquiryName, date, i, i + 1)
                 .get(0)
                 .getInquiryCount();
-      } else if (!getInquiryRealRankByHour(inquiryType, inquiryName, date, i, i + 1).isEmpty()
-          && "inquiryNumber".equals(parameter)) {
+      } else if ("inquiryNumber".equals(parameter)
+          && !getInquiryRealRankByHour(inquiryType, inquiryName, date, i, i + 1).isEmpty()) {
         arr[i] =
             getInquiryRealRankByHour(inquiryType, inquiryName, date, i, i + 1)
                 .get(0)
                 .getInquiryNumber();
-      } else if (!getInquiryRealRankByHour(inquiryType, inquiryName, date, i, i + 1).isEmpty()
-          && "inquiryAmount".equals(parameter)) {
+      } else if ("inquiryAmount".equals(parameter)
+          && !getInquiryRealRankByHour(inquiryType, inquiryName, date, i, i + 1).isEmpty()) {
         arr[i] =
             getInquiryRealRankByHour(inquiryType, inquiryName, date, i, i + 1)
                 .get(0)
@@ -349,7 +364,7 @@ public class InquiryServiceImpl implements InquiryService {
             "inquiryAmount",
             getEveryHourByInquiryName(inquiryType, inquiryName, date, "inquiryAmount")));
     Map<String, List> inquiryTimeMap = new HashMap<>();
-    inquiryTimeMap.put("hour", keyValue);
+    inquiryTimeMap.put("day", keyValue);
     return inquiryTimeMap;
   }
 
@@ -375,18 +390,14 @@ public class InquiryServiceImpl implements InquiryService {
    *
    * @author: lingjian @Date: 2019/5/20 9:35
    * @param inquirySearch
-   * @param date
    * @param type
    * @return
    */
   @Override
-  public List getInquirySearch(String inquirySearch, Date date, String type) {
+  public List getInquirySearch(String inquirySearch, String type) {
     return inquiryRankDao
         .findInquiryByInquiryName(
-            inquirySearch,
-            type,
-            DateTimeUtil.getTimesOfDay(date, 0),
-            DateTimeUtil.getTimesOfDay(date, 24))
+            inquirySearch, type, DateTimeUtil.getTimesmorning(), DateTimeUtil.getTimesnight())
         .stream()
         .map(
             bean -> {

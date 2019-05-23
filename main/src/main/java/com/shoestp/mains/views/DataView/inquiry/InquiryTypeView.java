@@ -1,7 +1,6 @@
 package com.shoestp.mains.views.DataView.inquiry;
 
 import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
-
 import lombok.Data;
 
 /**

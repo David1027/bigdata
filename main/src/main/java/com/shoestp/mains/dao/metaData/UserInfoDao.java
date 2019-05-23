@@ -1,14 +1,12 @@
 package com.shoestp.mains.dao.metaData;
 
-import java.util.Date;
-import java.util.List;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-
-import com.shoestp.mains.entitys.MetaData.UserInfo;
+import com.shoestp.mains.entitys.metaData.UserInfo;
 import com.shoestp.mains.enums.user.RegisterTypeEnum;
 import com.shoestp.mains.enums.user.SexEnum;
+import java.util.Date;
+import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 public interface UserInfoDao extends JpaRepository<UserInfo, Integer> {
 

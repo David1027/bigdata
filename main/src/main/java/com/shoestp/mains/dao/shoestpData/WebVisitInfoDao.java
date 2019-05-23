@@ -1,12 +1,10 @@
 package com.shoestp.mains.dao.shoestpData;
 
+import com.shoestp.mains.entitys.metaData.WebVisitInfo;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import com.shoestp.mains.entitys.MetaData.WebVisitInfo;
 
 public interface WebVisitInfoDao extends JpaRepository<WebVisitInfo, Integer> {
 

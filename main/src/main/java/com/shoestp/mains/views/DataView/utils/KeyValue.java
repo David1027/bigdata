@@ -9,6 +9,6 @@ import lombok.Data;
  */
 @Data
 public class KeyValue {
-    private String key;
-    private Object value;
+  private String key;
+  private Object value;
 }

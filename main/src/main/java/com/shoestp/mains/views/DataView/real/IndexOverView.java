@@ -2,13 +2,11 @@ package com.shoestp.mains.views.DataView.real;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.shoestp.mains.utils.dateUtils.CustomDoubleSerialize;
-
 import lombok.Data;
 
 /**
  * @description: 首页整体看板前端展示类
- * @author: lingjian
- * @Date: 2019/5/22 13:44
+ * @author: lingjian @Date: 2019/5/22 13:44
  */
 @Data
 public class IndexOverView {

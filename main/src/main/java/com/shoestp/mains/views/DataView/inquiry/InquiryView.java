@@ -1,11 +1,5 @@
 package com.shoestp.mains.views.DataView.inquiry;
 
-import java.util.Date;
-
-import javax.persistence.*;
-
-import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
-
 import lombok.Data;
 
 /**

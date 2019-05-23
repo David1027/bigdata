@@ -1,13 +1,12 @@
 package com.shoestp.mains.controllers.metaData;
 
+import com.shoestp.mains.pojo.MessageResult;
+import com.shoestp.mains.service.metaData.WebVisitInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.shoestp.mains.pojo.MessageResult;
-import com.shoestp.mains.service.metaData.WebVisitInfoService;
 
 @RestController
 @RequestMapping("/api/platform")

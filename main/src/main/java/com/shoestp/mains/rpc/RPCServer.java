@@ -1,21 +1,23 @@
 package com.shoestp.mains.rpc;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-
-import javax.annotation.Resource;
-
 import com.shoestp.mains.rpc.shoestp.imp.RPCServiceImp;
-
-import io.grpc.BindableService;
 import io.grpc.Server;
 import io.grpc.netty.NettyServerBuilder;
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-/** Created by IntelliJ IDEA. User: lijie@shoestp.cn Date: 2019/5/14 Time: 14:59 */
+/**
+ * Created by IntelliJ IDEA. User: lijie@shoestp.cn Date: 2019/5/14 Time: 14:59
+ *
+ * @author lijie@shoestp.cn
+ */
 @Component
 public class RPCServer {
   private Server server;
@@ -23,10 +25,13 @@ public class RPCServer {
 
   @Resource private Environment environment;
 
+  @Value("${rpc.host}")
+  private String host = "0.0.0.0";
+
+  @Value("${rpc.port}")
+  private Integer port = 888;
 
   public void start(RPCServiceImp service) throws InterruptedException, IOException {
-    String host = environment.getProperty("rpc.host", "0.0.0.0");
-    Integer port = Integer.parseInt(environment.getProperty("rpc.port", "888"));
     logger.info(String.format("RPC Listen:%s:%d", host, port));
     server =
         NettyServerBuilder.forAddress(new InetSocketAddress(host, port))
@@ -36,6 +41,7 @@ public class RPCServer {
     server.awaitTermination();
   }
 
+  @PreDestroy
   private void stop() {
     if (server != null) {
       logger.info("*** shutting down gRPC server since JVM is shutting down");

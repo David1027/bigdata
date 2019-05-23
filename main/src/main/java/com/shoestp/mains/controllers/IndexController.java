@@ -1,7 +1,7 @@
 package com.shoestp.mains.controllers;
 
 import com.shoestp.mains.pojo.MessageResult;
-import com.shoestp.mains.service.DataView.UserService;
+import com.shoestp.mains.service.dataView.UserService;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.LogManager;

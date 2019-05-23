@@ -1,15 +1,10 @@
 package com.shoestp.mains.views.DataView.user;
 
-import java.util.Date;
-
-import javax.persistence.*;
-
 import lombok.Data;
 
 /**
  * @description: 用户前端展示类
- * @author: lingjian
- * @Date: 2019/5/13 14:25
+ * @author: lingjian @Date: 2019/5/13 14:25
  */
 @Data
 public class DataViewUserView {

@@ -1,9 +1,5 @@
 package com.shoestp.mains.views.DataView.real;
 
-import java.util.Date;
-
-import javax.persistence.*;
-
 import lombok.Data;
 
 /**

@@ -1,7 +1,7 @@
 package com.shoestp.mains.service.metaData.impl;
 
 import com.shoestp.mains.dao.shoestpData.InquiryInfoDao;
-import com.shoestp.mains.entitys.MetaData.InquiryInfo;
+import com.shoestp.mains.entitys.metaData.InquiryInfo;
 import com.shoestp.mains.service.metaData.InquiryInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

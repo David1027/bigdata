@@ -1,21 +1,9 @@
 package com.shoestp.mains.service.impl.DataView;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import javax.annotation.Resource;
-
-import org.springframework.stereotype.Service;
-
-import com.shoestp.mains.dao.DataView.inquiry.InquiryDao;
-import com.shoestp.mains.dao.DataView.inquiry.InquiryRankDao;
+import com.shoestp.mains.dao.dataView.inquiry.InquiryDao;
+import com.shoestp.mains.dao.dataView.inquiry.InquiryRankDao;
 import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
-import com.shoestp.mains.service.DataView.InquiryService;
+import com.shoestp.mains.service.dataView.InquiryService;
 import com.shoestp.mains.utils.dateUtils.DateTimeUtil;
 import com.shoestp.mains.utils.dateUtils.KeyValueViewUtil;
 import com.shoestp.mains.views.DataView.inquiry.InquiryRankView;
@@ -23,6 +11,15 @@ import com.shoestp.mains.views.DataView.inquiry.InquiryTypeView;
 import com.shoestp.mains.views.DataView.inquiry.InquiryView;
 import com.shoestp.mains.views.DataView.utils.KeyValue;
 import com.shoestp.mains.views.DataView.utils.Page;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import javax.annotation.Resource;
+import org.springframework.stereotype.Service;
 
 /**
  * @description: 询盘-服务层实现类

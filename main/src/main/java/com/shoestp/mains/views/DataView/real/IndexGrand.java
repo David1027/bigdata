@@ -1,8 +1,5 @@
 package com.shoestp.mains.views.DataView.real;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.shoestp.mains.utils.dateUtils.CustomDoubleSerialize;
-
 import lombok.Data;
 
 /**

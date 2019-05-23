@@ -4,11 +4,16 @@
  */
 package com.shoestp.mains.utils.dateUtils;
 
+import com.shoestp.mains.constant.dataView.Contants;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
-
-import com.shoestp.mains.constant.DataView.Contants;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * 日期和时间工具类
@@ -406,6 +411,7 @@ public final class DateTimeUtil {
 
   /**
    * 根据时间获取是哪一年的第几个周
+   *
    * @param date
    * @return
    */
@@ -423,13 +429,15 @@ public final class DateTimeUtil {
 
   /**
    * 根据时间获取是哪一年的那个月
+   *
    * @param date
    * @return
    */
   public static List getMonth(Date date) {
     List list = new ArrayList();
     for (int i = 0; i < Contants.TWELVE; i++) {
-      list.add(formatDateToString(getDayFromNum(date, (Contants.TWELVE - i)*30 - 30), DATE_FARMAT_5));
+      list.add(
+          formatDateToString(getDayFromNum(date, (Contants.TWELVE - i) * 30 - 30), DATE_FARMAT_5));
     }
     return list;
   }
@@ -650,7 +658,7 @@ public final class DateTimeUtil {
   }
 
   public static String timeDifferent(Date starttime, Date endtime) {
-    String str = new String();
+    String str ="".intern();
     long dif = (endtime.getTime() - starttime.getTime()) / 1000;
     long year = 365 * 24 * 60 * 60;
     long month = 30 * 24 * 60 * 60;

@@ -1,16 +1,12 @@
 package com.shoestp.mains.views.DataView.flow;
 
-import javax.persistence.Column;
-
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.shoestp.mains.utils.dateUtils.CustomDoubleSerialize;
-
 import lombok.Data;
 
 /**
  * @description: 页面分析时段分布前端展示类
- * @author: lingjian
- * @Date: 2019/5/14 15:35
+ * @author: lingjian @Date: 2019/5/14 15:35
  */
 @Data
 public class AccessPageView {

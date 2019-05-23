@@ -23,21 +23,21 @@ message ViewInfo {
   string ip = 3;
   uint32 userId = 4;
   string referer = 5;
-  string visitName=6;
+  string visitName = 6;
 }
 message Inquiry {
   uint32 type = 1;
   uint32 inquiryId = 2;
   string referer = 3;
-  string url=4;
-  string name=5;
-  uint32 pkey=6;
-  double money=7;
-  string ip=8;
-  string img=9;
+  string url = 4;
+  string name = 5;
+  uint32 pkey = 6;
+  double money = 7;
+  string ip = 8;
+  string img = 9;
 }
 message UserInfo {
   uint32 type = 1;
-  string country=2;
-  uint32 sex=4;
+  string country = 2;
+  uint32 sex = 4;
 }

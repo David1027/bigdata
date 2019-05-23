@@ -1,19 +1,19 @@
 package com.shoestp.mains.service.impl.DataView;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-import javax.annotation.Resource;
-
-import com.shoestp.mains.dao.DataView.user.UserAreaDao;
-import com.shoestp.mains.dao.DataView.user.UserDao;
-import com.shoestp.mains.dao.DataView.user.UserSexDao;
-import com.shoestp.mains.service.DataView.UserService;
+import com.shoestp.mains.dao.dataView.user.UserAreaDao;
+import com.shoestp.mains.dao.dataView.user.UserDao;
+import com.shoestp.mains.dao.dataView.user.UserSexDao;
+import com.shoestp.mains.service.dataView.UserService;
 import com.shoestp.mains.utils.dateUtils.DateTimeUtil;
 import com.shoestp.mains.views.DataView.user.DataViewUserAreaView;
 import com.shoestp.mains.views.DataView.user.DataViewUserSexView;
 import com.shoestp.mains.views.DataView.user.DataViewUserView;
-
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 /**

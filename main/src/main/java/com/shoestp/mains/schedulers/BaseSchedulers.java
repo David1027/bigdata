@@ -9,9 +9,4 @@ public abstract class BaseSchedulers extends QuartzJobBean {
   @Setter @Getter private String jobNmae;
 
   @Setter @Getter private SimpleScheduleBuilder scheduleBuilder;
-
-  public BaseSchedulers(SimpleScheduleBuilder scheduleBuilder, String jobNmae) {
-    this.scheduleBuilder = scheduleBuilder;
-    this.jobNmae = jobNmae;
-  }
 }

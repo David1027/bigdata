@@ -2,13 +2,11 @@ package com.shoestp.mains.views.DataView.flow;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.shoestp.mains.utils.dateUtils.CustomDoubleSerialize;
-
 import lombok.Data;
 
 /**
  * @description: 页面分析前端展示类
- * @author: lingjian
- * @Date: 2019/5/14 15:35
+ * @author: lingjian @Date: 2019/5/14 15:35
  */
 @Data
 public class AccessView {

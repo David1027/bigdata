@@ -1,8 +1,8 @@
 package com.shoestp.mains.config.exceptionHandles;
 
 // @ControllerAdvice(basePackageClasses = AcmeController.class)
-//@ControllerAdvice
-//public class ExceptionHandleConfig {
+// @ControllerAdvice
+// public class ExceptionHandleConfig {
 //
 //  //  @ExceptionHandleConfigler(YourException.class)
 //  @ResponseBody
@@ -18,4 +18,4 @@ package com.shoestp.mains.config.exceptionHandles;
 //    }
 //    return HttpStatus.valueOf(statusCode);
 //  }
-//}
+// }

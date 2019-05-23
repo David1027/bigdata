@@ -1,22 +1,19 @@
 package com.shoestp.mains.dao.shoestpData.impl;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.PostConstruct;
-import javax.persistence.EntityManager;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.shoestp.mains.entitys.MetaData.QWebVisitInfo;
-import com.shoestp.mains.entitys.MetaData.WebVisitInfo;
+import com.shoestp.mains.entitys.metaData.QWebVisitInfo;
+import com.shoestp.mains.entitys.metaData.WebVisitInfo;
 import com.shoestp.mains.views.DataView.metaData.queryView;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class WebVisitInfoDaoImpl {
 
@@ -53,7 +50,7 @@ public class WebVisitInfoDaoImpl {
     selectFrom.where(qweb.createTime.between(startDate, endDate));
     selectFrom.groupBy(qweb.ip);
     List<queryView> fetchCount = selectFrom.fetch();
-    Long l = 0l;
+    Long l = 0L;
     for (queryView t : fetchCount) {
       l += (Long) t.getQueryField();
     }

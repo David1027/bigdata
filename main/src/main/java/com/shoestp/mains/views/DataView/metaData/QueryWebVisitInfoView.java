@@ -1,9 +1,7 @@
 package com.shoestp.mains.views.DataView.metaData;
 
-import java.util.Date;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
-
+import java.util.Date;
 import lombok.Data;
 
 @Data

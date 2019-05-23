@@ -1,8 +1,7 @@
 package com.shoestp.mains.service.metaData;
 
+import com.shoestp.mains.entitys.metaData.PltCountry;
 import java.util.List;
-
-import com.shoestp.mains.entitys.MetaData.PltCountry;
 
 public interface CountryService {
 

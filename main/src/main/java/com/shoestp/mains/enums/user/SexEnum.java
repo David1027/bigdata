@@ -1,7 +1,5 @@
 package com.shoestp.mains.enums.user;
 
-import org.omg.CORBA.UNKNOWN;
-
 /**
  * @description: 性别类型
  * @author: lingjian

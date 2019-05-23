@@ -1,20 +1,17 @@
 package com.shoestp.mains.dao.shoestpData.impl;
 
+import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.shoestp.mains.entitys.metaData.QSearchWordInfo;
+import com.shoestp.mains.views.DataView.utils.KeyValue;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.querydsl.core.types.Projections;
-import com.querydsl.jpa.impl.JPAQuery;
-import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.shoestp.mains.entitys.MetaData.QSearchWordInfo;
-import com.shoestp.mains.views.DataView.utils.KeyValue;
 
 public class SearchDaoImpl {
 

@@ -1,10 +1,5 @@
 package com.shoestp.mains.views.DataView.flow;
 
-import java.util.Date;
-
-import com.shoestp.mains.enums.flow.DeviceTypeEnum;
-import com.shoestp.mains.enums.flow.SourceTypeEnum;
-
 import lombok.Data;
 
 /**

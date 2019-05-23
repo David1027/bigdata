@@ -1,13 +1,12 @@
 package com.shoestp.mains.utils.dateUtils;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 
 /**
  * @description: double保留2位
@@ -16,22 +15,22 @@ import com.fasterxml.jackson.databind.SerializerProvider;
  */
 public class CustomDoubleSerialize extends JsonSerializer<Double> {
 
-    private DecimalFormat df = new DecimalFormat("0.00");
+  private DecimalFormat df = new DecimalFormat("0.00");
 
-    @Override
-    public void serialize(Double value, JsonGenerator gen, SerializerProvider serializers)
-            throws IOException, JsonProcessingException {
-        if(value != null) {
-            gen.writeString(df.format(value));
-        }
+  @Override
+  public void serialize(Double value, JsonGenerator gen, SerializerProvider serializers)
+      throws IOException, JsonProcessingException {
+    if (value != null) {
+      gen.writeString(df.format(value));
     }
+  }
 
-    public static Double setDouble(Double d){
-        double df = 0.00;
-        if(d != null){
-            BigDecimal b = new BigDecimal(d);
-            df = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-        }
-        return df;
+  public static Double setDouble(Double d) {
+    double df = 0.00;
+    if (d != null) {
+      BigDecimal b = new BigDecimal(d);
+      df = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
     }
+    return df;
+  }
 }

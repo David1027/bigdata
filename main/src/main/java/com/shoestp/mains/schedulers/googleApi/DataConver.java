@@ -1,5 +1,38 @@
 package com.shoestp.mains.schedulers.googleApi;
 
+import com.shoestp.mains.dao.dataView.flow.FlowDao;
+import com.shoestp.mains.dao.dataView.flow.FlowPageDao;
+import com.shoestp.mains.dao.dataView.inquiry.InquiryDao;
+import com.shoestp.mains.dao.dataView.inquiry.InquiryRankDao;
+import com.shoestp.mains.dao.dataView.realcountry.RealCountryDao;
+import com.shoestp.mains.dao.dataView.user.UserAreaDao;
+import com.shoestp.mains.dao.dataView.user.UserDao;
+import com.shoestp.mains.dao.dataView.user.UserSexDao;
+import com.shoestp.mains.dao.metaData.GoogleBrowseInfoDao;
+import com.shoestp.mains.dao.metaData.UserInfoDao;
+import com.shoestp.mains.dao.shoestpData.InquiryInfoDao;
+import com.shoestp.mains.dao.shoestpData.WebVisitInfoDao;
+import com.shoestp.mains.entitys.dataView.country.DataViewCountry;
+import com.shoestp.mains.entitys.dataView.flow.DataViewFlow;
+import com.shoestp.mains.entitys.dataView.flow.DataViewFlowPage;
+import com.shoestp.mains.entitys.dataView.inquiry.DataViewInquiry;
+import com.shoestp.mains.entitys.dataView.inquiry.DataViewInquiryRank;
+import com.shoestp.mains.entitys.dataView.user.DataViewUser;
+import com.shoestp.mains.entitys.dataView.user.DataViewUserArea;
+import com.shoestp.mains.entitys.dataView.user.DataViewUserSex;
+import com.shoestp.mains.entitys.metaData.GoogleBrowseInfo;
+import com.shoestp.mains.entitys.metaData.InquiryInfo;
+import com.shoestp.mains.entitys.metaData.PltCountry;
+import com.shoestp.mains.entitys.metaData.WebVisitInfo;
+import com.shoestp.mains.enums.flow.AccessTypeEnum;
+import com.shoestp.mains.enums.flow.DeviceTypeEnum;
+import com.shoestp.mains.enums.flow.SourceTypeEnum;
+import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
+import com.shoestp.mains.enums.user.RegisterTypeEnum;
+import com.shoestp.mains.enums.user.SexEnum;
+import com.shoestp.mains.schedulers.BaseSchedulers;
+import com.shoestp.mains.service.metaData.CountryService;
+import com.shoestp.mains.views.DataView.metaData.DataView;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -17,9 +50,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
-
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
@@ -28,68 +62,13 @@ import org.quartz.SimpleScheduleBuilder;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
-import com.shoestp.mains.dao.DataView.flow.FlowDao;
-import com.shoestp.mains.dao.DataView.flow.FlowPageDao;
-import com.shoestp.mains.dao.DataView.inquiry.InquiryDao;
-import com.shoestp.mains.dao.DataView.inquiry.InquiryRankDao;
-import com.shoestp.mains.dao.DataView.realcountry.RealCountryDao;
-import com.shoestp.mains.dao.DataView.user.UserAreaDao;
-import com.shoestp.mains.dao.DataView.user.UserDao;
-import com.shoestp.mains.dao.DataView.user.UserSexDao;
-import com.shoestp.mains.dao.metaData.GoogleBrowseInfoDao;
-import com.shoestp.mains.dao.metaData.UserInfoDao;
-import com.shoestp.mains.dao.shoestpData.InquiryInfoDao;
-import com.shoestp.mains.dao.shoestpData.WebVisitInfoDao;
-import com.shoestp.mains.entitys.DataView.country.DataViewCountry;
-import com.shoestp.mains.entitys.DataView.flow.DataViewFlow;
-import com.shoestp.mains.entitys.DataView.flow.DataViewFlowPage;
-import com.shoestp.mains.entitys.DataView.inquiry.DataViewInquiry;
-import com.shoestp.mains.entitys.DataView.inquiry.DataViewInquiryRank;
-import com.shoestp.mains.entitys.DataView.user.DataViewUser;
-import com.shoestp.mains.entitys.DataView.user.DataViewUserArea;
-import com.shoestp.mains.entitys.DataView.user.DataViewUserSex;
-import com.shoestp.mains.entitys.MetaData.GoogleBrowseInfo;
-import com.shoestp.mains.entitys.MetaData.InquiryInfo;
-import com.shoestp.mains.entitys.MetaData.PltCountry;
-import com.shoestp.mains.entitys.MetaData.WebVisitInfo;
-import com.shoestp.mains.enums.flow.AccessTypeEnum;
-import com.shoestp.mains.enums.flow.DeviceTypeEnum;
-import com.shoestp.mains.enums.flow.SourceTypeEnum;
-import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
-import com.shoestp.mains.enums.user.RegisterTypeEnum;
-import com.shoestp.mains.enums.user.SexEnum;
-import com.shoestp.mains.schedulers.BaseSchedulers;
-import com.shoestp.mains.service.metaData.impl.CountryServiceImpl;
-import com.shoestp.mains.views.DataView.metaData.DataView;
-
-// @Component
+@Component
 public class DataConver extends BaseSchedulers {
-  public DataConver() {
-    super(
-        SimpleScheduleBuilder.simpleSchedule().withIntervalInMinutes(timing).repeatForever(),
-        DataConver.class.getName());
-  }
-
-  @Bean(name = "DataConver")
-  public JobDetail JobDetail() {
-    return JobBuilder.newJob(this.getClass()).withIdentity(getJobNmae()).storeDurably().build();
-  }
-
-  public void defaults() {
-    SimpleScheduleBuilder.simpleSchedule().withIntervalInMinutes(5).repeatForever();
-  }
-
-  @Bean(name = "DataConverTrigger")
-  public Trigger sampleJobTrigger() {
-    return TriggerBuilder.newTrigger()
-        .forJob(JobDetail())
-        .withIdentity(getJobNmae() + "Trigger")
-        .withSchedule(getScheduleBuilder())
-        .build();
-  }
-
+  private static final Logger logger = LogManager.getLogger(DataConver.class);
   @Autowired private FlowDao flowDao;
   @Autowired private FlowPageDao flowPageDao;
   @Autowired private WebVisitInfoDao webDao;
@@ -104,15 +83,77 @@ public class DataConver extends BaseSchedulers {
   @Autowired private UserSexDao userSexDao;
 
   @Resource(name = "pltCountryService")
-  private CountryServiceImpl countryServiceImpl;
+  private CountryService countryServiceImpl;
+
+  @Value("${shoestp.scheduler.dataconver.enable}")
+  private Boolean enable = false;
+  /** * 定时60分钟 */
+  @Value("${shoestp.scheduler.dataconver.timing}")
+  private int timing = 60;
 
   private Integer session;
   private List<PltCountry> countryList;
 
-  private static SimpleDateFormat ydms = new SimpleDateFormat("yyyyMMddHHmm");
+  @PostConstruct
+  public void init() {
+    logger.info("Task Info: Name->{} Timing->{} isRun->{}", getJobNmae(), timing, enable);
+    setScheduleBuilder(
+        SimpleScheduleBuilder.simpleSchedule().withIntervalInMinutes(timing).repeatForever());
+    setJobNmae(DataConver.class.getName());
+    ydms=new SimpleDateFormat("yyyyMMddHHmm");
+    if (enable) {
+      sourcePage.put(
+          "迪盛着陆页",
+          Arrays.asList(
+              "/activity/html/ds/", "/m/disheng", "/activity/html/romania/disheng/index.html"));
+      sourcePage.put(
+          "巨纳着陆页",
+          Arrays.asList("/activity/html/jn/", "/m/juna", "/activity/html/romania/juna/index.html"));
+      sourcePage.put("耐瑞着陆页", Arrays.asList("/activity/html/ny/index.html"));
+      sourcePage.put(
+          "shoestp着陆页",
+          Arrays.asList(
+              "/activity/html/leatherShoes/",
+              "/activity/html/shoes/",
+              "/activity/html/footwear/",
+              "/m/landing/vipFoot",
+              "/m/landing/nomalFoot",
+              "/m/landing/leather",
+              "/m/landing/wmShoes"));
+      // sourcePage.put("罗马尼亚相关着陆页", Arrays.asList("/activity/html/romania/"));
+      sourcePage.put("爱莱发着陆页", Arrays.asList("/activity/html/romania/allaifa/index.html"));
+      sourcePage.put("乔奈着陆页", Arrays.asList("/activity/html/romania/baoluopate/index.html"));
+      sourcePage.put("丰盛着陆页", Arrays.asList("/activity/html/romania/fengsheng/index.html"));
+      sourcePage.put("华利欧着陆页", Arrays.asList("/activity/html/romania/hualiou/index.html"));
+      sourcePage.put("华友着陆页", Arrays.asList("/activity/html/romania/huayou/index.html"));
+      sourcePage.put("剑鲨着陆页", Arrays.asList("/activity/html/romania/jiansha/index.html"));
+      sourcePage.put("杰克巴乔着陆页", Arrays.asList("/activity/html/romania/jiekebaqiao/index.html"));
+      sourcePage.put("康睿着陆页", Arrays.asList("/activity/html/romania/kangrui/index.html"));
+      sourcePage.put("康益达着陆页", Arrays.asList("/activity/html/romania/kangyida/index.html"));
+      sourcePage.put("千百梦着陆页", Arrays.asList("/activity/html/romania/qianbaimeng/index.html"));
+      sourcePage.put("新纪元着陆页", Arrays.asList("/activity/html/romania/xinjiyuan/index.html"));
+      sourcePage.put("亿力洲着陆页", Arrays.asList("/activity/html/romania/yilizhou/index.html"));
+      sourcePage.put("展豪着陆页", Arrays.asList("/activity/html/romania/zhanhao/index.html"));
+    }
+  }
 
-  private static int timing = 60; // 定时60分钟
-  public static List<String> PC =
+  @Bean(name = "DataConver")
+  public JobDetail JobDetail() {
+    return JobBuilder.newJob(this.getClass()).withIdentity(getJobNmae()).storeDurably().build();
+  }
+
+  @Bean(name = "DataConverTrigger")
+  public Trigger sampleJobTrigger() {
+    return TriggerBuilder.newTrigger()
+        .forJob(JobDetail())
+        .withIdentity(getJobNmae() + "Trigger")
+        .withSchedule(getScheduleBuilder())
+        .build();
+  }
+
+  private  SimpleDateFormat ydms ;
+
+  public static final List<String> PC =
       Arrays.asList("(not set)", "Chrome OS", "Linux", "Macintosh", "Windows");
 
   private static List<String> MOBILE =
@@ -126,58 +167,8 @@ public class DataConver extends BaseSchedulers {
           "Windows Phone",
           "Xbox");
 
-  // 来源渠道
-  private static Map<String, List<String>> sourcePage = new HashMap<>();
-
-  static {
-    sourcePage.put(
-        "迪盛着陆页",
-        Arrays.asList(
-            "/activity/html/ds/", "/m/disheng", "/activity/html/romania/disheng/index.html"));
-    sourcePage.put(
-        "巨纳着陆页",
-        Arrays.asList("/activity/html/jn/", "/m/juna", "/activity/html/romania/juna/index.html"));
-    sourcePage.put("耐瑞着陆页", Arrays.asList("/activity/html/ny/index.html"));
-    sourcePage.put(
-        "shoestp着陆页",
-        Arrays.asList(
-            "/activity/html/leatherShoes/",
-            "/activity/html/shoes/",
-            "/activity/html/footwear/",
-            "/m/landing/vipFoot",
-            "/m/landing/nomalFoot",
-            "/m/landing/leather",
-            "/m/landing/wmShoes"));
-    // sourcePage.put("罗马尼亚相关着陆页", Arrays.asList("/activity/html/romania/"));
-    sourcePage.put("爱莱发着陆页", Arrays.asList("/activity/html/romania/allaifa/index.html"));
-    sourcePage.put("乔奈着陆页", Arrays.asList("/activity/html/romania/baoluopate/index.html"));
-    sourcePage.put("丰盛着陆页", Arrays.asList("/activity/html/romania/fengsheng/index.html"));
-    sourcePage.put("华利欧着陆页", Arrays.asList("/activity/html/romania/hualiou/index.html"));
-    sourcePage.put("华友着陆页", Arrays.asList("/activity/html/romania/huayou/index.html"));
-    sourcePage.put("剑鲨着陆页", Arrays.asList("/activity/html/romania/jiansha/index.html"));
-    sourcePage.put("杰克巴乔着陆页", Arrays.asList("/activity/html/romania/jiekebaqiao/index.html"));
-    sourcePage.put("康睿着陆页", Arrays.asList("/activity/html/romania/kangrui/index.html"));
-    sourcePage.put("康益达着陆页", Arrays.asList("/activity/html/romania/kangyida/index.html"));
-    sourcePage.put("千百梦着陆页", Arrays.asList("/activity/html/romania/qianbaimeng/index.html"));
-    sourcePage.put("新纪元着陆页", Arrays.asList("/activity/html/romania/xinjiyuan/index.html"));
-    sourcePage.put("亿力洲着陆页", Arrays.asList("/activity/html/romania/yilizhou/index.html"));
-    sourcePage.put("展豪着陆页", Arrays.asList("/activity/html/romania/zhanhao/index.html"));
-  }
-
-  /* protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
-    try {
-      getClickNum(
-      AccessTypeEnum.INDEX,
-      new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2018-01-01 00:00:00"),
-      new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2019-05-18 00:00:00"));
-      getInquiry(
-          SourceTypeEnum.OTHER,
-          "爱莱发着陆页",
-          new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2018-01-01 00:00:00"),
-          new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2019-05-18 00:00:00"));
-      e.printStackTrace();
-    }
-  }*/
+  /** * 来源渠道 */
+  private Map<String, List<String>> sourcePage = new HashMap<>();
 
   @Override
   protected void executeInternal(JobExecutionContext context) throws JobExecutionException {

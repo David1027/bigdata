@@ -1,18 +1,15 @@
 package com.shoestp.mains.dao.shoestpData.impl;
 
-import java.util.Date;
-
-import javax.annotation.PostConstruct;
-import javax.persistence.EntityManager;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.shoestp.mains.entitys.MetaData.InquiryInfo;
-import com.shoestp.mains.entitys.MetaData.QInquiryInfo;
+import com.shoestp.mains.entitys.metaData.InquiryInfo;
+import com.shoestp.mains.entitys.metaData.QInquiryInfo;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
+import java.util.Date;
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class InquiryInfoDaoImpl {
   @Autowired private EntityManager em;

@@ -1,15 +1,13 @@
 package com.shoestp.mains.service.metaData.impl;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.shoestp.mains.dao.metaData.GoogleBrowseInfoDao;
 import com.shoestp.mains.service.metaData.GoogleBrowseInfoSevice;
 import com.shoestp.mains.views.DataView.metaData.PageRankingView;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class GoogleBrowseInfoSeviceImpl implements GoogleBrowseInfoSevice {

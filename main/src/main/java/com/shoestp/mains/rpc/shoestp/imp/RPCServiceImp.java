@@ -1,19 +1,9 @@
 package com.shoestp.mains.rpc.shoestp.imp;
 
-import java.util.Date;
-
-import javax.annotation.Resource;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.start2do.utils.ipUtils.City;
-
 import com.shoestp.mains.dao.metaData.UserInfoDao;
-import com.shoestp.mains.entitys.MetaData.InquiryInfo;
-import com.shoestp.mains.entitys.MetaData.SearchWordInfo;
-import com.shoestp.mains.entitys.MetaData.WebVisitInfo;
+import com.shoestp.mains.entitys.metaData.InquiryInfo;
+import com.shoestp.mains.entitys.metaData.SearchWordInfo;
+import com.shoestp.mains.entitys.metaData.WebVisitInfo;
 import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
 import com.shoestp.mains.enums.user.RegisterTypeEnum;
 import com.shoestp.mains.enums.user.SexEnum;
@@ -24,8 +14,14 @@ import com.shoestp.mains.rpc.shoestp.pojo.SendDataUtilGrpc;
 import com.shoestp.mains.service.metaData.InquiryInfoService;
 import com.shoestp.mains.service.metaData.SearchWordInfoService;
 import com.shoestp.mains.service.metaData.WebVisitInfoService;
-
 import io.grpc.stub.StreamObserver;
+import java.util.Date;
+import javax.annotation.Resource;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.start2do.utils.ipUtils.City;
 
 /** Created by IntelliJ IDEA. User: lijie@shoestp.cn Date: 2019/5/14 Time: 15:00 */
 @Component
@@ -81,7 +77,9 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
         webVisitInfo.setUserId(viewInfo.getUserId());
         webVisitInfo.setVisitName(viewInfo.getVisitName());
         String[] str = City.find(viewInfo.getIp());
-        webVisitInfo.setLocation(str[0].toString());
+        if (str != null && str.length > 0) {
+          webVisitInfo.setLocation(str[0]);
+        }
         webVisitInfo.setCreateTime(new Date());
         webVisitInfoService.save(webVisitInfo);
       }
@@ -164,8 +162,8 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
 
       @Override
       public void onNext(UserInfo info) {
-        com.shoestp.mains.entitys.MetaData.UserInfo userInfo =
-            new com.shoestp.mains.entitys.MetaData.UserInfo();
+        com.shoestp.mains.entitys.metaData.UserInfo userInfo =
+            new com.shoestp.mains.entitys.metaData.UserInfo();
         userInfo.setCountry(info.getCountry());
         switch (info.getSex()) {
           case 0:

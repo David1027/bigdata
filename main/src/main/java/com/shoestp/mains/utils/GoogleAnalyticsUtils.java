@@ -1,15 +1,5 @@
 package com.shoestp.mains.utils;
 
-
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
-
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpTransport;
@@ -28,6 +18,13 @@ import com.google.api.services.analyticsreporting.v4.model.MetricHeaderEntry;
 import com.google.api.services.analyticsreporting.v4.model.Report;
 import com.google.api.services.analyticsreporting.v4.model.ReportRequest;
 import com.google.api.services.analyticsreporting.v4.model.ReportRow;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
 /** Created by IntelliJ IDEA. User: lijie@shoestp.cn Date: 2018/12/3 Time: 14:34 */
 @Component

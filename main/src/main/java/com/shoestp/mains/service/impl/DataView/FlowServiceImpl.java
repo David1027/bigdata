@@ -1,22 +1,11 @@
 package com.shoestp.mains.service.impl.DataView;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import javax.annotation.Resource;
-
-import org.springframework.stereotype.Service;
-
-import com.shoestp.mains.dao.DataView.flow.FlowDao;
-import com.shoestp.mains.dao.DataView.flow.FlowPageDao;
+import com.shoestp.mains.dao.dataView.flow.FlowDao;
+import com.shoestp.mains.dao.dataView.flow.FlowPageDao;
 import com.shoestp.mains.enums.flow.AccessTypeEnum;
 import com.shoestp.mains.enums.flow.DeviceTypeEnum;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
-import com.shoestp.mains.service.DataView.FlowService;
+import com.shoestp.mains.service.dataView.FlowService;
 import com.shoestp.mains.utils.dateUtils.CustomDoubleSerialize;
 import com.shoestp.mains.utils.dateUtils.DateTimeUtil;
 import com.shoestp.mains.utils.dateUtils.KeyValueViewUtil;
@@ -29,6 +18,14 @@ import com.shoestp.mains.views.DataView.flow.PageParameterView;
 import com.shoestp.mains.views.DataView.flow.PageView;
 import com.shoestp.mains.views.DataView.flow.PageViewObject;
 import com.shoestp.mains.views.DataView.utils.KeyValue;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import javax.annotation.Resource;
+import org.springframework.stereotype.Service;
 
 /**
  * @description: 流量-服务层实现类

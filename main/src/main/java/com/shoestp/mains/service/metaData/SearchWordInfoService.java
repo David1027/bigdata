@@ -1,10 +1,9 @@
 package com.shoestp.mains.service.metaData;
 
-import java.util.Date;
-
-import com.shoestp.mains.entitys.MetaData.SearchWordInfo;
-import com.shoestp.mains.views.Page;
+import com.shoestp.mains.entitys.metaData.SearchWordInfo;
 import com.shoestp.mains.views.DataView.utils.KeyValue;
+import com.shoestp.mains.views.Page;
+import java.util.Date;
 
 /** Created by IntelliJ IDEA. User: lijie@shoestp.cn Date: 2019/5/20 Time: 11:22 */
 public interface SearchWordInfoService {

@@ -1,11 +1,9 @@
 package com.shoestp.mains.dao.shoestpData;
 
+import com.shoestp.mains.entitys.metaData.SearchWordInfo;
 import java.util.Date;
 import java.util.Map;
-
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import com.shoestp.mains.entitys.MetaData.SearchWordInfo;
 
 public interface SearchDao extends JpaRepository<SearchWordInfo, Integer> {
 

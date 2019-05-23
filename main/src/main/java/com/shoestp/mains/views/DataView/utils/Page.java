@@ -1,7 +1,6 @@
 package com.shoestp.mains.views.DataView.utils;
 
 import java.util.List;
-
 import lombok.Data;
 
 /**
@@ -11,6 +10,6 @@ import lombok.Data;
  */
 @Data
 public class Page {
-    private List page;
-    private Integer totalCount;
+  private List page;
+  private Integer totalCount;
 }

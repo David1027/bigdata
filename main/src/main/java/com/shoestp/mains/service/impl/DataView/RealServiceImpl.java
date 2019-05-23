@@ -7,11 +7,11 @@ import javax.annotation.Resource;
 import com.shoestp.mains.constant.DataView.Contants;
 import com.shoestp.mains.dao.DataView.flow.FlowPageDao;
 import com.shoestp.mains.dao.DataView.realcountry.RealCountryDao;
-import com.shoestp.mains.enums.flow.AccessTypeEnum;
+import com.shoestp.mains.dao.DataView.user.UserDao;
 import com.shoestp.mains.service.DataView.RealService;
 import com.shoestp.mains.utils.dateUtils.DateTimeUtil;
 import com.shoestp.mains.utils.dateUtils.KeyValueViewUtil;
-import com.shoestp.mains.views.DataView.flow.PageViewObject;
+import com.shoestp.mains.views.DataView.real.IndexGrand;
 import com.shoestp.mains.views.DataView.real.IndexOverView;
 import com.shoestp.mains.views.DataView.real.RealOverView;
 import com.shoestp.mains.views.DataView.real.RealView;
@@ -28,6 +28,7 @@ public class RealServiceImpl implements RealService {
 
   @Resource private RealCountryDao realCountryDao;
   @Resource private FlowPageDao flowPageDao;
+  @Resource private UserDao userDao;
 
   /**
    * 获取两个值的比较率
@@ -322,20 +323,20 @@ public class RealServiceImpl implements RealService {
    * @param date
    * @return
    */
-  public int[] getEveryHour(Date date, String parameter) {
-    int[] arr = new int[12];
-    for (int i = 0; i < arr.length; i++) {
-      if ("visitorCount".equals(parameter)) {
-        arr[i] = getAddByTime(date, i * 2, i * 2 + 2).getVisitorCount();
-      } else if ("viewCount".equals(parameter)) {
-        arr[i] = getAddByTime(date, i * 2, i * 2 + 2).getViewCount();
-      } else if ("registerCount".equals(parameter)) {
-        arr[i] = getAddByTime(date, i * 2, i * 2 + 2).getRegisterCount();
-      } else if ("inquiryCount".equals(parameter)) {
-        arr[i] = getAddByTime(date, i * 2, i * 2 + 2).getInquiryCount();
+  public List getEveryHour(Date date, String parameter) {
+    List list = new ArrayList();
+    for (int i = 0; i < Contants.TWELVE; i++) {
+      if (Contants.VISITOR.equals(parameter)) {
+        list.add(getAddByTime(date, i * 2, i * 2 + 2).getVisitorCount());
+      } else if (Contants.VIEW.equals(parameter)) {
+        list.add(getAddByTime(date, i * 2, i * 2 + 2).getViewCount());
+      } else if (Contants.REGISTER.equals(parameter)) {
+        list.add(getAddByTime(date, i * 2, i * 2 + 2).getRegisterCount());
+      } else if (Contants.INQUIRY.equals(parameter)) {
+        list.add(getAddByTime(date, i * 2, i * 2 + 2).getInquiryCount());
       }
     }
-    return arr;
+    return list;
   }
 
   /**
@@ -344,12 +345,26 @@ public class RealServiceImpl implements RealService {
    * @param date
    * @return
    */
-  public Map<String, int[]> getRealTrendByDay(Date date) {
-    Map<String, int[]> visitorMap = new HashMap<>();
-    visitorMap.put("visitorCount", getEveryHour(date, "visitorCount"));
-    visitorMap.put("viewCount", getEveryHour(date, "viewCount"));
-    visitorMap.put("registerCount", getEveryHour(date, "registerCount"));
-    visitorMap.put("inquiryCount", getEveryHour(date, "inquiryCount"));
+  public Map<String, List> getRealTrendByDay(Date date) {
+    Map<String, List> visitorMap = new HashMap<>();
+    visitorMap.put(Contants.VISITOR, getEveryHour(date, Contants.VISITOR));
+    visitorMap.put(Contants.VIEW, getEveryHour(date, Contants.VIEW));
+    visitorMap.put(Contants.REGISTER, getEveryHour(date, Contants.REGISTER));
+    visitorMap.put(Contants.INQUIRY, getEveryHour(date, Contants.INQUIRY));
+    return visitorMap;
+  }
+
+  /**
+   * 根据关键字获取当前时间的实时趋势的值
+   *
+   * @author: lingjian @Date: 2019/5/23 13:56
+   * @param date
+   * @param indexCode
+   * @return
+   */
+  public Map<String, List> getIndexTrendByDay(Date date, String indexCode) {
+    Map<String, List> visitorMap = new HashMap<>();
+    visitorMap.put(indexCode, getEveryHour(date, indexCode));
     return visitorMap;
   }
 
@@ -363,9 +378,45 @@ public class RealServiceImpl implements RealService {
   @Override
   public Map<String, Map> getRealTrend(Date date) {
     Map<String, Map> visitorAllMap = new HashMap<>();
-    visitorAllMap.put("abscissa", DateTimeUtil.getHourAbscissa(2));
-    visitorAllMap.put("today", getRealTrendByDay(new Date()));
-    visitorAllMap.put("ratherday", getRealTrendByDay(date));
+    visitorAllMap.put(Contants.ABSCISSA, DateTimeUtil.getHourAbscissa(2));
+    visitorAllMap.put(Contants.TODAY, getRealTrendByDay(new Date()));
+    visitorAllMap.put(Contants.RATHERDAY, getRealTrendByDay(date));
     return visitorAllMap;
+  }
+
+  /**
+   * 根据时间，关键字获取实时数据分析时段分布
+   *
+   * @author: lingjian @Date: 2019/5/23 13:56
+   * @param date
+   * @param indexCode
+   * @return
+   */
+  @Override
+  public Map<String, Map> getIndexTrend(Date date, String indexCode) {
+    Map<String, Map> visitorAllMap = new HashMap<>();
+    visitorAllMap.put(Contants.ABSCISSA, DateTimeUtil.getHourAbscissa(2));
+    visitorAllMap.put(Contants.TODAY, getIndexTrendByDay(new Date(), indexCode));
+    visitorAllMap.put(Contants.RATHERDAY, getIndexTrendByDay(date, indexCode));
+    return visitorAllMap;
+  }
+
+  /**
+   * 获取首页累计数据
+   *
+   * @author: lingjian @Date: 2019/5/23 14:23
+   * @return
+   */
+  @Override
+  public IndexGrand getIndexGrand() {
+    IndexGrand grand = new IndexGrand();
+    IndexGrand real = realCountryDao.findByCreateTimeBefore(DateTimeUtil.getTimesnight());
+    IndexGrand user = userDao.findByCreateTimeBefore(DateTimeUtil.getTimesnight());
+    grand.setGrandInquiry(real.getGrandInquiry());
+    grand.setGrandRfq(real.getGrandRfq());
+    grand.setGrandRegister(real.getGrandRegister());
+    grand.setGrandPurchase(user.getGrandPurchase());
+    grand.setGrandSupplier(user.getGrandSupplier());
+    return grand;
   }
 }

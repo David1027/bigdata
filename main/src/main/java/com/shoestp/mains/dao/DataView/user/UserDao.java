@@ -8,9 +8,11 @@ import javax.annotation.Resource;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.shoestp.mains.dao.BaseDao;
+import com.shoestp.mains.entitys.DataView.country.QDataViewCountry;
 import com.shoestp.mains.entitys.DataView.user.DataViewUser;
 import com.shoestp.mains.entitys.DataView.user.QDataViewUser;
 import com.shoestp.mains.repositorys.DataView.user.UserRepository;
+import com.shoestp.mains.views.DataView.real.IndexGrand;
 import com.shoestp.mains.views.DataView.user.DataViewUserView;
 
 import org.springframework.stereotype.Repository;
@@ -23,6 +25,27 @@ import org.springframework.stereotype.Repository;
 public class UserDao extends BaseDao<DataViewUser> {
 
   @Resource private UserRepository userRepository;
+
+  /**
+   * 获取今天之前累计的询盘量，RFQ数，注册量
+   *
+   * @author: lingjian @Date: 2019/5/23 14:23
+   * @param date
+   * @return
+   */
+  public IndexGrand findByCreateTimeBefore(Date date) {
+    QDataViewUser qDataViewUser = QDataViewUser.dataViewUser;
+    return getQuery()
+            .select(
+                    Projections.bean(
+                            IndexGrand.class,
+                            qDataViewUser.purchaseCount.sum().as("grandPurchase"),
+                            qDataViewUser.supplierCount.sum().as("grandSupplier")))
+            .from(qDataViewUser)
+            .where(qDataViewUser.createTime.before(date))
+            .fetchOne();
+  }
+
 
   /**
    * 根据时间获取用户表的数据总和,返回对象

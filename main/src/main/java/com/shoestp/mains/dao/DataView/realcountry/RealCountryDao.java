@@ -12,6 +12,7 @@ import com.shoestp.mains.dao.BaseDao;
 import com.shoestp.mains.entitys.DataView.country.DataViewCountry;
 import com.shoestp.mains.entitys.DataView.country.QDataViewCountry;
 import com.shoestp.mains.repositorys.DataView.realcountry.RealCountryRepository;
+import com.shoestp.mains.views.DataView.real.IndexGrand;
 import com.shoestp.mains.views.DataView.real.RealView;
 
 /**
@@ -56,6 +57,27 @@ public class RealCountryDao extends BaseDao<DataViewCountry> {
                 qDataViewCountry.rfqCount.sum().as("rfqCount")))
         .from(qDataViewCountry)
         .where(qDataViewCountry.createTime.between(start, end))
+        .fetchOne();
+  }
+
+  /**
+   * 获取今天之前累计的询盘量，RFQ数，注册量
+   *
+   * @author: lingjian @Date: 2019/5/23 14:14
+   * @param date
+   * @return
+   */
+  public IndexGrand findByCreateTimeBefore(Date date) {
+    QDataViewCountry qDataViewCountry = QDataViewCountry.dataViewCountry;
+    return getQuery()
+        .select(
+            Projections.bean(
+                IndexGrand.class,
+                qDataViewCountry.registerCount.sum().as("grandRegister"),
+                qDataViewCountry.inquiryCount.sum().as("grandInquiry"),
+                qDataViewCountry.rfqCount.sum().as("grandRfq")))
+        .from(qDataViewCountry)
+        .where(qDataViewCountry.createTime.before(date))
         .fetchOne();
   }
 

@@ -749,6 +749,7 @@ public class DataConver extends BaseSchedulers {
       }
       rank.setPkey(item.getPkey());
       rank.setInquiryName(item.getName());
+      rank.setImg(item.getImg());
       if (map.containsKey(rank)) {
         map.get(rank).add(item);
       } else {

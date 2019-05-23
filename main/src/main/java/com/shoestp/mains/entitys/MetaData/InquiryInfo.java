@@ -2,7 +2,13 @@ package com.shoestp.mains.entitys.MetaData;
 
 import java.util.Date;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
 
@@ -35,6 +41,8 @@ public class InquiryInfo {
   private String ip;
   /** 国家 */
   private String country;
+  /** 图片 */
+  private String img;
   /** * 创建时间 */
   @Column(name = "create_time")
   private Date createTime;

@@ -137,6 +137,7 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
         inquiryInfo.setMoney(inquiry.getMoney());
         inquiryInfo.setIp(inquiry.getIp());
         inquiryInfo.setCountry(City.find(inquiry.getIp())[0]);
+        inquiryInfo.setImg(inquiry.getImg());
         inquiryInfoService.save(inquiryInfo);
       }
 

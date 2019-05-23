@@ -3,6 +3,7 @@ package com.shoestp.mains.controllers.metaData;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,14 +20,14 @@ public class SearchWordInfoController {
 
   @GetMapping(value = "/geKeyRanking")
   public Object getKeyRankng(
-      Date endTime,
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
       @RequestParam(defaultValue = "0") Integer num,
       @RequestParam(defaultValue = "0") int start,
       @RequestParam(defaultValue = "10") int limit) {
     return MessageResult.builder()
         .code(1)
         .msg("Hello")
-        .result(searchWordInfoService.getRanking(endTime, num, start, limit))
+        .result(searchWordInfoService.getRanking(date, num, start, limit))
         .build();
   }
 }

@@ -1,9 +1,9 @@
 package com.shoestp.mains.rpc.shoestp.imp;
 
-import com.shoestp.mains.dao.metaData.UserInfoDao;
-import com.shoestp.mains.entitys.metaData.InquiryInfo;
-import com.shoestp.mains.entitys.metaData.SearchWordInfo;
-import com.shoestp.mains.entitys.metaData.WebVisitInfo;
+import com.shoestp.mains.dao.metadata.UserInfoDao;
+import com.shoestp.mains.entitys.metadata.InquiryInfo;
+import com.shoestp.mains.entitys.metadata.SearchWordInfo;
+import com.shoestp.mains.entitys.metadata.WebVisitInfo;
 import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
 import com.shoestp.mains.enums.user.RegisterTypeEnum;
 import com.shoestp.mains.enums.user.SexEnum;
@@ -11,9 +11,9 @@ import com.shoestp.mains.rpc.shoestp.pojo.GRPC_ResultProto;
 import com.shoestp.mains.rpc.shoestp.pojo.GRPC_SendDataProto;
 import com.shoestp.mains.rpc.shoestp.pojo.GRPC_SendDataProto.UserInfo;
 import com.shoestp.mains.rpc.shoestp.pojo.SendDataUtilGrpc;
-import com.shoestp.mains.service.metaData.InquiryInfoService;
-import com.shoestp.mains.service.metaData.SearchWordInfoService;
-import com.shoestp.mains.service.metaData.WebVisitInfoService;
+import com.shoestp.mains.service.metadata.InquiryInfoService;
+import com.shoestp.mains.service.metadata.SearchWordInfoService;
+import com.shoestp.mains.service.metadata.WebVisitInfoService;
 import io.grpc.stub.StreamObserver;
 import java.util.Date;
 import javax.annotation.Resource;
@@ -162,8 +162,8 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
 
       @Override
       public void onNext(UserInfo info) {
-        com.shoestp.mains.entitys.metaData.UserInfo userInfo =
-            new com.shoestp.mains.entitys.metaData.UserInfo();
+        com.shoestp.mains.entitys.metadata.UserInfo userInfo =
+            new com.shoestp.mains.entitys.metadata.UserInfo();
         userInfo.setCountry(info.getCountry());
         switch (info.getSex()) {
           case 0:

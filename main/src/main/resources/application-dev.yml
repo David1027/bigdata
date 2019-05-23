@@ -37,7 +37,7 @@ spring:
     job-store-type: memory
 application:
   errorCode-path:
-    com.shoestp.mains.utils.errorCode.langs
+    com.shoestp.mains.utils.errorcode.langs
 rpc:
   host: 0.0.0.0
   port: 888

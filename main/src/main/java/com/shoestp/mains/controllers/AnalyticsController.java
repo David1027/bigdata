@@ -2,7 +2,7 @@ package com.shoestp.mains.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shoestp.mains.pojo.MessageResult;
-import com.shoestp.mains.service.metaData.WebVisitInfoService;
+import com.shoestp.mains.service.metadata.WebVisitInfoService;
 import com.shoestp.mains.views.analytics.WebVisitInfoView;
 import java.io.IOException;
 import javax.annotation.Resource;

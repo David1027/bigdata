@@ -4,7 +4,7 @@
  */
 package com.shoestp.mains.utils.dateUtils;
 
-import com.shoestp.mains.constant.dataView.Contants;
+import com.shoestp.mains.constant.dataview.Contants;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

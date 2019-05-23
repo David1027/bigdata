@@ -48,6 +48,8 @@ public class DataViewInquiryRank {
   /** 商家或商品pkey */
   @Column(name = "pkey")
   private Integer pkey;
+  /** 商家或商品图片 */
+  private String img;
   /** 创建时间 */
   @Column(name = "create_time")
   private Date createTime;

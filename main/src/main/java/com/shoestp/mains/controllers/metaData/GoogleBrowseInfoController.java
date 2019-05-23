@@ -3,6 +3,7 @@ package com.shoestp.mains.controllers.metaData;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,7 +26,9 @@ public class GoogleBrowseInfoController {
    */
   @GetMapping(value = "/getPageRanking")
   public Object getPageRanking(
-      Date startTime, Date endTime, @RequestParam(defaultValue = "50") Integer limit) {
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date startTime,
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date endTime,
+      @RequestParam(defaultValue = "50") Integer limit) {
     return MessageResult.builder()
         .code(1)
         .msg("Hello")

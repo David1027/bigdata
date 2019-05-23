@@ -22,6 +22,7 @@ import com.shoestp.mains.views.DataView.inquiry.InquiryRankView;
 import com.shoestp.mains.views.DataView.inquiry.InquiryTypeView;
 import com.shoestp.mains.views.DataView.inquiry.InquiryView;
 import com.shoestp.mains.views.DataView.utils.KeyValue;
+import com.shoestp.mains.views.DataView.utils.Page;
 
 /**
  * @description: 询盘-服务层实现类
@@ -200,15 +201,8 @@ public class InquiryServiceImpl implements InquiryService {
     return inquiryTimeMap;
   }
 
-  /**
-   * 根据询盘类型获取询盘排行
-   *
-   * @author: lingjian @Date: 2019/5/14 11:44
-   * @param inquiryType
-   * @return List<InquiryRankView>
-   */
-  @Override
-  public List<InquiryRankView> getInquiryRank(InquiryTypeEnum inquiryType, int page, int pageSize) {
+  public List<InquiryRankView> getInquiryRankPage(
+      InquiryTypeEnum inquiryType, Integer page, Integer pageSize) {
     return inquiryRankDao
         .findAllByInquiryType(inquiryType, DateTimeUtil.getTimesmorning(), page, pageSize).stream()
         .map(
@@ -226,15 +220,29 @@ public class InquiryServiceImpl implements InquiryService {
   }
 
   /**
-   * 根据询盘类型获取实时询盘排行
+   * 根据询盘类型获取询盘排行
+   *
+   * @author: lingjian @Date: 2019/5/14 11:44
+   * @param inquiryType
+   * @return List<InquiryRankView>
+   */
+  @Override
+  public Page getInquiryRank(InquiryTypeEnum inquiryType, Integer page, Integer pageSize) {
+    Page page1 = new Page();
+    page1.setPage(getInquiryRankPage(inquiryType, page, pageSize));
+    page1.setTotalCount(getInquiryRankPage(inquiryType, null, 0).size());
+    return page1;
+  }
+
+  /**
+   * 根据询盘类型获取实时询盘排行+分页
    *
    * @author: lingjian @Date: 2019/5/16 14:16
    * @param inquiryType
    * @return
    */
-  @Override
-  public List<InquiryRankView> getInquiryRealRank(
-      InquiryTypeEnum inquiryType, Date startDate, Date endDate, int page, int pageSize) {
+  public List getInquiryRealRankPage(
+      InquiryTypeEnum inquiryType, Date startDate, Date endDate, Integer page, Integer pageSize) {
     return inquiryRankDao
         .findAllByInquiryTypeBetween(
             inquiryType,
@@ -255,6 +263,22 @@ public class InquiryServiceImpl implements InquiryService {
               return inquiryRankView;
             })
         .collect(Collectors.toList());
+  }
+
+  /**
+   * 根据询盘类型获取实时询盘排行+分页
+   *
+   * @author: lingjian @Date: 2019/5/16 14:16
+   * @param inquiryType
+   * @return
+   */
+  @Override
+  public Page getInquiryRealRank(
+      InquiryTypeEnum inquiryType, Date startDate, Date endDate, Integer page, Integer pageSize) {
+    Page page1 = new Page();
+    page1.setPage(getInquiryRealRankPage(inquiryType, startDate, endDate, page, pageSize));
+    page1.setTotalCount(getInquiryRealRankPage(inquiryType, startDate, endDate, null, 0).size());
+    return page1;
   }
 
   /**

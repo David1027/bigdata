@@ -8,6 +8,7 @@ import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
 import com.shoestp.mains.views.DataView.inquiry.InquiryRankView;
 import com.shoestp.mains.views.DataView.inquiry.InquiryView;
 import com.shoestp.mains.views.DataView.utils.KeyValue;
+import com.shoestp.mains.views.DataView.utils.Page;
 
 /**
  * @description: 询盘-服务层接口
@@ -49,7 +50,7 @@ public interface InquiryService {
    * @param inquiryType
    * @return List<InquiryRankView>
    */
-  List<InquiryRankView> getInquiryRank(InquiryTypeEnum inquiryType, int page, int pageSize);
+  Page getInquiryRank(InquiryTypeEnum inquiryType, Integer page, Integer pageSize);
 
   /**
    * 根据询盘类型获取实时询盘排行
@@ -57,8 +58,8 @@ public interface InquiryService {
    * @param inquiryType
    * @return
    */
-  List<InquiryRankView> getInquiryRealRank(
-      InquiryTypeEnum inquiryType, Date startDate, Date endDate, int page, int pageSize);
+  Page getInquiryRealRank(
+      InquiryTypeEnum inquiryType, Date startDate, Date endDate, Integer page, Integer pageSize);
 
   /**
    * 根据询盘类型，询盘名称获取实时排行时段分析(小时)

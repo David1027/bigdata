@@ -89,7 +89,7 @@ public class InquiryController {
    * @return
    */
   @PostMapping(value = "/inquiryrank")
-  public Object getInquiryRank(InquiryTypeEnum inquiryType, int page, int pageSize) {
+  public Object getInquiryRank(InquiryTypeEnum inquiryType, Integer page, Integer pageSize) {
     logger.debug(inquiryType);
     return MessageResult.builder()
         .code(1)
@@ -110,8 +110,8 @@ public class InquiryController {
       InquiryTypeEnum inquiryType,
       @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
       @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate,
-      int page,
-      int pageSize) {
+      Integer page,
+      Integer pageSize) {
     logger.debug(inquiryType);
     return MessageResult.builder()
         .code(1)

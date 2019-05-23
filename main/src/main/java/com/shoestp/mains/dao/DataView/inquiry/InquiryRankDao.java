@@ -31,18 +31,19 @@ public class InquiryRankDao extends BaseDao<DataViewInquiryRank> {
    * @return
    */
   public List<DataViewInquiryRank> findAllByInquiryType(
-      InquiryTypeEnum inquiryType, Date date, int page, int pageSize) {
+      InquiryTypeEnum inquiryType, Date date, Integer page, Integer pageSize) {
     QDataViewInquiryRank qDataViewInquiryRank = QDataViewInquiryRank.dataViewInquiryRank;
-    return getQuery()
-        .select(qDataViewInquiryRank)
-        .from(qDataViewInquiryRank)
-        .where(qDataViewInquiryRank.createTime.before(date))
-        .where(qDataViewInquiryRank.inquiryType.eq(inquiryType))
-        .orderBy(qDataViewInquiryRank.inquiryCount.desc())
-        .offset(page)
-        .limit(pageSize)
-        .fetchResults()
-        .getResults();
+    JPAQuery<DataViewInquiryRank> quiry =
+        getQuery()
+            .select(qDataViewInquiryRank)
+            .from(qDataViewInquiryRank)
+            .where(qDataViewInquiryRank.createTime.before(date))
+            .where(qDataViewInquiryRank.inquiryType.eq(inquiryType))
+            .orderBy(qDataViewInquiryRank.inquiryCount.desc());
+    if (page != null) {
+      quiry.offset(page).limit(pageSize);
+    }
+    return quiry.fetchResults().getResults();
   }
 
   /**
@@ -55,18 +56,19 @@ public class InquiryRankDao extends BaseDao<DataViewInquiryRank> {
    * @return
    */
   public List<DataViewInquiryRank> findAllByInquiryTypeBetween(
-      InquiryTypeEnum inquiryType, Date startDate, Date endDate, int page, int pageSize) {
+      InquiryTypeEnum inquiryType, Date startDate, Date endDate, Integer page, Integer pageSize) {
     QDataViewInquiryRank qDataViewInquiryRank = QDataViewInquiryRank.dataViewInquiryRank;
-    return getQuery()
-        .select(qDataViewInquiryRank)
-        .from(qDataViewInquiryRank)
-        .where(qDataViewInquiryRank.createTime.between(startDate, endDate))
-        .where(qDataViewInquiryRank.inquiryType.eq(inquiryType))
-        .orderBy(qDataViewInquiryRank.inquiryCount.desc())
-        .offset(page)
-        .limit(pageSize)
-        .fetchResults()
-        .getResults();
+    JPAQuery<DataViewInquiryRank> quiry =
+        getQuery()
+            .select(qDataViewInquiryRank)
+            .from(qDataViewInquiryRank)
+            .where(qDataViewInquiryRank.createTime.between(startDate, endDate))
+            .where(qDataViewInquiryRank.inquiryType.eq(inquiryType))
+            .orderBy(qDataViewInquiryRank.inquiryCount.desc());
+    if (page != null) {
+      quiry.offset(page).limit(pageSize);
+    }
+    return quiry.fetchResults().getResults();
   }
 
   /**

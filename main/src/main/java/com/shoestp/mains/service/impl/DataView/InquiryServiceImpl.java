@@ -234,12 +234,12 @@ public class InquiryServiceImpl implements InquiryService {
    */
   @Override
   public List<InquiryRankView> getInquiryRealRank(
-      InquiryTypeEnum inquiryType, int page, int pageSize) {
+      InquiryTypeEnum inquiryType, Date startDate, Date endDate, int page, int pageSize) {
     return inquiryRankDao
         .findAllByInquiryTypeBetween(
             inquiryType,
-            DateTimeUtil.getTimesmorning(),
-            DateTimeUtil.getTimesnight(),
+            DateTimeUtil.getTimesOfDay(startDate, 0),
+            DateTimeUtil.getTimesOfDay(endDate, 24),
             page,
             pageSize)
         .stream()

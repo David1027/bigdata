@@ -57,7 +57,8 @@ public interface InquiryService {
    * @param inquiryType
    * @return
    */
-  List<InquiryRankView> getInquiryRealRank(InquiryTypeEnum inquiryType, int page, int pageSize);
+  List<InquiryRankView> getInquiryRealRank(
+      InquiryTypeEnum inquiryType, Date startDate, Date endDate, int page, int pageSize);
 
   /**
    * 根据询盘类型，询盘名称获取实时排行时段分析(小时)

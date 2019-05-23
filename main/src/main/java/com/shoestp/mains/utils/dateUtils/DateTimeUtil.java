@@ -6,11 +6,9 @@ package com.shoestp.mains.utils.dateUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TimeZone;
+import java.util.*;
+
+import com.shoestp.mains.constant.DataView.Contants;
 
 /**
  * 日期和时间工具类
@@ -52,6 +50,9 @@ public final class DateTimeUtil {
   public static final String HOUR = "hour";
 
   public static final String EVERY_DAY = "everyday";
+
+  /** 定义获取最近多少天的数量 */
+  public static final Integer DAY = 30;
 
   /** 数据库存储的date类型字段转成JAVA的String类型为2006-06-11 03:35:13.0，需要去掉后面的.0 */
   private static final String DATE_STRING_EXTRA = ".0";
@@ -387,6 +388,50 @@ public final class DateTimeUtil {
     Map<String, String[]> arrMap = new HashMap<>();
     arrMap.put(EVERY_DAY, arr);
     return arrMap;
+  }
+
+  /**
+   * 根据时间获取最近30天的日期集合
+   *
+   * @param date
+   * @return
+   */
+  public static List getDay(Date date) {
+    List list = new ArrayList();
+    for (int i = 0; i < DAY; i++) {
+      list.add(formatDateToString(getDayFromNum(date, DAY - i - 1), DATE_FARMAT_10));
+    }
+    return list;
+  }
+
+  /**
+   * 根据时间获取是哪一年的第几个周
+   * @param date
+   * @return
+   */
+  public static List getWeek(Date date) {
+    List list = new ArrayList();
+    Calendar calendar = Calendar.getInstance();
+    for (int i = 0; i < Contants.TWELVE; i++) {
+      calendar.setTime(getDayFromNum(date, (Contants.TWELVE - i) * 7 - 7));
+      String s = calendar.get(Calendar.YEAR) + " 第" + calendar.get(Calendar.WEEK_OF_YEAR) + "周";
+      list.add(s);
+    }
+
+    return list;
+  }
+
+  /**
+   * 根据时间获取是哪一年的那个月
+   * @param date
+   * @return
+   */
+  public static List getMonth(Date date) {
+    List list = new ArrayList();
+    for (int i = 0; i < Contants.TWELVE; i++) {
+      list.add(formatDateToString(getDayFromNum(date, (Contants.TWELVE - i)*30 - 30), DATE_FARMAT_5));
+    }
+    return list;
   }
 
   /** =================================大数据使用中================================= */

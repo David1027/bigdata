@@ -25,6 +25,43 @@ public class RealController {
   @Resource private RealService realService;
 
   /**
+   * 获取首页整体看板概况
+   *
+   * @author: lingjian @Date: 2019/5/22 14:27
+   * @param date
+   * @param num
+   * @return
+   */
+  @GetMapping(value = "/indexoverview")
+  public Object getIndexOverview(@DateTimeFormat(pattern = "yyyy-MM-dd") Date date, Integer num) {
+    logger.debug(date);
+    return MessageResult.builder()
+        .code(1)
+        .msg("Hello")
+        .result(realService.getIndexOverview(date, num))
+        .build();
+  }
+
+  /**
+   * 获取首页整体看板时段分布
+   *
+   * @param date
+   * @param num
+   * @param indexCode
+   * @return
+   */
+  @GetMapping(value = "/indexoverviewtime")
+  public Object getIndexOverviewTime(
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date, Integer num, String indexCode) {
+    logger.debug(date);
+    return MessageResult.builder()
+        .code(1)
+        .msg("Hello")
+        .result(realService.getIndexOverviewTime(date, num, indexCode))
+        .build();
+  }
+
+  /**
    * 获取实时概况
    *
    * @author: lingjian @Date: 2019/5/9 15:45

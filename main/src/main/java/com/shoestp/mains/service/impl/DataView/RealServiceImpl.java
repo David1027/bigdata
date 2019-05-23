@@ -4,11 +4,18 @@ import java.util.*;
 
 import javax.annotation.Resource;
 
+import com.shoestp.mains.constant.DataView.Contants;
+import com.shoestp.mains.dao.DataView.flow.FlowPageDao;
 import com.shoestp.mains.dao.DataView.realcountry.RealCountryDao;
+import com.shoestp.mains.enums.flow.AccessTypeEnum;
 import com.shoestp.mains.service.DataView.RealService;
 import com.shoestp.mains.utils.dateUtils.DateTimeUtil;
+import com.shoestp.mains.utils.dateUtils.KeyValueViewUtil;
+import com.shoestp.mains.views.DataView.flow.PageViewObject;
+import com.shoestp.mains.views.DataView.real.IndexOverView;
 import com.shoestp.mains.views.DataView.real.RealOverView;
 import com.shoestp.mains.views.DataView.real.RealView;
+import com.shoestp.mains.views.DataView.utils.KeyValue;
 
 import org.springframework.stereotype.Service;
 
@@ -20,6 +27,7 @@ import org.springframework.stereotype.Service;
 public class RealServiceImpl implements RealService {
 
   @Resource private RealCountryDao realCountryDao;
+  @Resource private FlowPageDao flowPageDao;
 
   /**
    * 获取两个值的比较率
@@ -29,7 +37,7 @@ public class RealServiceImpl implements RealService {
    * @param num2
    * @return
    */
-  public Double getCompare(int num1, int num2) {
+  public Double getCompare(double num1, double num2) {
     if (num2 == 0) {
       num2 = 1;
     }
@@ -52,6 +60,198 @@ public class RealServiceImpl implements RealService {
       real.setRfqCount(0);
     }
     return real;
+  }
+
+  /**
+   * 判断是否为空处理
+   *
+   * @author: lingjian @Date: 2019/5/16 16:20
+   * @param d
+   * @return
+   */
+  public Double isNullToDouble(Double d) {
+    if (d == null) {
+      d = 0.0;
+    }
+    return d;
+  }
+
+  /**
+   * 获取访客数，浏览量，注册量，询盘数
+   *
+   * @param startDate
+   * @param endDate
+   * @return
+   */
+  public RealView getIndexObject(Date startDate, Date endDate) {
+    return isNullTo(
+        realCountryDao.findAllByCreateTimeBetween(
+            DateTimeUtil.getTimesOfDay(startDate, 0), DateTimeUtil.getTimesOfDay(endDate, 24)));
+  }
+
+  /**
+   * 获取跳失率
+   *
+   * @param startDate
+   * @param endDate
+   * @return
+   */
+  public Double getFlowPageObject(Date startDate, Date endDate) {
+    return isNullToDouble(
+        flowPageDao.findByCreateTimeObject(
+            DateTimeUtil.getTimesOfDay(startDate, 0), DateTimeUtil.getTimesOfDay(endDate, 24)));
+  }
+
+  /**
+   * 每num周期的数据
+   *
+   * @author: lingjian @Date: 2019/5/22 16:18
+   * @param date
+   * @param parameter
+   * @return
+   */
+  public List getIndex(Date date, String parameter, int num, int day, int start, int end) {
+    List list = new ArrayList();
+    for (int i = 0; i < num; i++) {
+      if (Contants.VISITOR.equals(parameter)) {
+        list.add(
+            getIndexObject(
+                    DateTimeUtil.getDayFromNum(date, (num - i) * day - start),
+                    DateTimeUtil.getDayFromNum(date, (num - i) * day - end))
+                .getVisitorCount());
+      } else if (Contants.VIEW.equals(parameter)) {
+        list.add(
+            getIndexObject(
+                    DateTimeUtil.getDayFromNum(date, (num - i) * day - start),
+                    DateTimeUtil.getDayFromNum(date, (num - i) * day - end))
+                .getViewCount());
+      } else if (Contants.REGISTER.equals(parameter)) {
+        list.add(
+            getIndexObject(
+                    DateTimeUtil.getDayFromNum(date, (num - i) * day - start),
+                    DateTimeUtil.getDayFromNum(date, (num - i) * day - end))
+                .getRegisterCount());
+      } else if (Contants.INQUIRY.equals(parameter)) {
+        list.add(
+            getIndexObject(
+                    DateTimeUtil.getDayFromNum(date, (num - i) * day - start),
+                    DateTimeUtil.getDayFromNum(date, (num - i) * day - end))
+                .getInquiryCount());
+      } else if (Contants.JUMP.equals(parameter)) {
+        list.add(
+            getFlowPageObject(
+                DateTimeUtil.getDayFromNum(date, (num - i) * day - start),
+                DateTimeUtil.getDayFromNum(date, (num - i) * day - end)));
+      }
+    }
+    return list;
+  }
+
+  /**
+   * 获取每个参数的数据集合
+   *
+   * @author: lingjian @Date: 2019/5/23 10:03
+   * @param date
+   * @return
+   */
+  public List getIndexList(String indexCode, Date date, int num, int day, int start, int end) {
+    List<KeyValue> keyValues = new ArrayList<>();
+    keyValues.add(
+        KeyValueViewUtil.getFlowKeyValue(
+            indexCode, getIndex(date, indexCode, num, day, start, end)));
+    return keyValues;
+  }
+
+  /**
+   * 获取首页整体看板时段分布
+   *
+   * @author: lingjian @Date: 2019/5/23 10:03
+   * @param date
+   * @param num
+   * @return
+   */
+  @Override
+  public Map getIndexOverviewTime(Date date, Integer num, String indexCode) {
+    Map<String, List> map = new HashMap<>();
+    if (Contants.SEVEN.equals(num)) {
+      map.put(Contants.ABSCISSA, DateTimeUtil.getWeek(date));
+      map.put(Contants.LIST, getIndexList(indexCode, date, Contants.TWELVE, num, 1, num));
+    } else if (Contants.THIRTY.equals(num)) {
+      map.put(Contants.ABSCISSA, DateTimeUtil.getMonth(date));
+      map.put(Contants.LIST, getIndexList(indexCode, date, Contants.TWELVE, num, 1, num));
+    } else {
+      map.put(Contants.ABSCISSA, DateTimeUtil.getDay(date));
+      map.put(Contants.LIST, getIndexList(indexCode, date, Contants.THIRTY, 1, 1, 1));
+    }
+    return map;
+  }
+
+  /**
+   * 根据开始时间和结束时间获取实时概况
+   *
+   * @author: lingjian @Date: 2019/5/22 14:28
+   * @param startDate
+   * @param endDate
+   * @return
+   */
+  public IndexOverView getIndexOverviewObject(Date startDate, Date endDate, int ynum, int wnum) {
+    RealView today = getIndexObject(startDate, endDate);
+    RealView yesterday =
+        getIndexObject(
+            DateTimeUtil.getDayFromNum(startDate, ynum), DateTimeUtil.getDayFromNum(endDate, ynum));
+    RealView week =
+        getIndexObject(
+            DateTimeUtil.getDayFromNum(startDate, wnum), DateTimeUtil.getDayFromNum(endDate, wnum));
+
+    Double todatJump = getFlowPageObject(startDate, endDate);
+    Double yesterdayJump =
+        getFlowPageObject(
+            DateTimeUtil.getDayFromNum(startDate, ynum), DateTimeUtil.getDayFromNum(endDate, ynum));
+    Double weekJump =
+        getFlowPageObject(
+            DateTimeUtil.getDayFromNum(startDate, wnum), DateTimeUtil.getDayFromNum(endDate, wnum));
+
+    IndexOverView indexOverView = new IndexOverView();
+    indexOverView.setVisitorCount(today.getVisitorCount());
+    indexOverView.setVisitorCompareYesterday(
+        getCompare(today.getVisitorCount(), yesterday.getVisitorCount()));
+    indexOverView.setVisitorCompareWeek(
+        getCompare(today.getVisitorCount(), week.getVisitorCount()));
+    indexOverView.setViewCount(today.getViewCount());
+    indexOverView.setViewCompareYesterday(
+        getCompare(today.getViewCount(), yesterday.getViewCount()));
+    indexOverView.setViewCompareWeek(getCompare(today.getViewCount(), week.getViewCount()));
+    indexOverView.setRegisterCount(today.getRegisterCount());
+    indexOverView.setRegisterCompareYesterday(
+        getCompare(today.getRegisterCount(), yesterday.getRegisterCount()));
+    indexOverView.setRegisterCompareWeek(
+        getCompare(today.getRegisterCount(), week.getRegisterCount()));
+    indexOverView.setInquiryCount(today.getInquiryCount());
+    indexOverView.setInquiryCompareYesterday(
+        getCompare(today.getInquiryCount(), yesterday.getInquiryCount()));
+    indexOverView.setInquiryCompareWeek(
+        getCompare(today.getInquiryCount(), week.getInquiryCount()));
+    indexOverView.setJumpRate(todatJump);
+    indexOverView.setJumpRateCompareYesterday(getCompare(todatJump, yesterdayJump));
+    indexOverView.setJumpRateCompareWeek(getCompare(todatJump, weekJump));
+    return indexOverView;
+  }
+
+  /**
+   * 根据时间，天数获取实时概况
+   *
+   * @author: lingjian @Date: 2019/5/22 14:27
+   * @param date
+   * @param num
+   * @return
+   */
+  @Override
+  public IndexOverView getIndexOverview(Date date, Integer num) {
+    if (num != null) {
+      return getIndexOverviewObject(DateTimeUtil.getDayFromNum(date, num), date, num, 365);
+    } else {
+      return getIndexOverviewObject(date, date, 1, 7);
+    }
   }
 
   /**
@@ -111,7 +311,7 @@ public class RealServiceImpl implements RealService {
    */
   public RealView getAddByTime(Date date, int start, int end) {
     return isNullTo(
-            realCountryDao.findAllByCreateTimeBetween(
+        realCountryDao.findAllByCreateTimeBetween(
             DateTimeUtil.getTimesOfDay(date, start), DateTimeUtil.getTimesOfDay(date, end)));
   }
 

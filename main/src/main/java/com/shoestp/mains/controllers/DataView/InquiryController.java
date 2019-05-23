@@ -99,19 +99,24 @@ public class InquiryController {
   }
 
   /**
-   * 根据询盘类型获取询盘排行(实时)
+   * 根据询盘类型,时间获取询盘排行
    *
    * @author: lingjian @Date: 2019/5/16 14:15
    * @param inquiryType
    * @return
    */
   @PostMapping(value = "/inquiryrealrank")
-  public Object getInquiryRealRank(InquiryTypeEnum inquiryType, int page, int pageSize) {
+  public Object getInquiryRealRank(
+      InquiryTypeEnum inquiryType,
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate,
+      int page,
+      int pageSize) {
     logger.debug(inquiryType);
     return MessageResult.builder()
         .code(1)
         .msg("Hello")
-        .result(inquiryService.getInquiryRealRank(inquiryType, page, pageSize))
+        .result(inquiryService.getInquiryRealRank(inquiryType, startDate, endDate, page, pageSize))
         .build();
   }
 

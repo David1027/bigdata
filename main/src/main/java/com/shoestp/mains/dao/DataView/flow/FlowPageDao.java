@@ -81,14 +81,29 @@ public class FlowPageDao extends BaseDao<DataViewFlowPage> {
   public List<Tuple> findAllByAccessBy(Date start, Date end) {
     QDataViewFlowPage qDataViewFlowPage = QDataViewFlowPage.dataViewFlowPage;
     return getQuery()
-            .select(
-                    qDataViewFlowPage.accessType.stringValue(),
-                    qDataViewFlowPage.visitorCount.sum())
-            .from(qDataViewFlowPage)
-            .where(qDataViewFlowPage.createTime.between(start, end))
-            .groupBy(qDataViewFlowPage.accessType)
-            .fetchResults()
-            .getResults();
+        .select(qDataViewFlowPage.accessType.stringValue(), qDataViewFlowPage.visitorCount.sum())
+        .from(qDataViewFlowPage)
+        .where(qDataViewFlowPage.createTime.between(start, end))
+        .groupBy(qDataViewFlowPage.accessType)
+        .fetchResults()
+        .getResults();
+  }
+
+  /**
+   * 根据时间获取跳失率,返回对象
+   *
+   * @author: lingjian @Date: 2019/5/21 9:47
+   * @param start
+   * @param end
+   * @return
+   */
+  public Double findByCreateTimeObject(Date start, Date end) {
+    QDataViewFlowPage qDataViewFlowPage = QDataViewFlowPage.dataViewFlowPage;
+    return getQuery()
+        .select(qDataViewFlowPage.jumpRate.avg().as("jumpRate"))
+        .from(qDataViewFlowPage)
+        .where(qDataViewFlowPage.createTime.between(start, end))
+        .fetchFirst();
   }
 
   /**

@@ -1,5 +1,7 @@
 package com.shoestp.mains.service.metaData.impl;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +24,14 @@ public class GoogleBrowseInfoSeviceImpl implements GoogleBrowseInfoSevice {
    * @return
    */
   @Override
-  public List<PageRankingView> getPageRanking(Integer limit) {
-    return googleBrowseInfoDao.queryPageRanking(limit);
+  public List<PageRankingView> getPageRanking(Date startTime, Date endTime, Integer limit) {
+    if (startTime != null && endTime != null) {
+      SimpleDateFormat sim = new SimpleDateFormat("yyyyMMddHHmm");
+      String start = sim.format(startTime);
+      String end = sim.format(endTime);
+      return googleBrowseInfoDao.queryPageRanking(start, end, limit);
+    } else {
+      return googleBrowseInfoDao.queryPageRanking(limit);
+    }
   }
 }

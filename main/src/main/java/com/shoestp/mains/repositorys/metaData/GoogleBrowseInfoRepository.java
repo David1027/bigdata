@@ -26,6 +26,13 @@ public interface GoogleBrowseInfoRepository extends JpaRepository<GoogleBrowseIn
 
   @Query(
       value =
+          "SELECT\tpage_path AS pagePath,\tsum( page_views ) AS totalPageViews,\tSUM( sessions ) AS totalSession "
+              + "FROM\tgoogle_browse_info where access_time>?1 and access_time<?2 GROUP BY pagePath ORDER BY\ttotalPageViews DESC \tLIMIT ?3",
+      nativeQuery = true)
+  List<Object> queryPageRanking(String startTime, String endTime, Integer limit);
+
+  @Query(
+      value =
           "SELECT sum(page_views),sum(visitor) FROM `google_browse_info` WHERE page_path like ('%_p?1.html') and access_time > ?2 AND access_time <= ?3",
       nativeQuery = true)
   List<Object> getPdtVisitCountAndPageViews(Integer pkey, String startTime, String endTime);

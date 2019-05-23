@@ -1,5 +1,7 @@
 package com.shoestp.mains.controllers.metaData;
 
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,11 +24,12 @@ public class GoogleBrowseInfoController {
    * @return
    */
   @GetMapping(value = "/getPageRanking")
-  public Object getPageRanking(@RequestParam(defaultValue = "50") Integer limit) {
+  public Object getPageRanking(
+      Date startTime, Date endTime, @RequestParam(defaultValue = "50") Integer limit) {
     return MessageResult.builder()
         .code(1)
         .msg("Hello")
-        .result(browseInfo.getPageRanking(limit))
+        .result(browseInfo.getPageRanking(startTime, endTime, limit))
         .build();
   }
 }

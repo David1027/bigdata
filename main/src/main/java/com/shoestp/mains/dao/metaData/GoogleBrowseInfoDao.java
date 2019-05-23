@@ -77,6 +77,20 @@ public class GoogleBrowseInfoDao extends BaseDao<GoogleBrowseInfo> {
     return result;
   }
 
+  public List<PageRankingView> queryPageRanking(String startTime, String endTime, Integer limit) {
+    List result = new ArrayList();
+    for (Object o : googleBrowseInfoRepository.queryPageRanking(startTime, endTime, limit)) {
+      Object[] objects = (Object[]) o;
+      result.add(
+          new PageRankingView(
+              String.valueOf(objects[0]),
+              BigDecimal.valueOf(Double.valueOf(String.valueOf(objects[1]))),
+              BigDecimal.valueOf(Double.valueOf(String.valueOf(objects[2]))),
+              BigDecimal.valueOf(0)));
+    }
+    return result;
+  }
+
   public List<GoogleBrowseInfo> queryByStartTimeAndEndTime(String startTime, String endTime) {
     return googleBrowseInfoRepository.queryByStartTimeAndEndTime(startTime, endTime);
   }

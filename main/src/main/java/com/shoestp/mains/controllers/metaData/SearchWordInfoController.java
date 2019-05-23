@@ -20,7 +20,7 @@ public class SearchWordInfoController {
   @GetMapping(value = "/geKeyRanking")
   public Object getKeyRankng(
       Date endTime,
-      Integer num,
+      @RequestParam(defaultValue = "0") Integer num,
       @RequestParam(defaultValue = "0") int start,
       @RequestParam(defaultValue = "10") int limit) {
     return MessageResult.builder()

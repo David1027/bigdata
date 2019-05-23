@@ -1,9 +1,9 @@
 package com.shoestp.mains.service.metaData.impl;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -13,6 +13,7 @@ import com.shoestp.mains.dao.shoestpData.SearchDao;
 import com.shoestp.mains.entitys.MetaData.SearchWordInfo;
 import com.shoestp.mains.service.metaData.SearchWordInfoService;
 import com.shoestp.mains.utils.dateUtils.DateTimeUtil;
+import com.shoestp.mains.views.Page;
 import com.shoestp.mains.views.DataView.utils.KeyValue;
 
 /** Created by IntelliJ IDEA. User: lijie@shoestp.cn Date: 2019/5/20 Time: 11:24 */
@@ -27,7 +28,7 @@ public class SearchWordInfoServiceImpl implements SearchWordInfoService {
   }
 
   @Override
-  public List<KeyValue> getRanking(Date endTime, Integer num, int start, int limit) {
+  public Page<KeyValue> getRanking(Date endTime, Integer num, int start, int limit) {
     if (endTime == null) {
       endTime = new Date();
     }
@@ -39,15 +40,12 @@ public class SearchWordInfoServiceImpl implements SearchWordInfoService {
       startTime = DateTimeUtil.getTimesOfDay(endTime);
       endTime = DateTimeUtil.getTimesnight(endTime);
     }
-    List<Object> ranking = searchDao.getRanking(startTime, endTime, start, limit);
-    List<KeyValue> kv = new ArrayList<>();
-    for (Object item : ranking) {
-      Object[] o = (Object[]) item;
-      KeyValue k = new KeyValue();
-      k.setKey(o[0].toString());
-      k.setValue(o[1].toString());
-      kv.add(k);
-    }
-    return kv;
+    Map<String, Object> map = searchDao.getRanking(startTime, endTime, start, limit);
+    long count = (long) map.get("count");
+    List<KeyValue> kv = (List<KeyValue>) map.get("list");
+    Page<KeyValue> page = new Page<>();
+    page.setList(kv);
+    page.setTotal(count);
+    return page;
   }
 }

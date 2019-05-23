@@ -1,9 +1,9 @@
-package com.shoestp.mains.repositorys.DataView.realcountry;
+package com.shoestp.mains.repositorys.dataView.realcountry;
 
 import java.util.Date;
 import java.util.List;
 
-import com.shoestp.mains.entitys.DataView.country.DataViewCountry;
+import com.shoestp.mains.entitys.dataView.country.DataViewCountry;
 
 import org.springframework.data.repository.PagingAndSortingRepository;
 

@@ -2,15 +2,10 @@ package com.shoestp.mains.entitys.dataView.flow;
 
 import com.shoestp.mains.enums.flow.DeviceTypeEnum;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
-import java.util.Date;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import lombok.Data;
+
+import javax.persistence.*;
+import java.util.Date;
 
 /**
  * @description: 流量表
@@ -21,7 +16,7 @@ import lombok.Data;
 @Entity
 @Table(name = "data_view_flow")
 public class DataViewFlow {
-  @Id @GeneratedValue private Integer id;
+  @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private Integer id;
   /** 设备类型：PC-电脑端，WAP-移动端 */
   @Enumerated(EnumType.STRING)
   @Column(name = "device_type")

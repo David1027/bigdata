@@ -4,10 +4,11 @@ import com.querydsl.core.Tuple;
 import com.shoestp.mains.dao.BaseDao;
 import com.shoestp.mains.entitys.dataView.user.DataViewUserSex;
 import com.shoestp.mains.entitys.dataView.user.QDataViewUserSex;
-import com.shoestp.mains.repositorys.dataView.user.UserSexRepository;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.Resource;
+
+import com.shoestp.mains.repositorys.dataView.user.UserSexRepository;
 import org.springframework.stereotype.Repository;
 
 /**

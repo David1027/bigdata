@@ -9,4 +9,6 @@ public class MessageResult {
   private Integer code;
   private String msg;
   private Object result;
+
+
 }

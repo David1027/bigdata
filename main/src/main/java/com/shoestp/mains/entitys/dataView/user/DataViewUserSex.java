@@ -1,15 +1,10 @@
 package com.shoestp.mains.entitys.dataView.user;
 
 import com.shoestp.mains.enums.user.SexEnum;
-import java.util.Date;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import lombok.Data;
+
+import javax.persistence.*;
+import java.util.Date;
 
 /**
  * @description: 用户表
@@ -20,7 +15,7 @@ import lombok.Data;
 @Entity
 @Table(name = "data_view_user_sex")
 public class DataViewUserSex {
-  @Id @GeneratedValue private Integer id;
+  @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private Integer id;
   /** 性别：MAN-男，WOMAN-女，UNKNOWN-未知 */
   @Enumerated(EnumType.STRING)
   @Column(name = "sex")

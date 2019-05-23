@@ -1,12 +1,9 @@
 package com.shoestp.mains.entitys.dataView.user;
 
-import java.util.Date;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import lombok.Data;
+
+import javax.persistence.*;
+import java.util.Date;
 
 /**
  * @description: 用户表
@@ -17,7 +14,7 @@ import lombok.Data;
 @Entity
 @Table(name = "data_view_user_area")
 public class DataViewUserArea {
-  @Id @GeneratedValue private Integer id;
+  @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private Integer id;
   /** 地域名称 */
   @Column(name = "area")
   private String area;

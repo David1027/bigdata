@@ -3,13 +3,14 @@ package com.shoestp.mains.dao.metaData;
 import com.shoestp.mains.dao.BaseDao;
 import com.shoestp.mains.entitys.metaData.GoogleBrowseInfo;
 import com.shoestp.mains.repositorys.metaData.GoogleBrowseInfoRepository;
-import com.shoestp.mains.views.DataView.metaData.PageRankingView;
+import com.shoestp.mains.views.dataView.metaData.PageRankingView;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import javax.annotation.Resource;
-import org.springframework.stereotype.Component;
 
 @Component
 public class GoogleBrowseInfoDao extends BaseDao<GoogleBrowseInfo> {

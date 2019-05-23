@@ -3,7 +3,7 @@ package com.shoestp.mains.service.metaData.impl;
 import com.shoestp.mains.dao.shoestpData.WebVisitInfoDao;
 import com.shoestp.mains.entitys.metaData.WebVisitInfo;
 import com.shoestp.mains.service.metaData.WebVisitInfoService;
-import com.shoestp.mains.views.DataView.metaData.QueryWebVisitInfoView;
+import com.shoestp.mains.views.dataView.metaData.QueryWebVisitInfoView;
 import com.shoestp.mains.views.Page;
 import com.shoestp.mains.views.analytics.WebVisitInfoView;
 import java.util.Date;

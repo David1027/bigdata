@@ -1,20 +1,19 @@
 package com.shoestp.mains.entitys.metaData;
 
-import java.util.Date;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import lombok.Data;
+
+import javax.persistence.*;
+import java.util.Date;
 
 /** 网站访问元数据 */
 @Data
 @Entity
-@Table(name = "mete_data_web_visit_info")
+@Table(name = "meta_data_web_visit_info")
 public class WebVisitInfo {
   /** Id表主键 自增 */
-  @Id @GeneratedValue private Integer id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer id;
   /** * 页面标题 */
   private String title;
   /** * 页面URL */

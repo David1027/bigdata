@@ -2,10 +2,10 @@ package com.shoestp.mains.service.dataView;
 
 import com.shoestp.mains.enums.flow.AccessTypeEnum;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
-import com.shoestp.mains.views.DataView.flow.AccessView;
-import com.shoestp.mains.views.DataView.flow.FlowDeviceView;
-import com.shoestp.mains.views.DataView.flow.PageParameterView;
-import com.shoestp.mains.views.DataView.utils.KeyValue;
+import com.shoestp.mains.views.dataView.flow.AccessView;
+import com.shoestp.mains.views.dataView.flow.FlowDeviceView;
+import com.shoestp.mains.views.dataView.flow.PageParameterView;
+import com.shoestp.mains.views.dataView.utils.KeyValue;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;

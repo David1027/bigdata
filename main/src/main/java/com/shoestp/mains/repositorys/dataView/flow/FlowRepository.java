@@ -1,10 +1,9 @@
-package com.shoestp.mains.repositorys.DataView.flow;
+package com.shoestp.mains.repositorys.dataView.flow;
 
-import java.util.Optional;
-
+import com.shoestp.mains.entitys.dataView.flow.DataViewFlow;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
-import com.shoestp.mains.entitys.DataView.flow.DataViewFlow;
+import java.util.Optional;
 
 /**
  * @description: 流量-实现JPA接口

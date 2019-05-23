@@ -4,7 +4,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.shoestp.mains.entitys.metaData.QSearchWordInfo;
-import com.shoestp.mains.views.DataView.utils.KeyValue;
+import com.shoestp.mains.views.dataView.utils.KeyValue;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;

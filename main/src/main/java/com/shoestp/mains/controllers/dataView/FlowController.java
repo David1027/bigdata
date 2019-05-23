@@ -36,7 +36,7 @@ public class FlowController {
   @GetMapping(value = "/realsource")
   public Object getRealSource(HttpServletRequest httpRequest) {
     logger.debug(httpRequest.getCookies());
-    return MessageResult.builder().code(1).msg("Hello").result(flowService.getRealSource()).build();
+    return MessageResult.builder().code(1).result(flowService.getRealSource()).build();
   }
 
   /**
@@ -54,7 +54,6 @@ public class FlowController {
     logger.debug(startDate + "==" + endDate);
     return MessageResult.builder()
         .code(1)
-        .msg("Hello")
         .result(flowService.getFlowDevice(startDate, endDate))
         .build();
   }
@@ -70,11 +69,7 @@ public class FlowController {
   @PostMapping(value = "/flowsourcetype")
   public Object getFlowSourceType(@DateTimeFormat(pattern = "yyyy-MM-dd") Date date, Integer num) {
     logger.debug(date);
-    return MessageResult.builder()
-        .code(1)
-        .msg("Hello")
-        .result(flowService.getFlowSourceType(date, num))
-        .build();
+    return MessageResult.builder().code(1).result(flowService.getFlowSourceType(date, num)).build();
   }
 
   /**
@@ -89,7 +84,6 @@ public class FlowController {
     logger.debug(date);
     return MessageResult.builder()
         .code(1)
-        .msg("Hello")
         .result(flowService.getFlowSourceTypeTimeByHour(date))
         .build();
   }
@@ -107,7 +101,6 @@ public class FlowController {
     logger.debug(date);
     return MessageResult.builder()
         .code(1)
-        .msg("Hello")
         .result(flowService.getFlowSourceTypeTimeByDay(num, date))
         .build();
   }
@@ -123,11 +116,7 @@ public class FlowController {
   @PostMapping(value = "/flowsourcepage")
   public Object getFlowSourcePage(@DateTimeFormat(pattern = "yyyy-MM-dd") Date date, Integer num) {
     logger.debug(date);
-    return MessageResult.builder()
-        .code(1)
-        .msg("Hello")
-        .result(flowService.getFlowSourcePage(date, num))
-        .build();
+    return MessageResult.builder().code(1).result(flowService.getFlowSourcePage(date, num)).build();
   }
 
   /**
@@ -147,7 +136,6 @@ public class FlowController {
     logger.debug(date);
     return MessageResult.builder()
         .code(1)
-        .msg("Hello")
         .result(flowService.getFlowSourcePageByHour(date, sourceType, sourcePage))
         .build();
   }
@@ -171,7 +159,6 @@ public class FlowController {
     logger.debug(date);
     return MessageResult.builder()
         .code(1)
-        .msg("Hello")
         .result(flowService.getFlowSourcePageByDay(num, date, sourceType, sourcePage))
         .build();
   }
@@ -190,7 +177,6 @@ public class FlowController {
     logger.debug(date);
     return MessageResult.builder()
         .code(1)
-        .msg("Hello")
         .result(flowService.getFlowPageAnalysis(date, num))
         .build();
   }
@@ -209,7 +195,6 @@ public class FlowController {
     logger.debug(date);
     return MessageResult.builder()
         .code(1)
-        .msg("Hello")
         .result(flowService.getFlowPageAnalysisByHour(date, access))
         .build();
   }
@@ -228,7 +213,6 @@ public class FlowController {
     logger.debug(date);
     return MessageResult.builder()
         .code(1)
-        .msg("Hello")
         .result(flowService.getFlowPageAnalysisByDay(num, date, access))
         .build();
   }
@@ -243,11 +227,7 @@ public class FlowController {
   @PostMapping(value = "/flowpage")
   public Object getFlowPage(@DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
     logger.debug(date);
-    return MessageResult.builder()
-        .code(1)
-        .msg("Hello")
-        .result(flowService.getFlowPage(date))
-        .build();
+    return MessageResult.builder().code(1).result(flowService.getFlowPage(date)).build();
   }
 
   /**
@@ -260,10 +240,6 @@ public class FlowController {
   @PostMapping(value = "/flowpagebymonyh")
   public Object getFlowPageByMonth(@DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
     logger.debug(date);
-    return MessageResult.builder()
-        .code(1)
-        .msg("Hello")
-        .result(flowService.getFlowPageByMonth(date))
-        .build();
+    return MessageResult.builder().code(1).result(flowService.getFlowPageByMonth(date)).build();
   }
 }

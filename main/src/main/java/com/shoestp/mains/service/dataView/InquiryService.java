@@ -1,9 +1,9 @@
 package com.shoestp.mains.service.dataView;
 
 import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
-import com.shoestp.mains.views.DataView.inquiry.InquiryView;
-import com.shoestp.mains.views.DataView.utils.KeyValue;
-import com.shoestp.mains.views.DataView.utils.Page;
+import com.shoestp.mains.views.dataView.inquiry.InquiryView;
+import com.shoestp.mains.views.dataView.utils.KeyValue;
+import com.shoestp.mains.views.dataView.utils.Page;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;

@@ -1,6 +1,6 @@
-package com.shoestp.mains.repositorys.DataView.user;
+package com.shoestp.mains.repositorys.dataView.user;
 
-import com.shoestp.mains.entitys.DataView.user.DataViewUser;
+import com.shoestp.mains.entitys.dataView.user.DataViewUser;
 
 import org.springframework.data.repository.PagingAndSortingRepository;
 

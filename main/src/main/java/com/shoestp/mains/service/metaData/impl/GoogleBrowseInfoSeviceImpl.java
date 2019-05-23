@@ -2,7 +2,7 @@ package com.shoestp.mains.service.metaData.impl;
 
 import com.shoestp.mains.dao.metaData.GoogleBrowseInfoDao;
 import com.shoestp.mains.service.metaData.GoogleBrowseInfoSevice;
-import com.shoestp.mains.views.DataView.metaData.PageRankingView;
+import com.shoestp.mains.views.dataView.metaData.PageRankingView;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;

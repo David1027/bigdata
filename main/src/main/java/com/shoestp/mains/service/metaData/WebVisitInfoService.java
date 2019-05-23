@@ -1,7 +1,7 @@
 package com.shoestp.mains.service.metaData;
 
 import com.shoestp.mains.entitys.metaData.WebVisitInfo;
-import com.shoestp.mains.views.DataView.metaData.QueryWebVisitInfoView;
+import com.shoestp.mains.views.dataView.metaData.QueryWebVisitInfoView;
 import com.shoestp.mains.views.Page;
 import com.shoestp.mains.views.analytics.WebVisitInfoView;
 

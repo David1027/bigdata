@@ -2,13 +2,14 @@ package com.shoestp.mains.controllers.dataView;
 
 import com.shoestp.mains.pojo.MessageResult;
 import com.shoestp.mains.service.dataView.CountryService;
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @description: 国家-控制器
@@ -33,7 +34,6 @@ public class CountryController {
     logger.debug(httpRequest.getCookies());
     return MessageResult.builder()
         .code(1)
-        .msg("Hello")
         .result(countryService.getCountryArea())
         .build();
   }

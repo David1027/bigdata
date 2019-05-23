@@ -32,7 +32,7 @@ import com.shoestp.mains.enums.user.RegisterTypeEnum;
 import com.shoestp.mains.enums.user.SexEnum;
 import com.shoestp.mains.schedulers.BaseSchedulers;
 import com.shoestp.mains.service.metaData.CountryService;
-import com.shoestp.mains.views.DataView.metaData.DataView;
+import com.shoestp.mains.views.dataView.metaData.DataView;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.ParseException;

@@ -1,21 +1,18 @@
-package com.shoestp.mains.dao.DataView.flow;
-
-import java.util.Date;
-import java.util.List;
-
-import javax.annotation.Resource;
-
-import org.springframework.stereotype.Repository;
+package com.shoestp.mains.dao.dataView.flow;
 
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.shoestp.mains.dao.BaseDao;
-import com.shoestp.mains.entitys.DataView.flow.DataViewFlowPage;
-import com.shoestp.mains.entitys.DataView.flow.QDataViewFlowPage;
+import com.shoestp.mains.entitys.dataView.flow.DataViewFlowPage;
+import com.shoestp.mains.entitys.dataView.flow.QDataViewFlowPage;
 import com.shoestp.mains.enums.flow.AccessTypeEnum;
-import com.shoestp.mains.repositorys.DataView.flow.FlowPageRepository;
-import com.shoestp.mains.views.DataView.flow.AccessView;
-import com.shoestp.mains.views.DataView.flow.PageViewObject;
+import com.shoestp.mains.repositorys.dataView.flow.FlowPageRepository;
+import com.shoestp.mains.views.dataView.flow.PageViewObject;
+import org.springframework.stereotype.Repository;
+
+import javax.annotation.Resource;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @description: 流量-数据层

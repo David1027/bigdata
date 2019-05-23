@@ -1,46 +1,27 @@
 package com.shoestp.mains.schedulers.googleApi;
 
 import com.google.api.services.analyticsreporting.v4.AnalyticsReporting;
-import com.google.api.services.analyticsreporting.v4.model.ColumnHeader;
-import com.google.api.services.analyticsreporting.v4.model.DateRange;
-import com.google.api.services.analyticsreporting.v4.model.Dimension;
-import com.google.api.services.analyticsreporting.v4.model.DimensionFilterClause;
-import com.google.api.services.analyticsreporting.v4.model.GetReportsRequest;
-import com.google.api.services.analyticsreporting.v4.model.GetReportsResponse;
-import com.google.api.services.analyticsreporting.v4.model.Metric;
-import com.google.api.services.analyticsreporting.v4.model.MetricHeaderEntry;
-import com.google.api.services.analyticsreporting.v4.model.Report;
-import com.google.api.services.analyticsreporting.v4.model.ReportRequest;
-import com.google.api.services.analyticsreporting.v4.model.ReportRow;
+import com.google.api.services.analyticsreporting.v4.model.*;
 import com.shoestp.mains.dao.metaData.GoogleBrowseInfoDao;
 import com.shoestp.mains.entitys.metaData.GoogleBrowseInfo;
 import com.shoestp.mains.entitys.metaData.GooglePageProperty;
 import com.shoestp.mains.repositorys.metaData.GooglePagePropertyInfoRepository;
 import com.shoestp.mains.schedulers.BaseSchedulers;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.quartz.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import javax.annotation.PostConstruct;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.quartz.JobBuilder;
-import org.quartz.JobDetail;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.quartz.SimpleScheduleBuilder;
-import org.quartz.Trigger;
-import org.quartz.TriggerBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
+import java.util.*;
 
 @Component
 public class GoogleMetaData extends BaseSchedulers {
@@ -158,11 +139,13 @@ public class GoogleMetaData extends BaseSchedulers {
     }
     try {
       // 本地测试用开启代理
-      System.setProperty("http.proxySet", String.valueOf(enable_Proxy));
-      System.setProperty("http.proxyHost", host);
-      System.setProperty("http.proxyPort", port);
-      System.setProperty("https.proxyHost", host);
-      System.setProperty("https.proxyPort", host);
+      if (enable_Proxy) {
+        System.setProperty("java.net.useSystemProxies", String.valueOf(enable_Proxy));
+        System.setProperty("http.proxyHost", host);
+        System.setProperty("http.proxyPort", port);
+        System.setProperty("https.proxyHost", host);
+        System.setProperty("https.proxyPort", port);
+      }
       DateRange dateRange = new DateRange();
       dateRange.setStartDate(startDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
       dateRange.setEndDate("today");

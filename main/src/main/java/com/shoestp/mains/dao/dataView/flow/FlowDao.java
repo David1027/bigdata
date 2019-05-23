@@ -1,25 +1,18 @@
-package com.shoestp.mains.dao.DataView.flow;
+package com.shoestp.mains.dao.dataView.flow;
 
+import com.querydsl.core.Tuple;
+import com.shoestp.mains.dao.BaseDao;
+import com.shoestp.mains.entitys.dataView.flow.DataViewFlow;
+import com.shoestp.mains.entitys.dataView.flow.QDataViewFlow;
+import com.shoestp.mains.enums.flow.DeviceTypeEnum;
+import com.shoestp.mains.enums.flow.SourceTypeEnum;
+import com.shoestp.mains.repositorys.dataView.flow.FlowRepository;
+import org.springframework.stereotype.Repository;
+
+import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-
-import javax.annotation.Resource;
-
-import jdk.nashorn.internal.objects.annotations.Where;
-import org.springframework.stereotype.Repository;
-
-import com.querydsl.core.Tuple;
-import com.querydsl.jpa.impl.JPAQuery;
-import com.shoestp.mains.dao.BaseDao;
-import com.shoestp.mains.entitys.DataView.flow.DataViewFlow;
-import com.shoestp.mains.entitys.DataView.flow.QDataViewFlow;
-import com.shoestp.mains.entitys.DataView.inquiry.DataViewInquiryRank;
-import com.shoestp.mains.entitys.DataView.inquiry.QDataViewInquiryRank;
-import com.shoestp.mains.enums.flow.DeviceTypeEnum;
-import com.shoestp.mains.enums.flow.SourceTypeEnum;
-import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
-import com.shoestp.mains.repositorys.DataView.flow.FlowRepository;
 
 /**
  * @description: 流量-数据层

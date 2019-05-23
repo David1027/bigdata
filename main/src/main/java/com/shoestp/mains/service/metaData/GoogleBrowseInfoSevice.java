@@ -1,6 +1,6 @@
 package com.shoestp.mains.service.metaData;
 
-import com.shoestp.mains.views.DataView.metaData.PageRankingView;
+import com.shoestp.mains.views.dataView.metaData.PageRankingView;
 import java.util.Date;
 import java.util.List;
 

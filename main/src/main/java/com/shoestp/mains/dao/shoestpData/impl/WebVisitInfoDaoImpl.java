@@ -6,7 +6,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.shoestp.mains.entitys.metaData.QWebVisitInfo;
 import com.shoestp.mains.entitys.metaData.WebVisitInfo;
-import com.shoestp.mains.views.DataView.metaData.queryView;
+import com.shoestp.mains.views.dataView.metaData.queryView;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;

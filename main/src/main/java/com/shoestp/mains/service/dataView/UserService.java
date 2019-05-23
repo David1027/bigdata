@@ -1,13 +1,12 @@
-package com.shoestp.mains.service.DataView;
+package com.shoestp.mains.service.dataView;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.shoestp.mains.entitys.DataView.user.DataViewUser;
-import com.shoestp.mains.views.DataView.user.DataViewUserAreaView;
-import com.shoestp.mains.views.DataView.user.DataViewUserSexView;
-import com.shoestp.mains.views.DataView.user.DataViewUserView;
+import com.shoestp.mains.views.dataView.user.DataViewUserAreaView;
+import com.shoestp.mains.views.dataView.user.DataViewUserSexView;
+import com.shoestp.mains.views.dataView.user.DataViewUserView;
 
 /**
  * @description: 用户-服务层接口

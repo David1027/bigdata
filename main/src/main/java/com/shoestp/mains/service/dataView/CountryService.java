@@ -1,6 +1,6 @@
 package com.shoestp.mains.service.dataView;
 
-import com.shoestp.mains.views.DataView.country.CountryView;
+import com.shoestp.mains.views.dataView.country.CountryView;
 import java.util.List;
 
 /**

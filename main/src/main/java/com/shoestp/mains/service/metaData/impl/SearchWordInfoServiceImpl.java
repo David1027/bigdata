@@ -4,7 +4,7 @@ import com.shoestp.mains.dao.shoestpData.SearchDao;
 import com.shoestp.mains.entitys.metaData.SearchWordInfo;
 import com.shoestp.mains.service.metaData.SearchWordInfoService;
 import com.shoestp.mains.utils.dateUtils.DateTimeUtil;
-import com.shoestp.mains.views.DataView.utils.KeyValue;
+import com.shoestp.mains.views.dataView.utils.KeyValue;
 import com.shoestp.mains.views.Page;
 import java.util.Calendar;
 import java.util.Date;

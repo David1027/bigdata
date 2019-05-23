@@ -1,12 +1,9 @@
 package com.shoestp.mains.entitys.dataView.country;
 
-import java.util.Date;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import lombok.Data;
+
+import javax.persistence.*;
+import java.util.Date;
 
 /**
  * @description: 国家表
@@ -17,7 +14,9 @@ import lombok.Data;
 @Entity
 @Table(name = "data_view_country")
 public class DataViewCountry {
-  @Id @GeneratedValue private Integer id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer id;
   /** 国家名称 */
   @Column(name = "country_name")
   private String countryName;

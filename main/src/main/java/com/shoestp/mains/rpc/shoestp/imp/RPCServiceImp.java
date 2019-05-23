@@ -116,6 +116,10 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
             inquiryInfo.setType(InquiryTypeEnum.COMMODITY);
             b = false;
             break;
+          case 3:
+            inquiryInfo.setType(InquiryTypeEnum.COMMODITY);
+            b = false;
+            break;
           case 4:
             inquiryInfo.setType(InquiryTypeEnum.SUPPLIER);
             b = false;

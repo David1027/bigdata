@@ -1,12 +1,13 @@
 package com.shoestp.mains.repositorys.metadata;
 
-import com.shoestp.mains.entitys.metadata.GoogleBrowseInfo;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
-import java.util.Optional;
+import com.shoestp.mains.entitys.metadata.GoogleBrowseInfo;
 
 public interface GoogleBrowseInfoRepository extends JpaRepository<GoogleBrowseInfo, Integer> {
 
@@ -20,7 +21,7 @@ public interface GoogleBrowseInfoRepository extends JpaRepository<GoogleBrowseIn
 
   @Query(
       value =
-          "SELECT page_path AS pagePath, sum( page_views ) AS totalPageViews, SUM( sessions ) AS totalSession, sum(time_on_page) AS totalTime FROM meta_data_google_browse_info GROUP BY pagePath ORDER BY totalPageViews DESC LIMIT :limit",
+          "SELECT page_path AS pagePath, sum( page_views ) AS totalPageViews, SUM( sessions ) AS totalSession, sum(time_on_page) AS totalTime FROM google_browse_info GROUP BY pagePath ORDER BY totalPageViews DESC LIMIT :limit",
       nativeQuery = true)
   List<Object> queryPageRanking(@Param("limit") Integer limit);
 

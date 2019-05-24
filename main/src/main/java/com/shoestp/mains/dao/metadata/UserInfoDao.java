@@ -14,7 +14,7 @@ public interface UserInfoDao extends JpaRepository<UserInfo, Integer> {
 
   @Query(
       value =
-          "SELECT country,count(*) as count  FROM `user_info` where create_time > ?1 AND create_time <= ?2 GROUP BY country ",
+          "SELECT country,count(*) as count  FROM `meta_data_user_info` where create_time > ?1 AND create_time <= ?2 GROUP BY country ",
       nativeQuery = true)
   List<Object> getCountryAndCount(Date startTime, Date endTime);
 

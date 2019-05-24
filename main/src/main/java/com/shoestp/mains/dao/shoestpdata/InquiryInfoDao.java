@@ -1,12 +1,13 @@
 package com.shoestp.mains.dao.shoestpdata;
 
-import com.shoestp.mains.entitys.metadata.InquiryInfo;
-import com.shoestp.mains.enums.flow.SourceTypeEnum;
+import java.util.Date;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import java.util.Date;
-import java.util.List;
+import com.shoestp.mains.entitys.metadata.InquiryInfo;
+import com.shoestp.mains.enums.flow.SourceTypeEnum;
 
 public interface InquiryInfoDao extends JpaRepository<InquiryInfo, Integer> {
 
@@ -16,7 +17,7 @@ public interface InquiryInfoDao extends JpaRepository<InquiryInfo, Integer> {
 
   @Query(
       value =
-          "SELECT count(*) FROM meta_data_inquiry_info where create_time > ?1 AND create_time <= ?2 GROUP BY  ip",
+          "SELECT count(*) FROM meta_data_meta_data_inquiry_info where create_time > ?1 AND create_time <= ?2 GROUP BY  ip",
       nativeQuery = true)
   List getPeopleNum(Date startTime, Date endTime);
 

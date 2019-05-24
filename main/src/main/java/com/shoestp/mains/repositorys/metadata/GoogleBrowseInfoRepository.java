@@ -21,14 +21,14 @@ public interface GoogleBrowseInfoRepository extends JpaRepository<GoogleBrowseIn
 
   @Query(
       value =
-          "SELECT page_path AS pagePath, sum( page_views ) AS totalPageViews, SUM( sessions ) AS totalSession, sum(time_on_page) AS totalTime FROM google_browse_info GROUP BY pagePath ORDER BY totalPageViews DESC LIMIT :limit",
+          "SELECT page_path AS pagePath, sum( page_views ) AS totalPageViews, SUM( sessions ) AS totalSession, sum(time_on_page) AS totalTime FROM meta_data_google_browse_info GROUP BY pagePath ORDER BY totalPageViews DESC LIMIT :limit",
       nativeQuery = true)
   List<Object> queryPageRanking(@Param("limit") Integer limit);
 
   @Query(
       value =
           "SELECT page_path AS pagePath, sum( page_views ) AS totalPageViews, SUM( sessions ) AS totalSession "
-              + "FROM google_browse_info where access_time>?1 and access_time<?2 GROUP BY pagePath ORDER BY totalPageViews DESC  LIMIT ?3",
+              + "FROM meta_data_google_browse_info where access_time>?1 and access_time<?2 GROUP BY pagePath ORDER BY totalPageViews DESC  LIMIT ?3",
       nativeQuery = true)
   List<Object> queryPageRanking(String startTime, String endTime, Integer limit);
 

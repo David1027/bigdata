@@ -60,7 +60,7 @@ public class SellerUserDao extends BaseDao<SellerDataViewUser> {
       query.where(qSellerDataViewUser.province.eq(province));
     }
     if (keywords != null) {
-      query.where(qSellerDataViewUser.keyWords.like(keywords));
+      query.where(qSellerDataViewUser.keyWords.like("%" + keywords + "%"));
     }
     if (SellerContants.TYPE.equals(type)) {
       query.where(qSellerDataViewUser.createTime.before(startDate));

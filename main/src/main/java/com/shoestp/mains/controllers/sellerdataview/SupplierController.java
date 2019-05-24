@@ -4,7 +4,6 @@ import javax.annotation.Resource;
 
 import com.shoestp.mains.controllers.dataview.CountryController;
 import com.shoestp.mains.service.sellerdataview.SupplierService;
-import com.shoestp.mains.service.sellerdataview.UserService;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

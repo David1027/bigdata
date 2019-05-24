@@ -3,9 +3,7 @@ package com.shoestp.mains.service.sellerdataview.impl;
 import javax.annotation.Resource;
 
 import com.shoestp.mains.dao.sellerdataview.supplier.SupplierDao;
-import com.shoestp.mains.dao.sellerdataview.user.UserDao;
 import com.shoestp.mains.service.sellerdataview.SupplierService;
-import com.shoestp.mains.service.sellerdataview.UserService;
 
 import org.springframework.stereotype.Service;
 

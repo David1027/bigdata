@@ -6,9 +6,7 @@ import javax.annotation.Resource;
 
 import com.shoestp.mains.dao.BaseDao;
 import com.shoestp.mains.entitys.sellerdataview.product.SellerDataViewProduct;
-import com.shoestp.mains.entitys.sellerdataview.supplier.SellerDataViewSupplier;
 import com.shoestp.mains.repositorys.sellerdataview.product.ProductRepository;
-import com.shoestp.mains.repositorys.sellerdataview.user.UserRepository;
 
 import org.springframework.stereotype.Repository;
 

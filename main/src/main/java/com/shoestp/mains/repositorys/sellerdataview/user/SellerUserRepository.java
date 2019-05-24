@@ -9,4 +9,4 @@ import org.springframework.data.repository.PagingAndSortingRepository;
  * @author: lingjian
  * @create: 2019/5/24 11:40
  */
-public interface UserRepository extends PagingAndSortingRepository<SellerDataViewUser, Integer> {}
+public interface SellerUserRepository extends PagingAndSortingRepository<SellerDataViewUser, Integer> {}

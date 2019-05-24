@@ -1,9 +1,8 @@
-package com.shoestp.mains.entitys.dataView.inquiry;
+package com.shoestp.mains.entitys.dataview.inquiry;
 
-import lombok.Data;
-
-import javax.persistence.*;
 import java.util.Date;
+import javax.persistence.*;
+import lombok.Data;
 
 /**
  * @description: 询盘表

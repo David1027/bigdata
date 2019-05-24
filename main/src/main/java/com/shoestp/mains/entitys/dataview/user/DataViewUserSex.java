@@ -1,10 +1,9 @@
-package com.shoestp.mains.entitys.dataView.user;
+package com.shoestp.mains.entitys.dataview.user;
 
 import com.shoestp.mains.enums.user.SexEnum;
-import lombok.Data;
-
-import javax.persistence.*;
 import java.util.Date;
+import javax.persistence.*;
+import lombok.Data;
 
 /**
  * @description: 用户表

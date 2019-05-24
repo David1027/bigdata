@@ -2,8 +2,8 @@ package com.shoestp.mains.dao.dataview.inquiry;
 
 import com.querydsl.jpa.impl.JPAQuery;
 import com.shoestp.mains.dao.BaseDao;
-import com.shoestp.mains.entitys.dataView.inquiry.DataViewInquiryRank;
-import com.shoestp.mains.entitys.dataView.inquiry.QDataViewInquiryRank;
+import com.shoestp.mains.entitys.dataview.inquiry.DataViewInquiryRank;
+import com.shoestp.mains.entitys.dataview.inquiry.QDataViewInquiryRank;
 import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
 import com.shoestp.mains.repositorys.dataview.inquory.InquiryRankRepository;
 import java.util.Date;

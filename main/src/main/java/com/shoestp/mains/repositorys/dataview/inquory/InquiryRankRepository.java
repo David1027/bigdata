@@ -1,11 +1,10 @@
 package com.shoestp.mains.repositorys.dataview.inquory;
 
-import com.shoestp.mains.entitys.dataView.inquiry.DataViewInquiryRank;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.PagingAndSortingRepository;
-
+import com.shoestp.mains.entitys.dataview.inquiry.DataViewInquiryRank;
 import java.util.Date;
 import java.util.List;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
 /**
  * @description: 询盘-实现JPA接口

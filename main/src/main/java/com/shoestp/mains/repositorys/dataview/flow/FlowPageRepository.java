@@ -1,6 +1,6 @@
 package com.shoestp.mains.repositorys.dataview.flow;
 
-import com.shoestp.mains.entitys.dataView.flow.DataViewFlowPage;
+import com.shoestp.mains.entitys.dataview.flow.DataViewFlowPage;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 /**

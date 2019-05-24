@@ -3,15 +3,14 @@ package com.shoestp.mains.dao.dataview.inquiry;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.shoestp.mains.dao.BaseDao;
-import com.shoestp.mains.entitys.dataView.inquiry.DataViewInquiry;
-import com.shoestp.mains.entitys.dataView.inquiry.QDataViewInquiry;
+import com.shoestp.mains.entitys.dataview.inquiry.DataViewInquiry;
+import com.shoestp.mains.entitys.dataview.inquiry.QDataViewInquiry;
 import com.shoestp.mains.repositorys.dataview.inquory.InquiryRepository;
 import com.shoestp.mains.views.dataview.inquiry.InquiryView;
-import org.springframework.stereotype.Repository;
-
-import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
+import javax.annotation.Resource;
+import org.springframework.stereotype.Repository;
 
 /**
  * @description: 询盘-数据层

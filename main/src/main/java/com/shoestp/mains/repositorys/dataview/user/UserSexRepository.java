@@ -1,7 +1,6 @@
 package com.shoestp.mains.repositorys.dataview.user;
 
-import com.shoestp.mains.entitys.dataView.user.DataViewUserSex;
-
+import com.shoestp.mains.entitys.dataview.user.DataViewUserSex;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 /**

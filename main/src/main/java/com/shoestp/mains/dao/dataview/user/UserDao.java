@@ -1,19 +1,16 @@
 package com.shoestp.mains.dao.dataview.user;
 
-import java.util.Date;
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.shoestp.mains.dao.BaseDao;
-import com.shoestp.mains.entitys.dataView.user.DataViewUser;
-import com.shoestp.mains.entitys.dataView.user.QDataViewUser;
+import com.shoestp.mains.entitys.dataview.user.DataViewUser;
+import com.shoestp.mains.entitys.dataview.user.QDataViewUser;
 import com.shoestp.mains.repositorys.dataview.user.UserRepository;
 import com.shoestp.mains.views.dataview.real.IndexGrand;
 import com.shoestp.mains.views.dataview.user.DataViewUserView;
-
+import java.util.Date;
+import java.util.List;
+import javax.annotation.Resource;
 import org.springframework.stereotype.Repository;
 
 /**

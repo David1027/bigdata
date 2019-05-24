@@ -17,7 +17,7 @@ public interface InquiryInfoDao extends JpaRepository<InquiryInfo, Integer> {
 
   @Query(
       value =
-          "SELECT count(*) FROM meta_data_meta_data_inquiry_info where create_time > ?1 AND create_time <= ?2 GROUP BY  ip",
+          "SELECT count(*) FROM meta_data_inquiry_info where create_time > ?1 AND create_time <= ?2 GROUP BY  ip",
       nativeQuery = true)
   List getPeopleNum(Date startTime, Date endTime);
 

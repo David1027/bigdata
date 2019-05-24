@@ -40,7 +40,7 @@ public class SellerDataViewProduct {
   @Column(name = "inquiry_count")
   private String inquiryCount;
   /** 访问量 */
-  @Column(name = "view_count")
+  @Column(name = "visitor_count")
   private String visitorCount;
   /** 收藏量 */
   @Column(name = "collect_count")

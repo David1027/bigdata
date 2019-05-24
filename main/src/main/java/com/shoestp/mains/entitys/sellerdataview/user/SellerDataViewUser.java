@@ -20,7 +20,7 @@ public class SellerDataViewUser {
   private Integer id;
   /** 供应商ID-usr_main表的ID */
   @Column(name = "supplier_id")
-  private String supplierId;
+  private Integer supplierId;
   /** 国家 */
   @Column(name = "country")
   private String country;

@@ -34,6 +34,7 @@ public class ProductController {
    *
    * @author: lingjian @Date: 2019/5/27 9:51
    * @param date
+   * @param country
    * @param datetype
    * @param supplierid
    * @param type
@@ -44,6 +45,7 @@ public class ProductController {
   @PostMapping(value = "/realrank")
   public Object getRealRank(
       @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
+      String country,
       String datetype,
       Integer supplierid,
       String type,
@@ -53,7 +55,7 @@ public class ProductController {
     return MessageResult.builder()
         .code(1)
         .msg("Hello")
-        .result(productService.getRealRank(date, datetype, supplierid, type, start, limit))
+        .result(productService.getRealRank(date, country,datetype, supplierid, type, start, limit))
         .build();
   }
 }

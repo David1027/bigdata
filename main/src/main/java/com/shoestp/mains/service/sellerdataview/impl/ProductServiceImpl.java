@@ -39,11 +39,18 @@ public class ProductServiceImpl implements ProductService {
    * @return
    */
   public List getRealRankList(
-      Date date, String datetype, Integer supplierid, String type, Integer start, Integer limit) {
+      Date date,
+      String country,
+      String datetype,
+      Integer supplierid,
+      String type,
+      Integer start,
+      Integer limit) {
     return productDao
         .findProduct(
             DateTimeUtil.getTimesOfDay(date),
             DateTimeUtil.getTimesOfDay(date, 24),
+            country,
             datetype,
             supplierid,
             type,
@@ -81,17 +88,31 @@ public class ProductServiceImpl implements ProductService {
    */
   @Override
   public Page getRealRank(
-      Date date, String datetype, Integer supplierid, String type, Integer start, Integer limit) {
+      Date date,
+      String country,
+      String datetype,
+      Integer supplierid,
+      String type,
+      Integer start,
+      Integer limit) {
     Page page = new Page();
     if (date != null) {
-      page.setPage(getRealRankList(date, datetype, supplierid, type, start, limit));
+      page.setPage(getRealRankList(date, country, datetype, supplierid, type, start, limit));
       page.setTotalCount(
-          getRealRankList(date, datetype, supplierid, type, SellerContants.NEGATIVEONE, limit)
+          getRealRankList(
+                  date, country, datetype, supplierid, type, SellerContants.NEGATIVEONE, limit)
               .size());
     } else {
-      page.setPage(getRealRankList(new Date(), datetype, supplierid, type, start, limit));
+      page.setPage(getRealRankList(new Date(), country, datetype, supplierid, type, start, limit));
       page.setTotalCount(
-          getRealRankList(new Date(), datetype, supplierid, type, SellerContants.NEGATIVEONE, limit)
+          getRealRankList(
+                  new Date(),
+                  country,
+                  datetype,
+                  supplierid,
+                  type,
+                  SellerContants.NEGATIVEONE,
+                  limit)
               .size());
     }
 

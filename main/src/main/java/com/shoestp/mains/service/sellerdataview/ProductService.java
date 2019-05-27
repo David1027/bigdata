@@ -23,5 +23,11 @@ public interface ProductService {
    * @return
    */
   Page getRealRank(
-      Date date, String datetype, Integer supplierid, String type, Integer start, Integer limit);
+      Date date,
+      String country,
+      String datetype,
+      Integer supplierid,
+      String type,
+      Integer start,
+      Integer limit);
 }

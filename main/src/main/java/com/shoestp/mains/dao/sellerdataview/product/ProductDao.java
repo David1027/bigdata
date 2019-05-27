@@ -39,6 +39,7 @@ public class ProductDao extends BaseDao<SellerDataViewProduct> {
   public List<SellerDataViewProduct> findProduct(
       Date startDate,
       Date endDate,
+      String country,
       String datetype,
       Integer supplierid,
       String type,
@@ -50,6 +51,9 @@ public class ProductDao extends BaseDao<SellerDataViewProduct> {
             .select(qSellerDataViewProduct)
             .from(qSellerDataViewProduct)
             .where(qSellerDataViewProduct.supplierId.eq(supplierid));
+    if (country != null) {
+      query.where(qSellerDataViewProduct.country.eq(country));
+    }
     if (SellerContants.TYPE.equals(datetype)) {
       query.where(qSellerDataViewProduct.createTime.before(startDate));
     } else {

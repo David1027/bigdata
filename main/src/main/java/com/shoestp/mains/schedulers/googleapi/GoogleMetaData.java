@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-@Component
+//@Component
 public class GoogleMetaData extends BaseSchedulers {
 
   @Value("${proxy.enable}")

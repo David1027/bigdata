@@ -395,6 +395,14 @@ public final class DateTimeUtil {
     return arrMap;
   }
 
+  public static List getDayByNum(Date date, int num) {
+    List list = new ArrayList();
+    for (int i = 0; i < num; i++) {
+      list.add(formatDateToString(getDayFromNum(date, num - i - 1), DATE_FARMAT_10));
+    }
+    return list;
+  }
+
   /**
    * 根据时间获取最近30天的日期集合
    *
@@ -658,7 +666,7 @@ public final class DateTimeUtil {
   }
 
   public static String timeDifferent(Date starttime, Date endtime) {
-    String str ="".intern();
+    String str = "".intern();
     long dif = (endtime.getTime() - starttime.getTime()) / 1000;
     long year = 365 * 24 * 60 * 60;
     long month = 30 * 24 * 60 * 60;

@@ -20,22 +20,22 @@ public class SellerDataViewSupplier {
   private Integer id;
   /** 供应商ID-usr_main表的ID */
   @Column(name = "supplier_id")
-  private String supplierId;
+  private Integer supplierId;
   /** 国家 */
   @Column(name = "country")
   private String country;
   /** 访客数 */
   @Column(name = "visitor_count")
-  private String visitorCount;
+  private Integer visitorCount;
   /** 浏览量 */
   @Column(name = "view_count")
-  private String viewCount;
+  private Integer viewCount;
   /** 询盘量 */
   @Column(name = "inquiry_count")
-  private String inquiryCount;
+  private Integer inquiryCount;
   /** 询盘人数 */
   @Column(name = "inquiry_number")
-  private String inquiryNumber;
+  private Integer inquiryNumber;
   /** 创建时间 */
   @Column(name = "create_time")
   private Date createTime;

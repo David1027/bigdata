@@ -29,15 +29,14 @@ public interface SupplierService {
    * @author: lingjian @Date: 2019/5/27 11:27
    * @param num
    * @param supplierid
-   * @param type
    * @return
    */
-  Map getIndexTrend(Integer num, Integer supplierid, String type);
+  Map getIndexTrend(Integer num, Integer supplierid);
 
   /**
    * 获取国家用户画像
    *
-   * @author: lingjian @Date: 2019/5/27 13:31
+   * @author: lingjian @Date: 2019/5/27 14:10
    * @param startDate
    * @param endDate
    * @param supplierid

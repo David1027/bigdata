@@ -55,7 +55,48 @@ public class ProductController {
     return MessageResult.builder()
         .code(1)
         .msg("Hello")
-        .result(productService.getRealRank(date, country,datetype, supplierid, type, start, limit))
+        .result(productService.getRealRank(date, country, datetype, supplierid, type, start, limit))
+        .build();
+  }
+
+  /**
+   * 获取首页商品排行
+   *
+   * @author: lingjian @Date: 2019/5/27 13:56
+   * @param startDate
+   * @param endDate
+   * @param supplierid
+   * @param type
+   * @return
+   */
+  @PostMapping(value = "/indexrank")
+  public Object getIndexRank(
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate,
+      Integer supplierid,
+      String type) {
+    logger.debug(startDate + "===" + endDate);
+    return MessageResult.builder()
+        .code(1)
+        .msg("Hello")
+        .result(productService.getIndexRank(startDate, endDate, supplierid, type))
+        .build();
+  }
+
+  /**
+   * 获取市场分析
+   *
+   * @author: lingjian @Date: 2019/5/27 14:43
+   * @param country
+   * @return
+   */
+  @PostMapping(value = "/indexmarket")
+  public Object getIndexMarket(String country) {
+    logger.debug(country);
+    return MessageResult.builder()
+        .code(1)
+        .msg("Hello")
+        .result(productService.getIndexMarket(country))
         .build();
   }
 }

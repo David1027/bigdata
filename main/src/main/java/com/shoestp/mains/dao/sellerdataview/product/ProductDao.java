@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.shoestp.mains.constant.sellerdataview.SellerContants;
 import com.shoestp.mains.dao.BaseDao;
@@ -13,6 +14,8 @@ import com.shoestp.mains.entitys.sellerdataview.product.SellerDataViewProduct;
 import com.shoestp.mains.entitys.sellerdataview.user.QSellerDataViewUser;
 import com.shoestp.mains.entitys.sellerdataview.user.SellerDataViewUser;
 import com.shoestp.mains.repositorys.sellerdataview.product.ProductRepository;
+import com.shoestp.mains.views.sellerdataview.product.IndexRankView;
+import com.shoestp.mains.views.sellerdataview.product.MarketView;
 
 import org.springframework.stereotype.Repository;
 
@@ -25,7 +28,7 @@ import org.springframework.stereotype.Repository;
 public class ProductDao extends BaseDao<SellerDataViewProduct> {
 
   /**
-   * 获取产品对象集合
+   * 获取产品对象集合-实时
    *
    * @param startDate
    * @param endDate
@@ -73,6 +76,74 @@ public class ProductDao extends BaseDao<SellerDataViewProduct> {
     }
     if (SellerContants.COLLECT.equals(type)) {
       query.orderBy(qSellerDataViewProduct.collectCount.desc());
+    }
+    return query.fetchResults().getResults();
+  }
+
+  /**
+   * 获取商品对象集合-首页
+   *
+   * @author: lingjian @Date: 2019/5/27 13:56
+   * @param startDate
+   * @param endDate
+   * @param supplierid
+   * @param type
+   * @return
+   */
+  public List findProductRank(Date startDate, Date endDate, Integer supplierid, String type) {
+    QSellerDataViewProduct qSellerDataViewProduct = QSellerDataViewProduct.sellerDataViewProduct;
+    JPAQuery query =
+        getQuery()
+            .select(
+                Projections.bean(
+                    IndexRankView.class,
+                    qSellerDataViewProduct.supplierId.as("supplierId"),
+                    qSellerDataViewProduct.productName.as("productName"),
+                    qSellerDataViewProduct.productImg.as("productImg"),
+                    qSellerDataViewProduct.productUrl.as("productUrl"),
+                    qSellerDataViewProduct.inquiryCount.sum().as("inquiryCount"),
+                    qSellerDataViewProduct.viewCount.sum().as("viewCount")))
+            .from(qSellerDataViewProduct)
+            .where(qSellerDataViewProduct.supplierId.eq(supplierid))
+            .where(qSellerDataViewProduct.createTime.between(startDate, endDate))
+            .groupBy(qSellerDataViewProduct.productName)
+            .limit(10);
+    if (SellerContants.VIEW.equals(type)) {
+      query.orderBy(qSellerDataViewProduct.viewCount.sum().desc());
+    }
+    if (SellerContants.INQUIRY.equals(type)) {
+      query.orderBy(qSellerDataViewProduct.inquiryCount.sum().desc());
+    }
+    return query.fetchResults().getResults();
+  }
+
+  /**
+   * 根据国家获取市场指数对象
+   *
+   * @author: lingjian @Date: 2019/5/27 14:44
+   * @param date
+   * @param country
+   * @return
+   */
+  public List<SellerDataViewProduct> findProductMarket(Date date, String country) {
+    QSellerDataViewProduct qSellerDataViewProduct = QSellerDataViewProduct.sellerDataViewProduct;
+    JPAQuery query =
+        getQuery()
+            .select(
+                Projections.bean(
+                    MarketView.class,
+                    qSellerDataViewProduct.country.as("country"),
+                    qSellerDataViewProduct.productName.as("productName"),
+                    qSellerDataViewProduct.productUrl.as("productUrl"),
+                    qSellerDataViewProduct.productImg.as("productImg"),
+                    qSellerDataViewProduct.marketCount.sum().as("marketCount")))
+            .from(qSellerDataViewProduct)
+            .where(qSellerDataViewProduct.createTime.before(date))
+            .groupBy(qSellerDataViewProduct.productName)
+            .orderBy(qSellerDataViewProduct.marketCount.sum().desc())
+            .limit(10);
+    if (country != null) {
+      query.where(qSellerDataViewProduct.country.eq(country));
     }
     return query.fetchResults().getResults();
   }

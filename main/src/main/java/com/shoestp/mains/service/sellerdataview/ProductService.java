@@ -30,4 +30,25 @@ public interface ProductService {
       String type,
       Integer start,
       Integer limit);
+
+  /**
+   * 获取首页商品排行
+   *
+   * @author: lingjian @Date: 2019/5/27 13:56
+   * @param startDate
+   * @param endDate
+   * @param supplierid
+   * @param type
+   * @return
+   */
+  List getIndexRank(Date startDate, Date endDate, Integer supplierid, String type);
+
+  /**
+   * 获取市场分析
+   *
+   * @author: lingjian @Date: 2019/5/27 14:47
+   * @param country
+   * @return
+   */
+  List getIndexMarket(String country);
 }

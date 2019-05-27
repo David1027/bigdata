@@ -56,16 +56,15 @@ public class SupplierController {
    * @author: lingjian @Date: 2019/5/27 11:26
    * @param num
    * @param supplierid
-   * @param type
    * @return
    */
   @PostMapping(value = "/indextrend")
-  public Object getIndexTrend(Integer num, Integer supplierid, String type) {
-    logger.debug(type);
+  public Object getIndexTrend(Integer num, Integer supplierid) {
+    logger.debug(supplierid);
     return MessageResult.builder()
         .code(1)
         .msg("Hello")
-        .result(supplierService.getIndexTrend(num, supplierid, type))
+        .result(supplierService.getIndexTrend(num, supplierid))
         .build();
   }
 

@@ -13,6 +13,7 @@ import com.shoestp.mains.service.sellerdataview.ProductService;
 import com.shoestp.mains.service.sellerdataview.SupplierService;
 import com.shoestp.mains.utils.dateUtils.DateTimeUtil;
 import com.shoestp.mains.views.dataview.utils.Page;
+import com.shoestp.mains.views.sellerdataview.product.MarketView;
 import com.shoestp.mains.views.sellerdataview.product.RealRankView;
 
 import org.springframework.stereotype.Service;
@@ -117,5 +118,36 @@ public class ProductServiceImpl implements ProductService {
     }
 
     return page;
+  }
+
+  /**
+   * 获取首页商品排行
+   *
+   * @author: lingjian @Date: 2019/5/27 13:56
+   * @param startDate
+   * @param endDate
+   * @param supplierid
+   * @param type
+   * @return
+   */
+  @Override
+  public List getIndexRank(Date startDate, Date endDate, Integer supplierid, String type) {
+    return productDao.findProductRank(
+        DateTimeUtil.getTimesOfDay(startDate),
+        DateTimeUtil.getTimesOfDay(endDate, 24),
+        supplierid,
+        type);
+  }
+
+  /**
+   * 获取市场分析
+   *
+   * @author: lingjian @Date: 2019/5/27 14:44
+   * @param country
+   * @return
+   */
+  @Override
+  public List getIndexMarket(String country) {
+    return productDao.findProductMarket(new Date(), country);
   }
 }

@@ -109,13 +109,25 @@ public class SupplierServiceImpl implements SupplierService {
    * @param date
    * @param supplierid
    * @param num
-   * @param type
    * @return
    */
-  public List getIndexTrendKV(Date date, Integer supplierid, int num, String type) {
+  public List getIndexTrendKV(Date date, Integer supplierid, int num) {
     List<KeyValue> keyValues = new ArrayList<>();
     keyValues.add(
-        KeyValueViewUtil.getFlowKeyValue(type, getIndexTrendList(date, supplierid, num, type)));
+        KeyValueViewUtil.getFlowKeyValue(
+            SellerContants.VISITOR,
+            getIndexTrendList(date, supplierid, num, SellerContants.VISITOR)));
+    keyValues.add(
+        KeyValueViewUtil.getFlowKeyValue(
+            SellerContants.VIEW, getIndexTrendList(date, supplierid, num, SellerContants.VIEW)));
+    keyValues.add(
+        KeyValueViewUtil.getFlowKeyValue(
+            SellerContants.INQUIRY,
+            getIndexTrendList(date, supplierid, num, SellerContants.INQUIRY)));
+    keyValues.add(
+        KeyValueViewUtil.getFlowKeyValue(
+            SellerContants.INQUIRYNUM,
+            getIndexTrendList(date, supplierid, num, SellerContants.INQUIRYNUM)));
     return keyValues;
   }
 
@@ -125,14 +137,13 @@ public class SupplierServiceImpl implements SupplierService {
    * @author: lingjian @Date: 2019/5/27 11:27
    * @param num
    * @param supplierid
-   * @param type
    * @return
    */
   @Override
-  public Map getIndexTrend(Integer num, Integer supplierid, String type) {
+  public Map getIndexTrend(Integer num, Integer supplierid) {
     Map<String, List> map = new HashMap<>();
     map.put(Contants.ABSCISSA, DateTimeUtil.getDayByNum(new Date(), num));
-    map.put(Contants.LIST, getIndexTrendKV(new Date(), supplierid, num, type));
+    map.put(Contants.LIST, getIndexTrendKV(new Date(), supplierid, num));
     return map;
   }
 

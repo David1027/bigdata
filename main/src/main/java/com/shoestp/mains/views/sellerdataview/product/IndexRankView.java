@@ -1,9 +1,5 @@
 package com.shoestp.mains.views.sellerdataview.product;
 
-import java.util.Date;
-
-import javax.persistence.*;
-
 import lombok.Data;
 
 /**
@@ -11,11 +7,9 @@ import lombok.Data;
  * @author: lingjian @Date: 2019/5/27 8:58
  */
 @Data
-public class RealRankView {
+public class IndexRankView {
   /** 供应商ID-usr_main表的ID */
   private Integer supplierId;
-  /** 国家 */
-  private String country;
   /** 商品名称 */
   private String productName;
   /** 商品图片 */
@@ -26,8 +20,4 @@ public class RealRankView {
   private Integer viewCount;
   /** 询盘量 */
   private Integer inquiryCount;
-  /** 访问量 */
-  private Integer visitorCount;
-  /** 收藏量 */
-  private Integer collectCount;
 }

@@ -74,6 +74,7 @@ public class SellerUserServiceImpl implements SellerUserService {
               view.setGoogle(bean.getGoogle());
               view.setLinkedin(bean.getLinkedin());
               view.setTwitter(bean.getTwitter());
+              view.setCreateTime(bean.getCreateTime());
               return view;
             })
         .collect(Collectors.toList());

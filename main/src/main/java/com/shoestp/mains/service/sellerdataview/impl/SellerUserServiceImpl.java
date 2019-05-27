@@ -62,20 +62,20 @@ public class SellerUserServiceImpl implements SellerUserService {
         .stream()
         .map(
             bean -> {
-              RealVisitorView view = new RealVisitorView();
-              view.setSupplierId(bean.getSupplierId());
-              view.setCountry(bean.getCountry());
-              view.setProvince(bean.getProvince());
-              view.setVisitorName(bean.getVisitorName());
-              view.setPageCount(bean.getPageCount());
-              view.setInquiryCount(bean.getInquiryCount());
-              view.setKeyWords(bean.getKeyWords());
-              view.setFacebook(bean.getFacebook());
-              view.setGoogle(bean.getGoogle());
-              view.setLinkedin(bean.getLinkedin());
-              view.setTwitter(bean.getTwitter());
-              view.setCreateTime(DateTimeUtil.formatDateString(bean.getCreateTime().toString()));
-              return view;
+              RealVisitorView real = new RealVisitorView();
+              real.setSupplierId(bean.get(0, Integer.class));
+              real.setCountry(bean.get(1, String.class));
+              real.setProvince(bean.get(2, String.class));
+              real.setVisitorName(bean.get(3, String.class));
+              real.setPageCount(bean.get(4, Integer.class));
+              real.setInquiryCount(bean.get(5, Integer.class));
+              real.setKeyWords(bean.get(6, String.class));
+              real.setFacebook(bean.get(7, Boolean.class));
+              real.setGoogle(bean.get(8, Boolean.class));
+              real.setLinkedin(bean.get(9, Boolean.class));
+              real.setTwitter(bean.get(10, Boolean.class));
+              real.setCreateTime(bean.get(11, Date.class).toString());
+              return real;
             })
         .collect(Collectors.toList());
   }

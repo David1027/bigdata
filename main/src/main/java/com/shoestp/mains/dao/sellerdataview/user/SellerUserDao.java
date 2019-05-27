@@ -5,12 +5,16 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.shoestp.mains.constant.sellerdataview.SellerContants;
 import com.shoestp.mains.dao.BaseDao;
 import com.shoestp.mains.entitys.sellerdataview.user.QSellerDataViewUser;
 import com.shoestp.mains.entitys.sellerdataview.user.SellerDataViewUser;
 import com.shoestp.mains.repositorys.sellerdataview.user.SellerUserRepository;
+import com.shoestp.mains.utils.dateUtils.DateTimeUtil;
+import com.shoestp.mains.views.sellerdataview.user.RealVisitorView;
 
 import org.springframework.stereotype.Repository;
 
@@ -37,7 +41,7 @@ public class SellerUserDao extends BaseDao<SellerDataViewUser> {
    * @param limit
    * @return
    */
-  public List<SellerDataViewUser> findUser(
+  public List<Tuple> findUser(
       Date startDate,
       Date endDate,
       Integer supplierid,
@@ -50,9 +54,22 @@ public class SellerUserDao extends BaseDao<SellerDataViewUser> {
     QSellerDataViewUser qSellerDataViewUser = QSellerDataViewUser.sellerDataViewUser;
     JPAQuery query =
         getQuery()
-            .select(qSellerDataViewUser)
+            .select(
+                qSellerDataViewUser.supplierId,
+                qSellerDataViewUser.country,
+                qSellerDataViewUser.province,
+                qSellerDataViewUser.visitorName,
+                qSellerDataViewUser.pageCount.sum(),
+                qSellerDataViewUser.inquiryCount.sum(),
+                qSellerDataViewUser.keyWords,
+                qSellerDataViewUser.facebook,
+                qSellerDataViewUser.google,
+                qSellerDataViewUser.linkedin,
+                qSellerDataViewUser.twitter,
+                qSellerDataViewUser.createTime)
             .from(qSellerDataViewUser)
-            .where(qSellerDataViewUser.supplierId.eq(supplierid));
+            .where(qSellerDataViewUser.supplierId.eq(supplierid))
+            .groupBy(qSellerDataViewUser.visitorName);
     if (country != null) {
       query.where(qSellerDataViewUser.country.eq(country));
     }

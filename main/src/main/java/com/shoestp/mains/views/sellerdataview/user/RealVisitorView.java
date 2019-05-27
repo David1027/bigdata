@@ -37,5 +37,5 @@ public class RealVisitorView {
   /** 社交媒体 */
   private Boolean twitter;
   /** 创建时间 */
-  private Date createTime;
+  private String createTime;
 }

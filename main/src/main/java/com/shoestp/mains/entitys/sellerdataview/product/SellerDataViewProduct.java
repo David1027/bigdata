@@ -35,16 +35,19 @@ public class SellerDataViewProduct {
   private String productUrl;
   /** 浏览量 */
   @Column(name = "view_count")
-  private String viewCount;
+  private Integer viewCount;
   /** 询盘量 */
   @Column(name = "inquiry_count")
-  private String inquiryCount;
+  private Integer inquiryCount;
   /** 访问量 */
   @Column(name = "visitor_count")
-  private String visitorCount;
+  private Integer visitorCount;
   /** 收藏量 */
   @Column(name = "collect_count")
-  private String collectCount;
+  private Integer collectCount;
+  /** 市场指数 */
+  @Column(name = "market_count")
+  private Integer marketCount;
   /** 创建时间 */
   @Column(name = "create_time")
   private Date createTime;

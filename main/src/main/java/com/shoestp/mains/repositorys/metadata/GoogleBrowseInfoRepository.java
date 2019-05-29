@@ -51,7 +51,7 @@ public interface GoogleBrowseInfoRepository extends JpaRepository<GoogleBrowseIn
   @Query(
       value =
           "SELECT country as co,sum(page_views) as pageViews,sum(sessions) as sessions,"
-              + " ( SELECT SUM( sessions )  FROM `meta_data_google_browse_info`  WHERE access_time > ?2  AND access_time < ?3  AND  sys_type = ?1  and country = co )  "
+              + " ( SELECT SUM( sessions )  FROM `meta_data_google_browse_info`  WHERE access_time > ?2  AND access_time <= ?3  AND  sys_type = ?1  and country = co )  "
               + " FROM `meta_data_google_browse_info` "
               + "where access_time > ?2 AND access_time <= ?3 GROUP BY country ",
       nativeQuery = true)

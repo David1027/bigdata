@@ -1,9 +1,15 @@
 package com.shoestp.mains.entitys.metadata;
 
-import lombok.Data;
-
-import javax.persistence.*;
 import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import lombok.Data;
 
 /** 网站访问元数据 */
 @Data
@@ -31,9 +37,16 @@ public class WebVisitInfo {
   /** * 访客名称 */
   @Column(name = "visit_name")
   private String visitName;
-  /** * 访客位置 */
+  /** * 访客位置 国家 */
   @Column(name = "location")
   private String location;
+  /** * 省 */
+  private String province;
+  /** * 商家id usr_main */
+  @Column(name = "usr_main_supplier")
+  private Integer usrMainSupplier;
+  /** 商品图片 */
+  private String img;
   /** * 创建时间 */
   @Column(name = "create_time")
   private Date createTime;

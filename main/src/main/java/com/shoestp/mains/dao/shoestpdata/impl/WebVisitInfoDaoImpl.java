@@ -1,5 +1,15 @@
 package com.shoestp.mains.dao.shoestpdata.impl;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -7,13 +17,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.shoestp.mains.entitys.metadata.QWebVisitInfo;
 import com.shoestp.mains.entitys.metadata.WebVisitInfo;
 import com.shoestp.mains.views.dataview.metadata.queryView;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.annotation.PostConstruct;
-import javax.persistence.EntityManager;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class WebVisitInfoDaoImpl {
 

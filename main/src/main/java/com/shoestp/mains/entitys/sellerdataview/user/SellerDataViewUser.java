@@ -2,7 +2,12 @@ package com.shoestp.mains.entitys.sellerdataview.user;
 
 import java.util.Date;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 import lombok.Data;
 
@@ -21,6 +26,8 @@ public class SellerDataViewUser {
   /** 供应商ID-usr_main表的ID */
   @Column(name = "supplier_id")
   private Integer supplierId;
+  /** 访客标记 */
+  private String sign;
   /** 国家 */
   @Column(name = "country")
   private String country;

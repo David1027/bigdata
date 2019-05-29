@@ -2,8 +2,11 @@ package com.shoestp.mains.dao.sellerdataview.product;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.annotation.Resource;
+
+import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -11,13 +14,9 @@ import com.shoestp.mains.constant.sellerdataview.SellerContants;
 import com.shoestp.mains.dao.BaseDao;
 import com.shoestp.mains.entitys.sellerdataview.product.QSellerDataViewProduct;
 import com.shoestp.mains.entitys.sellerdataview.product.SellerDataViewProduct;
-import com.shoestp.mains.entitys.sellerdataview.user.QSellerDataViewUser;
-import com.shoestp.mains.entitys.sellerdataview.user.SellerDataViewUser;
 import com.shoestp.mains.repositorys.sellerdataview.product.ProductRepository;
 import com.shoestp.mains.views.sellerdataview.product.IndexRankView;
 import com.shoestp.mains.views.sellerdataview.product.MarketView;
-
-import org.springframework.stereotype.Repository;
 
 /**
  * @description: 商家后台商品类数据层
@@ -178,5 +177,13 @@ public class ProductDao extends BaseDao<SellerDataViewProduct> {
   @Override
   public int removeByIds(Integer... id) {
     return 0;
+  }
+
+  public void save(SellerDataViewProduct pdt) {
+    productRepository.save(pdt);
+  }
+
+  public Optional<SellerDataViewProduct> findTopByOrderByCreateTimeDesc() {
+    return productRepository.findTopByOrderByCreateTimeDesc();
   }
 }

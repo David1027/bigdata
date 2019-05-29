@@ -2,21 +2,22 @@ package com.shoestp.mains.dao.sellerdataview.user;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.annotation.Resource;
+
+import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.shoestp.mains.constant.sellerdataview.SellerContants;
 import com.shoestp.mains.dao.BaseDao;
 import com.shoestp.mains.entitys.sellerdataview.user.QSellerDataViewUser;
 import com.shoestp.mains.entitys.sellerdataview.user.SellerDataViewUser;
 import com.shoestp.mains.repositorys.sellerdataview.user.SellerUserRepository;
-import com.shoestp.mains.utils.dateUtils.DateTimeUtil;
-import com.shoestp.mains.views.sellerdataview.user.RealVisitorView;
-
-import org.springframework.stereotype.Repository;
+import com.shoestp.mains.views.dataview.metadata.Data;
 
 /**
  * @description: 商家后台用户数据层
@@ -120,5 +121,23 @@ public class SellerUserDao extends BaseDao<SellerDataViewUser> {
   @Override
   public int removeByIds(Integer... id) {
     return 0;
+  }
+
+  public void save(SellerDataViewUser usr) {
+    sellerUserRepository.save(usr);
+  }
+
+  public Optional<SellerDataViewUser> findTopByOrderByCreateTimeDesc() {
+    return sellerUserRepository.findTopByOrderByCreateTimeDesc();
+  }
+
+  public List<Data> getUserRelation() {
+    QSellerDataViewUser qs = QSellerDataViewUser.sellerDataViewUser;
+    JPAQueryFactory queryFactory = getQueryFactory();
+    JPAQuery<Data> select =
+        queryFactory.select(
+            Projections.bean(Data.class, qs.supplierId.as("number"), qs.sign.as("key")));
+    List<Data> fetch = select.fetch();
+    return fetch;
   }
 }

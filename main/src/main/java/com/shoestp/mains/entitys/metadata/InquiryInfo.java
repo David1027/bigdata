@@ -1,17 +1,28 @@
 package com.shoestp.mains.entitys.metadata;
 
-import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
-import lombok.Data;
-
-import javax.persistence.*;
 import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
+
+import lombok.Data;
 
 /** * 从鞋帽港推送过来的数据 */
 @Data
 @Entity
 @Table(name = "meta_data_inquiry_info")
 public class InquiryInfo {
-  @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private Integer id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer id;
   /** * 询盘类型 */
   @Enumerated(EnumType.STRING)
   @Column(name = "type")
@@ -35,6 +46,15 @@ public class InquiryInfo {
   private String country;
   /** 图片 */
   private String img;
+  /** 商家id usr_main */
+  @Column(name = "usr_main_supplier")
+  private String usrMainSupplier;
+  /** 采购商id usr_main */
+  @Column(name = "usr_main_purchase")
+  private String usrMainPurchase;
+  /** 商品关键字 */
+  @Column(columnDefinition = "json null COMMENT '商品关键字'")
+  private String keyword;
   /** * 创建时间 */
   @Column(name = "create_time")
   private Date createTime;

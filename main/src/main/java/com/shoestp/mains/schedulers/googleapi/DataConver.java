@@ -1,5 +1,39 @@
 package com.shoestp.mains.schedulers.googleapi;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.quartz.JobBuilder;
+import org.quartz.JobDetail;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+import org.quartz.SimpleScheduleBuilder;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+
 import com.shoestp.mains.dao.dataview.flow.FlowDao;
 import com.shoestp.mains.dao.dataview.flow.FlowPageDao;
 import com.shoestp.mains.dao.dataview.inquiry.InquiryDao;
@@ -33,40 +67,8 @@ import com.shoestp.mains.enums.user.SexEnum;
 import com.shoestp.mains.schedulers.BaseSchedulers;
 import com.shoestp.mains.service.metadata.CountryService;
 import com.shoestp.mains.views.dataview.metadata.DataView;
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.quartz.JobBuilder;
-import org.quartz.JobDetail;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.quartz.SimpleScheduleBuilder;
-import org.quartz.Trigger;
-import org.quartz.TriggerBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
 
-@Component
+// @Component
 public class DataConver extends BaseSchedulers {
   private static final Logger logger = LogManager.getLogger(DataConver.class);
   @Autowired private FlowDao flowDao;
@@ -100,7 +102,7 @@ public class DataConver extends BaseSchedulers {
     setScheduleBuilder(
         SimpleScheduleBuilder.simpleSchedule().withIntervalInMinutes(timing).repeatForever());
     setJobNmae(DataConver.class.getName());
-    ydms=new SimpleDateFormat("yyyyMMddHHmm");
+    ydms = new SimpleDateFormat("yyyyMMddHHmm");
     if (enable) {
       sourcePage.put(
           "迪盛着陆页",
@@ -151,7 +153,7 @@ public class DataConver extends BaseSchedulers {
         .build();
   }
 
-  private  SimpleDateFormat ydms ;
+  private SimpleDateFormat ydms;
 
   public static final List<String> PC =
       Arrays.asList("(not set)", "Chrome OS", "Linux", "Macintosh", "Windows");
@@ -719,7 +721,10 @@ public class DataConver extends BaseSchedulers {
   public void inquiryConver(Date startTime, Date endTime) {
     DataViewInquiry in = new DataViewInquiry();
     in.setVisitorCount(0);
-    in.setInquiryCount((int) inquiryInfoDao.countByCreateTimeBetween(startTime, endTime));
+    in.setInquiryCount(
+        (int)
+            inquiryInfoDao.countByTypeNotAndTypeNotAndCreateTimeBetween(
+                InquiryTypeEnum.SEARCHTERM, InquiryTypeEnum.RFQ, startTime, endTime));
     in.setInquiryNumber(inquiryInfoDao.getPeopleNum(startTime, endTime).size());
     in.setCreateTime(endTime);
     inquiryDao.save(in);

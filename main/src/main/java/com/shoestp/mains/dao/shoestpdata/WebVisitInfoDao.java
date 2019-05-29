@@ -1,10 +1,13 @@
 package com.shoestp.mains.dao.shoestpdata;
 
-import com.shoestp.mains.entitys.metadata.WebVisitInfo;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+import com.shoestp.mains.entitys.metadata.WebVisitInfo;
 
 public interface WebVisitInfoDao extends JpaRepository<WebVisitInfo, Integer> {
 
@@ -19,4 +22,31 @@ public interface WebVisitInfoDao extends JpaRepository<WebVisitInfo, Integer> {
 
   public Map<String, Object> queryList(
       int type, int source, String page, String country, int start, int limit);
+
+  @Query(
+      value =
+          "SELECT url,title,location,img,usr_main_supplier,count(*) FROM `meta_data_web_visit_info` "
+              + "WHERE create_time > ?1 AND create_time <= ?2 and url REGEXP '^(.*_p)([1234567890]{1,}).html' GROUP BY location,title ",
+      nativeQuery = true)
+  public List<Object> getPdtPageViews(Date startTime, Date endTime);
+
+  @Query(
+      value =
+          "SELECT url,title,location,img,usr_main_supplier,count(*) FROM `meta_data_web_visit_info` "
+              + "WHERE create_time > ?1 AND create_time <= ?2 and url REGEXP '^(.*_p)([1234567890]{1,}).html' GROUP BY location,title,ip ",
+      nativeQuery = true)
+  public List<Object> getPdtVisitorCount(Date startTime, Date endTime);
+
+  @Query(
+      value =
+          "SELECT user_id,visit_name,usr_main_supplier,count(*) FROM `meta_data_web_visit_info` "
+              + "WHERE user_id <> -1 and usr_main_supplier is not null and create_time > ?1 AND create_time <= ?2 GROUP BY user_id",
+      nativeQuery = true)
+  public List<Object> getLoginUserInfo(Date startTime, Date endTime);
+
+  @Query(
+      value =
+          "SELECT ip,usr_main_supplier,count(*) FROM `meta_data_web_visit_info` "
+              + "WHERE user_id = -1 AND usr_main_supplier is not null and create_time > ?1 AND create_time <= ?2 GROUP BY ip")
+  public List<Object> getNotLoginUserInfo(Date startTime, Date endTime);
 }

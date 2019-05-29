@@ -63,10 +63,6 @@ public class SellerUserDao extends BaseDao<SellerDataViewUser> {
                 qSellerDataViewUser.pageCount.sum(),
                 qSellerDataViewUser.inquiryCount.sum(),
                 qSellerDataViewUser.keyWords,
-                qSellerDataViewUser.facebook,
-                qSellerDataViewUser.google,
-                qSellerDataViewUser.linkedin,
-                qSellerDataViewUser.twitter,
                 qSellerDataViewUser.createTime)
             .from(qSellerDataViewUser)
             .where(qSellerDataViewUser.supplierId.eq(supplierid))

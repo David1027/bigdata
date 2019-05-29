@@ -19,5 +19,5 @@ public class InquiryRankView {
   /** 询盘人数 */
   private Integer inquiryNumber;
   /** 询盘金额 */
-  private double inquiryAmount;
+  private Integer inquiryAmount;
 }

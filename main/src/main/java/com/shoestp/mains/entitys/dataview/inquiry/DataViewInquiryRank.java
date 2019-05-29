@@ -42,7 +42,7 @@ public class DataViewInquiryRank {
   private Integer inquiryNumber;
   /** 询盘金额 */
   @Column(name = "inquiry_amount")
-  private double inquiryAmount;
+  private Integer inquiryAmount;
   /** 商家或商品pkey */
   @Column(name = "pkey")
   private Integer pkey;

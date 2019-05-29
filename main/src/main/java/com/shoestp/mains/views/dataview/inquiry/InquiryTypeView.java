@@ -22,5 +22,5 @@ public class InquiryTypeView {
   /** 询盘人数 */
   private Integer inquiryNumber;
   /** 询盘金额 */
-  private double inquiryAmount;
+  private Integer inquiryAmount;
 }

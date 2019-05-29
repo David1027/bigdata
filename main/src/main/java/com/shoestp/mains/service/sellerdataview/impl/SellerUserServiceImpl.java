@@ -70,11 +70,7 @@ public class SellerUserServiceImpl implements SellerUserService {
               real.setPageCount(bean.get(4, Integer.class));
               real.setInquiryCount(bean.get(5, Integer.class));
               real.setKeyWords(bean.get(6, String.class));
-              real.setFacebook(bean.get(7, Boolean.class));
-              real.setGoogle(bean.get(8, Boolean.class));
-              real.setLinkedin(bean.get(9, Boolean.class));
-              real.setTwitter(bean.get(10, Boolean.class));
-              real.setCreateTime(bean.get(11, Date.class).toString());
+              real.setCreateTime(bean.get(7, Date.class).toString());
               return real;
             })
         .collect(Collectors.toList());

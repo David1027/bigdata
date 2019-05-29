@@ -28,14 +28,6 @@ public class RealVisitorView {
   private Integer inquiryCount;
   /** 用户关键词 */
   private String keyWords;
-  /** 社交媒体 */
-  private Boolean facebook;
-  /** 社交媒体 */
-  private Boolean google;
-  /** 社交媒体 */
-  private Boolean linkedin;
-  /** 社交媒体 */
-  private Boolean twitter;
   /** 创建时间 */
   private String createTime;
 }

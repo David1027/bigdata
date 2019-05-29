@@ -46,18 +46,6 @@ public class SellerDataViewUser {
   /** 用户关键词 */
   @Column(name = "key_words", columnDefinition = " text null ")
   private String keyWords;
-  /** 社交媒体 */
-  @Column(name = "facebook")
-  private Boolean facebook;
-  /** 社交媒体 */
-  @Column(name = "google")
-  private Boolean google;
-  /** 社交媒体 */
-  @Column(name = "linkedin")
-  private Boolean linkedin;
-  /** 社交媒体 */
-  @Column(name = "twitter")
-  private Boolean twitter;
   /** 创建时间 */
   @Column(name = "create_time")
   private Date createTime;

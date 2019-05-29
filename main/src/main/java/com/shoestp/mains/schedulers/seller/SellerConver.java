@@ -5,12 +5,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -25,14 +23,20 @@ import org.quartz.TriggerBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
+import org.start2do.utils.ipUtils.City;
 
 import com.shoestp.mains.dao.metadata.FavoriteDao;
+import com.shoestp.mains.dao.metadata.UserInfoDao;
 import com.shoestp.mains.dao.sellerdataview.product.ProductDao;
 import com.shoestp.mains.dao.sellerdataview.supplier.SupplierDao;
 import com.shoestp.mains.dao.sellerdataview.user.SellerUserDao;
 import com.shoestp.mains.dao.shoestpdata.InquiryInfoDao;
+import com.shoestp.mains.dao.shoestpdata.SearchDao;
 import com.shoestp.mains.dao.shoestpdata.WebVisitInfoDao;
 import com.shoestp.mains.entitys.metadata.PltCountry;
+import com.shoestp.mains.entitys.metadata.SearchWordInfo;
+import com.shoestp.mains.entitys.metadata.UserInfo;
 import com.shoestp.mains.entitys.sellerdataview.product.SellerDataViewProduct;
 import com.shoestp.mains.entitys.sellerdataview.supplier.SellerDataViewSupplier;
 import com.shoestp.mains.entitys.sellerdataview.user.SellerDataViewUser;
@@ -42,7 +46,7 @@ import com.shoestp.mains.service.metadata.CountryService;
 import com.shoestp.mains.utils.dateUtils.DateTimeUtil;
 import com.shoestp.mains.views.dataview.metadata.Data;
 
-// @Component
+@Component
 public class SellerConver extends BaseSchedulers {
 
   @PostConstruct
@@ -80,6 +84,8 @@ public class SellerConver extends BaseSchedulers {
   @Autowired private SellerUserDao usrDao;
   @Autowired private WebVisitInfoDao webInfoDao;
   @Autowired private FavoriteDao favoriteDao;
+  @Autowired private SearchDao searchDao;
+  @Autowired private UserInfoDao userInfoDao;
 
   @Resource(name = "pltCountryService")
   private CountryService countryServiceImpl;
@@ -123,6 +129,17 @@ public class SellerConver extends BaseSchedulers {
       }
       count(startTime, endTime, 1);
 
+      lastTime = getLastTime(2);
+      if (lastTime != null) {
+        startTime = lastTime;
+      }
+      count(startTime, endTime, 2);
+
+      lastTime = getLastTime(3);
+      if (lastTime != null) {
+        startTime = lastTime;
+      }
+      count(startTime, endTime, 3);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -142,6 +159,12 @@ public class SellerConver extends BaseSchedulers {
         switch (type) {
           case 1:
             pdtConver(startTime, endDate);
+            break;
+          case 2:
+            supplierConver(startTime, endDate);
+            break;
+          case 3:
+            userConver(startTime, endDate);
             break;
           default:
             break;
@@ -222,9 +245,19 @@ public class SellerConver extends BaseSchedulers {
             new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2019-05-27 14:11:00"), new Date());
     String s = DateTimeUtil.formatDateToString(new Date(), "yyyyMMddHHmm");
     System.out.println(s);*/
-    List<Integer> l = new ArrayList<>();
+    /*List<Integer> l = new ArrayList<>();
     l.add(1);
-    System.out.println(l.isEmpty());
+    System.out.println(l.isEmpty());*/
+    Map<String, Integer> m = new HashMap<>();
+    m.put("ss", 1);
+    e(m);
+    for (Entry<String, Integer> item : m.entrySet()) {
+      System.out.println(item.getKey());
+    }
+  }
+
+  public static void e(Map<String, Integer> m) {
+    m.put("zz", 2);
   }
 
   // TODO
@@ -244,6 +277,9 @@ public class SellerConver extends BaseSchedulers {
         pdt.setProductImg(o[3].toString());
         pdt.setSupplierId(Integer.valueOf(o[4].toString()));
         pdt.setViewCount(Integer.valueOf(o[5].toString()));
+        pdt.setInquiryCount(0);
+        pdt.setVisitorCount(0);
+        pdt.setCollectCount(0);
         pdtMap.put(d, pdt);
       }
     }
@@ -264,7 +300,9 @@ public class SellerConver extends BaseSchedulers {
         pdt.setProductImg(o[1].toString());
         pdt.setSupplierId(Integer.valueOf(o[4].toString()));
         pdt.setInquiryCount(Integer.valueOf(o[5].toString()));
+        pdt.setVisitorCount(0);
         pdt.setViewCount(0);
+        pdt.setCollectCount(0);
         pdtMap.put(d, pdt);
       }
     }
@@ -274,18 +312,17 @@ public class SellerConver extends BaseSchedulers {
       Object[] o = (Object[]) item;
       Data d = new Data(getCountry("zh_CN", o[2].toString())[1], getPdtId(o[0].toString()));
       if (pdtMap.containsKey(d)) {
-        pdtMap
-            .get(d)
-            .setVisitorCount(pdtMap.get(d).getVisitorCount() + Integer.valueOf(o[5].toString()));
+        pdtMap.get(d).setVisitorCount(pdtMap.get(d).getVisitorCount() + 1);
       } else {
         SellerDataViewProduct pdt = new SellerDataViewProduct();
         pdt.setProductUrl(o[0].toString());
         pdt.setProductName(o[1].toString());
         pdt.setProductImg(o[3].toString());
         pdt.setSupplierId(Integer.valueOf(o[4].toString()));
-        pdt.setVisitorCount(Integer.valueOf(o[5].toString()));
+        pdt.setVisitorCount(1);
         pdt.setInquiryCount(0);
         pdt.setViewCount(0);
+        pdt.setCollectCount(0);
         pdtMap.put(d, pdt);
       }
     }
@@ -318,71 +355,341 @@ public class SellerConver extends BaseSchedulers {
       pdt.setMarketCount(pdt.getViewCount() + pdt.getVisitorCount() + pdt.getInquiryCount());
       pdt.setCreateTime(endTime);
       pdtList.add(pdt);
-      pdtDao.save(pdt);
     }
-    supplierConver(pdtList, startTime, endTime);
+    pdtDao.saveAll(pdtList);
   }
 
-  public void supplierConver(List<SellerDataViewProduct> pdtList, Date startTime, Date endTime) {
-    Map<String, List<SellerDataViewProduct>> map =
-        pdtList.stream().collect(Collectors.groupingBy(SellerDataViewProduct::getCountry));
-    // 获取询盘人数
+  public void supplierConver(Date startTime, Date endTime) {
+    // 获取所有登录用户的访客数
+    List<Object> visitorCount = webInfoDao.getVisitorCount(startTime, endTime);
+    // 获取所有未登录用户的访客数
+    List<Object> notLoginVisitorCount = webInfoDao.getNotLoginVisitorCount(startTime, endTime);
+    // 获取所有登陆用户的访问量
+    List<Object> pageViewsCount = webInfoDao.getPageViewsCount(startTime, endTime);
+    // 获取所有未登陆用户的访问量
+    List<Object> notLoginPageViewsCount = webInfoDao.getNotLoginPageViewsCount(startTime, endTime);
+    // 获取所有登录用户的询盘量
+    List<Object> inquiryCountGroupByCountry =
+        inquiryInfoDao.getInquiryCountGroupByCountry(startTime, endTime);
+    // 获取所有未登录用户的询盘量
+    List<Object> notLoginInquiryCountGroupByCountry =
+        inquiryInfoDao.getNotLoginInquiryCountGroupByCountry(startTime, endTime);
+    // 获取登录用户的询盘人数
     List<Object> inquiryList = inquiryInfoDao.getPeopleNumGroupByCountry(startTime, endTime);
-    List<Object> copyInquiry = new ArrayList<>();
-    for (Object i : inquiryList) {
-      copyInquiry.add(i);
+    // 获取未登录用户的询盘人数
+    List<Object> notLoginInquiryList = inquiryInfoDao.getNotLoginPeopleNum(startTime, endTime);
+    Map<Data, SellerDataViewSupplier> map = new HashMap<>();
+    getVisitorCount(map, visitorCount, endTime);
+    getVisitorCount(map, notLoginVisitorCount, endTime);
+    getViewCount(map, pageViewsCount, endTime);
+    getViewCount(map, notLoginPageViewsCount, endTime);
+    getInquiryCount(map, inquiryCountGroupByCountry, endTime);
+    getInquiryCount(map, notLoginInquiryCountGroupByCountry, endTime);
+    getInquiryNumber(map, inquiryList, endTime);
+    getInquiryNumber(map, notLoginInquiryList, endTime);
+    List<SellerDataViewSupplier> list = new ArrayList<>();
+    for (Entry<Data, SellerDataViewSupplier> item : map.entrySet()) {
+      SellerDataViewSupplier sup = item.getValue();
+      sup.setCountry(item.getKey().getKey());
+      sup.setSupplierId(item.getKey().getNumber());
+      list.add(sup);
     }
-    Iterator<Object> it = inquiryList.iterator();
-    List<SellerDataViewSupplier> sellerDataViewSupplierList = new ArrayList<>();
-    for (Entry<String, List<SellerDataViewProduct>> item : map.entrySet()) {
-      SellerDataViewSupplier sup = new SellerDataViewSupplier();
-      sup.setCountry(item.getKey());
-      Map<Integer, List<SellerDataViewProduct>> supMap =
-          item.getValue().stream()
-              .collect(Collectors.groupingBy(SellerDataViewProduct::getSupplierId));
-      for (Entry<Integer, List<SellerDataViewProduct>> supItem : supMap.entrySet()) {
-        sup.setSupplierId(supItem.getKey());
-        for (SellerDataViewProduct supList : supItem.getValue()) {
-          sup.setViewCount(sup.getViewCount() + supList.getViewCount());
-          sup.setVisitorCount(sup.getVisitorCount() + supList.getVisitorCount());
-          sup.setInquiryCount(sup.getInquiryCount() + supList.getInquiryCount());
-        }
-      }
-      sup.setCreateTime(endTime);
-      sellerDataViewSupplierList.add(sup);
-    }
-    for (SellerDataViewSupplier suplist : sellerDataViewSupplierList) {
-      while (it.hasNext()) {
-        Object[] o = (Object[]) it.next();
-        if (suplist.getCountry().equals(o[0])
-            && suplist.getSupplierId().equals(Integer.valueOf(o[1].toString()))) {
-          suplist.setInquiryNumber(suplist.getInquiryNumber() + 1);
-          it.remove();
-        }
-      }
-    }
-    for (Object item : inquiryList) {
-      Object[] o = (Object[]) item;
-      SellerDataViewSupplier sup = new SellerDataViewSupplier();
-      sup.setCountry(o[0].toString());
-      sup.setSupplierId(Integer.valueOf(o[1].toString()));
-      sup.setViewCount(0);
-      sup.setVisitorCount(0);
-      sup.setInquiryCount(0);
-      sup.setInquiryNumber(1);
-      sup.setCreateTime(endTime);
-      sellerDataViewSupplierList.add(sup);
-    }
-    supDao.saveAll(sellerDataViewSupplierList);
+    supDao.saveAll(list);
   }
 
-  public void userConver(List<Object> inquiry, Date startTime, Date endTime) {
-    List<Data> userRelation = usrDao.getUserRelation();
-    List<Object> loginUserInfo = webInfoDao.getLoginUserInfo(startTime, endTime);
-    List<Object> notLoginUserInfo = webInfoDao.getNotLoginUserInfo(startTime, endTime);
-    Map<SellerDataViewUser, SellerDataViewUser> map = new HashMap<>();
+  public void getVisitorCount(
+      Map<Data, SellerDataViewSupplier> map, List<Object> obj, Date endTime) {
+    for (Object item : obj) {
+      Object[] o = (Object[]) item;
+      String country = o[0].toString();
+      Integer supplier = Integer.valueOf(o[1].toString());
+      Data d = new Data(getCountry("zh_CN", country)[1], supplier);
+      if (map.containsKey(d)) {
+        SellerDataViewSupplier sup = map.get(d);
+        sup.setVisitorCount(sup.getVisitorCount() + 1);
+        map.put(d, sup);
+      } else {
+        SellerDataViewSupplier sup = new SellerDataViewSupplier();
+        sup.setVisitorCount(1);
+        sup.setViewCount(0);
+        sup.setInquiryCount(0);
+        sup.setInquiryNumber(0);
+        sup.setCreateTime(endTime);
+        map.put(d, sup);
+      }
+    }
+  }
+
+  public void getViewCount(Map<Data, SellerDataViewSupplier> map, List<Object> obj, Date endTime) {
+    for (Object item : obj) {
+      Object[] o = (Object[]) item;
+      String country = o[0].toString();
+      Integer supplier = Integer.valueOf(o[1].toString());
+      Data d = new Data(getCountry("zh_CN", country)[1], supplier);
+      if (map.containsKey(d)) {
+        SellerDataViewSupplier sup = map.get(d);
+        sup.setViewCount(sup.getViewCount() + Integer.valueOf(o[2].toString()));
+        map.put(d, sup);
+      } else {
+        SellerDataViewSupplier sup = new SellerDataViewSupplier();
+        sup.setVisitorCount(0);
+        sup.setViewCount(Integer.valueOf(o[2].toString()));
+        sup.setInquiryCount(0);
+        sup.setInquiryNumber(0);
+        sup.setCreateTime(endTime);
+        map.put(d, sup);
+      }
+    }
+  }
+
+  public void getInquiryCount(
+      Map<Data, SellerDataViewSupplier> map, List<Object> obj, Date endTime) {
+    for (Object item : obj) {
+      Object[] o = (Object[]) item;
+      String country = o[0].toString();
+      Integer supplier = Integer.valueOf(o[1].toString());
+      Data d = new Data(getCountry("zh_CN", country)[1], supplier);
+      if (map.containsKey(d)) {
+        SellerDataViewSupplier sup = map.get(d);
+        sup.setInquiryCount(sup.getInquiryCount() + Integer.valueOf(o[2].toString()));
+        map.put(d, sup);
+      } else {
+        SellerDataViewSupplier sup = new SellerDataViewSupplier();
+        sup.setVisitorCount(0);
+        sup.setViewCount(0);
+        sup.setInquiryCount(Integer.valueOf(o[2].toString()));
+        sup.setInquiryNumber(0);
+        sup.setCreateTime(endTime);
+        map.put(d, sup);
+      }
+    }
+  }
+
+  public void getInquiryNumber(
+      Map<Data, SellerDataViewSupplier> map, List<Object> obj, Date endTime) {
+    for (Object item : obj) {
+      Object[] o = (Object[]) item;
+      String country = o[0].toString();
+      Integer supplier = Integer.valueOf(o[1].toString());
+      Data d = new Data(getCountry("zh_CN", country)[1], supplier);
+      if (map.containsKey(d)) {
+        SellerDataViewSupplier sup = map.get(d);
+        sup.setInquiryNumber(sup.getInquiryNumber() + 1);
+        map.put(d, sup);
+      } else {
+        SellerDataViewSupplier sup = new SellerDataViewSupplier();
+        sup.setVisitorCount(0);
+        sup.setViewCount(0);
+        sup.setInquiryCount(0);
+        sup.setInquiryNumber(1);
+        sup.setCreateTime(endTime);
+        map.put(d, sup);
+      }
+    }
+  }
+
+  public void userConver(Date startTime, Date endTime) {
+    List<Object> inquiry = inquiryInfoDao.getInquiryCount(startTime, endTime); // 所有登录用户的询盘数量
+    List<Object> notInquiry =
+        inquiryInfoDao.getNotLoginInquiryCount(startTime, endTime); // 所有未登录用户的询盘数量
+    List<Data> userRelation = usrDao.getUserRelation(); // 至今访客已经访问过的商家
+    List<Object> loginUserInfo = webInfoDao.getLoginUserInfo(startTime, endTime); // 所有登录用户的访问信息
+    List<Object> notLoginUserInfo =
+        webInfoDao.getNotLoginUserInfo(startTime, endTime); // 所有未登录用户的访问信息
+    List<SearchWordInfo> searInfo =
+        searchDao.findByCreateTimeBetween(startTime, endTime); // 所有访客的搜索信息
+    List<Data> inquiryKeyword =
+        inquiryInfoDao.getInquiryKeyword(
+            InquiryTypeEnum.COMMODITY, startTime, endTime); // 所有用户发布商品询盘的keyword
+    Map<SellerDataViewUser, SellerDataViewUser> updMap = new HashMap<>();
+    Map<SellerDataViewUser, SellerDataViewUser> insMap = new HashMap<>();
+    if (userRelation.isEmpty()) {
+      Data d = new Data("未知", 0);
+      userRelation.add(d);
+    }
+    getInquiry(updMap, insMap, userRelation, inquiry, endTime);
+    getInquiry(updMap, insMap, userRelation, notInquiry, endTime);
+    getPageCount(updMap, insMap, userRelation, loginUserInfo, endTime);
+    getPageCount(updMap, insMap, userRelation, notLoginUserInfo, endTime);
+    for (Entry<SellerDataViewUser, SellerDataViewUser> item : updMap.entrySet()) {
+      usrDao.updBySupAndSign(
+          item.getKey().getSupplierId(),
+          item.getKey().getSign(),
+          item.getValue().getPageCount(),
+          item.getValue().getInquiryCount());
+    }
+    List<SellerDataViewUser> sList = new ArrayList<>();
+    for (Entry<SellerDataViewUser, SellerDataViewUser> item : insMap.entrySet()) {
+      SellerDataViewUser value = item.getValue();
+      value.setSign(item.getKey().getSign());
+      value.setSupplierId(item.getKey().getSupplierId());
+      sList.add(value);
+    }
+    usrDao.saveAll(sList);
+    for (SearchWordInfo search : searInfo) {
+      if (search.getUserId() == -1) {
+        // TODO 调用修改 发送ip
+        usrDao.updBySign(search.getIp(), search.getKeyword());
+      } else {
+        // TODO 调用修改 发送userId
+        usrDao.updBySign(search.getUserId().toString(), search.getKeyword());
+      }
+    }
+    for (Data d : inquiryKeyword) {
+      // TODO 调用修改 发送userId
+      usrDao.updBySign(d.getNumber().toString(), d.getKey());
+    }
+  }
+
+  public void getInquiry(
+      Map<SellerDataViewUser, SellerDataViewUser> updMap,
+      Map<SellerDataViewUser, SellerDataViewUser> insMap,
+      List<Data> userRelation,
+      List<Object> inquiry,
+      Date endTime) {
     for (Object item : inquiry) {
       Object[] o = (Object[]) item;
+      boolean b = false;
+      for (Data d : userRelation) {
+        if (Integer.valueOf(o[1].toString()).equals(d.getNumber())
+            && o[2].toString().equals(d.getKey())) {
+          SellerDataViewUser su = new SellerDataViewUser();
+          su.setSign(d.getKey());
+          su.setSupplierId(d.getNumber());
+          if (updMap.containsKey(su)) {
+            SellerDataViewUser vsu = updMap.get(su);
+            vsu.setInquiryCount(vsu.getInquiryCount() + 1);
+            updMap.put(su, vsu);
+          } else {
+            SellerDataViewUser vsu = new SellerDataViewUser();
+            vsu.setSign(d.getKey());
+            vsu.setSupplierId(d.getNumber());
+            vsu.setInquiryCount(1);
+            vsu.setPageCount(0);
+            vsu.setKeyWords("");
+            vsu.setCreateTime(endTime);
+            // TODO 获取用户的国家省份姓名
+            addUserField(vsu, d.getKey());
+            updMap.put(su, vsu);
+          }
+          b = true;
+        }
+      }
+      if (!b) {
+        SellerDataViewUser su = new SellerDataViewUser();
+        su.setSign(o[2].toString());
+        su.setSupplierId(Integer.valueOf(o[1].toString()));
+        if (insMap.containsKey(su)) {
+          SellerDataViewUser vsu = insMap.get(su);
+          vsu.setInquiryCount(vsu.getInquiryCount() + 1);
+          insMap.put(su, vsu);
+        } else {
+          SellerDataViewUser vsu = new SellerDataViewUser();
+          vsu.setSign(o[2].toString());
+          vsu.setSupplierId(Integer.valueOf(o[1].toString()));
+          vsu.setInquiryCount(1);
+          vsu.setPageCount(0);
+          vsu.setKeyWords("");
+          vsu.setCreateTime(endTime);
+          // TODO 验证用户是否存在后  获取用户的国家省份姓名
+          addUserField(vsu, o[2].toString());
+          insMap.put(su, vsu);
+        }
+      }
     }
+  }
+
+  public void getPageCount(
+      Map<SellerDataViewUser, SellerDataViewUser> updMap,
+      Map<SellerDataViewUser, SellerDataViewUser> insMap,
+      List<Data> userRelation,
+      List<Object> loginUserInfo,
+      Date endTime) {
+    for (Object item : loginUserInfo) {
+      Object[] o = (Object[]) item;
+      boolean b = false;
+      for (Data d : userRelation) {
+        if (Integer.valueOf(o[2].toString()).equals(d.getNumber())
+            && o[0].toString().equals(d.getKey())) {
+          SellerDataViewUser su = new SellerDataViewUser();
+          su.setSign(d.getKey());
+          su.setSupplierId(d.getNumber());
+          if (updMap.containsKey(su)) {
+            SellerDataViewUser vsu = updMap.get(su);
+            vsu.setPageCount(vsu.getPageCount() + Integer.valueOf(o[3].toString()));
+            updMap.put(su, vsu);
+          } else {
+            SellerDataViewUser vsu = new SellerDataViewUser();
+            vsu.setSign(d.getKey());
+            vsu.setSupplierId(d.getNumber());
+            vsu.setPageCount(Integer.valueOf(o[3].toString()));
+            vsu.setInquiryCount(0);
+            vsu.setKeyWords("");
+            vsu.setCreateTime(endTime);
+            // TODO 获取用户的国家省份姓名
+            addUserField(vsu, d.getKey());
+            updMap.put(su, vsu);
+          }
+          b = true;
+        }
+      }
+      if (!b) {
+        SellerDataViewUser su = new SellerDataViewUser();
+        su.setSign(o[0].toString());
+        su.setSupplierId(Integer.valueOf(o[2].toString()));
+        if (insMap.containsKey(su)) {
+          SellerDataViewUser vsu = insMap.get(su);
+          vsu.setPageCount(vsu.getPageCount() + Integer.valueOf(o[3].toString()));
+          insMap.put(su, vsu);
+        } else {
+          SellerDataViewUser vsu = new SellerDataViewUser();
+          vsu.setSign(o[0].toString());
+          vsu.setSupplierId(Integer.valueOf(o[2].toString()));
+          vsu.setPageCount(Integer.valueOf(o[3].toString()));
+          vsu.setInquiryCount(0);
+          vsu.setKeyWords("");
+          vsu.setCreateTime(endTime);
+          // TODO 验证用户是否存在后  获取用户的国家省份姓名
+          addUserField(vsu, o[0].toString());
+          insMap.put(su, vsu);
+        }
+      }
+    }
+  }
+
+  public void addUserField(SellerDataViewUser vsu, String obj) {
+    if (!isNumeric0(obj)) {
+      String[] cp = City.find(obj);
+      vsu.setCountry(cp[0]);
+      if (cp[0].equals("中国")) vsu.setProvince(cp[1]);
+      vsu.setVisitorName("访客" + obj);
+    } else {
+      UserInfo user = getUser(Integer.valueOf(obj));
+      if (user == null) {
+        vsu.setCountry("未知");
+        vsu.setVisitorName("访客");
+      } else {
+        vsu.setCountry(user.getCountry());
+        if (user.getCountry().equals("中国")) vsu.setProvince(user.getProvince());
+        vsu.setVisitorName(user.getName());
+      }
+    }
+  }
+
+  public UserInfo getUser(Integer id) {
+    Optional<UserInfo> user = userInfoDao.findByUserId(id);
+    if (!user.isPresent()) {
+      return null;
+    } else {
+      return user.get();
+    }
+  }
+
+  public static boolean isNumeric0(String str) {
+    for (int i = str.length(); --i >= 0; ) {
+      int chr = str.charAt(i);
+      if (chr < 48 || chr > 57) return false;
+    }
+    return true;
   }
 }

@@ -135,9 +135,22 @@ public class SellerUserDao extends BaseDao<SellerDataViewUser> {
     QSellerDataViewUser qs = QSellerDataViewUser.sellerDataViewUser;
     JPAQueryFactory queryFactory = getQueryFactory();
     JPAQuery<Data> select =
-        queryFactory.select(
-            Projections.bean(Data.class, qs.supplierId.as("number"), qs.sign.as("key")));
+        queryFactory
+            .select(Projections.bean(Data.class, qs.supplierId.as("number"), qs.sign.as("key")))
+            .from(qs);
     List<Data> fetch = select.fetch();
     return fetch;
+  }
+
+  public void updBySign(String sign, String keyword) {
+    sellerUserRepository.updBySign(sign, keyword);
+  }
+
+  public void updBySupAndSign(Integer sup, String sign, Integer pageCount, Integer inquiryCount) {
+    sellerUserRepository.updBySupAndSign(sup, sign, pageCount, inquiryCount);
+  }
+
+  public void saveAll(List<SellerDataViewUser> list) {
+    sellerUserRepository.saveAll(list);
   }
 }

@@ -1,15 +1,21 @@
 package com.shoestp.mains.dao.shoestpdata.impl;
 
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.shoestp.mains.entitys.metadata.InquiryInfo;
 import com.shoestp.mains.entitys.metadata.QInquiryInfo;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
-import java.util.Date;
-import javax.annotation.PostConstruct;
-import javax.persistence.EntityManager;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.shoestp.mains.views.dataview.metadata.Data;
 
 public class InquiryInfoDaoImpl {
   @Autowired private EntityManager em;
@@ -53,5 +59,19 @@ public class InquiryInfoDaoImpl {
     }
     Long fetchCount = selectFrom.fetchCount();
     return fetchCount.intValue();
+  }
+
+  public List<Data> getInquiryKeyword(InquiryTypeEnum type, Date startTime, Date endTime) {
+    QInquiryInfo info = QInquiryInfo.inquiryInfo;
+    JPAQuery<Data> selectFrom =
+        queryFactory
+            .select(
+                Projections.bean(
+                    Data.class, info.keyword.as("key"), info.usrMainPurchase.as("number")))
+            .from(info);
+    selectFrom.where(info.type.eq(type));
+    selectFrom.where(info.createTime.between(startTime, endTime));
+    List<Data> fetch = selectFrom.fetch();
+    return fetch;
   }
 }

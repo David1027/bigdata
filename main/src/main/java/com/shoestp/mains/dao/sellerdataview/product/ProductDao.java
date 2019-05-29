@@ -186,4 +186,8 @@ public class ProductDao extends BaseDao<SellerDataViewProduct> {
   public Optional<SellerDataViewProduct> findTopByOrderByCreateTimeDesc() {
     return productRepository.findTopByOrderByCreateTimeDesc();
   }
+
+  public void saveAll(List<SellerDataViewProduct> list) {
+    productRepository.saveAll(list);
+  }
 }

@@ -25,10 +25,13 @@ public class UserInfo {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
   /** usr_main表id */
+  @Column(name = "user_id")
   private Integer userId;
   /** 用户类型 */
   @Enumerated(EnumType.STRING)
   private RegisterTypeEnum type;
+  /** 用户名称 */
+  private String name;
   /** 性别 */
   @Enumerated(EnumType.STRING)
   private SexEnum sex;

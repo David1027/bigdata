@@ -18,4 +18,6 @@ public interface SearchDao extends JpaRepository<SearchWordInfo, Integer> {
           "SELECT keyword,count(*) FROM `meta_data_search_word_info` where country = ?1 GROUP BY keyword",
       nativeQuery = true)
   public List<Object> getRankingByCountry(String country);
+
+  public List<SearchWordInfo> findByCreateTimeBetween(Date startDate, Date endDate);
 }

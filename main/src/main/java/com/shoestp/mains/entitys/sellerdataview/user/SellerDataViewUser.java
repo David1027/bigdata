@@ -44,7 +44,7 @@ public class SellerDataViewUser {
   @Column(name = "inquiry_count")
   private Integer inquiryCount;
   /** 用户关键词 */
-  @Column(name = "key_words")
+  @Column(name = "key_words", columnDefinition = " text null ")
   private String keyWords;
   /** 社交媒体 */
   @Column(name = "facebook")

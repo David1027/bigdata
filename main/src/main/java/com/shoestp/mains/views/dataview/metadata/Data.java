@@ -9,4 +9,6 @@ public class Data {
     this.key = key;
     this.number = number;
   }
+
+  public Data() {}
 }

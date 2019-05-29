@@ -4,7 +4,6 @@
  */
 package com.shoestp.mains.utils.dateUtils;
 
-import com.shoestp.mains.constant.dataview.Contants;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -14,6 +13,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
+
+import com.shoestp.mains.constant.dataview.Contants;
 
 /**
  * 日期和时间工具类
@@ -252,7 +253,7 @@ public final class DateTimeUtil {
     cal.set(Calendar.HOUR_OF_DAY, 23);
     cal.set(Calendar.SECOND, 59);
     cal.set(Calendar.MINUTE, 59);
-    cal.set(Calendar.MILLISECOND, 999);
+    cal.set(Calendar.MILLISECOND, 0);
     return cal.getTime();
   }
 

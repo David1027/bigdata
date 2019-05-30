@@ -23,7 +23,6 @@ import org.quartz.TriggerBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
 import org.start2do.utils.ipUtils.City;
 
 import com.shoestp.mains.dao.metadata.FavoriteDao;
@@ -46,7 +45,7 @@ import com.shoestp.mains.service.metadata.CountryService;
 import com.shoestp.mains.utils.dateUtils.DateTimeUtil;
 import com.shoestp.mains.views.dataview.metadata.Data;
 
-@Component
+// @Component
 public class SellerConver extends BaseSchedulers {
 
   @PostConstruct

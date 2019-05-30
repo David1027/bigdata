@@ -30,7 +30,7 @@ public class UserInfo {
   /** 用户类型 */
   @Enumerated(EnumType.STRING)
   private RegisterTypeEnum type;
-  /** 用户名称 */
+  /** 用户名称-邮箱 */
   private String name;
   /** 性别 */
   @Enumerated(EnumType.STRING)

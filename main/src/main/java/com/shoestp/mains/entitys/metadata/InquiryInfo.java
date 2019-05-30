@@ -52,7 +52,7 @@ public class InquiryInfo {
   /** 采购商id usr_main */
   @Column(name = "usr_main_purchase")
   private Integer usrMainPurchase;
-  /** 商品关键字 */
+  /** 商品关键字 推送商品名称 */
   private String keyword;
   /** * 创建时间 */
   @Column(name = "create_time")

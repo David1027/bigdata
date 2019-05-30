@@ -1,5 +1,16 @@
 package com.shoestp.mains.rpc.shoestp.imp;
 
+import java.util.Date;
+
+import javax.annotation.Resource;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.start2do.utils.ipUtils.City;
+
+import com.shoestp.mains.dao.metadata.FavoriteDao;
 import com.shoestp.mains.dao.metadata.UserInfoDao;
 import com.shoestp.mains.entitys.metadata.InquiryInfo;
 import com.shoestp.mains.entitys.metadata.SearchWordInfo;
@@ -9,19 +20,14 @@ import com.shoestp.mains.enums.user.RegisterTypeEnum;
 import com.shoestp.mains.enums.user.SexEnum;
 import com.shoestp.mains.rpc.shoestp.pojo.GRPC_ResultProto;
 import com.shoestp.mains.rpc.shoestp.pojo.GRPC_SendDataProto;
+import com.shoestp.mains.rpc.shoestp.pojo.GRPC_SendDataProto.Favorite;
 import com.shoestp.mains.rpc.shoestp.pojo.GRPC_SendDataProto.UserInfo;
 import com.shoestp.mains.rpc.shoestp.pojo.SendDataUtilGrpc;
 import com.shoestp.mains.service.metadata.InquiryInfoService;
 import com.shoestp.mains.service.metadata.SearchWordInfoService;
 import com.shoestp.mains.service.metadata.WebVisitInfoService;
+
 import io.grpc.stub.StreamObserver;
-import java.util.Date;
-import javax.annotation.Resource;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.start2do.utils.ipUtils.City;
 
 /** Created by IntelliJ IDEA. User: lijie@shoestp.cn Date: 2019/5/14 Time: 15:00 */
 @Component
@@ -32,6 +38,7 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
   @Resource private SearchWordInfoService searchWordInfoService;
   @Resource private InquiryInfoService inquiryInfoService;
   @Autowired private UserInfoDao userInfoDao;
+  @Autowired private FavoriteDao favoriteDao;
 
   @Override
   public StreamObserver<GRPC_SendDataProto.SearchInfo> sendSearch(
@@ -45,6 +52,7 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
         searchWordInfo.setIp(searchInfo.getIp());
         searchWordInfo.setKeyword(searchInfo.getKeyword());
         searchWordInfo.setUserId(searchInfo.getUserId());
+        searchWordInfo.setCountry(City.find(searchInfo.getIp())[0]);
         searchWordInfo.setCreateTime(new Date());
         searchWordInfoService.save(searchWordInfo);
       }
@@ -140,6 +148,9 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
         inquiryInfo.setIp(inquiry.getIp());
         inquiryInfo.setCountry(City.find(inquiry.getIp())[0]);
         inquiryInfo.setImg(inquiry.getImg());
+        inquiryInfo.setUsrMainPurchase(inquiry.getUsrMainPurchase());
+        inquiryInfo.setUsrMainSupplier(inquiryInfo.getUsrMainSupplier());
+        inquiryInfo.setKeyword(inquiryInfo.getKeyword());
         inquiryInfoService.save(inquiryInfo);
       }
 
@@ -184,8 +195,49 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
         } else {
           userInfo.setType(RegisterTypeEnum.SUPPLIER);
         }
+        userInfo.setUserId(info.getUserId());
+        userInfo.setName(info.getName());
+        userInfo.setProvince(info.getProvince());
         userInfo.setCreateTime(new Date());
         userInfoDao.save(userInfo);
+      }
+
+      @Override
+      public void onError(Throwable t) {
+        logger.error(t);
+      }
+
+      @Override
+      public void onCompleted() {
+        responseObserver.onCompleted();
+      }
+    };
+  }
+
+  @Override
+  public StreamObserver<GRPC_SendDataProto.Favorite> sendFavorite(
+      StreamObserver<GRPC_ResultProto.Result> responseObserver) {
+    return new StreamObserver<GRPC_SendDataProto.Favorite>() {
+
+      @Override
+      public void onNext(Favorite fa) {
+        com.shoestp.mains.entitys.metadata.Favorite favorite =
+            new com.shoestp.mains.entitys.metadata.Favorite();
+        if (fa.getStatus() == 0) {
+          String[] splitPkye = fa.getPkey().split(",");
+          for (String str : splitPkye) {
+            favoriteDao.delByPkey(Integer.valueOf(str));
+          }
+          return;
+        }
+        favorite.setPkey(Integer.valueOf(fa.getPkey()));
+        favorite.setImg(fa.getImg());
+        favorite.setName(fa.getName());
+        favorite.setPdtId(fa.getPdtId());
+        favorite.setSupId(fa.getSupId());
+        favorite.setCountry(City.find(fa.getIp())[0]);
+        favorite.setCreateTime(new Date());
+        favoriteDao.save(favorite);
       }
 
       @Override

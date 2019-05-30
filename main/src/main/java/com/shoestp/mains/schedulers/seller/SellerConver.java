@@ -498,9 +498,10 @@ public class SellerConver extends BaseSchedulers {
         webInfoDao.getNotLoginUserInfo(startTime, endTime); // 所有未登录用户的访问信息
     List<SearchWordInfo> searInfo =
         searchDao.findByCreateTimeBetween(startTime, endTime); // 所有访客的搜索信息
-    List<Data> inquiryKeyword =
-        inquiryInfoDao.getInquiryKeyword(
-            InquiryTypeEnum.COMMODITY, startTime, endTime); // 所有用户发布商品询盘的keyword
+    /* List<Data> inquiryKeyword =
+            inquiryInfoDao.getInquiryKeyword(
+                InquiryTypeEnum.COMMODITY, startTime, endTime); // 所有用户发布商品询盘的keyword
+    */
     Map<SellerDataViewUser, SellerDataViewUser> updMap = new HashMap<>();
     Map<SellerDataViewUser, SellerDataViewUser> insMap = new HashMap<>();
     if (userRelation.isEmpty()) {
@@ -535,10 +536,10 @@ public class SellerConver extends BaseSchedulers {
         usrDao.updBySign(search.getUserId().toString(), search.getKeyword());
       }
     }
-    for (Data d : inquiryKeyword) {
+    /* for (Data d : inquiryKeyword) {
       // TODO 调用修改 发送userId
       usrDao.updBySign(d.getNumber().toString(), d.getKey());
-    }
+    }*/
   }
 
   public void getInquiry(

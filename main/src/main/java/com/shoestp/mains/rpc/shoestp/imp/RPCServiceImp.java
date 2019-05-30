@@ -141,7 +141,7 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
         }
         inquiryInfo.setId(inquiry.getInquiryId());
         inquiryInfo.setReferer(inquiry.getReferer());
-        inquiryInfo.setCreateTime(new Date());
+        inquiryInfo.setCreateTime(new Date(inquiry.getCreateDate()));
         inquiryInfo.setName(inquiry.getName());
         inquiryInfo.setPkey(inquiry.getPkey());
         inquiryInfo.setMoney(inquiry.getMoney());
@@ -198,7 +198,7 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
         userInfo.setUserId(info.getUserId());
         userInfo.setName(info.getName());
         userInfo.setProvince(info.getProvince());
-        userInfo.setCreateTime(new Date());
+        userInfo.setCreateTime(new Date(info.getCreateDate()));
         userInfoDao.save(userInfo);
       }
 

@@ -23,6 +23,7 @@ import org.quartz.TriggerBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 import org.start2do.utils.ipUtils.City;
 
 import com.shoestp.mains.dao.metadata.FavoriteDao;
@@ -45,7 +46,7 @@ import com.shoestp.mains.service.metadata.CountryService;
 import com.shoestp.mains.utils.dateUtils.DateTimeUtil;
 import com.shoestp.mains.views.dataview.metadata.Data;
 
-// @Component
+@Component
 public class SellerConver extends BaseSchedulers {
 
   @PostConstruct
@@ -119,7 +120,7 @@ public class SellerConver extends BaseSchedulers {
   protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
     try {
       countryList = countryServiceImpl.getCountryList();
-      Date startTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2019-05-01 00:00:00");
+      Date startTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2018-11-18 00:00:00");
       Date endTime = new Date();
       Date lastTime = null;
       lastTime = getLastTime(1);

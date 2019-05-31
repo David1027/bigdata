@@ -23,7 +23,6 @@ import org.quartz.TriggerBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
 import org.start2do.utils.ipUtils.City;
 
 import com.shoestp.mains.dao.metadata.FavoriteDao;
@@ -46,7 +45,7 @@ import com.shoestp.mains.service.metadata.CountryService;
 import com.shoestp.mains.utils.dateUtils.DateTimeUtil;
 import com.shoestp.mains.views.dataview.metadata.Data;
 
-@Component
+// @Component
 public class SellerConver extends BaseSchedulers {
 
   @PostConstruct
@@ -92,30 +91,6 @@ public class SellerConver extends BaseSchedulers {
 
   private List<PltCountry> countryList;
 
-  protected void executeInternal1(JobExecutionContext context) throws JobExecutionException {
-    /*InquiryInfo i = new InquiryInfo();
-    i.setMoney(0);
-    i.setKeyword("{\"keyword\":[\"呵呵\"]}");
-    inquiryInfoDao.save(i);*/
-    /* String[] s = {"哈哈", "拒绝"};
-    List<InquiryInfo> findAll = inquiryInfoDao.findAll();
-    for (InquiryInfo i : findAll) {
-      JSONObject json = new JSONObject(i.getKeyword());
-      JSONArray array = new JSONArray();
-      array.put(s);
-      System.out.println(array);
-      JSONArray object = (JSONArray) json.get("keyword");
-      System.out.println(object);
-    }
-    JSONArray array = new JSONArray();
-    array.put("哈哈");
-    array.put("嗯嗯");
-    InquiryInfo i = new InquiryInfo();
-    i.setMoney(0);
-    i.setKeyword("{\"keyword\":" + array.toString() + "}");
-    inquiryInfoDao.save(i);*/
-  }
-
   @Override
   protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
     try {
@@ -146,30 +121,50 @@ public class SellerConver extends BaseSchedulers {
   }
 
   public void count(Date startTime, Date endTime, int type) throws ParseException {
+    SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    Date startDate = sim.parse(sim.format(startTime));
     Long timeDiffForDay = DateTimeUtil.timeDiffForDay(startTime, endTime);
     if (timeDiffForDay <= 1) {
       if (DateTimeUtil.timeDiffForHour(startTime, endTime) >= 1) {
         pdtConver(startTime, endTime);
+        supplierConver(startTime, endTime);
+        userConver(startTime, endTime);
       } else {
         return;
       }
     } else {
       for (int i = 1; i < timeDiffForDay; i++) {
-        Date endDate = DateTimeUtil.getTimesnight(startTime);
+        Date endDate = DateTimeUtil.getTimesnight(startDate);
         switch (type) {
           case 1:
-            pdtConver(startTime, endDate);
+            pdtConver(startDate, endDate);
             break;
           case 2:
-            supplierConver(startTime, endDate);
+            supplierConver(startDate, endDate);
             break;
           case 3:
-            userConver(startTime, endDate);
+            userConver(startDate, endDate);
             break;
           default:
             break;
         }
-        startTime = DateTimeUtil.countDate(startTime, 5, 1);
+        startDate = DateTimeUtil.countDate(startDate, 5, 1);
+        Long timeDiffForDay1 = DateTimeUtil.timeDiffForDay(startDate, endTime);
+        if (timeDiffForDay1 <= 1) {
+          switch (type) {
+            case 1:
+              pdtConver(startDate, endTime);
+              break;
+            case 2:
+              supplierConver(startDate, endTime);
+              break;
+            case 3:
+              userConver(startDate, endTime);
+              break;
+            default:
+              break;
+          }
+        }
       }
     }
   }

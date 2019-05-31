@@ -43,7 +43,7 @@ rpc:
 proxy:
   enable: true
   host: 127.0.0.1
-  port: 1080
+  port: 1088
 shoestp:
   scheduler:
     #    谷歌元数据拉去时间
@@ -59,4 +59,15 @@ shoestp:
       enable: true
       timing: 60
 
-
+management:
+  endpoints:
+    enabled-by-default: false
+    web:
+      exposure:
+        include: shutdown
+  server:
+    port: 9000
+    address: 127.0.0.1
+  endpoint:
+    shutdown:
+      enabled: true

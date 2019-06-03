@@ -34,19 +34,25 @@ public interface GoogleBrowseInfoRepository extends JpaRepository<GoogleBrowseIn
 
   @Query(
       value =
-          "SELECT sum(page_views),sum(visitor) FROM `meta_data_google_browse_info` WHERE page_path like ('%_p?1.html') and access_time > ?2 AND access_time <= ?3",
+          "SELECT sum(page_views),sum(visitor) FROM `meta_data_google_browse_info` WHERE page_path like ('%_p:pkey.html') and access_time > :startTime AND access_time <= :endTime",
       nativeQuery = true)
-  List<Object> getPdtVisitCountAndPageViews(Integer pkey, String startTime, String endTime);
+  List<Object> getPdtVisitCountAndPageViews(
+      @Param("pkey") Integer pkey,
+      @Param("startTime") String startTime,
+      @Param("endTime") String endTime);
 
   @Query(
       value =
-          "SELECT sum(page_views),sum(visitor) FROM `meta_data_google_browse_info` "
-              + "WHERE page_path like ('%/home/usr_UsrSupplier_gtSupIndex?pkey=?1%') "
-              + "or  page_path like ('%/home/usr_UsrSupplier_gtSupPro?pkey=?1%') "
-              + "or  page_path like ('%/home/usr_UsrSupplier_gtSupInfo?pkey=?1%') "
-              + "and access_time > ?2 AND access_time <= ?3",
+          "SELECT sum(page_views),sum(visitor) FROM meta_data_google_browse_info "
+              + "WHERE page_path like ('%/home/usr_UsrSupplier_gtSupIndex?pkey=:pkey%') "
+              + "or  page_path like ('%/home/usr_UsrSupplier_gtSupPro?pkey=:pkey%') "
+              + "or  page_path like ('%/home/usr_UsrSupplier_gtSupInfo?pkey=:pkey%') "
+              + "and access_time > :startTime AND access_time <= :endTime",
       nativeQuery = true)
-  List<Object> getSupVisitCountAndPageViews(Integer pkey, String startTime, String endTime);
+  List<Object> getSupVisitCountAndPageViews(
+      @Param("pkey") Integer pkey,
+      @Param("startTime") String startTime,
+      @Param("endTime") String endTime);
 
   @Query(
       value =

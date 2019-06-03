@@ -1,16 +1,18 @@
 package com.shoestp.mains.dao.metadata;
 
-import com.shoestp.mains.dao.BaseDao;
-import com.shoestp.mains.entitys.metadata.GoogleBrowseInfo;
-import com.shoestp.mains.repositorys.metadata.GoogleBrowseInfoRepository;
-import com.shoestp.mains.views.dataview.metadata.PageRankingView;
-import org.springframework.stereotype.Component;
-
-import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Component;
+
+import com.shoestp.mains.dao.BaseDao;
+import com.shoestp.mains.entitys.metadata.GoogleBrowseInfo;
+import com.shoestp.mains.repositorys.metadata.GoogleBrowseInfoRepository;
+import com.shoestp.mains.views.dataview.metadata.PageRankingView;
 
 @Component
 public class GoogleBrowseInfoDao extends BaseDao<GoogleBrowseInfo> {
@@ -98,7 +100,11 @@ public class GoogleBrowseInfoDao extends BaseDao<GoogleBrowseInfo> {
         googleBrowseInfoRepository.getPdtVisitCountAndPageViews(pkey, startTime, endTime);
     if (pdtVisitCountAndPageViews.size() > 0) {
       for (Object item : pdtVisitCountAndPageViews) {
-        return (Integer[]) item;
+        Object[] o = (Object[]) item;
+        Integer[] j = {0, 0};
+        j[0] = Integer.valueOf(o[0] == null ? "0" : o[0].toString());
+        j[1] = Integer.valueOf(o[1] == null ? "0" : o[1].toString());
+        return j;
       }
     }
     Integer[] i = {0, 0};
@@ -110,7 +116,11 @@ public class GoogleBrowseInfoDao extends BaseDao<GoogleBrowseInfo> {
         googleBrowseInfoRepository.getSupVisitCountAndPageViews(pkey, startTime, endTime);
     if (supVisitCountAndPageViews.size() > 0) {
       for (Object item : supVisitCountAndPageViews) {
-        return (Integer[]) item;
+        Object[] o = (Object[]) item;
+        Integer[] j = {0, 0};
+        j[0] = Integer.valueOf(o[0] == null ? "0" : o[0].toString());
+        j[1] = Integer.valueOf(o[1] == null ? "0" : o[1].toString());
+        return j;
       }
     }
     Integer[] i = {0, 0};

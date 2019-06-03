@@ -212,7 +212,6 @@ public class RealServiceImpl implements RealService {
     Double weekJump =
         getFlowPageObject(
             DateTimeUtil.getDayFromNum(startDate, wnum), DateTimeUtil.getDayFromNum(endDate, wnum));
-
     IndexOverView indexOverView = new IndexOverView();
     indexOverView.setVisitorCount(today.getVisitorCount());
     indexOverView.setVisitorCompareYesterday(

@@ -1,10 +1,13 @@
 package org.start2do.utils;
 
-import org.start2do.utils.classUtils.ClassUtils;
-
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.net.*;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLConnection;
+import org.start2do.utils.classutils.ClassUtils;
 
 public abstract class ResourceUtils {
   public static final String CLASSPATH_URL_PREFIX = "classpath:";

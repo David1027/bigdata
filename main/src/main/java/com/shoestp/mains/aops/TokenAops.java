@@ -9,8 +9,8 @@ import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import org.start2do.utils.tokenUtils.TokenUtils;
-import org.start2do.utils.tokenUtils.pojo.CheckTokenPojo;
+import org.start2do.utils.tokenutils.TokenUtils;
+import org.start2do.utils.tokenutils.pojo.CheckTokenPojo;
 
 @Aspect
 public class TokenAops {

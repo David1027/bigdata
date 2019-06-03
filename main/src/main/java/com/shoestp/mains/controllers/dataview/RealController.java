@@ -66,11 +66,7 @@ public class RealController {
   @GetMapping(value = "/indexoverview")
   public Object getIndexOverview(@DateTimeFormat(pattern = "yyyy-MM-dd") Date date, Integer num) {
     logger.debug(date);
-    return MessageResult.builder()
-        .code(1)
-        .msg("Hello")
-        .result(realService.getIndexOverview(date, num))
-        .build();
+    return MessageResult.builder().code(1).result(realService.getIndexOverview(date, num)).build();
   }
 
   /**

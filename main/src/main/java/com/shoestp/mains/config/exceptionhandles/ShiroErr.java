@@ -1,5 +1,6 @@
 package com.shoestp.mains.config.exceptionhandles;
 
+import com.shoestp.mains.controllers.BaseController;
 import com.shoestp.mains.pojo.MessageResult;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.LogManager;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /** Created by IntelliJ IDEA. User: lijie@shoestp.cn Date: 2019/5/22 Time: 14:18 */
 @RestControllerAdvice
-public class ShiroErr {
+public class ShiroErr extends BaseController {
   private static final Logger logger = LogManager.getLogger(ShiroErr.class);
   /** * 捕捉shiro的异常 */
   @ResponseStatus(HttpStatus.UNAUTHORIZED)
@@ -40,6 +41,9 @@ public class ShiroErr {
   @ExceptionHandler(Exception.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public MessageResult globalException(HttpServletRequest request, Throwable ex) {
+    logger.error(
+        "Request Info:{}    User-Agent:{}", getIpByHeader(request), getUserAgentByHeader(request));
+    logger.error("Exception Info:{}", ex);
     return MessageResult.builder().code(-1).msg("其他异常").build();
   }
 

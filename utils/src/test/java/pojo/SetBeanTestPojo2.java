@@ -1,7 +1,7 @@
 package pojo;
 
 import lombok.Data;
-import org.start2do.utils.setBean.SetBean;
+import org.start2do.utils.setbean.SetBean;
 
 import java.sql.Timestamp;
 

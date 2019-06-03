@@ -71,3 +71,5 @@ management:
   endpoint:
     shutdown:
       enabled: true
+logging:
+  config: /log4j2.xml

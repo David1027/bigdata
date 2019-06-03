@@ -11,7 +11,7 @@ import com.shoestp.mains.views.dataview.utils.KeyValue;
 public interface SearchWordInfoService {
   SearchWordInfo save(SearchWordInfo searchInfo);
 
-  public Page<KeyValue> getRanking(Date endTime, Integer num, int start, int limit);
+   Page<KeyValue> getRanking(Date endTime, Integer num, int start, int limit);
 
-  public List<KeyValue> getRankingByCountry(String country);
+   List<KeyValue> getRankingByCountry(String country);
 }

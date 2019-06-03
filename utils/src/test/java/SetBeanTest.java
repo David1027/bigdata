@@ -1,6 +1,6 @@
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
-import org.start2do.utils.setBean.SetBeanUtils;
+import org.start2do.utils.setbean.SetBeanUtils;
 import pojo.SetBeanTestPojo;
 import pojo.SetBeanTestPojo2;
 

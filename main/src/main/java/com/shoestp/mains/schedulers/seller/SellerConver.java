@@ -23,7 +23,7 @@ import org.quartz.TriggerBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.start2do.utils.ipUtils.City;
+import org.start2do.utils.iputils.City;
 
 import com.shoestp.mains.dao.metadata.FavoriteDao;
 import com.shoestp.mains.dao.metadata.UserInfoDao;

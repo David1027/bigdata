@@ -1,29 +1,48 @@
 package com.shoestp.mains.schedulers.googleapi;
 
 import com.google.api.services.analyticsreporting.v4.AnalyticsReporting;
-import com.google.api.services.analyticsreporting.v4.model.*;
+import com.google.api.services.analyticsreporting.v4.model.ColumnHeader;
+import com.google.api.services.analyticsreporting.v4.model.DateRange;
+import com.google.api.services.analyticsreporting.v4.model.Dimension;
+import com.google.api.services.analyticsreporting.v4.model.DimensionFilterClause;
+import com.google.api.services.analyticsreporting.v4.model.GetReportsRequest;
+import com.google.api.services.analyticsreporting.v4.model.GetReportsResponse;
+import com.google.api.services.analyticsreporting.v4.model.Metric;
+import com.google.api.services.analyticsreporting.v4.model.MetricHeaderEntry;
+import com.google.api.services.analyticsreporting.v4.model.Report;
+import com.google.api.services.analyticsreporting.v4.model.ReportRequest;
+import com.google.api.services.analyticsreporting.v4.model.ReportRow;
 import com.shoestp.mains.dao.metadata.GoogleBrowseInfoDao;
 import com.shoestp.mains.entitys.metadata.GoogleBrowseInfo;
 import com.shoestp.mains.entitys.metadata.GooglePageProperty;
 import com.shoestp.mains.repositorys.metadata.GooglePagePropertyInfoRepository;
 import com.shoestp.mains.schedulers.BaseSchedulers;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.quartz.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import javax.annotation.PostConstruct;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.quartz.JobBuilder;
+import org.quartz.JobDetail;
+import org.quartz.JobExecutionContext;
+import org.quartz.SimpleScheduleBuilder;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Component;
 
-//@Component
+@Component
 public class GoogleMetaData extends BaseSchedulers {
 
   @Value("${proxy.enable}")
@@ -43,9 +62,9 @@ public class GoogleMetaData extends BaseSchedulers {
 
   private static final Logger logger = LogManager.getLogger(GoogleMetaData.class);
 
-  @Autowired private AnalyticsReporting ar;
-  @Autowired private GoogleBrowseInfoDao googleBrowseInfoDao;
-  @Autowired private GooglePagePropertyInfoRepository googlePagePropertyInfoDao;
+  @Autowired @Lazy private AnalyticsReporting ar;
+  @Autowired @Lazy private GoogleBrowseInfoDao googleBrowseInfoDao;
+  @Autowired @Lazy private GooglePagePropertyInfoRepository googlePagePropertyInfoDao;
 
   private List<Dimension> browseDimensionList = new ArrayList<>();
   private List<Metric> browseMetricList = new ArrayList<>();
@@ -53,12 +72,12 @@ public class GoogleMetaData extends BaseSchedulers {
 
   @PostConstruct
   public void inti() {
+    setJobNmae(GoogleMetaData.class.getName());
     logger.info("Task Info: Name->{} Timing->{} isRun->{}", getJobNmae(), timing, enable);
     logger.info("Proxy Info[{}]:Host->{}  Port-> {}", enable_Proxy, host, port);
     if (enable) {
       setScheduleBuilder(
           SimpleScheduleBuilder.simpleSchedule().withIntervalInMinutes(timing).repeatForever());
-      setJobNmae(GoogleMetaData.class.getName());
       // 下级目录
       browseDimensionList.add(new Dimension().setName("ga:pagePath"));
       // 域名
@@ -98,10 +117,11 @@ public class GoogleMetaData extends BaseSchedulers {
   }
 
   @Override
-  protected void executeInternal(JobExecutionContext context)
-      throws JobExecutionException { // TODO Auto-generated method stub
+  protected void executeInternal(JobExecutionContext context) {
+    logger.info("Task Running:{}", getJobNmae());
     sleep(5000);
-    queryData(1, browseMetricList, browseDimensionList); // 浏览数据
+    // 浏览数据
+    queryData(1, browseMetricList, browseDimensionList);
     // queryData(3, pageMetricList, new ArrayList<>()); // 页面数据
   }
 

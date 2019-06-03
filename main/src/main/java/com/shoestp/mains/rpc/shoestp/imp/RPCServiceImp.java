@@ -8,7 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.start2do.utils.ipUtils.City;
+import org.start2do.utils.iputils.City;
 
 import com.shoestp.mains.dao.metadata.FavoriteDao;
 import com.shoestp.mains.dao.metadata.UserInfoDao;

@@ -3,7 +3,7 @@ package com.shoestp.mains.utils.errorcode;
 import javax.annotation.Resource;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
-import org.start2do.utils.classUtils.ClassUtils;
+import org.start2do.utils.classutils.ClassUtils;
 
 @Component
 public class ErrorCodeUtils {

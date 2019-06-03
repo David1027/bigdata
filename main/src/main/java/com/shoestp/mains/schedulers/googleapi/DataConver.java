@@ -1,39 +1,5 @@
 package com.shoestp.mains.schedulers.googleapi;
 
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.quartz.JobBuilder;
-import org.quartz.JobDetail;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.quartz.SimpleScheduleBuilder;
-import org.quartz.Trigger;
-import org.quartz.TriggerBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-
 import com.shoestp.mains.dao.dataview.flow.FlowDao;
 import com.shoestp.mains.dao.dataview.flow.FlowPageDao;
 import com.shoestp.mains.dao.dataview.inquiry.InquiryDao;
@@ -67,22 +33,54 @@ import com.shoestp.mains.enums.user.SexEnum;
 import com.shoestp.mains.schedulers.BaseSchedulers;
 import com.shoestp.mains.service.metadata.CountryService;
 import com.shoestp.mains.views.dataview.metadata.DataView;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.quartz.JobBuilder;
+import org.quartz.JobDetail;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+import org.quartz.SimpleScheduleBuilder;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Component;
 
-// @Component
+@Component
 public class DataConver extends BaseSchedulers {
   private static final Logger logger = LogManager.getLogger(DataConver.class);
-  @Autowired private FlowDao flowDao;
-  @Autowired private FlowPageDao flowPageDao;
-  @Autowired private WebVisitInfoDao webDao;
-  @Autowired private InquiryInfoDao inquiryInfoDao;
-  @Autowired private InquiryDao inquiryDao;
-  @Autowired private GoogleBrowseInfoDao googleDao;
-  @Autowired private InquiryRankDao inquiryRankDao;
-  @Autowired private UserInfoDao userInfoDao;
-  @Autowired private RealCountryDao countryDao;
-  @Autowired private UserDao userDao;
-  @Autowired private UserAreaDao userAreaDao;
-  @Autowired private UserSexDao userSexDao;
+  @Autowired @Lazy private FlowDao flowDao;
+  @Autowired @Lazy private FlowPageDao flowPageDao;
+  @Autowired @Lazy private WebVisitInfoDao webDao;
+  @Autowired @Lazy private InquiryInfoDao inquiryInfoDao;
+  @Autowired @Lazy private InquiryDao inquiryDao;
+  @Autowired @Lazy private GoogleBrowseInfoDao googleDao;
+  @Autowired @Lazy private InquiryRankDao inquiryRankDao;
+  @Autowired @Lazy private UserInfoDao userInfoDao;
+  @Autowired @Lazy private RealCountryDao countryDao;
+  @Autowired @Lazy private UserDao userDao;
+  @Autowired @Lazy private UserAreaDao userAreaDao;
+  @Autowired @Lazy private UserSexDao userSexDao;
 
   @Resource(name = "pltCountryService")
   private CountryService countryServiceImpl;
@@ -98,10 +96,10 @@ public class DataConver extends BaseSchedulers {
 
   @PostConstruct
   public void init() {
+    setJobNmae(DataConver.class.getName());
     logger.info("Task Info: Name->{} Timing->{} isRun->{}", getJobNmae(), timing, enable);
     setScheduleBuilder(
         SimpleScheduleBuilder.simpleSchedule().withIntervalInMinutes(timing).repeatForever());
-    setJobNmae(DataConver.class.getName());
     ydms = new SimpleDateFormat("yyyyMMddHHmm");
     if (enable) {
       sourcePage.put(
@@ -174,13 +172,15 @@ public class DataConver extends BaseSchedulers {
 
   @Override
   protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
+    logger.info("Task Running:{}", getJobNmae());
     try {
       DateTimeFormatter ofPattern = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
       SimpleDateFormat sim = new SimpleDateFormat("yyyyMMddHHmmss");
       LocalDateTime date = LocalDateTime.now();
       // Date createTime = LocalDateTimeToUdate(date);
       String startTime = "20181119000000";
-      long day = 0; // 天数差
+      // 天数差
+      long day = 0;
       String endTime = date.format(ofPattern) + "00";
       countryList = countryServiceImpl.getCountryList();
       if (flowDao.getFlowTopOne().isPresent()) {
@@ -247,7 +247,7 @@ public class DataConver extends BaseSchedulers {
       }
     } catch (Exception e) {
       e.printStackTrace();
-      // TODO
+      logger.error(e);
     }
   }
 
@@ -439,11 +439,11 @@ public class DataConver extends BaseSchedulers {
 
   public String[] getCountry(String lag, String data) {
     String[] str = {"no set", "未知"};
-    if (data.equals("(not set)")) {
+    if ("(not set)".equals(data)) {
       return str;
     }
     for (PltCountry item : countryList) {
-      if (lag.equals("en")) {
+      if ("en".equals(lag)) {
         if (data.indexOf(item.getEngName()) != -1) {
           str[0] = item.getEngName();
           str[1] = item.getName();
@@ -458,50 +458,6 @@ public class DataConver extends BaseSchedulers {
       }
     }
     return str;
-  }
-
-  public static void main(String[] args) throws ParseException {
-    //    LocalDateTime date = LocalDateTime.now();
-    //    String format = date.format(DateTimeFormatter.ofPattern("yyyyMMddHHmm")) + "00";
-    //    Duration duration =
-    //        Duration.between(
-    //            date,
-    //            LocalDateTime.parse("20180101000000",
-    // DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
-    //    System.out.println(duration.toDays());
-    // System.out.println(0.5 * 2 % (int) (0.5 * 2) > 0 ? (int) (0.5 * 2) + 1 : (0.5 * 2));
-    // System.out.println(Double.parseDouble("66.66666".));
-    // System.out.println(countBounce("0.0", "10"));
-    /*Date d = new SimpleDateFormat("yyyyMMddHHmmss").parse("20190516180300");
-    System.out.println(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(d));*/
-    /* Double d = 28.0;
-    Double a = 32.0;
-    DecimalFormat df = new DecimalFormat("#.00");
-    String format = df.format(d / a);
-    double parseDouble = Double.parseDouble(format);
-    System.out.println(parseDouble);*/
-    /* String s = "a";
-    String b = "a";
-    Map<String, Integer> m = new HashMap<>();
-    m.put(s, 1);
-    // m.
-    System.out.println(m.containsKey(b));*/
-    /*Map<DataViewCountry, DataViewCountry> map = new HashMap<>();
-    DataViewCountry d = new DataViewCountry();
-    DataViewCountry a = new DataViewCountry();
-    DataViewCountry w = new DataViewCountry();
-    DataViewCountry s = new DataViewCountry();
-    d.setCountryEnglishName("zz");
-    d.setCountryName("aa");
-    a.setCountryImage("ad");
-    w.setCountryEnglishName("zz");
-    w.setCountryName("aa");
-    s.setCountryEnglishName("zz");
-    s.setCountryName("aa");
-    map.put(d, a);
-    map.put(w, a);
-    System.out.println(map.containsKey(w));*/
-    System.out.println(Integer.parseInt("2"));
   }
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -722,9 +678,9 @@ public class DataConver extends BaseSchedulers {
     DataViewInquiry in = new DataViewInquiry();
     in.setVisitorCount(0);
     in.setInquiryCount(
-        (int)
+        Math.toIntExact(
             inquiryInfoDao.countByTypeNotAndTypeNotAndCreateTimeBetween(
-                InquiryTypeEnum.SEARCHTERM, InquiryTypeEnum.RFQ, startTime, endTime));
+                InquiryTypeEnum.SEARCHTERM, InquiryTypeEnum.RFQ, startTime, endTime)));
     in.setInquiryNumber(inquiryInfoDao.getPeopleNum(startTime, endTime).size());
     in.setCreateTime(endTime);
     inquiryDao.save(in);
@@ -799,9 +755,11 @@ public class DataConver extends BaseSchedulers {
     user.setNewVisitorCount(newVisitorCount);
     user.setOldVisitorCount(oldVisitorCount);
     user.setPurchaseCount(
-        (int) userInfoDao.countByTypeAndCreateTimeLessThan(RegisterTypeEnum.PURCHASE, endTime));
+        Math.toIntExact(
+            userInfoDao.countByTypeAndCreateTimeLessThan(RegisterTypeEnum.PURCHASE, endTime)));
     user.setSupplierCount(
-        (int) userInfoDao.countByTypeAndCreateTimeLessThan(RegisterTypeEnum.SUPPLIER, endTime));
+        Math.toIntExact(
+            userInfoDao.countByTypeAndCreateTimeLessThan(RegisterTypeEnum.SUPPLIER, endTime)));
     user.setCreateTime(endTime);
     userDao.save(user);
   }
@@ -822,13 +780,13 @@ public class DataConver extends BaseSchedulers {
     DataViewUserSex userWoman = new DataViewUserSex();
     DataViewUserSex userUnknown = new DataViewUserSex();
     userMan.setSex(SexEnum.MAN);
-    userMan.setSexCount((int) man);
+    userMan.setSexCount(Math.toIntExact(man));
     userMan.setCreateTime(endTime);
     userWoman.setSex(SexEnum.WOMAN);
-    userWoman.setSexCount((int) woman);
+    userWoman.setSexCount(Math.toIntExact(woman));
     userWoman.setCreateTime(endTime);
     userUnknown.setSex(SexEnum.UNKNOWN);
-    userUnknown.setSexCount((int) unknown);
+    userUnknown.setSexCount(Math.toIntExact(unknown));
     userUnknown.setCreateTime(endTime);
     userSexDao.save(userMan);
     userSexDao.save(userWoman);

@@ -52,7 +52,7 @@ public interface InquiryInfoDao extends JpaRepository<InquiryInfo, Integer> {
   @Query(
       value =
           "SELECT country,usr_main_supplier FROM meta_data_inquiry_info "
-              + "where (type = 'SUPPLIERSUPPLIER' or type = 'COMMODITY') and create_time >= ?1 AND create_time <= ?2 GROUP BY  country,usr_main_supplier,usr_main_purchase ",
+              + "where (type = 'SUPPLIERSUPPLIER' or type = 'COMMODITY') and create_time > ?1 AND create_time <= ?2 GROUP BY  country,usr_main_supplier,usr_main_purchase ",
       nativeQuery = true)
   List<Object> getPeopleNumGroupByCountry(Date startTime, Date endTime);
 
@@ -60,14 +60,14 @@ public interface InquiryInfoDao extends JpaRepository<InquiryInfo, Integer> {
       value =
           "SELECT country,usr_main_supplier FROM meta_data_inquiry_info "
               + "where type <> 'SUPPLIERSUPPLIER' and type <> 'COMMODITY' "
-              + " and type <> 'SEARCHTERM' and type <> 'RFQ' and create_time >= ?1 AND create_time <= ?2 GROUP BY  country,usr_main_supplier,ip ",
+              + " and type <> 'SEARCHTERM' and type <> 'RFQ' and create_time > ?1 AND create_time <= ?2 GROUP BY  country,usr_main_supplier,ip ",
       nativeQuery = true)
   List<Object> getNotLoginPeopleNum(Date startTime, Date endTime);
 
   @Query(
       value =
           "SELECT country,usr_main_supplier,usr_main_purchase FROM meta_data_inquiry_info "
-              + "where (type = 'SUPPLIERSUPPLIER' or type = 'COMMODITY') and create_time >= ?1 AND create_time <= ?2 ",
+              + "where (type = 'SUPPLIERSUPPLIER' or type = 'COMMODITY') and create_time > ?1 AND create_time <= ?2 ",
       nativeQuery = true)
   List<Object> getInquiryCount(Date startTime, Date endTime);
 
@@ -75,7 +75,7 @@ public interface InquiryInfoDao extends JpaRepository<InquiryInfo, Integer> {
       value =
           "SELECT country,usr_main_supplier,ip FROM meta_data_inquiry_info "
               + "where type <> 'SUPPLIERSUPPLIER' and type <> 'COMMODITY' "
-              + " and type <> 'SEARCHTERM' and type <> 'RFQ' and create_time >= ?1 AND create_time <= ?2",
+              + " and type <> 'SEARCHTERM' and type <> 'RFQ' and create_time > ?1 AND create_time <= ?2",
       nativeQuery = true)
   List<Object> getNotLoginInquiryCount(Date startTime, Date endTime);
 
@@ -84,7 +84,7 @@ public interface InquiryInfoDao extends JpaRepository<InquiryInfo, Integer> {
   @Query(
       value =
           "SELECT country,usr_main_supplier,count(*) FROM meta_data_inquiry_info "
-              + "where (type = 'SUPPLIERSUPPLIER' or type = 'COMMODITY') and create_time >= ?1 AND create_time <= ?2 GROUP BY  country,usr_main_supplier ",
+              + "where (type = 'SUPPLIERSUPPLIER' or type = 'COMMODITY') and create_time > ?1 AND create_time <= ?2 GROUP BY  country,usr_main_supplier ",
       nativeQuery = true)
   List<Object> getInquiryCountGroupByCountry(Date startTime, Date endTime);
 
@@ -92,7 +92,7 @@ public interface InquiryInfoDao extends JpaRepository<InquiryInfo, Integer> {
       value =
           "SELECT country,usr_main_supplier,count(*)  FROM meta_data_inquiry_info "
               + "where type <> 'SUPPLIERSUPPLIER' and type <> 'COMMODITY' "
-              + " and type <> 'SEARCHTERM' and type <> 'RFQ' and create_time >= ?1 AND create_time <= ?2 GROUP BY  country,usr_main_supplier ",
+              + " and type <> 'SEARCHTERM' and type <> 'RFQ' and create_time > ?1 AND create_time <= ?2 GROUP BY  country,usr_main_supplier ",
       nativeQuery = true)
   List<Object> getNotLoginInquiryCountGroupByCountry(Date startTime, Date endTime);
 }

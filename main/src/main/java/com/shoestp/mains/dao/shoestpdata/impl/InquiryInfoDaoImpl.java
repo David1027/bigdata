@@ -51,6 +51,7 @@ public class InquiryInfoDaoImpl {
           .eq(InquiryTypeEnum.SUPPLIER)
           .or(info.type.eq(InquiryTypeEnum.COMMODITY))
           .or(info.type.eq(InquiryTypeEnum.SEARCHTERM)));*/
+      return 0;
     } else {
       for (InquiryTypeEnum item : InquiryTypeEnum.values()) {
         if (sou.equals(item.getName())) {

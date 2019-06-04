@@ -30,7 +30,8 @@ public enum InquiryTypeEnum {
   QIANBAIMENG(282, "千百梦着陆页"),
   XINJIYUAN(317, "新纪元着陆页"),
   YILIZHOU(23, "亿力洲着陆页"),
-  ZHANHAO(301, "展豪着陆页");
+  ZHANHAO(301, "展豪着陆页"),
+  SHOESTP(-1, "shoestp着陆页");
 
   public String name;
   public int sup;

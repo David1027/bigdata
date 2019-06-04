@@ -1,5 +1,13 @@
 package com.shoestp.mains.dao.dataview.realcountry;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Repository;
+
 import com.querydsl.core.types.Projections;
 import com.shoestp.mains.dao.BaseDao;
 import com.shoestp.mains.entitys.dataview.country.DataViewCountry;
@@ -7,10 +15,6 @@ import com.shoestp.mains.entitys.dataview.country.QDataViewCountry;
 import com.shoestp.mains.repositorys.dataview.realcountry.RealCountryRepository;
 import com.shoestp.mains.views.dataview.real.IndexGrand;
 import com.shoestp.mains.views.dataview.real.RealView;
-import java.util.Date;
-import java.util.List;
-import javax.annotation.Resource;
-import org.springframework.stereotype.Repository;
 
 /**
  * @description: 国家-数据层
@@ -110,5 +114,9 @@ public class RealCountryDao extends BaseDao<DataViewCountry> {
 
   public void save(DataViewCountry country) {
     realCountryRepository.save(country);
+  }
+
+  public Optional<DataViewCountry> getLastCountryByCountryName(String name) {
+    return realCountryRepository.findTopByCountryNameOrderByCreateTimeDesc(name);
   }
 }

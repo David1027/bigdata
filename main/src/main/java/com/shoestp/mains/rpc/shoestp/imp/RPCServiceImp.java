@@ -15,6 +15,7 @@ import com.shoestp.mains.dao.metadata.UserInfoDao;
 import com.shoestp.mains.entitys.metadata.InquiryInfo;
 import com.shoestp.mains.entitys.metadata.SearchWordInfo;
 import com.shoestp.mains.entitys.metadata.WebVisitInfo;
+import com.shoestp.mains.enums.flow.DeviceTypeEnum;
 import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
 import com.shoestp.mains.enums.user.RegisterTypeEnum;
 import com.shoestp.mains.enums.user.SexEnum;
@@ -151,6 +152,7 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
         inquiryInfo.setUsrMainPurchase(inquiry.getUsrMainPurchase());
         inquiryInfo.setUsrMainSupplier(inquiry.getUsrMainSupplier());
         inquiryInfo.setKeyword(inquiry.getKeyword());
+        inquiryInfo.setDeviceType(DeviceTypeEnum.PC);
         inquiryInfoService.save(inquiryInfo);
       }
 

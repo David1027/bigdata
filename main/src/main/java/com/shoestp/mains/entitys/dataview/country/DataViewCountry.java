@@ -1,12 +1,14 @@
 package com.shoestp.mains.entitys.dataview.country;
 
 import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
 import lombok.Data;
 
 /**
@@ -54,6 +56,9 @@ public class DataViewCountry {
   /** 用户人数 */
   @Column(name = "user_count")
   private Integer userCount;
+  /** 用户人数 */
+  @Column(name = "user_count_total")
+  private Integer userCountTotal;
   /** 创建时间 */
   @Column(name = "create_time")
   private Date createTime;
@@ -67,5 +72,6 @@ public class DataViewCountry {
     this.inquiryCount = 0;
     this.rfqCount = 0;
     this.userCount = 0;
+    this.userCountTotal = 0;
   }
 }

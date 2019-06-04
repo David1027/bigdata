@@ -1,5 +1,41 @@
 package com.shoestp.mains.schedulers.googleapi;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.quartz.JobBuilder;
+import org.quartz.JobDetail;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+import org.quartz.SimpleScheduleBuilder;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
+
 import com.shoestp.mains.dao.dataview.flow.FlowDao;
 import com.shoestp.mains.dao.dataview.flow.FlowPageDao;
 import com.shoestp.mains.dao.dataview.inquiry.InquiryDao;
@@ -33,40 +69,8 @@ import com.shoestp.mains.enums.user.SexEnum;
 import com.shoestp.mains.schedulers.BaseSchedulers;
 import com.shoestp.mains.service.metadata.CountryService;
 import com.shoestp.mains.views.dataview.metadata.DataView;
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.quartz.JobBuilder;
-import org.quartz.JobDetail;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.quartz.SimpleScheduleBuilder;
-import org.quartz.Trigger;
-import org.quartz.TriggerBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Component;
 
-@Component
+// @Component
 public class DataConver extends BaseSchedulers {
   private static final Logger logger = LogManager.getLogger(DataConver.class);
   @Autowired @Lazy private FlowDao flowDao;
@@ -178,7 +182,7 @@ public class DataConver extends BaseSchedulers {
       SimpleDateFormat sim = new SimpleDateFormat("yyyyMMddHHmmss");
       LocalDateTime date = LocalDateTime.now();
       // Date createTime = LocalDateTimeToUdate(date);
-      String startTime = "20181119000000";
+      String startTime = "20170501000000";
       // 天数差
       long day = 0;
       String endTime = date.format(ofPattern) + "00";
@@ -201,9 +205,9 @@ public class DataConver extends BaseSchedulers {
       }
       if (day < 0) {
         // 之前的数据按天插入
-        LocalDateTime startDate = LocalDateTime.parse("201811180000", ofPattern);
-        LocalDateTime endDate = LocalDateTime.parse("201811182359", ofPattern);
-        for (int i = 0; i >= day; i--) {
+        LocalDateTime startDate = LocalDateTime.parse("201705010000", ofPattern);
+        LocalDateTime endDate = LocalDateTime.parse("201705012359", ofPattern);
+        for (int i = 0; i > day; i--) {
           LocalDateTime plusDays = startDate.plusDays(1);
           LocalDateTime plusDays2 = endDate.plusDays(1);
           List<GoogleBrowseInfo> browseInfoList =
@@ -250,6 +254,8 @@ public class DataConver extends BaseSchedulers {
       logger.error(e);
     }
   }
+
+  Integer zxczx = 0;
 
   public SourceTypeEnum judgeSource(String source) {
     if (source.indexOf("google") != -1) {
@@ -405,8 +411,9 @@ public class DataConver extends BaseSchedulers {
     return 0;
   }
 
-  public int getInquiry(SourceTypeEnum souType, String source, Date startTime, Date endTime) {
-    return inquiryInfoDao.queryInquiryCount(startTime, endTime, souType, source);
+  public int getInquiry(
+      SourceTypeEnum souType, String source, DeviceTypeEnum dev, Date startTime, Date endTime) {
+    return inquiryInfoDao.queryInquiryCount(startTime, endTime, souType, source, dev);
   }
 
   /**
@@ -444,13 +451,13 @@ public class DataConver extends BaseSchedulers {
     }
     for (PltCountry item : countryList) {
       if ("en".equals(lag)) {
-        if (data.indexOf(item.getEngName()) != -1) {
+        if (data.equals(item.getEngName())) {
           str[0] = item.getEngName();
           str[1] = item.getName();
           return str;
         }
       } else {
-        if (data.indexOf(item.getName()) != -1) {
+        if (data.equals(item.getName())) {
           str[0] = item.getEngName();
           str[1] = item.getName();
           return str;
@@ -462,7 +469,7 @@ public class DataConver extends BaseSchedulers {
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // TODO
-  public void countryConver(Date startTime, Date endTime) {
+  public void countryConver(Date startTime, Date endTime) throws ParseException {
     Map<DataViewCountry, DataViewCountry> map = new HashMap<>();
     /* StringBuffer sql = new StringBuffer("");
     for (int i = 0; i < MOBILE.size(); i++) {
@@ -498,6 +505,11 @@ public class DataConver extends BaseSchedulers {
         count.setVisitorCount(sessions);
         map.put(country, count);
       }
+    }
+    if (startTime.compareTo(
+            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2018-12-28 00:00:00"))
+        == 0) {
+      System.out.println(123);
     }
     // 注册量
     List<Object> objUserInfo = userInfoDao.getCountryAndCount(startTime, endTime);
@@ -580,8 +592,9 @@ public class DataConver extends BaseSchedulers {
     Integer registerCount = 0;
     Integer inquiryCount = 0;
     Integer rfqCount = 0;
-
+    int i = 0;
     for (Entry<DataViewCountry, DataViewCountry> item : map.entrySet()) {
+      i++;
       DataViewCountry key = item.getKey();
       DataViewCountry value = item.getValue();
       value.setCountryEnglishName(key.getCountryEnglishName());
@@ -595,10 +608,25 @@ public class DataConver extends BaseSchedulers {
       registerCount += value.getRegisterCount();
       // inquiryCount += value.getInquiryCount();
       // rfqCount += value.getRfqCount();
-      countryDao.save(value);
-      userConver(visitorCount, registerCount, startTime, endTime);
-      userAreaConver(key.getCountryName(), c, startTime, endTime);
+      value.setUserCountTotal(c);
+      // 计算差异
+      Optional<DataViewCountry> lastCountryByCountryName =
+          countryDao.getLastCountryByCountryName(value.getCountryName());
+      if (lastCountryByCountryName.isPresent()) {
+        DataViewCountry dataViewCountry = lastCountryByCountryName.get();
+        value.setUserCount(
+            value.getUserCount() - dataViewCountry.getUserCountTotal() <= 0
+                ? 0
+                : value.getUserCount() - dataViewCountry.getUserCountTotal());
+        countryDao.save(value);
+      } else {
+        countryDao.save(value);
+      }
+      if (i == map.size()) {
+        userAreaConver(key.getCountryName(), c, startTime, endTime);
+      }
     }
+    userConver(visitorCount, registerCount, startTime, endTime);
   }
 
   public void flowConver(Map<DataView, List<GoogleBrowseInfo>> map, Date startTime, Date endTime) {
@@ -621,7 +649,8 @@ public class DataConver extends BaseSchedulers {
       flow.setSourcePage(t.getSourcePage());
       flow.setSourceType(t.getSourceType());
       flow.setVisitorCount(df.intValue());
-      flow.setInquiryCount(getInquiry(t.getSourceType(), t.getSourcePage(), startTime, endTime));
+      flow.setInquiryCount(
+          getInquiry(t.getSourceType(), t.getSourcePage(), t.getDeviceType(), startTime, endTime));
       flowDao.save(flow);
     }
   }
@@ -676,7 +705,7 @@ public class DataConver extends BaseSchedulers {
 
   public void inquiryConver(Date startTime, Date endTime) {
     DataViewInquiry in = new DataViewInquiry();
-    in.setVisitorCount(0);
+    in.setVisitorCount(webDao.getVisitorCountByDate(startTime, endTime).size());
     in.setInquiryCount(
         Math.toIntExact(
             inquiryInfoDao.countByTypeNotAndTypeNotAndCreateTimeBetween(
@@ -720,6 +749,9 @@ public class DataConver extends BaseSchedulers {
                 rank.getPkey(), ydms.format(startTime), ydms.format(endTime));
       } else {
         // 商家
+        if (startTime == null || endTime == null || rank.getPkey() == null) {
+          System.out.println("err");
+        }
         count =
             googleDao.getSupVisitCountAndPageViews(
                 rank.getPkey(), ydms.format(startTime), ydms.format(endTime));
@@ -754,14 +786,43 @@ public class DataConver extends BaseSchedulers {
     }
     user.setNewVisitorCount(newVisitorCount);
     user.setOldVisitorCount(oldVisitorCount);
-    user.setPurchaseCount(
+    int intExact =
         Math.toIntExact(
-            userInfoDao.countByTypeAndCreateTimeLessThan(RegisterTypeEnum.PURCHASE, endTime)));
-    user.setSupplierCount(
+            userInfoDao.countByTypeAndCreateTimeLessThan(RegisterTypeEnum.PURCHASE, endTime));
+    int intExact2 =
         Math.toIntExact(
-            userInfoDao.countByTypeAndCreateTimeLessThan(RegisterTypeEnum.SUPPLIER, endTime)));
+            userInfoDao.countByTypeAndCreateTimeLessThan(RegisterTypeEnum.SUPPLIER, endTime));
+    user.setPurchaseCount(intExact);
+    user.setSupplierCount(intExact2);
     user.setCreateTime(endTime);
-    userDao.save(user);
+    user.setNewVisitorCountTotal(newVisitorCount);
+    user.setOldVisitorCountTotal(oldVisitorCount);
+    user.setPurchaseCountTotal(intExact);
+    user.setSupplierCountTotal(intExact2);
+    // 计算差异
+    Optional<DataViewUser> lastUser = userDao.getLastUser();
+    if (lastUser.isPresent()) {
+      DataViewUser duser = lastUser.get();
+      user.setNewVisitorCount(
+          user.getNewVisitorCount() - duser.getNewVisitorCountTotal() <= 0
+              ? 0
+              : user.getNewVisitorCount() - duser.getNewVisitorCountTotal());
+      user.setOldVisitorCount(
+          user.getOldVisitorCount() - duser.getOldVisitorCountTotal() <= 0
+              ? 0
+              : user.getOldVisitorCount() - duser.getOldVisitorCountTotal());
+      user.setPurchaseCount(
+          user.getPurchaseCount() - duser.getPurchaseCountTotal() <= 0
+              ? 0
+              : user.getPurchaseCount() - duser.getPurchaseCountTotal());
+      user.setSupplierCount(
+          user.getSupplierCount() - duser.getSupplierCountTotal() <= 0
+              ? 0
+              : user.getSupplierCount() - duser.getSupplierCountTotal());
+      userDao.save(user);
+    } else {
+      userDao.save(user);
+    }
   }
 
   public void userAreaConver(String country, int userCount, Date startTime, Date endTime) {
@@ -769,7 +830,19 @@ public class DataConver extends BaseSchedulers {
     area.setAreaCount(userCount);
     area.setArea(country);
     area.setCreateTime(endTime);
-    userAreaDao.save(area);
+    area.setAreaCountTotal(userCount);
+    // 计算差异
+    Optional<DataViewUserArea> lastUserArea = userAreaDao.getLastUserArea(country);
+    if (lastUserArea.isPresent()) {
+      DataViewUserArea dUserArea = lastUserArea.get();
+      area.setAreaCount(
+          area.getAreaCount() - dUserArea.getAreaCountTotal() <= 0
+              ? 0
+              : area.getAreaCount() - dUserArea.getAreaCountTotal());
+      userAreaDao.save(area);
+    } else {
+      userAreaDao.save(area);
+    }
   }
 
   public void userSexConver(Date startTime, Date endTime) {
@@ -782,14 +855,48 @@ public class DataConver extends BaseSchedulers {
     userMan.setSex(SexEnum.MAN);
     userMan.setSexCount(Math.toIntExact(man));
     userMan.setCreateTime(endTime);
+    userMan.setSexCountTotal(Math.toIntExact(man));
     userWoman.setSex(SexEnum.WOMAN);
     userWoman.setSexCount(Math.toIntExact(woman));
     userWoman.setCreateTime(endTime);
+    userWoman.setSexCountTotal(Math.toIntExact(woman));
     userUnknown.setSex(SexEnum.UNKNOWN);
     userUnknown.setSexCount(Math.toIntExact(unknown));
     userUnknown.setCreateTime(endTime);
-    userSexDao.save(userMan);
-    userSexDao.save(userWoman);
-    userSexDao.save(userUnknown);
+    userUnknown.setSexCountTotal(Math.toIntExact(unknown));
+    // 计算差异
+    Optional<DataViewUserSex> lastUserSexByType = userSexDao.getLastUserSexByType(SexEnum.MAN);
+    if (lastUserSexByType.isPresent()) {
+      DataViewUserSex dUserSex = lastUserSexByType.get();
+      userMan.setSexCount(
+          userMan.getSexCount() - dUserSex.getSexCountTotal() <= 0
+              ? 0
+              : userMan.getSexCount() - dUserSex.getSexCountTotal());
+      userSexDao.save(userMan);
+    } else {
+      userSexDao.save(userMan);
+    }
+    Optional<DataViewUserSex> lastUserSexByType2 = userSexDao.getLastUserSexByType(SexEnum.WOMAN);
+    if (lastUserSexByType2.isPresent()) {
+      DataViewUserSex dUserSex = lastUserSexByType2.get();
+      userWoman.setSexCount(
+          userWoman.getSexCount() - dUserSex.getSexCountTotal() <= 0
+              ? 0
+              : userWoman.getSexCount() - dUserSex.getSexCountTotal());
+      userSexDao.save(userWoman);
+    } else {
+      userSexDao.save(userWoman);
+    }
+    Optional<DataViewUserSex> lastUserSexByType3 = userSexDao.getLastUserSexByType(SexEnum.UNKNOWN);
+    if (lastUserSexByType3.isPresent()) {
+      DataViewUserSex dUserSex = lastUserSexByType3.get();
+      userUnknown.setSexCount(
+          userUnknown.getSexCount() - dUserSex.getSexCountTotal() <= 0
+              ? 0
+              : userUnknown.getSexCount() - dUserSex.getSexCountTotal());
+      userSexDao.save(userUnknown);
+    } else {
+      userSexDao.save(userUnknown);
+    }
   }
 }

@@ -1,18 +1,22 @@
 package com.shoestp.mains.dao.shoestpdata.impl;
 
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.shoestp.mains.entitys.metadata.InquiryInfo;
 import com.shoestp.mains.entitys.metadata.QInquiryInfo;
+import com.shoestp.mains.enums.flow.DeviceTypeEnum;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
 import com.shoestp.mains.views.dataview.metadata.Data;
-import java.util.Date;
-import java.util.List;
-import javax.annotation.PostConstruct;
-import javax.persistence.EntityManager;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class InquiryInfoDaoImpl {
   @Autowired private EntityManager em;
@@ -24,7 +28,8 @@ public class InquiryInfoDaoImpl {
     queryFactory = new JPAQueryFactory(em);
   }
 
-  public int queryInquiryCount(Date startDate, Date endDate, SourceTypeEnum souType, String sou) {
+  public int queryInquiryCount(
+      Date startDate, Date endDate, SourceTypeEnum souType, String sou, DeviceTypeEnum dev) {
     QInquiryInfo info = QInquiryInfo.inquiryInfo;
     JPAQuery<InquiryInfo> selectFrom = queryFactory.selectFrom(info);
     if (souType.equals(SourceTypeEnum.INTERVIEW)) {
@@ -39,6 +44,7 @@ public class InquiryInfoDaoImpl {
       selectFrom.where(info.referer.notLike("%google.com%"));
       selectFrom.where(info.referer.notLike("%baidu.com%"));
     }
+    selectFrom.where(info.deviceType.eq(dev));
     if ("自然搜索".equals(sou)) {
       /*selectFrom.where(
       info.type
@@ -53,6 +59,7 @@ public class InquiryInfoDaoImpl {
         }
       }
     }
+    selectFrom.where(info.createTime.between(startDate, endDate));
     Long fetchCount = selectFrom.fetchCount();
     return fetchCount.intValue();
   }

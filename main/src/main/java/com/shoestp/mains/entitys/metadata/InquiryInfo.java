@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.shoestp.mains.enums.flow.DeviceTypeEnum;
 import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
 
 import lombok.Data;
@@ -54,6 +55,10 @@ public class InquiryInfo {
   private Integer usrMainPurchase;
   /** 商品关键字 推送商品名称 */
   private String keyword;
+  /** 设备类型：PC-电脑端，WAP-移动端 */
+  @Enumerated(EnumType.STRING)
+  @Column(name = "device_type")
+  private DeviceTypeEnum deviceType;
   /** * 创建时间 */
   @Column(name = "create_time")
   private Date createTime;

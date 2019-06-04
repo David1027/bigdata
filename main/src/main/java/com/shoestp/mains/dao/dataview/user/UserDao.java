@@ -1,5 +1,13 @@
 package com.shoestp.mains.dao.dataview.user;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Repository;
+
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.shoestp.mains.dao.BaseDao;
@@ -8,10 +16,6 @@ import com.shoestp.mains.entitys.dataview.user.QDataViewUser;
 import com.shoestp.mains.repositorys.dataview.user.UserRepository;
 import com.shoestp.mains.views.dataview.real.IndexGrand;
 import com.shoestp.mains.views.dataview.user.DataViewUserView;
-import java.util.Date;
-import java.util.List;
-import javax.annotation.Resource;
-import org.springframework.stereotype.Repository;
 
 /**
  * @description: 用户概况-数据层
@@ -32,16 +36,15 @@ public class UserDao extends BaseDao<DataViewUser> {
   public IndexGrand findByCreateTimeBefore(Date date) {
     QDataViewUser qDataViewUser = QDataViewUser.dataViewUser;
     return getQuery()
-            .select(
-                    Projections.bean(
-                            IndexGrand.class,
-                            qDataViewUser.purchaseCount.sum().as("grandPurchase"),
-                            qDataViewUser.supplierCount.sum().as("grandSupplier")))
-            .from(qDataViewUser)
-            .where(qDataViewUser.createTime.before(date))
-            .fetchOne();
+        .select(
+            Projections.bean(
+                IndexGrand.class,
+                qDataViewUser.purchaseCount.sum().as("grandPurchase"),
+                qDataViewUser.supplierCount.sum().as("grandSupplier")))
+        .from(qDataViewUser)
+        .where(qDataViewUser.createTime.before(date))
+        .fetchOne();
   }
-
 
   /**
    * 根据时间获取用户表的数据总和,返回对象
@@ -123,5 +126,9 @@ public class UserDao extends BaseDao<DataViewUser> {
 
   public void save(DataViewUser user) {
     userRepository.save(user);
+  }
+
+  public Optional<DataViewUser> getLastUser() {
+    return userRepository.findTopByOrderByCreateTimeDescIdDesc();
   }
 }

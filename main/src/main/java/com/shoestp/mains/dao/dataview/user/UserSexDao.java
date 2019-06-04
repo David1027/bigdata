@@ -1,14 +1,19 @@
 package com.shoestp.mains.dao.dataview.user;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Repository;
+
 import com.querydsl.core.Tuple;
 import com.shoestp.mains.dao.BaseDao;
 import com.shoestp.mains.entitys.dataview.user.DataViewUserSex;
 import com.shoestp.mains.entitys.dataview.user.QDataViewUserSex;
+import com.shoestp.mains.enums.user.SexEnum;
 import com.shoestp.mains.repositorys.dataview.user.UserSexRepository;
-import java.util.Date;
-import java.util.List;
-import javax.annotation.Resource;
-import org.springframework.stereotype.Repository;
 
 /**
  * @description: 用户性别-数据层
@@ -70,5 +75,9 @@ public class UserSexDao extends BaseDao<DataViewUserSex> {
 
   public void save(DataViewUserSex userSex) {
     userSexRepository.save(userSex);
+  }
+
+  public Optional<DataViewUserSex> getLastUserSexByType(SexEnum sex) {
+    return userSexRepository.findTopBySexOrderByCreateTimeDesc(sex);
   }
 }

@@ -1,23 +1,30 @@
 package com.shoestp.mains.service.metadata.impl;
 
-import com.shoestp.mains.dao.shoestpdata.WebVisitInfoDao;
-import com.shoestp.mains.entitys.metadata.WebVisitInfo;
-import com.shoestp.mains.service.metadata.WebVisitInfoService;
-import com.shoestp.mains.views.dataview.metadata.QueryWebVisitInfoView;
-import com.shoestp.mains.views.Page;
-import com.shoestp.mains.views.analytics.WebVisitInfoView;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 import javax.annotation.Resource;
+
 import org.springframework.stereotype.Service;
+
+import com.shoestp.mains.dao.shoestpdata.WebVisitInfoDao;
+import com.shoestp.mains.entitys.metadata.WebVisitInfo;
+import com.shoestp.mains.service.metadata.WebVisitInfoService;
+import com.shoestp.mains.utils.iputils.City;
+import com.shoestp.mains.views.Page;
+import com.shoestp.mains.views.analytics.WebVisitInfoView;
+import com.shoestp.mains.views.dataview.metadata.QueryWebVisitInfoView;
 
 /** Created by IntelliJ IDEA. User: lijie@shoestp.cn Date: 2019/5/20 Time: 11:17 */
 @Service
 public class WebVisitInfoServiceImpl implements WebVisitInfoService {
 
   @Resource WebVisitInfoDao webVisitInfoDao;
+
+  @Resource(name = "ipCity")
+  private City city;
 
   @Override
   public WebVisitInfo save(WebVisitInfo webVisitInfo) {
@@ -36,6 +43,14 @@ public class WebVisitInfoServiceImpl implements WebVisitInfoService {
     if (pojo.getUserInfo() != null) {
       webVisitInfo.setUserId(pojo.getUserInfo().getUserId());
       webVisitInfo.setVisitName(pojo.getUserInfo().getUserName());
+    } else {
+      webVisitInfo.setUserId(-1);
+      webVisitInfo.setVisitName("游客");
+    }
+    String[] find = city.find(ip);
+    webVisitInfo.setLocation(find[0]);
+    if (find[0].equals("中国")) {
+      webVisitInfo.setProvince(find[1]);
     }
     webVisitInfo.setCreateTime(new Date());
     webVisitInfoDao.save(webVisitInfo);

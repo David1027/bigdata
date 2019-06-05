@@ -8,10 +8,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.start2do.utils.iputils.City;
 
 import com.shoestp.mains.dao.metadata.FavoriteDao;
 import com.shoestp.mains.dao.metadata.UserInfoDao;
+import com.shoestp.mains.dao.shoestpdata.InquiryInfoDao;
 import com.shoestp.mains.entitys.metadata.InquiryInfo;
 import com.shoestp.mains.entitys.metadata.SearchWordInfo;
 import com.shoestp.mains.entitys.metadata.WebVisitInfo;
@@ -27,6 +27,7 @@ import com.shoestp.mains.rpc.shoestp.pojo.SendDataUtilGrpc;
 import com.shoestp.mains.service.metadata.InquiryInfoService;
 import com.shoestp.mains.service.metadata.SearchWordInfoService;
 import com.shoestp.mains.service.metadata.WebVisitInfoService;
+import com.shoestp.mains.utils.iputils.City;
 
 import io.grpc.stub.StreamObserver;
 
@@ -40,6 +41,10 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
   @Resource private InquiryInfoService inquiryInfoService;
   @Autowired private UserInfoDao userInfoDao;
   @Autowired private FavoriteDao favoriteDao;
+  @Autowired private InquiryInfoDao inquiryDao;
+
+  @Resource(name = "ipCity")
+  private City city;
 
   @Override
   public StreamObserver<GRPC_SendDataProto.SearchInfo> sendSearch(
@@ -53,7 +58,7 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
         searchWordInfo.setIp(searchInfo.getIp());
         searchWordInfo.setKeyword(searchInfo.getKeyword());
         searchWordInfo.setUserId(searchInfo.getUserId());
-        searchWordInfo.setCountry(City.find(searchInfo.getIp())[0]);
+        searchWordInfo.setCountry(city.find(searchInfo.getIp())[0]);
         searchWordInfo.setCreateTime(new Date());
         searchWordInfoService.save(searchWordInfo);
       }
@@ -85,7 +90,7 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
         webVisitInfo.setIp(viewInfo.getIp());
         webVisitInfo.setUserId(viewInfo.getUserId());
         webVisitInfo.setVisitName(viewInfo.getVisitName());
-        String[] str = City.find(viewInfo.getIp());
+        String[] str = city.find(viewInfo.getIp());
         if (str != null && str.length > 0) {
           webVisitInfo.setLocation(str[0]);
         }
@@ -105,13 +110,15 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
     };
   }
 
+  int i = 0;
+
   @Override
   public StreamObserver<GRPC_SendDataProto.Inquiry> sendInquiry(
       StreamObserver<GRPC_ResultProto.Result> responseObserver) {
     return new StreamObserver<GRPC_SendDataProto.Inquiry>() {
       @Override
       public void onNext(GRPC_SendDataProto.Inquiry inquiry) {
-        logger.debug(inquiry);
+        City c = new City();
         InquiryInfo inquiryInfo = new InquiryInfo();
         boolean b = true;
         switch (inquiry.getType()) {
@@ -140,20 +147,20 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
             }
           }
         }
-        inquiryInfo.setId(inquiry.getInquiryId());
+        inquiryInfo.setInquiryId(inquiry.getInquiryId());
         inquiryInfo.setReferer(inquiry.getReferer());
         inquiryInfo.setCreateTime(new Date(inquiry.getCreateDate()));
         inquiryInfo.setName(inquiry.getName());
         inquiryInfo.setPkey(inquiry.getPkey());
         inquiryInfo.setMoney(inquiry.getMoney());
         inquiryInfo.setIp(inquiry.getIp());
-        inquiryInfo.setCountry(City.find(inquiry.getIp())[0]);
+        inquiryInfo.setCountry(city.find(inquiry.getIp())[0]);
         inquiryInfo.setImg(inquiry.getImg());
         inquiryInfo.setUsrMainPurchase(inquiry.getUsrMainPurchase());
         inquiryInfo.setUsrMainSupplier(inquiry.getUsrMainSupplier());
         inquiryInfo.setKeyword(inquiry.getKeyword());
         inquiryInfo.setDeviceType(DeviceTypeEnum.PC);
-        inquiryInfoService.save(inquiryInfo);
+        inquiryDao.save(inquiryInfo);
       }
 
       @Override
@@ -237,7 +244,7 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
         favorite.setName(fa.getName());
         favorite.setPdtId(fa.getPdtId());
         favorite.setSupId(fa.getSupId());
-        favorite.setCountry(City.find(fa.getIp())[0]);
+        favorite.setCountry(city.find(fa.getIp())[0]);
         favorite.setCreateTime(new Date());
         favoriteDao.save(favorite);
       }

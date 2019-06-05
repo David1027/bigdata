@@ -92,6 +92,7 @@ public class WebVisitInfoDaoImpl {
       // 筛选国家
       selectFrom.where(qweb.location.like("%" + country + "%"));
     }
+    selectFrom.orderBy(qweb.createTime.desc());
     map.put("count", selectFrom.fetchCount());
     map.put("list", selectFrom.offset(start).limit(limit).fetch());
     return map;

@@ -506,11 +506,6 @@ public class DataConver extends BaseSchedulers {
         map.put(country, count);
       }
     }
-    if (startTime.compareTo(
-            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2018-12-28 00:00:00"))
-        == 0) {
-      System.out.println(123);
-    }
     // 注册量
     List<Object> objUserInfo = userInfoDao.getCountryAndCount(startTime, endTime);
     if (objUserInfo.size() > 0) {

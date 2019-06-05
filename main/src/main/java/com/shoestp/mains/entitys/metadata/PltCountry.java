@@ -1,8 +1,13 @@
 package com.shoestp.mains.entitys.metadata;
 
-import lombok.Data;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
-import javax.persistence.*;
+import lombok.Data;
 
 /**
  * -鞋贸港国家表
@@ -23,6 +28,8 @@ public class PltCountry {
 
   @Column(name = "eng_name", length = 50)
   private String engName;
+
+  private String img;
 
   @Column(length = 50)
   private String name;

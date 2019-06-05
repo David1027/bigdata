@@ -445,8 +445,8 @@ public class DataConver extends BaseSchedulers {
   }
 
   public String[] getCountry(String lag, String data) {
-    String[] str = {"no set", "未知"};
-    if ("(not set)".equals(data)) {
+    String[] str = {"no set", "未知", ""};
+    if ("(not set)".equals(data) || "NO SET".equals(data)) {
       return str;
     }
     for (PltCountry item : countryList) {
@@ -454,12 +454,14 @@ public class DataConver extends BaseSchedulers {
         if (data.equals(item.getEngName())) {
           str[0] = item.getEngName();
           str[1] = item.getName();
+          str[2] = item.getImg();
           return str;
         }
       } else {
         if (data.equals(item.getName())) {
           str[0] = item.getEngName();
           str[1] = item.getName();
+          str[2] = item.getImg();
           return str;
         }
       }
@@ -492,6 +494,7 @@ public class DataConver extends BaseSchedulers {
         String[] getCountry = getCountry("en", (String) o[0]);
         country.setCountryEnglishName(getCountry[0]);
         country.setCountryName(getCountry[1]);
+        country.setCountryImage(getCountry[2]);
         Integer views = Double.valueOf(o[1].toString()).intValue();
         Integer sessions = Double.valueOf(o[2].toString()).intValue();
         Integer phone = 0;
@@ -516,6 +519,7 @@ public class DataConver extends BaseSchedulers {
         DataViewCountry count = new DataViewCountry();
         country.setCountryEnglishName(getCountry[0]);
         country.setCountryName(getCountry[1]);
+        country.setCountryImage(getCountry[2]);
         if (map.containsKey(country)) {
           count = map.get(country);
           count.setRegisterCount(Double.valueOf(o[1].toString()).intValue());
@@ -540,6 +544,7 @@ public class DataConver extends BaseSchedulers {
         DataViewCountry count = new DataViewCountry();
         country.setCountryEnglishName(getCountry[0]);
         country.setCountryName(getCountry[1]);
+        country.setCountryImage(getCountry[2]);
         if (map.containsKey(country)) {
           count = map.get(country);
           count.setInquiryCount(Double.valueOf(o[1].toString()).intValue());
@@ -565,6 +570,7 @@ public class DataConver extends BaseSchedulers {
         DataViewCountry count = new DataViewCountry();
         country.setCountryEnglishName(getCountry[0]);
         country.setCountryName(getCountry[1]);
+        country.setCountryImage(getCountry[2]);
         if (map.containsKey(country)) {
           count = map.get(country);
           count.setRfqCount(Double.valueOf(o[1].toString()).intValue());
@@ -594,6 +600,7 @@ public class DataConver extends BaseSchedulers {
       DataViewCountry value = item.getValue();
       value.setCountryEnglishName(key.getCountryEnglishName());
       value.setCountryName(key.getCountryName());
+      value.setCountryImage(key.getCountryImage());
       int c =
           (int) userInfoDao.countByCountryLikeAndCreateTimeLessThan(key.getCountryName(), endTime);
       value.setUserCount(c);

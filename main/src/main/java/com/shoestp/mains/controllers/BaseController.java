@@ -14,16 +14,18 @@ public class BaseController {
     Enumeration<String> enumeration = httpRequest.getHeaders("X-Forwarded-For");
     String ip = null;
     Enumeration<String> stringEnumeration = httpRequest.getHeaderNames();
-    while (stringEnumeration.hasMoreElements()) {
-      String next = stringEnumeration.nextElement();
-      logger.debug("Header Info:{}  {}", next, httpRequest.getHeader(next));
-    }
-    if (enumeration.hasMoreElements()) {
-      ip = enumeration.nextElement();
-      logger.debug("X-Forwarded-For Header Info {}", ip);
-      return ip;
-    }
-    logger.debug("Not Found Header Info:{}", "X-Forwarded-For");
+    // ;
+    //      return ip;
+    //    }hile (stringEnumeration.hasMoreElements()) {
+    ////      String next = stringEnumeration.nextElement();
+    ////      logger.debug("Header Info:{}  {}", next, httpRequest.getHeader(next));
+    ////    }
+    ////    if (enumeration.hasMoreElements()) {
+    ////      ip = enumeration.nextElement();
+    ////      logger.debug("X-Forwarded-For Header Info {}", ip);
+    ////      return ip;
+    ////    }
+    //    logger.debug("Not Found Header Info:{}", "X-Forwarded-For");
     enumeration = httpRequest.getHeaders("X-Real-IP");
     if (enumeration.hasMoreElements()) {
       ip = enumeration.nextElement();

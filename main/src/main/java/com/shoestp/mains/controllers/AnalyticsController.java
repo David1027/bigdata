@@ -5,11 +5,13 @@ import com.shoestp.mains.pojo.MessageResult;
 import com.shoestp.mains.service.metadata.WebVisitInfoService;
 import com.shoestp.mains.views.analytics.WebVisitInfoView;
 import java.io.IOException;
+import java.util.UUID;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,5 +35,15 @@ public class AnalyticsController extends BaseController {
     webVisitInfoService.save(
         webVisitInfoView, getIpByHeader(httpRequest), getUserAgentByHeader(httpRequest));
     return MessageResult.builder().code(1).build();
+  }
+
+  @GetMapping("device_sign")
+  public MessageResult device_sign(HttpServletRequest httpRequest) throws IOException {
+    logger.debug(
+        "device_sign :{},{}", getIpByHeader(httpRequest), getUserAgentByHeader(httpRequest));
+    return MessageResult.builder()
+        .code(1)
+        .result(UUID.randomUUID().toString().replace("-", ""))
+        .build();
   }
 }

@@ -59,10 +59,12 @@ public class MyStringUtils {
     }
     cur[0] = true;
     for (int j = 1; j <= n; j++) {
-      boolean pre = cur[0]; // use the value before update
+      // use the value before update
+      boolean pre = cur[0];
       cur[0] = cur[0] && p.charAt(j - 1) == '*';
       for (int i = 1; i <= m; i++) {
-        boolean temp = cur[i]; // record the value before update
+        // record the value before update
+        boolean temp = cur[i];
         if (p.charAt(j - 1) != '*') {
           cur[i] = pre && (s.charAt(i - 1) == p.charAt(j - 1) || p.charAt(j - 1) == '?');
         } else {

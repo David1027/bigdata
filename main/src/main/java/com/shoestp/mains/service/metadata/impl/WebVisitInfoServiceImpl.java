@@ -1,14 +1,6 @@
 package com.shoestp.mains.service.metadata.impl;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import javax.annotation.Resource;
-
-import org.springframework.stereotype.Service;
-
+import com.shoestp.mains.config.AppConfig;
 import com.shoestp.mains.dao.shoestpdata.WebVisitInfoDao;
 import com.shoestp.mains.entitys.metadata.WebVisitInfo;
 import com.shoestp.mains.service.metadata.WebVisitInfoService;
@@ -16,12 +8,20 @@ import com.shoestp.mains.utils.iputils.City;
 import com.shoestp.mains.views.Page;
 import com.shoestp.mains.views.analytics.WebVisitInfoView;
 import com.shoestp.mains.views.dataview.metadata.QueryWebVisitInfoView;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import javax.annotation.Resource;
+import org.springframework.stereotype.Service;
+import org.start2do.utils.MyStringUtils;
 
 /** Created by IntelliJ IDEA. User: lijie@shoestp.cn Date: 2019/5/20 Time: 11:17 */
 @Service
 public class WebVisitInfoServiceImpl implements WebVisitInfoService {
 
-  @Resource WebVisitInfoDao webVisitInfoDao;
+  @Resource private WebVisitInfoDao webVisitInfoDao;
+  @Resource private AppConfig appConfig;
 
   @Resource(name = "ipCity")
   private City city;
@@ -33,7 +33,6 @@ public class WebVisitInfoServiceImpl implements WebVisitInfoService {
 
   @Override
   public WebVisitInfo save(WebVisitInfoView pojo, String ip, String ua) {
-    //    TODO 夏炎IP库引入后需要对localtion进行设置
     WebVisitInfo webVisitInfo = new WebVisitInfo();
     webVisitInfo.setTitle(pojo.getTitle());
     webVisitInfo.setUrl(pojo.getUrl());
@@ -41,25 +40,26 @@ public class WebVisitInfoServiceImpl implements WebVisitInfoService {
     webVisitInfo.setReferer(pojo.getFirstReferrer());
     webVisitInfo.setIp(ip);
     if (pojo.getUserInfo() != null) {
-      webVisitInfo.setUserId(pojo.getUserInfo().getUserId());
-      webVisitInfo.setVisitName(pojo.getUserInfo().getUserName());
+      if (pojo.getUserInfo().getUserId() != null) {
+        webVisitInfo.setUserId(pojo.getUserInfo().getUserId());
+        webVisitInfo.setVisitName(pojo.getUserInfo().getUserName());
+      } else {
+        webVisitInfo.setUserId(-1);
+        webVisitInfo.setVisitName(pojo.getUserInfo().getUserName());
+      }
     } else {
       webVisitInfo.setUserId(-1);
       webVisitInfo.setVisitName("游客");
     }
     String[] find = city.find(ip);
-    webVisitInfo.setLocation(find[0]);
-    if (find[0].equals("中国")) {
-      webVisitInfo.setProvince(find[1]);
+    if (find.length > 0) {
+      webVisitInfo.setLocation(find[0]);
+      if ("中国".equals(find[0])) {
+        webVisitInfo.setProvince(find[1]);
+      }
     }
     webVisitInfo.setCreateTime(new Date());
-    webVisitInfoDao.save(webVisitInfo);
-    return null;
-  }
-
-  public List<WebVisitInfoView> queryWebVisitInfo(
-      Integer visitType, Integer sourceType, String page) {
-    return null;
+    return webVisitInfoDao.save(webVisitInfo);
   }
 
   @Override
@@ -84,10 +84,20 @@ public class WebVisitInfoServiceImpl implements WebVisitInfoService {
                           setSource("Google");
                         } else if (bean.getReferer().indexOf("baidu.com") != -1) {
                           setSource("Baidu");
-                        } else if (bean.getReferer().equals("")) {
+                        } else if ("".equals(bean.getReferer())) {
                           setSource("自主访问");
                         } else {
-                          setSource("社交访问");
+                          if (appConfig.getDomain() != null) {
+                            for (String s : appConfig.getDomain()) {
+                              if (MyStringUtils.isMatch(bean.getReferer(), "*" + s + "*")) {
+                                setSource("站内跳转");
+                                break;
+                              }
+                            }
+                          }
+                          if (getSource() == null || getSource().length() < 1) {
+                            setSource("社交访问");
+                          }
                         }
                       }
                     })

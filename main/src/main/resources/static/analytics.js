@@ -1,7 +1,8 @@
 (function () {
   var bigData = {
     config: {
-      url: "/api/analytics",
+      host: "",
+      url: "/analytics/api/analytics",
       key: 'shoestp',
       project: 'bigdata'
     },
@@ -24,19 +25,38 @@
         _that.data.mouseClick.push({
           x: oEvent.clientX,
           y: oEvent.clientY,
-          scroll: _that.ScollPostion()
+          scroll: _that.ScollPostion(),
+          date: new Date()
         })
         if (temp) {
           temp(ev)
         }
       }
+      if (sysConfig && sysConfig.user) {
+        _that.data.userInfo = {
+          id: sysConfig.user.id,
+          userName: sysConfig.user.name,
+          email: sysConfig.user.name,
+        }
+      }
+      if (!_that.data.userInfo) {
+        this.ajax.get(this.config.host + "/api/analytics/device_sign",
+            function (data) {
+              data = JSON.parse(data)
+              _that.cookie.set("__" + _that.config.key + "_UUID", data.result,
+                  "d360")
+              _that.data.userInfo = {
+                userName: data.result
+              }
+            })
+      }
       // window.onbeforeunload = this.send
       window.addEventListener('unload', function (event) {
         _that.data.firstReferrer = sessionStorage[_that.config.key
         + _that.config.project]
-        navigator.sendBeacon(_that.config.url, JSON.stringify(_that.data));
+        navigator.sendBeacon(_that.config.host + _that.config.url,
+            JSON.stringify(_that.data));
       });
-
     },
     data: {
       "title": document.title,
@@ -71,7 +91,7 @@
         height: h
       };
     },
-    /*ajax: {
+    ajax: {
       get: function (url, fn) {
         // XMLHttpRequest对象用于在后台与服务器交换数据
         var xhr = new XMLHttpRequest();
@@ -101,7 +121,41 @@
         };
         xhr.send(data);
       }
-    }*/
+    }, cookie: {
+      get: function (name) {
+        var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
+        if (arr = document.cookie.match(reg)) {
+          return unescape(arr[2]);
+        } else {
+          return null;
+        }
+      },
+      set: function (name, value, time) {
+        function getsec(str) {
+          var str1 = str.substring(1, str.length) * 1;
+          var str2 = str.substring(0, 1);
+          if (str2 == "s") {
+            return str1 * 1000;
+          }
+          else if (str2 == "h") {
+            return str1 * 60 * 60 * 1000;
+          }
+          else if (str2 == "d") {
+            return str1 * 24 * 60 * 60 * 1000;
+          }
+        }
+        //s20是代表20秒
+        //h是指小时，如12小时则是：h12
+        //d是天数，30天则：d30
+        var strsec = getsec(time);
+        var exp = new Date();
+        exp.setTime(exp.getTime() + strsec * 1);
+        document.cookie = name + "=" + escape(value) + ";expires="
+            + exp.toUTCString();
+      }
+    }
   }
   bigData.init()
 })(window)
+
+

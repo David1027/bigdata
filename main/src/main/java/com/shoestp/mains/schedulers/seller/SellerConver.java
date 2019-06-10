@@ -1,30 +1,5 @@
 package com.shoestp.mains.schedulers.seller;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-
-import org.quartz.JobBuilder;
-import org.quartz.JobDetail;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.quartz.SimpleScheduleBuilder;
-import org.quartz.Trigger;
-import org.quartz.TriggerBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.start2do.utils.iputils.City;
-
 import com.shoestp.mains.dao.metadata.FavoriteDao;
 import com.shoestp.mains.dao.metadata.UserInfoDao;
 import com.shoestp.mains.dao.sellerdataview.product.ProductDao;
@@ -44,9 +19,35 @@ import com.shoestp.mains.schedulers.BaseSchedulers;
 import com.shoestp.mains.service.metadata.CountryService;
 import com.shoestp.mains.utils.dateUtils.DateTimeUtil;
 import com.shoestp.mains.views.dataview.metadata.Data;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.quartz.JobBuilder;
+import org.quartz.JobDetail;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+import org.quartz.SimpleScheduleBuilder;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
+import org.start2do.utils.iputils.City;
 
-// @Component
+@Component
 public class SellerConver extends BaseSchedulers {
+  private static final Logger logger = LogManager.getLogger(SellerConver.class);
 
   @PostConstruct
   public void init() {
@@ -94,6 +95,7 @@ public class SellerConver extends BaseSchedulers {
   @Override
   protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
     try {
+      logger.info("Task Running:{}", getJobNmae());
       countryList = countryServiceImpl.getCountryList();
       Date startTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2018-11-18 00:00:00");
       Date endTime = new Date();

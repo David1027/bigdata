@@ -39,6 +39,11 @@
           email: sysConfig.user.name,
         }
       }
+      if (_that.cookie.get("__" + _that.config.key + "_UUID")) {
+        _that.data.userInfo = {
+          userName: _that.cookie.get("__" + _that.config.key + "_UUID")
+        }
+      }
       if (!_that.data.userInfo) {
         this.ajax.get(this.config.host + "/api/analytics/device_sign",
             function (data) {
@@ -144,6 +149,7 @@
             return str1 * 24 * 60 * 60 * 1000;
           }
         }
+
         //s20是代表20秒
         //h是指小时，如12小时则是：h12
         //d是天数，30天则：d30

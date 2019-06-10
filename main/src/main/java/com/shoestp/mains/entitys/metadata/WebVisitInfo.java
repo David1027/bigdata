@@ -1,14 +1,12 @@
 package com.shoestp.mains.entitys.metadata;
 
 import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
 import lombok.Data;
 
 /** 网站访问元数据 */
@@ -23,6 +21,7 @@ public class WebVisitInfo {
   /** * 页面标题 */
   private String title;
   /** * 页面URL */
+  @Column(length = 1000)
   private String url;
   /** * 访客UA */
   @Column(name = "user_agent")

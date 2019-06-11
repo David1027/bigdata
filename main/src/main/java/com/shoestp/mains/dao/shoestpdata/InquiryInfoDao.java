@@ -1,16 +1,14 @@
 package com.shoestp.mains.dao.shoestpdata;
 
-import java.util.Date;
-import java.util.List;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-
 import com.shoestp.mains.entitys.metadata.InquiryInfo;
 import com.shoestp.mains.enums.flow.DeviceTypeEnum;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
 import com.shoestp.mains.views.dataview.metadata.Data;
+import java.util.Date;
+import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 public interface InquiryInfoDao extends JpaRepository<InquiryInfo, Integer> {
 

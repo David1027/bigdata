@@ -57,6 +57,9 @@ public class GoogleMetaData extends BaseSchedulers {
   @Value("${shoestp.scheduler.googlemete.timing}")
   private int timing = 5;
 
+  @Value("${shoestp.scheduler.googlemete.viewId}")
+  private String viewId = "185165418";
+
   @Value("${shoestp.scheduler.googlemete.enable}")
   private Boolean enable = false;
 
@@ -173,7 +176,7 @@ public class GoogleMetaData extends BaseSchedulers {
       DimensionFilterClause dim = new DimensionFilterClause();
       ReportRequest request =
           new ReportRequest()
-              .setViewId("185165418")
+              .setViewId(viewId)
               .setPageSize(500000)
               .setDateRanges(Arrays.asList(dateRange))
               // 10个

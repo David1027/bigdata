@@ -25,7 +25,7 @@ public class ShiroErr extends BaseController {
         "Host:[{}]  X-Real-IP:[{}] .Visit url[{}]. Error Message: {}",
         request.getRemoteHost(),
         request.getHeader("X-Real-IP"),
-        request.getRequestURL(),
+        request.getRequestURI(),
         e.getMessage());
     return MessageResult.builder().code(-1).msg("未认证").build();
   }
@@ -41,9 +41,10 @@ public class ShiroErr extends BaseController {
   @ExceptionHandler(Exception.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public MessageResult globalException(HttpServletRequest request, Throwable ex) {
+    logger.error("Visit Url:{}", request.getRequestURI());
     logger.error(
         "Request Info:{}    User-Agent:{}", getIpByHeader(request), getUserAgentByHeader(request));
-    logger.error("Exception Info:{}", ex);
+    logger.error("Exception Info:{}", ex.getMessage());
     return MessageResult.builder().code(-1).msg("其他异常").build();
   }
 

@@ -8,6 +8,7 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Repository;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.shoestp.mains.dao.BaseDao;
 import com.shoestp.mains.entitys.dataview.country.DataViewCountry;
@@ -33,8 +34,22 @@ public class RealCountryDao extends BaseDao<DataViewCountry> {
    * @param end 结束时间
    * @return List<DataViewCountry>
    */
-  public List<DataViewCountry> findAllByCountry(Date start, Date end) {
-    return realCountryRepository.findAllByCreateTimeBetween(start, end);
+  public List<Tuple> findAllByCountry(Date start, Date end) {
+    //    return realCountryRepository.findAllByCreateTimeBetween(start, end);
+    QDataViewCountry qDataViewCountry = QDataViewCountry.dataViewCountry;
+    return getQuery()
+        .select(
+            qDataViewCountry.countryName,
+            qDataViewCountry.countryEnglishName,
+            qDataViewCountry.countryImage,
+            qDataViewCountry.visitorCount.sum(),
+            qDataViewCountry.visitorCountPc.sum(),
+            qDataViewCountry.visitorCountWap.sum())
+        .from(qDataViewCountry)
+        .where(qDataViewCountry.createTime.between(start, end))
+        .groupBy(qDataViewCountry.countryEnglishName)
+        .fetchResults()
+        .getResults();
   }
 
   /**

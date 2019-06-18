@@ -120,6 +120,7 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
       public void onNext(GRPC_SendDataProto.Inquiry inquiry) {
         City c = new City();
         InquiryInfo inquiryInfo = new InquiryInfo();
+        inquiryInfo.setType(InquiryTypeEnum.OTHER);
         boolean b = true;
         switch (inquiry.getType()) {
           case 1:

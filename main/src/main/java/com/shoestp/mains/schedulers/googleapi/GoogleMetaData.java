@@ -1,5 +1,35 @@
 package com.shoestp.mains.schedulers.googleapi;
 
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+
+import javax.annotation.PostConstruct;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.quartz.JobBuilder;
+import org.quartz.JobDetail;
+import org.quartz.JobExecutionContext;
+import org.quartz.SimpleScheduleBuilder;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Component;
+
 import com.google.api.services.analyticsreporting.v4.AnalyticsReporting;
 import com.google.api.services.analyticsreporting.v4.model.ColumnHeader;
 import com.google.api.services.analyticsreporting.v4.model.DateRange;
@@ -17,30 +47,6 @@ import com.shoestp.mains.entitys.metadata.GoogleBrowseInfo;
 import com.shoestp.mains.entitys.metadata.GooglePageProperty;
 import com.shoestp.mains.repositorys.metadata.GooglePagePropertyInfoRepository;
 import com.shoestp.mains.schedulers.BaseSchedulers;
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import javax.annotation.PostConstruct;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.quartz.JobBuilder;
-import org.quartz.JobDetail;
-import org.quartz.JobExecutionContext;
-import org.quartz.SimpleScheduleBuilder;
-import org.quartz.Trigger;
-import org.quartz.TriggerBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Component;
 
 @Component
 public class GoogleMetaData extends BaseSchedulers {
@@ -53,7 +59,7 @@ public class GoogleMetaData extends BaseSchedulers {
 
   @Value("${proxy.port}")
   private String port;
-  /** * 定时5分钟 */
+  /** * 定时5分钟 单次运行插入10w条时修改为10分钟 */
   @Value("${shoestp.scheduler.googlemete.timing}")
   private int timing = 5;
 
@@ -130,6 +136,7 @@ public class GoogleMetaData extends BaseSchedulers {
 
   public void queryData(int queryType, List<Metric> metric, List<Dimension> dimension) {
     Date date = new Date();
+    date = minutePlusOne(date);
     // 是否下一小时
     boolean b = false;
     // 获取数据库里最后拉去数据的的日期
@@ -150,9 +157,10 @@ public class GoogleMetaData extends BaseSchedulers {
       return;
     }
     Integer minute = Integer.parseInt(startDate.format(DateTimeFormatter.ofPattern("mm")));
+    // TODO >>>首次运行、分批次运行注释
     if (!"2018-11-18 00:00:00".equals(startDateString)) {
       filter +=
-          ",ga:dateHourMinute=@" + startDate.format(DateTimeFormatter.ofPattern("yyyyMMddHH"));
+          ";ga:dateHourMinute=@" + startDate.format(DateTimeFormatter.ofPattern("yyyyMMddHH"));
       if (minute <= timing) {
         b = true;
         LocalDateTime newStartDate = startDate.plusHours(1);
@@ -160,6 +168,7 @@ public class GoogleMetaData extends BaseSchedulers {
             ",ga:dateHourMinute=@" + newStartDate.format(DateTimeFormatter.ofPattern("yyyyMMddHH"));
       }
     }
+    // <<<首次运行、分批次运行注释
     try {
       // 本地测试用开启代理
       if (enable_Proxy) {
@@ -170,8 +179,16 @@ public class GoogleMetaData extends BaseSchedulers {
         System.setProperty("https.proxyPort", port);
       }
       DateRange dateRange = new DateRange();
+      // TODO >>>数据量大于10w条时分批次运行
+      /*dateRange.setStartDate("2018-11-18");
+      dateRange.setEndDate("2019-06-14"); // 截止2019年6月14日数据量为96952条
+      dateRange.setStartDate("2019-06-15");
+      dateRange.setEndDate("today");*/
+      // <<<数据量大于10w条时分批次运行
+      // TODO >>>首次运行注释
       dateRange.setStartDate(startDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
       dateRange.setEndDate("today");
+      // <<<首次运行注释
       List<DimensionFilterClause> dimList = new ArrayList<>();
       DimensionFilterClause dim = new DimensionFilterClause();
       ReportRequest request =
@@ -190,6 +207,9 @@ public class GoogleMetaData extends BaseSchedulers {
       requests.add(request);
       GetReportsRequest getReport = new GetReportsRequest().setReportRequests(requests);
       GetReportsResponse response = ar.reports().batchGet(getReport).execute();
+      SimpleDateFormat googleSim = new SimpleDateFormat("yyyyMMddHHmm");
+      Date gDate = null;
+      Date sDate = LocalDateTimeToUdate(startDate);
       for (Report report : response.getReports()) {
         ColumnHeader header = report.getColumnHeader();
         List<MetricHeaderEntry> metricHeaders = header.getMetricHeader().getMetricHeaderEntries();
@@ -201,6 +221,17 @@ public class GoogleMetaData extends BaseSchedulers {
         logger.debug("Google Meta Data Rows {}", rows.size());
         for (ReportRow row : rows) {
           List<String> dimensions = row.getDimensions();
+          // TODO >>>首次运行、分批次运行注释
+          try {
+            gDate = googleSim.parse(dimensions.get(1));
+            if (gDate.compareTo(sDate) != 1) {
+              continue;
+            }
+          } catch (ParseException e) {
+            e.printStackTrace();
+            continue;
+          }
+          // <<<首次运行、分批次运行注释
           List<String> values = row.getMetrics().get(0).getValues();
           save(queryType, dimensions, values, date, minute, b, parse);
         }
@@ -306,6 +337,19 @@ public class GoogleMetaData extends BaseSchedulers {
         break;
     }
     return defaultDate;
+  }
+
+  public static Date minutePlusOne(Date d) {
+    Calendar cal = Calendar.getInstance();
+    cal.setTime(d);
+    cal.add(Calendar.MINUTE, 1);
+    return cal.getTime();
+  }
+
+  public Date LocalDateTimeToUdate(LocalDateTime localDateTime) {
+    ZoneId zone = ZoneId.systemDefault();
+    Instant instant = localDateTime.atZone(zone).toInstant();
+    return Date.from(instant);
   }
 
   @Bean(name = "GoogleMetaData")

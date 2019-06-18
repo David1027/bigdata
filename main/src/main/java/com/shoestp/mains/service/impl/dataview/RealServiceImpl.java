@@ -5,6 +5,7 @@ import com.shoestp.mains.dao.dataview.flow.FlowPageDao;
 import com.shoestp.mains.dao.dataview.realcountry.RealCountryDao;
 import com.shoestp.mains.dao.dataview.user.UserDao;
 import com.shoestp.mains.service.dataview.RealService;
+import com.shoestp.mains.utils.dateUtils.CustomDoubleSerialize;
 import com.shoestp.mains.utils.dateUtils.DateTimeUtil;
 import com.shoestp.mains.utils.dateUtils.KeyValueViewUtil;
 import com.shoestp.mains.views.dataview.real.IndexGrand;
@@ -41,7 +42,7 @@ public class RealServiceImpl implements RealService {
    */
   public Double getCompare(double num1, double num2) {
     if (num2 == 0) {
-      num2 = 1;
+      return 1.0;
     }
     return (num1 - num2) / (num2 * 1.0);
   }
@@ -215,26 +216,36 @@ public class RealServiceImpl implements RealService {
     IndexOverView indexOverView = new IndexOverView();
     indexOverView.setVisitorCount(today.getVisitorCount());
     indexOverView.setVisitorCompareYesterday(
-        getCompare(today.getVisitorCount(), yesterday.getVisitorCount()));
+        CustomDoubleSerialize.setDouble(
+            getCompare(today.getVisitorCount(), yesterday.getVisitorCount())));
     indexOverView.setVisitorCompareWeek(
-        getCompare(today.getVisitorCount(), week.getVisitorCount()));
+        CustomDoubleSerialize.setDouble(
+            getCompare(today.getVisitorCount(), week.getVisitorCount())));
     indexOverView.setViewCount(today.getViewCount());
     indexOverView.setViewCompareYesterday(
-        getCompare(today.getViewCount(), yesterday.getViewCount()));
-    indexOverView.setViewCompareWeek(getCompare(today.getViewCount(), week.getViewCount()));
+        CustomDoubleSerialize.setDouble(
+            getCompare(today.getViewCount(), yesterday.getViewCount())));
+    indexOverView.setViewCompareWeek(
+        CustomDoubleSerialize.setDouble(getCompare(today.getViewCount(), week.getViewCount())));
     indexOverView.setRegisterCount(today.getRegisterCount());
     indexOverView.setRegisterCompareYesterday(
-        getCompare(today.getRegisterCount(), yesterday.getRegisterCount()));
+        CustomDoubleSerialize.setDouble(
+            getCompare(today.getRegisterCount(), yesterday.getRegisterCount())));
     indexOverView.setRegisterCompareWeek(
-        getCompare(today.getRegisterCount(), week.getRegisterCount()));
+        CustomDoubleSerialize.setDouble(
+            getCompare(today.getRegisterCount(), week.getRegisterCount())));
     indexOverView.setInquiryCount(today.getInquiryCount());
     indexOverView.setInquiryCompareYesterday(
-        getCompare(today.getInquiryCount(), yesterday.getInquiryCount()));
+        CustomDoubleSerialize.setDouble(
+            getCompare(today.getInquiryCount(), yesterday.getInquiryCount())));
     indexOverView.setInquiryCompareWeek(
-        getCompare(today.getInquiryCount(), week.getInquiryCount()));
-    indexOverView.setJumpRate(todatJump);
-    indexOverView.setJumpRateCompareYesterday(getCompare(todatJump, yesterdayJump));
-    indexOverView.setJumpRateCompareWeek(getCompare(todatJump, weekJump));
+        CustomDoubleSerialize.setDouble(
+            getCompare(today.getInquiryCount(), week.getInquiryCount())));
+    indexOverView.setJumpRate(CustomDoubleSerialize.setDouble(todatJump));
+    indexOverView.setJumpRateCompareYesterday(
+        CustomDoubleSerialize.setDouble(getCompare(todatJump, yesterdayJump)));
+    indexOverView.setJumpRateCompareWeek(
+        CustomDoubleSerialize.setDouble(getCompare(todatJump, weekJump)));
     return indexOverView;
   }
 

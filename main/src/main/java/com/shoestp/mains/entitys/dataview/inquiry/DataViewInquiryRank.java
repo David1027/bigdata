@@ -20,7 +20,9 @@ import lombok.Data;
 @Entity
 @Table(name = "data_view_inquiry_rank")
 public class DataViewInquiryRank {
-  @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private Integer id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer id;
   /** 询盘类型：SUPPLIER-供应商询盘，COMMODITY-商品询盘，SEARCHTERM-热门关键词 */
   @Enumerated(EnumType.STRING)
   @Column(name = "inquiry_type")

@@ -776,10 +776,10 @@ public class DataConver extends BaseSchedulers {
     Map<String, List<WebVisitInfo>> m =
         list.stream().collect(Collectors.groupingBy(WebVisitInfo::getIp));
     DataViewUser user = new DataViewUser();
-    user.setVisitorCount(visitCount);
+    user.setVisitorCount(m.size());
     user.setRegisterCount(registerCount);
     // 新用户
-    Integer newVisitorCount = m.size();
+    Integer newVisitorCount = 0;
     // 老用户
     Integer oldVisitorCount = 0;
     for (WebVisitInfo item : list) {
@@ -787,7 +787,10 @@ public class DataConver extends BaseSchedulers {
         oldVisitorCount++;
       }
     }
-    user.setNewVisitorCount(newVisitorCount);
+    user.setNewVisitorCount(
+        user.getVisitorCount() - oldVisitorCount < 0
+            ? 0
+            : user.getVisitorCount() - oldVisitorCount);
     user.setOldVisitorCount(oldVisitorCount);
     int intExact =
         Math.toIntExact(
@@ -806,14 +809,14 @@ public class DataConver extends BaseSchedulers {
     Optional<DataViewUser> lastUser = userDao.getLastUser();
     if (lastUser.isPresent()) {
       DataViewUser duser = lastUser.get();
-      user.setNewVisitorCount(
+      /*user.setNewVisitorCount(
           user.getNewVisitorCount() - duser.getNewVisitorCountTotal() <= 0
               ? 0
               : user.getNewVisitorCount() - duser.getNewVisitorCountTotal());
       user.setOldVisitorCount(
           user.getOldVisitorCount() - duser.getOldVisitorCountTotal() <= 0
               ? 0
-              : user.getOldVisitorCount() - duser.getOldVisitorCountTotal());
+              : user.getOldVisitorCount() - duser.getOldVisitorCountTotal());*/
       user.setPurchaseCount(
           user.getPurchaseCount() - duser.getPurchaseCountTotal() <= 0
               ? 0

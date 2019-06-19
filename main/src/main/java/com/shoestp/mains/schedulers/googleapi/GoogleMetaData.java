@@ -224,7 +224,7 @@ public class GoogleMetaData extends BaseSchedulers {
           // TODO >>>首次运行、分批次运行注释
           try {
             gDate = googleSim.parse(dimensions.get(1));
-            if (gDate.compareTo(sDate) != 1) {
+            if (gDate.compareTo(sDate) == -1) {
               continue;
             }
           } catch (ParseException e) {

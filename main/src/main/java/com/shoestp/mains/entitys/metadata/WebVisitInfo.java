@@ -15,6 +15,7 @@ import java.util.Date;
  * @modify Lijie HelloBox@outlook.com 2019-08-06 10:46 添加设备平台标识,页面URI,
  * @modify Lijie HelloBox@outlook.com 2019-08-06 11:01 添加会话次数
  * @modify Lijie HelloBox@outlook.com 2019-08-06 11:12 添加会话创建时间
+ * @modify Lijie HelloBox@outlook.com 2019-08-06 11:38 删除访客名称
  */
 @Data
 @Entity
@@ -48,9 +49,6 @@ public class WebVisitInfo {
   @ManyToOne
   @JoinColumn(name = "user_id")
   private UserInfo userId;
-  /** * 访客名称 */
-  @Column(name = "visit_name")
-  private String visitName;
   /** * 访客位置 国家 */
   @OneToOne
   @JoinColumn(name = "location")

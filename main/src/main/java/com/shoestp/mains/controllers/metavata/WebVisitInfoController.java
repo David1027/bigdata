@@ -25,18 +25,18 @@ public class WebVisitInfoController {
    * @param limit 返回条数
    * @return
    */
-  @GetMapping(value = "/getRealVisitInfo")
-  public Object getVisitInfo(
-      @RequestParam(defaultValue = "1") int visitType,
-      @RequestParam(defaultValue = "0") int sourceType,
-      String page,
-      String country,
-      @RequestParam(defaultValue = "0") int start,
-      @RequestParam(defaultValue = "20") int limit) {
-    return MessageResult.builder()
-        .code(1)
-        .msg("Hello")
-        .result(webVisitInfo.getWebVisitInfo(visitType, sourceType, page, country, start, limit))
-        .build();
-  }
+//  @GetMapping(value = "/getRealVisitInfo")
+//  public Object getVisitInfo(
+//      @RequestParam(defaultValue = "1") int visitType,
+//      @RequestParam(defaultValue = "0") int sourceType,
+//      String page,
+//      String country,
+//      @RequestParam(defaultValue = "0") int start,
+//      @RequestParam(defaultValue = "20") int limit) {
+//    return MessageResult.builder()
+//        .code(1)
+//        .msg("Hello")
+//        .result(webVisitInfo.getWebVisitInfo(visitType, sourceType, page, country, start, limit))
+//        .build();
+//  }
 }

@@ -1,23 +1,27 @@
-package com.shoestp.mains.controllers;
+package com.shoestp.mains.controllers.analytics;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shoestp.mains.controllers.BaseController;
+import com.shoestp.mains.controllers.analytics.view.SignView;
+import com.shoestp.mains.controllers.analytics.view.WebVisitInfoView;
 import com.shoestp.mains.pojo.MessageResult;
 import com.shoestp.mains.service.metadata.WebVisitInfoService;
-import com.shoestp.mains.views.analytics.WebVisitInfoView;
-import java.io.IOException;
-import java.util.UUID;
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-/** 用于接受js统计信息 */
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.UUID;
+
+/**
+ * 用于接受js统计信息
+ *
+ * @author lijie
+ * @date 2019 /08/06
+ * @since
+ */
 @RequestMapping("/api/analytics")
 @RestController
 @CrossOrigin
@@ -32,18 +36,21 @@ public class AnalyticsController extends BaseController {
     logger.info("Body Messages =>{}", body);
     WebVisitInfoView webVisitInfoView = objectMapper.readValue(body, WebVisitInfoView.class);
     logger.info("Pojo Info =>{}", webVisitInfoView);
-    webVisitInfoService.save(
-        webVisitInfoView, getIpByHeader(httpRequest), getUserAgentByHeader(httpRequest));
+        webVisitInfoService.save(
+            webVisitInfoView, getIpByHeader(httpRequest), getUserAgentByHeader(httpRequest));
     return MessageResult.builder().code(1).build();
   }
 
   @GetMapping("device_sign")
-  public MessageResult device_sign(HttpServletRequest httpRequest) throws IOException {
+  public Object device_sign(HttpServletRequest httpRequest, String get) throws IOException {
     logger.debug(
         "device_sign :{},{}", getIpByHeader(httpRequest), getUserAgentByHeader(httpRequest));
-    return MessageResult.builder()
-        .code(1)
-        .result(UUID.randomUUID().toString().replace("-", ""))
-        .build();
+    SignView sign = new SignView();
+    sign.setSession(UUID.randomUUID().toString().replace("-", ""));
+    if (get != null && "session".equalsIgnoreCase(get)) {
+      return sign;
+    }
+    sign.setSign(UUID.randomUUID().toString().replace("-", ""));
+    return sign;
   }
 }

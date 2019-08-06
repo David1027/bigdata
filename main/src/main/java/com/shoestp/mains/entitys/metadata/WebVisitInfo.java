@@ -1,5 +1,6 @@
 package com.shoestp.mains.entitys.metadata;
 
+import com.shoestp.mains.entitys.metadata.enums.EquipmentPlatform;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -83,10 +84,4 @@ public class WebVisitInfo {
   /** 会话创建时间 格式:2019-05-12 12:40:22 */
   @Column(name = "session_create_time")
   private LocalDateTime sessionCreateTime;
-}
-
-enum EquipmentPlatform {
-  PC,
-  IOS,
-  ANDROID
 }

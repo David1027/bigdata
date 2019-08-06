@@ -1,4 +1,4 @@
-package com.shoestp.mains.enums.user;
+package com.shoestp.mains.entitys.metadata.enums;
 
 /**
  * @description: 性别类型

@@ -1,7 +1,7 @@
 package com.shoestp.mains.entitys.metadata;
 
-import com.shoestp.mains.enums.user.RegisterTypeEnum;
-import com.shoestp.mains.enums.user.SexEnum;
+import com.shoestp.mains.entitys.metadata.enums.RegisterTypeEnum;
+import com.shoestp.mains.entitys.metadata.enums.SexEnum;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -31,7 +31,7 @@ public class UserInfo {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
-  /** usr_main表id */
+  /** 鞋贸港 usr_main表id */
   @Column(name = "user_id")
   private Integer userId;
   /** 用户类型 */
@@ -43,9 +43,9 @@ public class UserInfo {
   @Enumerated(EnumType.STRING)
   private SexEnum sex;
   /** 国家 */
-  private String country;
+  @OneToOne @JoinColumn private PltCountry country;
   /** 省 */
-  private String province;
+  @OneToOne @JoinColumn private Province province;
   /** * 创建时间 */
   @Column(name = "create_time")
   private Date createTime;

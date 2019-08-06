@@ -1,15 +1,14 @@
 package com.shoestp.mains.dao.metadata;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-
+import com.shoestp.mains.entitys.metadata.UserInfo;
+import com.shoestp.mains.entitys.metadata.enums.RegisterTypeEnum;
+import com.shoestp.mains.entitys.metadata.enums.SexEnum;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import com.shoestp.mains.entitys.metadata.UserInfo;
-import com.shoestp.mains.enums.user.RegisterTypeEnum;
-import com.shoestp.mains.enums.user.SexEnum;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 public interface UserInfoDao extends JpaRepository<UserInfo, Integer> {
 
@@ -26,4 +25,6 @@ public interface UserInfoDao extends JpaRepository<UserInfo, Integer> {
   long countBySexAndCreateTimeLessThan(SexEnum sex, Date createTime);
 
   Optional<UserInfo> findByUserId(Integer userId);
+
+  Optional<UserInfo> findBySign(String userName);
 }

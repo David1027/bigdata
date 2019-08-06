@@ -12,7 +12,7 @@ import com.querydsl.core.Tuple;
 import com.shoestp.mains.dao.BaseDao;
 import com.shoestp.mains.entitys.dataview.user.DataViewUserSex;
 import com.shoestp.mains.entitys.dataview.user.QDataViewUserSex;
-import com.shoestp.mains.enums.user.SexEnum;
+import com.shoestp.mains.entitys.metadata.enums.SexEnum;
 import com.shoestp.mains.repositorys.dataview.user.UserSexRepository;
 
 /**

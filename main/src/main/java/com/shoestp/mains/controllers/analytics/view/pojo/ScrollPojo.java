@@ -1,4 +1,4 @@
-package com.shoestp.mains.views.analytics.pojo;
+package com.shoestp.mains.controllers.analytics.view.pojo;
 
 import lombok.Data;
 

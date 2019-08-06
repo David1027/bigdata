@@ -670,8 +670,8 @@ public class SellerConver extends BaseSchedulers {
         vsu.setCountry("未知");
         vsu.setVisitorName("访客");
       } else {
-        vsu.setCountry(user.getCountry());
-        if (user.getCountry().equals("中国")) vsu.setProvince(user.getProvince());
+//        vsu.setCountry(user.getCountry());
+//        if (user.getCountry().equals("中国")) vsu.setProvince(user.getProvince());
         vsu.setVisitorName(user.getName());
       }
     }

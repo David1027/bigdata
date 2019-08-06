@@ -11,7 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.shoestp.mains.enums.user.SexEnum;
+import com.shoestp.mains.entitys.metadata.enums.SexEnum;
 
 import lombok.Data;
 

@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 import com.shoestp.mains.entitys.dataview.user.DataViewUserSex;
-import com.shoestp.mains.enums.user.SexEnum;
+import com.shoestp.mains.entitys.metadata.enums.SexEnum;
 
 /**
  * @description: 用户概况-实现JPA接口

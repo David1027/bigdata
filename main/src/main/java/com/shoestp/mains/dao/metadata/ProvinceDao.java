@@ -1,7 +1,11 @@
 package com.shoestp.mains.dao.metadata;
 
+import com.shoestp.mains.entitys.metadata.Province;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.shoestp.mains.entitys.metadata.Province;
+import java.util.Optional;
 
-public interface ProvinceDao extends JpaRepository<Province, Integer> {}
+public interface ProvinceDao extends JpaRepository<Province, Integer> {
+
+  Optional<Province> findByName(String name);
+}

@@ -1,14 +1,5 @@
 package com.shoestp.mains.rpc.shoestp.imp;
 
-import java.util.Date;
-
-import javax.annotation.Resource;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.shoestp.mains.dao.metadata.FavoriteDao;
 import com.shoestp.mains.dao.metadata.UserInfoDao;
 import com.shoestp.mains.dao.shoestpdata.InquiryInfoDao;
@@ -17,8 +8,8 @@ import com.shoestp.mains.entitys.metadata.SearchWordInfo;
 import com.shoestp.mains.entitys.metadata.WebVisitInfo;
 import com.shoestp.mains.enums.flow.DeviceTypeEnum;
 import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
-import com.shoestp.mains.enums.user.RegisterTypeEnum;
-import com.shoestp.mains.enums.user.SexEnum;
+import com.shoestp.mains.entitys.metadata.enums.RegisterTypeEnum;
+import com.shoestp.mains.entitys.metadata.enums.SexEnum;
 import com.shoestp.mains.rpc.shoestp.pojo.GRPC_ResultProto;
 import com.shoestp.mains.rpc.shoestp.pojo.GRPC_SendDataProto;
 import com.shoestp.mains.rpc.shoestp.pojo.GRPC_SendDataProto.Favorite;
@@ -28,8 +19,14 @@ import com.shoestp.mains.service.metadata.InquiryInfoService;
 import com.shoestp.mains.service.metadata.SearchWordInfoService;
 import com.shoestp.mains.service.metadata.WebVisitInfoService;
 import com.shoestp.mains.utils.iputils.City;
-
 import io.grpc.stub.StreamObserver;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
+import java.util.Date;
 
 /** Created by IntelliJ IDEA. User: lijie@shoestp.cn Date: 2019/5/14 Time: 15:00 */
 @Component
@@ -88,12 +85,6 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
         webVisitInfo.setUserAgent(viewInfo.getUseragent());
         webVisitInfo.setReferer(viewInfo.getReferer());
         webVisitInfo.setIp(viewInfo.getIp());
-//        webVisitInfo.setUserId(viewInfo.getUserId());
-        webVisitInfo.setVisitName(viewInfo.getVisitName());
-        String[] str = city.find(viewInfo.getIp());
-        if (str != null && str.length > 0) {
-//          webVisitInfo.setLocation(str[0]);
-        }
         webVisitInfo.setCreateTime(new Date());
         webVisitInfoService.save(webVisitInfo);
       }
@@ -184,7 +175,7 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
       public void onNext(UserInfo info) {
         com.shoestp.mains.entitys.metadata.UserInfo userInfo =
             new com.shoestp.mains.entitys.metadata.UserInfo();
-        userInfo.setCountry(info.getCountry());
+//        userInfo.setCountry(info.getCountry());
         switch (info.getSex()) {
           case 0:
             userInfo.setSex(SexEnum.UNKNOWN);
@@ -206,7 +197,7 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
         }
         userInfo.setUserId(info.getUserId());
         userInfo.setName(info.getName());
-        userInfo.setProvince(info.getProvince());
+//        userInfo.setProvince(info.getProvince());
         userInfo.setCreateTime(new Date(info.getCreateDate()));
         userInfoDao.save(userInfo);
       }

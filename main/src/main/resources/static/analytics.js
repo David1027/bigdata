@@ -5,8 +5,9 @@
         config: {
             /** 域名地址  */
             host: "",
+            // host: "/analytics",
             /** 后台保存数据地址  */
-            url: "/analytics/api/analytics",
+            url: "/api/analytics",
             /** key名称  */
             key: 'shoestp',
             /** 工程名称  */
@@ -35,6 +36,9 @@
             /** 注册发送事件 */
             document.onmousedown = function (ev) {
                 var oEvent = ev || event;
+                if (_that.data.mouseClick.length > 20) {
+                    _that.data.mouseClick.splice(0, 1)
+                }
                 _that.data.mouseClick.push({
                     x: oEvent.clientX,
                     y: oEvent.clientY,
@@ -50,7 +54,7 @@
             /** NOTE 2019-08-05 15:41
              *  单页应用可能要在Window对象下面手动挂载
              */
-            if (sysConfig && sysConfig.user) {
+            if (window.sysConfig && window.sysConfig.user) {
                 _that.data.userInfo = {
                     id: sysConfig.user.id,
                     userName: sysConfig.user.name,
@@ -62,17 +66,26 @@
                 _that.data.userInfo = {
                     userName: _that.cookie.get("__" + _that.config.key + "_UUID")
                 }
+                _that.data.session = _that.cookie.get("__" + _that.config.key + "_session")
+                _that.data.session_create_time = _that.cookie.get("__" + _that.config.key + "_UUID_create_time")
+
             }
             /** 如果没有唯一标识获取用户唯一标识 */
-            if (!_that.data.userInfo) {
+            if (!_that.data.userInfo || _that.data.userInfo.userName) {
+                console.log("请求签名")
                 this.ajax.get(this.config.host + "/api/analytics/device_sign",
                     function (data) {
                         data = JSON.parse(data)
-                        _that.cookie.set("__" + _that.config.key + "_UUID", data.result,
+                        /** 设置会话ID  */
+                        _that.cookie.set("__" + _that.config.key + "_session", data.result.session)
+                        /** 设置回话创建时间  */
+                        _that.cookie.set("__" + _that.config.key + "_session_create_time", new Date())
+                        _that.cookie.set("__" + _that.config.key + "_UUID", data.result.sign,
                             "d360")
                         _that.data.userInfo = {
-                            userName: data.result
+                            userName: data.result.sign
                         }
+                        console.log(_that.data.userInfo)
                     })
             }
             // window.onbeforeunload = this.send
@@ -80,7 +93,10 @@
             window.addEventListener('unload', function (event) {
                 _that.data.firstReferrer = sessionStorage[_that.config.key
                 + _that.config.project]
-                /** 关闭浏览器时发送数据  */
+                /** 关闭浏览器时发送数据
+                 *  浏览器将 Beacon 请求排队让它在空闲的时候执行并立即返回控制
+                 *  它在unload状态下也可以异步发送，不阻塞页面刷新/跳转等操作。
+                 * */
                 navigator.sendBeacon(_that.config.host + _that.config.url,
                     JSON.stringify(_that.data));
             });
@@ -95,6 +111,8 @@
             "title": document.title,
             /** url  */
             "url": window.location.href,
+            /** uri  */
+            "uri": window.location.pathname,
             /** 首次跳入的ref  */
             "firstReferrer": sessionStorage["bigdata"],
             /** 页面跳入的ref  */
@@ -107,7 +125,16 @@
                 height: window.screen.height,
                 width: window.screen.width,
             },
-            "userInfo": null
+            /** {
+                userId: null,
+                userName: null,
+                email: null
+            }  */
+            "userInfo": null,
+            /** 会话Id  */
+            "session": null,
+            /** 会话创建时间  */
+            "session_create_time": null
         },
         ScollPostion: function () {
             var t, l, w, h;
@@ -170,6 +197,7 @@
             },
             set: function (name, value, time) {
                 function getsec(str) {
+                    if (!str) return null
                     var str1 = str.substring(1, str.length) * 1;
                     var str2 = str.substring(0, 1);
                     if (str2 == "s") {
@@ -185,10 +213,13 @@
                 //h是指小时，如12小时则是：h12
                 //d是天数，30天则：d30
                 var strsec = getsec(time);
-                var exp = new Date();
-                exp.setTime(exp.getTime() + strsec * 1);
-                document.cookie = name + "=" + escape(value) + ";expires="
-                    + exp.toUTCString();
+                var _t = ""
+                if (strsec) {
+                    var exp = new Date();
+                    exp.setTime(exp.getTime() + strsec * 1);
+                    _t = ";expires=" + exp.toUTCString();
+                }
+                document.cookie = name + "=" + escape(value) + _t
             }
         }
     }

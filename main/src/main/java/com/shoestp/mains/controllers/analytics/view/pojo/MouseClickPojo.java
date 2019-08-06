@@ -1,7 +1,8 @@
-package com.shoestp.mains.views.analytics.pojo;
+package com.shoestp.mains.controllers.analytics.view.pojo;
+
+import lombok.Data;
 
 import java.util.Date;
-import lombok.Data;
 
 /** Created by IntelliJ IDEA. User: lijie@shoestp.cn Date: 2019/5/20 Time: 14:05 */
 @Data

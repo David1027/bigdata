@@ -41,22 +41,22 @@ public class WebVisitInfoServiceImpl implements WebVisitInfoService {
     webVisitInfo.setIp(ip);
     if (pojo.getUserInfo() != null) {
       if (pojo.getUserInfo().getUserId() != null) {
-        webVisitInfo.setUserId(pojo.getUserInfo().getUserId());
+//        webVisitInfo.setUserId(pojo.getUserInfo().getUserId());
         webVisitInfo.setVisitName(pojo.getUserInfo().getUserName());
       } else {
-        webVisitInfo.setUserId(-1);
+//        webVisitInfo.setUserId(-1);
         webVisitInfo.setVisitName(pojo.getUserInfo().getUserName());
       }
     } else {
-      webVisitInfo.setUserId(-1);
+//      webVisitInfo.setUserId(-1);
       webVisitInfo.setVisitName("游客");
     }
     String[] find = city.find(ip);
     if (find.length > 0) {
-      webVisitInfo.setLocation(find[0]);
-      if ("中国".equals(find[0])) {
-        webVisitInfo.setProvince(find[1]);
-      }
+//      webVisitInfo.setLocation(find[0]);
+//      if ("中国".equals(find[0])) {
+//        webVisitInfo.setProvince(find[1]);
+//      }
     }
     webVisitInfo.setCreateTime(new Date());
     return webVisitInfoDao.save(webVisitInfo);
@@ -77,7 +77,7 @@ public class WebVisitInfoServiceImpl implements WebVisitInfoService {
                       {
                         setDate(bean.getCreateTime());
                         setId(bean.getId());
-                        setLoation(bean.getLocation());
+//                        setLoation(bean.getLocation());
                         setPage(bean.getUrl());
                         setName(bean.getVisitName());
                         if (bean.getReferer().indexOf("google.com") != -1) {

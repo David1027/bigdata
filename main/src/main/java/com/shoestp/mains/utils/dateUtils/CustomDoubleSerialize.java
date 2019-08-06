@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -28,9 +29,13 @@ public class CustomDoubleSerialize extends JsonSerializer<Double> {
   public static Double setDouble(Double d) {
     double df = 0.00;
     if (d != null) {
-      BigDecimal b = new BigDecimal(d);
+      BigDecimal b = BigDecimal.valueOf(d);
       df = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
     }
     return df;
+  }
+
+  public static void main(String[] args) {
+
   }
 }

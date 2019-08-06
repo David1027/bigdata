@@ -88,11 +88,11 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
         webVisitInfo.setUserAgent(viewInfo.getUseragent());
         webVisitInfo.setReferer(viewInfo.getReferer());
         webVisitInfo.setIp(viewInfo.getIp());
-        webVisitInfo.setUserId(viewInfo.getUserId());
+//        webVisitInfo.setUserId(viewInfo.getUserId());
         webVisitInfo.setVisitName(viewInfo.getVisitName());
         String[] str = city.find(viewInfo.getIp());
         if (str != null && str.length > 0) {
-          webVisitInfo.setLocation(str[0]);
+//          webVisitInfo.setLocation(str[0]);
         }
         webVisitInfo.setCreateTime(new Date());
         webVisitInfoService.save(webVisitInfo);
@@ -118,7 +118,6 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
     return new StreamObserver<GRPC_SendDataProto.Inquiry>() {
       @Override
       public void onNext(GRPC_SendDataProto.Inquiry inquiry) {
-        City c = new City();
         InquiryInfo inquiryInfo = new InquiryInfo();
         inquiryInfo.setType(InquiryTypeEnum.OTHER);
         boolean b = true;

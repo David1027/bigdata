@@ -67,7 +67,7 @@ public class WebVisitInfoDaoImpl {
     Map<String, Object> map = new HashMap<>();
     if (type == 1) {
       // 登录用户
-      selectFrom.where(qweb.userId.gt(-1));
+//      selectFrom.where(qweb.userId.gt(-1));
     }
     if (source == 1) {
       // google

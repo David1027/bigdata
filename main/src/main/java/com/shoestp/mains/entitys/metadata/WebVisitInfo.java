@@ -4,7 +4,6 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.Set;
 
 /**
  * 网站访问元数据 访客
@@ -37,18 +36,19 @@ public class WebVisitInfo {
   /** 多对一关系,用户标识 */
   @ManyToOne
   @JoinColumn(name = "user_id")
-  private Set<UserInfo> userId;
+  private UserInfo userId;
   /** * 访客名称 */
   @Column(name = "visit_name")
   private String visitName;
   /** * 访客位置 国家 */
-  @Column(name = "location")
-  private String location;
+  @OneToOne
+  @JoinColumn(name = "location")
+  private PltCountry location;
   /** * 省 */
-  private String province;
+  @OneToOne @JoinColumn private Province province;
   /** 商品图片 */
   private String img;
-  /** * 创建时间 */
+  /** * 创建时间 完整的时间戳 2019-05-12 12:40:22 */
   @Column(name = "create_time")
   private Date createTime;
 

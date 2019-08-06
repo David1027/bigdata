@@ -90,7 +90,7 @@ public class WebVisitInfoDaoImpl {
     }
     if (country != null && !"".equals(country)) {
       // 筛选国家
-      selectFrom.where(qweb.location.like("%" + country + "%"));
+//      selectFrom.where(qweb.location.like("%" + country + "%"));
     }
     selectFrom.orderBy(qweb.createTime.desc());
     map.put("count", selectFrom.fetchCount());

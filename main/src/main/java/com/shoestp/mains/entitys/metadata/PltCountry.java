@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import lombok.Data;
+import lombok.ToString;
 
 /**
  * -鞋贸港国家表
@@ -16,6 +17,7 @@ import lombok.Data;
  */
 @Data
 @Entity
+@ToString
 @Table(name = "meta_data_country")
 public class PltCountry {
 

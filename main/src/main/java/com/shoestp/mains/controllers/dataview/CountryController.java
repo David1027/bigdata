@@ -32,9 +32,6 @@ public class CountryController {
   @GetMapping(value = "/countryarea")
   public Object getCountryArea(HttpServletRequest httpRequest) {
     logger.debug(httpRequest.getCookies());
-    return MessageResult.builder()
-        .code(1)
-        .result(countryService.getCountryArea())
-        .build();
+    return MessageResult.builder().code(1).result(countryService.getCountryArea()).build();
   }
 }

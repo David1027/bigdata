@@ -11,6 +11,7 @@ import java.util.Date;
  * @author lijie
  * @date 2019 /08/05
  * @modify Lijie HelloBox@outlook.com 2019-08-05 13:59 删除UsrmainId 字段
+ * @modify Lijie HelloBox@outlook.com 2019-08-06 10:46 添加设备平台标识,页面URI,
  */
 @Data
 @Entity
@@ -25,9 +26,16 @@ public class WebVisitInfo {
   /** * 页面URL */
   @Column(columnDefinition = " text null ")
   private String url;
+  /** 页面的URI 没有HOST数据 */
+  private String uri;
   /** * 访客UA */
   @Column(name = "user_agent", columnDefinition = " text null ")
   private String userAgent;
+  /** 设备平台标识 */
+  @Enumerated(EnumType.ORDINAL)
+  @Column(name = "equipment_platform")
+  private UserAgent equipmentPlatform;
+
   /** * 访客来自于 */
   @Column(columnDefinition = " text null ")
   private String referer;
@@ -67,4 +75,10 @@ public class WebVisitInfo {
    */
   @Column(name = "time_on_page")
   private Long timeOnPage;
+}
+
+enum UserAgent {
+  PC,
+  IOS,
+  ANDROID
 }

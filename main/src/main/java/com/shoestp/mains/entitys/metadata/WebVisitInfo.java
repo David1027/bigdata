@@ -3,6 +3,7 @@ package com.shoestp.mains.entitys.metadata;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -12,6 +13,8 @@ import java.util.Date;
  * @date 2019 /08/05
  * @modify Lijie HelloBox@outlook.com 2019-08-05 13:59 删除UsrmainId 字段
  * @modify Lijie HelloBox@outlook.com 2019-08-06 10:46 添加设备平台标识,页面URI,
+ * @modify Lijie HelloBox@outlook.com 2019-08-06 11:01 添加会话次数
+ * @modify Lijie HelloBox@outlook.com 2019-08-06 11:12 添加会话创建时间
  */
 @Data
 @Entity
@@ -34,7 +37,7 @@ public class WebVisitInfo {
   /** 设备平台标识 */
   @Enumerated(EnumType.ORDINAL)
   @Column(name = "equipment_platform")
-  private UserAgent equipmentPlatform;
+  private EquipmentPlatform equipmentPlatform;
 
   /** * 访客来自于 */
   @Column(columnDefinition = " text null ")
@@ -75,9 +78,16 @@ public class WebVisitInfo {
    */
   @Column(name = "time_on_page")
   private Long timeOnPage;
+
+  /** 会话Id,当会话超时或者关闭浏览器,该会话id会重新生成 所以会话次数 = 通过count(1) from xxx group by session */
+  @Column(name = "session")
+  private String session;
+  /** 会话创建时间 格式:2019-05-12 12:40:22 */
+  @Column(name = "session_create_time")
+  private LocalDateTime sessionCreateTime;
 }
 
-enum UserAgent {
+enum EquipmentPlatform {
   PC,
   IOS,
   ANDROID

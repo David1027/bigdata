@@ -1,17 +1,18 @@
 package com.shoestp.mains.entitys.metadata;
 
-import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
 import lombok.Data;
 
-/** 网站访问元数据 */
+import javax.persistence.*;
+import java.util.Date;
+import java.util.Set;
+
+/**
+ * 网站访问元数据 访客
+ *
+ * @author lijie
+ * @date 2019 /08/05
+ * @modify Lijie HelloBox@outlook.com 2019-08-05 13:59 删除UsrmainId 字段
+ */
 @Data
 @Entity
 @Table(name = "meta_data_web_visit_info")
@@ -33,9 +34,10 @@ public class WebVisitInfo {
   private String referer;
   /** * 访客IP */
   private String ip;
-  /** * Usr_main表里的Id 默认值为-1 -1 为游客 */
-  @Column(name = "user_id")
-  private Integer userId;
+  /** 多对一关系,用户标识 */
+  @ManyToOne
+  @JoinColumn(name = "user_id")
+  private Set<UserInfo> userId;
   /** * 访客名称 */
   @Column(name = "visit_name")
   private String visitName;
@@ -44,12 +46,25 @@ public class WebVisitInfo {
   private String location;
   /** * 省 */
   private String province;
-  /** * 商家id usr_main */
-  @Column(name = "usr_main_supplier")
-  private Integer usrMainSupplier;
   /** 商品图片 */
   private String img;
   /** * 创建时间 */
   @Column(name = "create_time")
   private Date createTime;
+
+  /**
+   * 页面等待时间 用于后期优化页面数据埋点
+   *
+   * @modify Lijie HelloBox@outlook.com 2019-08-05 13:56 新增字段
+   */
+  @Column(name = "page_wait_time")
+  private Long pageWaitTime;
+
+  /**
+   * 页面停留时间
+   *
+   * @modify Lijie HelloBox@outlook.com 2019-08-05 13:57 新增字段
+   */
+  @Column(name = "time_on_page")
+  private Long timeOnPage;
 }

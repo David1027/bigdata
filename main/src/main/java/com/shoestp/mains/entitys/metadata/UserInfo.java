@@ -2,17 +2,19 @@ package com.shoestp.mains.entitys.metadata;
 
 import com.shoestp.mains.enums.user.RegisterTypeEnum;
 import com.shoestp.mains.enums.user.SexEnum;
-import java.util.Date;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import lombok.Data;
 
+import javax.persistence.*;
+import java.util.Date;
+
+/**
+ * The type User info.
+ *
+ * @author lijie
+ * @date 2019 /08/05
+ * @since
+ * @modify Lijie HelloBox@outlook.com 2019-08-05 14:02 新增用户签名
+ */
 @Data
 @Entity
 @Table(name = "meta_data_user_info")
@@ -47,4 +49,10 @@ public class UserInfo {
   /** * 创建时间 */
   @Column(name = "create_time")
   private Date createTime;
+  /**
+   * 用户签名,规则为UUID
+   *
+   * @modify Lijie HelloBox@outlook.com 2019-08-05 14:03 用户签名用于追踪
+   */
+  private String sign;
 }

@@ -73,6 +73,5 @@ public class WebVisitInfoServiceImpl implements WebVisitInfoService {
     webVisitInfo.setSession(pojo.getSession());
     webVisitInfo.setCreateTime(new Date());
     return webVisitInfoDao.save(webVisitInfo);
-    //    return null;
   }
 }

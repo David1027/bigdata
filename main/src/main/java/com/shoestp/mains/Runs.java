@@ -2,11 +2,13 @@ package com.shoestp.mains;
 
 import com.shoestp.mains.rpc.RPCServer;
 import com.shoestp.mains.rpc.shoestp.imp.RPCServiceImp;
-import java.io.IOException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.test.context.ActiveProfiles;
+
+import java.io.IOException;
 
 @EnableCaching
 @SpringBootApplication

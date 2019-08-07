@@ -2,6 +2,7 @@ package com.shoestp.mains.entitys.metadata;
 
 import com.shoestp.mains.entitys.metadata.enums.RegisterTypeEnum;
 import com.shoestp.mains.entitys.metadata.enums.SexEnum;
+import com.shoestp.mains.entitys.metadata.enums.UserStatus;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -43,6 +44,9 @@ public class UserInfo {
   /** 性别 */
   @Enumerated(EnumType.STRING)
   private SexEnum sex;
+
+  @Enumerated(EnumType.STRING)
+  private UserStatus status;
   /** 国家 */
   @OneToOne @JoinColumn private PltCountry country;
   /** 省 */
@@ -59,7 +63,17 @@ public class UserInfo {
   /** 最后访问时间 */
   @Column(name = "last_visit_time")
   private Date lastVisitTime;
-
+  /** 实体类关系映射 */
   @OneToMany(mappedBy = "userId")
   private Set<WebVisitInfo> webVisitInfos;
+
+  @OneToMany(mappedBy = "userInfo")
+  private Set<InquiryInfo> inquiryInfos;
+
+  @OneToMany(mappedBy = "userId")
+  private Set<SearchWordInfo> searchWordInfos;
+
+  @OneToMany(mappedBy = "userInfo")
+  private Set<Favorite> favorites;
+
 }

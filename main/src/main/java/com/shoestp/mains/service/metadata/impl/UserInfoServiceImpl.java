@@ -8,6 +8,7 @@ import com.shoestp.mains.service.metadata.UserInfoService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -26,21 +27,27 @@ public class UserInfoServiceImpl implements UserInfoService {
       /** 如果是非登录用户,那么查询用户签名,以前存在是否有记录 */
       result = userInfoDao.findBySign(pojo.getUserName());
       if (result.isPresent()) {
-        return result.get();
+        info = result.get();
+        info.setLastVisitTime(new Date());
+        return info;
       }
       /** 不存在的情况下,保存记录 */
       info = new UserInfo();
       info.setSign(pojo.getUserName());
       info.setType(RegisterTypeEnum.VISITOR);
+      info.setLastVisitTime(new Date());
       return userInfoDao.save(info);
     } else {
       result = userInfoDao.findByUserId(pojo.getUserId());
       if (result.isPresent()) {
-        return result.get();
+        info = result.get();
+        info.setLastVisitTime(new Date());
+        return info;
       }
       info = new UserInfo();
       info.setUserId(pojo.getUserId());
       info.setName(pojo.getUserName());
+      info.setLastVisitTime(new Date());
       return userInfoDao.save(info);
     }
   }

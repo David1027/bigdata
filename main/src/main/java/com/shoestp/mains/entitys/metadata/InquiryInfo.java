@@ -1,20 +1,11 @@
 package com.shoestp.mains.entitys.metadata;
 
-import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-import com.shoestp.mains.enums.flow.DeviceTypeEnum;
+import com.shoestp.mains.entitys.metadata.enums.DeviceTypeEnum;
 import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
-
 import lombok.Data;
+
+import javax.persistence.*;
+import java.util.Date;
 
 /** * 从鞋帽港推送过来的数据 */
 @Data
@@ -41,15 +32,12 @@ public class InquiryInfo {
   private Integer pkey;
   /** * 金额 */
   private double money;
-  /** * ip */
-  private String ip;
-  /** 国家 */
-  private String country;
   /** 图片 */
   private String img;
   /** 商家id usr_main */
-  @Column(name = "usr_main_supplier")
-  private Integer usrMainSupplier;
+  @ManyToOne
+  @JoinColumn(name = "user_info")
+  private UserInfo userInfo;
   /** 采购商id usr_main */
   @Column(name = "usr_main_purchase")
   private Integer usrMainPurchase;

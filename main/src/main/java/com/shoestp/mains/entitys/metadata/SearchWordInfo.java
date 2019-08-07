@@ -1,15 +1,9 @@
 package com.shoestp.mains.entitys.metadata;
 
-import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
 import lombok.Data;
+
+import javax.persistence.*;
+import java.util.Date;
 
 /** 搜索关键词元数据 */
 @Data
@@ -28,8 +22,9 @@ public class SearchWordInfo {
   private String keyword;
 
   /** 搜索人的id,usr_main的pkey 默认值为 -1 */
-  @Column(name = "user_id")
-  private Integer userId;
+  @ManyToOne
+  @JoinColumn(name = "user_id")
+  private UserInfo userId;
   /** * 国家 */
   private String country;
   /** 插入时间 */

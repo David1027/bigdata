@@ -6,10 +6,10 @@ import com.shoestp.mains.dao.shoestpdata.InquiryInfoDao;
 import com.shoestp.mains.entitys.metadata.InquiryInfo;
 import com.shoestp.mains.entitys.metadata.SearchWordInfo;
 import com.shoestp.mains.entitys.metadata.WebVisitInfo;
-import com.shoestp.mains.enums.flow.DeviceTypeEnum;
-import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
+import com.shoestp.mains.entitys.metadata.enums.DeviceTypeEnum;
 import com.shoestp.mains.entitys.metadata.enums.RegisterTypeEnum;
 import com.shoestp.mains.entitys.metadata.enums.SexEnum;
+import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
 import com.shoestp.mains.rpc.shoestp.pojo.GRPC_ResultProto;
 import com.shoestp.mains.rpc.shoestp.pojo.GRPC_SendDataProto;
 import com.shoestp.mains.rpc.shoestp.pojo.GRPC_SendDataProto.Favorite;
@@ -54,7 +54,7 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
         SearchWordInfo searchWordInfo = new SearchWordInfo();
         searchWordInfo.setIp(searchInfo.getIp());
         searchWordInfo.setKeyword(searchInfo.getKeyword());
-        searchWordInfo.setUserId(searchInfo.getUserId());
+//        searchWordInfo.setUserId(searchInfo.getUserId());
         searchWordInfo.setCountry(city.find(searchInfo.getIp())[0]);
         searchWordInfo.setCreateTime(new Date());
         searchWordInfoService.save(searchWordInfo);
@@ -144,11 +144,11 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
         inquiryInfo.setName(inquiry.getName());
         inquiryInfo.setPkey(inquiry.getPkey());
         inquiryInfo.setMoney(inquiry.getMoney());
-        inquiryInfo.setIp(inquiry.getIp());
-        inquiryInfo.setCountry(city.find(inquiry.getIp())[0]);
+//        inquiryInfo.setIp(inquiry.getIp());
+//        inquiryInfo.setCountry(city.find(inquiry.getIp())[0]);
         inquiryInfo.setImg(inquiry.getImg());
         inquiryInfo.setUsrMainPurchase(inquiry.getUsrMainPurchase());
-        inquiryInfo.setUsrMainSupplier(inquiry.getUsrMainSupplier());
+//        inquiryInfo.setUsrMainSupplier(inquiry.getUsrMainSupplier());
         inquiryInfo.setKeyword(inquiry.getKeyword());
         inquiryInfo.setDeviceType(DeviceTypeEnum.PC);
         inquiryDao.save(inquiryInfo);
@@ -175,7 +175,7 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
       public void onNext(UserInfo info) {
         com.shoestp.mains.entitys.metadata.UserInfo userInfo =
             new com.shoestp.mains.entitys.metadata.UserInfo();
-//        userInfo.setCountry(info.getCountry());
+        //        userInfo.setCountry(info.getCountry());
         switch (info.getSex()) {
           case 0:
             userInfo.setSex(SexEnum.UNKNOWN);
@@ -197,7 +197,7 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
         }
         userInfo.setUserId(info.getUserId());
         userInfo.setName(info.getName());
-//        userInfo.setProvince(info.getProvince());
+        //        userInfo.setProvince(info.getProvince());
         userInfo.setCreateTime(new Date(info.getCreateDate()));
         userInfoDao.save(userInfo);
       }

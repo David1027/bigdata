@@ -3,6 +3,7 @@ package com.shoestp.mains.service.metadata.impl;
 import com.shoestp.mains.controllers.analytics.view.pojo.UserInfoPojo;
 import com.shoestp.mains.dao.metadata.UserInfoDao;
 import com.shoestp.mains.entitys.metadata.UserInfo;
+import com.shoestp.mains.entitys.metadata.enums.RegisterTypeEnum;
 import com.shoestp.mains.service.metadata.UserInfoService;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +31,7 @@ public class UserInfoServiceImpl implements UserInfoService {
       /** 不存在的情况下,保存记录 */
       info = new UserInfo();
       info.setSign(pojo.getUserName());
+      info.setType(RegisterTypeEnum.VISITOR);
       return userInfoDao.save(info);
     } else {
       result = userInfoDao.findByUserId(pojo.getUserId());

@@ -6,7 +6,6 @@ import com.shoestp.mains.controllers.analytics.view.pojo.UserInfoPojo;
 import com.shoestp.mains.controllers.analytics.view.pojo.WindowsPojo;
 import lombok.Data;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -41,12 +40,11 @@ public class WebVisitInfoView {
   /** 会话ID */
   private String session;
   /** 会话创建时间 */
-  private LocalDateTime session_create_time;
+  private Long session_create_time;
   /** 页面停留时间 */
   private Long timeOnPage;
   /** 页面等待时间 */
   private Long pageWaitTime;
   /** 页面图片信息 */
   private String img;
-
 }

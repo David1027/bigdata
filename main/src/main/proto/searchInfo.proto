@@ -17,6 +17,7 @@ message SearchInfo {
   string keyword = 1;
   string ip = 2;
   uint32 userId = 3;
+  string sign=4;
 }
 message ViewInfo {
   string url = 1;

@@ -76,10 +76,9 @@
                 this.ajax.get(this.config.host + "/api/analytics/device_sign",
                     function (data) {
                         data = JSON.parse(data)
-                        /** 设置会话ID  */
+                        /** 设置会话ID及会话创建时间,但是不设置过期时间,默认关闭浏览器就过期  */
                         _that.cookie.set("__" + _that.config.key + "_session", data.result.session)
-                        /** 设置回话创建时间  */
-                        var date = new Date();
+                        var date = Number(new Date());
                         _that.cookie.set("__" + _that.config.key + "_session_time", date)
                         _that.cookie.set("__" + _that.config.key + "_UUID", data.result.sign,
                             "d360")
@@ -99,16 +98,29 @@
                  *  浏览器将 Beacon 请求排队让它在空闲的时候执行并立即返回控制
                  *  它在unload状态下也可以异步发送，不阻塞页面刷新/跳转等操作。
                  * */
-                navigator.sendBeacon(_that.config.host + _that.config.url,
-                    JSON.stringify(_that.data));
+                if (_that.issend) {
+                    navigator.sendBeacon(_that.config.host + _that.config.url,
+                        JSON.stringify(_that.data));
+                }
             });
             /** TODO 2019-08-05 15:43
              *  添加超时发送数据
              */
+            var t = setTimeout(function () {
+                _that.data.firstReferrer = sessionStorage[_that.config.key
+                + _that.config.project]
+                _that.ajax.post(_that.config.host + _that.config.url,
+                    JSON.stringify(_that.data))
+                _that.cookie.set("__" + _that.config.key + "_session", null, -1)
+                _that.cookie.set("__" + _that.config.key + "_session_time", null, -1)
+                clearTimeout(t)
+                _that.issend = false
+            }, _that.config.timeout * 60 * 1000)
 
         },
         /** 数据  */
         data: {
+            issend: true,
             /** 标题  */
             "title": document.title,
             /** url  */

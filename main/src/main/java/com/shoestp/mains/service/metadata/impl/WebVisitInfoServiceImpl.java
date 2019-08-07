@@ -13,8 +13,10 @@ import eu.bitwalker.useragentutils.UserAgent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
+import org.start2do.utils.DateTimeUtil;
 
 import javax.annotation.Resource;
+import java.time.Instant;
 import java.util.Date;
 
 /** Created by IntelliJ IDEA. User: lijie@shoestp.cn Date: 2019/5/20 Time: 11:17 */
@@ -66,8 +68,9 @@ public class WebVisitInfoServiceImpl implements WebVisitInfoService {
     webVisitInfo.setImg(pojo.getImg());
     webVisitInfo.setPageWaitTime(pojo.getPageWaitTime());
     webVisitInfo.setTimeOnPage(pojo.getTimeOnPage());
+    webVisitInfo.setSessionCreateTime(
+        DateTimeUtil.toLocalDateTime(Instant.ofEpochMilli(pojo.getSession_create_time())));
     webVisitInfo.setSession(pojo.getSession());
-    webVisitInfo.setSessionCreateTime(pojo.getSession_create_time());
     webVisitInfo.setCreateTime(new Date());
     return webVisitInfoDao.save(webVisitInfo);
     //    return null;

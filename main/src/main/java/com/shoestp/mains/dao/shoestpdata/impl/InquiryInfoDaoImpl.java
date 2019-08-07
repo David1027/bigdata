@@ -54,10 +54,10 @@ public class InquiryInfoDaoImpl {
       return 0;
     } else {
       for (InquiryTypeEnum item : InquiryTypeEnum.values()) {
-        if (sou.equals(item.getName())) {
-          selectFrom.where(info.type.eq(item));
-          break;
-        }
+//        if (sou.equals(item.getName())) {
+//          selectFrom.where(info.type.eq(item));
+//          break;
+//        }
       }
     }
     selectFrom.where(info.createTime.between(startDate, endDate));

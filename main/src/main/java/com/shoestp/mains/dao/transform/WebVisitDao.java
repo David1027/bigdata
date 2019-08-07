@@ -8,7 +8,8 @@ import com.shoestp.mains.dao.BaseDao;
 import com.shoestp.mains.entitys.metadata.PltCountry;
 import com.shoestp.mains.entitys.metadata.QWebVisitInfo;
 import com.shoestp.mains.entitys.metadata.WebVisitInfo;
-import com.shoestp.mains.entitys.metadata.enums.EquipmentPlatform;
+import com.shoestp.mains.entitys.metadata.enums.DeviceTypeEnum;
+import com.shoestp.mains.enums.flow.SourceTypeEnum;
 
 import org.springframework.stereotype.Repository;
 
@@ -21,36 +22,17 @@ import org.springframework.stereotype.Repository;
 public class WebVisitDao extends BaseDao<WebVisitInfo> {
 
   /**
-   * 根据时间获取国家列表
+   * 根据来源设备，时间获取记录列表
    *
-   * @param start
-   * @param end
-   * @return
+   * @param start 开始时间
+   * @param end 结束时间
+   * @return List<WebVisitInfo> 源数据集合对象
    */
-  public List<PltCountry> getCountryList(Date start, Date end) {
-    QWebVisitInfo qWebVisitInfo = QWebVisitInfo.webVisitInfo;
-    List<PltCountry> results =
-        getQuery()
-            .select(qWebVisitInfo.location)
-            .where(qWebVisitInfo.createTime.between(start, end))
-            .groupBy(qWebVisitInfo.location)
-            .from(qWebVisitInfo)
-            .fetchResults()
-            .getResults();
-    return results;
-  }
-
-  /**
-   * 根据时间获取记录列表
-   *
-   * @param start
-   * @param end
-   * @return
-   */
-  public List<WebVisitInfo> getWebVisitInfo(Date start, Date end) {
+  public List<WebVisitInfo> getWebVisitInfo(DeviceTypeEnum deviceTypeEnum, Date start, Date end) {
     QWebVisitInfo qWebVisitInfo = QWebVisitInfo.webVisitInfo;
     return getQuery()
         .select(qWebVisitInfo)
+        .where(qWebVisitInfo.equipmentPlatform.eq(deviceTypeEnum))
         .where(qWebVisitInfo.createTime.between(start, end))
         .from(qWebVisitInfo)
         .fetchResults()
@@ -76,20 +58,18 @@ public class WebVisitDao extends BaseDao<WebVisitInfo> {
 
   /**
    * 根据设备来源，时间获取访客数
-   * @param equipmentPlatform 设备来源
+   *
+   * @param deviceTypeEnum 设备来源
    * @param start 开始时间
    * @param end 结束时间
    * @return Integer
    */
-  public Integer countVisitor(
-      EquipmentPlatform equipmentPlatform, Date start, Date end) {
+  public Integer countVisitor(DeviceTypeEnum deviceTypeEnum, Date start, Date end) {
     QWebVisitInfo qWebVisitInfo = QWebVisitInfo.webVisitInfo;
     JPAQuery<WebVisitInfo> query =
-        getQuery()
-            .select(qWebVisitInfo)
-            .where(qWebVisitInfo.createTime.between(start, end));
-    if (equipmentPlatform != null) {
-      query.where(qWebVisitInfo.equipmentPlatform.eq(equipmentPlatform));
+        getQuery().select(qWebVisitInfo).where(qWebVisitInfo.createTime.between(start, end));
+    if (deviceTypeEnum != null) {
+      query.where(qWebVisitInfo.equipmentPlatform.eq(deviceTypeEnum));
     }
     return (int) query.groupBy(qWebVisitInfo.ip).from(qWebVisitInfo).fetchCount();
   }

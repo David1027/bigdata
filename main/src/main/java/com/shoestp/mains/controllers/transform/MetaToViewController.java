@@ -29,12 +29,45 @@ public class MetaToViewController {
 
   @Resource private MetaToViewService metaToViewService;
 
-  @GetMapping(value = "/tocountry")
-  public Object toCountry(
+  /**
+   * 源数据转化real数据总表
+   *
+   * @param httpRequest 请求参数
+   * @param start 开始时间
+   * @param end 结束时间
+   * @return Object对象
+   */
+  @GetMapping(value = "/toreal")
+  public Object toReal(
       HttpServletRequest httpRequest,
-      @DateTimeFormat(pattern = "yyyy-MM-dd") Date start,
-      @DateTimeFormat(pattern = "yyyy-MM-dd") Date end) {
+      @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") Date start,
+      @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") Date end) {
     logger.debug(httpRequest.getCookies());
-    return MessageResult.builder().code(1).result(metaToViewService.toCountry(start, end)).build();
+    return MessageResult.builder().code(1).result(metaToViewService.toReal(start, end)).build();
+  }
+
+  /**
+   * 源数据转化flow流量表
+   * @param httpRequest 请求参数
+   * @param start 开始时间
+   * @param end 结束时间
+   * @return Object对象
+   */
+  @GetMapping(value = "/toflow")
+  public Object toFlow(
+      HttpServletRequest httpRequest,
+      @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") Date start,
+      @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") Date end) {
+    logger.debug(httpRequest.getCookies());
+    return MessageResult.builder().code(1).result(metaToViewService.toFlow(start, end)).build();
+  }
+
+  @GetMapping(value = "/toflowpage")
+  public Object toFlowPage(
+          HttpServletRequest httpRequest,
+          @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") Date start,
+          @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") Date end) {
+    logger.debug(httpRequest.getCookies());
+    return MessageResult.builder().code(1).result(metaToViewService.toFlowPage(start, end)).build();
   }
 }

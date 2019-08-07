@@ -66,15 +66,16 @@ public class InquiryInfoDaoImpl {
   }
 
   public List<Data> getInquiryKeyword(InquiryTypeEnum type, Date startTime, Date endTime) {
-    QInquiryInfo info = QInquiryInfo.inquiryInfo;
-    JPAQuery<Data> selectFrom =
-        queryFactory
-            .select(
-                Projections.bean(
-                    Data.class, info.keyword.as("key"), info.usrMainPurchase.as("number")))
-            .from(info);
-    selectFrom.where(info.type.eq(type)).where(info.createTime.between(startTime, endTime));
-    List<Data> fetch = selectFrom.fetch();
-    return fetch;
+    //    QInquiryInfo info = QInquiryInfo.inquiryInfo;
+    //    JPAQuery<Data> selectFrom =
+    //        queryFactory
+    //            .select(
+    //                Projections.bean(
+    //                    Data.class, info.keyword.as("key"), info.usrMainPurchase.as("number")))
+    //            .from(info);
+    //    selectFrom.where(info.type.eq(type)).where(info.createTime.between(startTime, endTime));
+    //    List<Data> fetch = selectFrom.fetch();
+    //    return fetch;
+    return null;
   }
 }

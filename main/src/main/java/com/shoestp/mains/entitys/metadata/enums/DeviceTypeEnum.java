@@ -10,6 +10,8 @@ public enum DeviceTypeEnum {
   PC,
   /** 移动端 */
   WAP,
+  /** app-苹果 */
   IOS,
+  /** app-安卓 */
   ANDROID
 }

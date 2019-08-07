@@ -38,7 +38,6 @@ public class InquiryInfo {
   @OneToOne
   @JoinColumn(name = "country")
   private PltCountry country;
-
   /** 图片,商品询盘:商品主图,供应商询盘:供应商Logo,着陆页:供应商Logo */
   private String img;
   /** 商家id usr_main */
@@ -47,7 +46,7 @@ public class InquiryInfo {
   private UserInfo userInfo;
 
   /** 设备类型：PC-电脑端，WAP-移动端 */
-  @Enumerated(EnumType.STRING)
+  @Enumerated(EnumType.ORDINAL)
   @Column(name = "device_type")
   private DeviceTypeEnum deviceType;
   /** * 创建时间 */

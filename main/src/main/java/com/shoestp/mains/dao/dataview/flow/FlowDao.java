@@ -23,6 +23,15 @@ public class FlowDao extends BaseDao<DataViewFlow> {
   @Resource private FlowRepository flowRepository;
 
   /**
+   * 新增流量表
+   *
+   * @param dataViewFlow 流量表
+   */
+  public void saveFlow(DataViewFlow dataViewFlow) {
+    flowRepository.save(dataViewFlow);
+  }
+
+  /**
    * 根据设备来源，当天时间，流量来源分组获取访客数
    *
    * @author: lingjian @Date: 2019/5/10 16:45

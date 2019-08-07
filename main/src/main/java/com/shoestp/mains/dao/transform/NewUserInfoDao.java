@@ -3,10 +3,9 @@ package com.shoestp.mains.dao.transform;
 import java.util.Date;
 import java.util.List;
 
-import com.querydsl.jpa.impl.JPAQuery;
 import com.shoestp.mains.dao.BaseDao;
-import com.shoestp.mains.entitys.metadata.*;
-import com.shoestp.mains.entitys.metadata.enums.EquipmentPlatform;
+import com.shoestp.mains.entitys.metadata.QUserInfo;
+import com.shoestp.mains.entitys.metadata.UserInfo;
 
 import org.springframework.stereotype.Repository;
 

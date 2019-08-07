@@ -40,7 +40,6 @@ public class WebVisitInfo {
   @Enumerated(EnumType.ORDINAL)
   @Column(name = "equipment_platform")
   private DeviceTypeEnum equipmentPlatform;
-
   /** * 访客来自于 */
   @Column(columnDefinition = " text null ")
   private String referer;

@@ -31,6 +31,9 @@ public class WebVisitInfo {
   /** * 页面URL */
   @Column(columnDefinition = " text null ")
   private String url;
+  /** 页面类型 */
+  @Column(name = "page_type")
+  private AccessType pageType;
   /** 页面的URI 没有HOST数据 */
   private String uri;
   /** * 访客UA */

@@ -1,14 +1,10 @@
 package com.shoestp.mains.entitys.metadata;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
 import lombok.Data;
 import lombok.ToString;
+
+import javax.persistence.*;
+import java.util.Set;
 
 /**
  * -鞋贸港国家表
@@ -35,4 +31,7 @@ public class PltCountry {
 
   @Column(length = 50)
   private String name;
+  /** 实体类关系映射 */
+  @OneToMany(mappedBy = "country")
+  private Set<UserInfo> userInfos;
 }

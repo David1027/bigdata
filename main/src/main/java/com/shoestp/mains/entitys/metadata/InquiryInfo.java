@@ -19,30 +19,33 @@ public class InquiryInfo {
   @Enumerated(EnumType.STRING)
   @Column(name = "type")
   private InquiryTypeEnum type;
-  /** * 询盘的ID */
+  /** * 询盘的ID 原鞋贸港询盘表的ID */
   @Column(name = "inquiry_id")
   private Integer inquiryId;
-  /** * 来自于那个链接 */
+  /** * 来自于那个链接,追踪提交询盘入口 */
   private String url;
-  /** * 来自于那个页面 */
+  /** * 来自于那个页面,追踪从哪个搜索引擎进入 */
   private String referer;
-  /** * 名称 */
+  /** * 名称 产品询盘: 产品标题 ,供应商:供应商名称, 着陆页:供应商名称 */
   private String name;
   /** * 商家或商品pkey */
   private Integer pkey;
   /** * 金额 */
-  private double money;
-  /** 图片 */
+  private Double money;
+  /** * ip */
+  private String ip;
+  /** 国家 */
+  @OneToOne
+  @JoinColumn(name = "country")
+  private PltCountry country;
+
+  /** 图片,商品询盘:商品主图,供应商询盘:供应商Logo,着陆页:供应商Logo */
   private String img;
   /** 商家id usr_main */
   @ManyToOne
   @JoinColumn(name = "user_info")
   private UserInfo userInfo;
-  /** 采购商id usr_main */
-  @Column(name = "usr_main_purchase")
-  private Integer usrMainPurchase;
-  /** 商品关键字 推送商品名称 */
-  private String keyword;
+
   /** 设备类型：PC-电脑端，WAP-移动端 */
   @Enumerated(EnumType.STRING)
   @Column(name = "device_type")

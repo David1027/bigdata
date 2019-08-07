@@ -110,7 +110,7 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
       @Override
       public void onNext(GRPC_SendDataProto.Inquiry inquiry) {
         InquiryInfo inquiryInfo = new InquiryInfo();
-        inquiryInfo.setType(InquiryTypeEnum.OTHER);
+        //        inquiryInfo.setType(InquiryTypeEnum.OTHER);
         boolean b = true;
         switch (inquiry.getType()) {
           case 1:
@@ -132,10 +132,10 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
         }
         if (b) {
           for (InquiryTypeEnum item : InquiryTypeEnum.values()) {
-            if (inquiry.getType() == item.getSup()) {
-              inquiryInfo.setType(item);
-              break;
-            }
+            //                if (inquiry.getType() == item.getSup()) {
+            //              inquiryInfo.setType(item);
+            //              break;
+            //            }
           }
         }
         inquiryInfo.setInquiryId(inquiry.getInquiryId());
@@ -144,12 +144,12 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
         inquiryInfo.setName(inquiry.getName());
         inquiryInfo.setPkey(inquiry.getPkey());
         inquiryInfo.setMoney(inquiry.getMoney());
-//        inquiryInfo.setIp(inquiry.getIp());
-//        inquiryInfo.setCountry(city.find(inquiry.getIp())[0]);
+        //        inquiryInfo.setIp(inquiry.getIp());
+        //        inquiryInfo.setCountry(city.find(inquiry.getIp())[0]);
         inquiryInfo.setImg(inquiry.getImg());
-        inquiryInfo.setUsrMainPurchase(inquiry.getUsrMainPurchase());
-//        inquiryInfo.setUsrMainSupplier(inquiry.getUsrMainSupplier());
-        inquiryInfo.setKeyword(inquiry.getKeyword());
+        //        inquiryInfo.setUsrMainPurchase(inquiry.getUsrMainPurchase());
+        //        inquiryInfo.setUsrMainSupplier(inquiry.getUsrMainSupplier());
+        //        inquiryInfo.setKeyword(inquiry.getKeyword());
         inquiryInfo.setDeviceType(DeviceTypeEnum.PC);
         inquiryDao.save(inquiryInfo);
       }

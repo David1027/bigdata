@@ -527,15 +527,15 @@ public class SellerConver extends BaseSchedulers {
       sList.add(value);
     }
     usrDao.saveAll(sList);
-    for (SearchWordInfo search : searInfo) {
-      if (search.getUserId() == -1) {
+//    for (SearchWordInfo search : searInfo) {
+//      if (search.getUserId() == -1) {
         // TODO 调用修改 发送ip
-        usrDao.updBySign(search.getIp(), search.getKeyword());
-      } else {
-        // TODO 调用修改 发送userId
-        usrDao.updBySign(search.getUserId().toString(), search.getKeyword());
-      }
-    }
+//        usrDao.updBySign(search.getIp(), search.getKeyword());
+//      } else {
+//         TODO 调用修改 发送userId
+//        usrDao.updBySign(search.getUserId().toString(), search.getKeyword());
+//      }
+//    }
     /* for (Data d : inquiryKeyword) {
       // TODO 调用修改 发送userId
       usrDao.updBySign(d.getNumber().toString(), d.getKey());

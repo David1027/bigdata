@@ -1,6 +1,8 @@
 package com.shoestp.mains.entitys.metadata;
 
 import com.shoestp.mains.entitys.metadata.enums.DeviceTypeEnum;
+import com.shoestp.mains.enums.flow.AccessTypeEnum;
+
 import lombok.Data;
 
 import javax.persistence.*;
@@ -32,8 +34,9 @@ public class WebVisitInfo {
   @Column(columnDefinition = " text null ")
   private String url;
   /** 页面类型 */
+  @Enumerated(EnumType.STRING)
   @Column(name = "page_type")
-  private AccessType pageType;
+  private AccessTypeEnum pageType;
   /** 页面的URI 没有HOST数据 */
   private String uri;
   /** * 访客UA */

@@ -5,11 +5,9 @@ import java.util.List;
 
 import com.querydsl.jpa.impl.JPAQuery;
 import com.shoestp.mains.dao.BaseDao;
-import com.shoestp.mains.entitys.metadata.PltCountry;
 import com.shoestp.mains.entitys.metadata.QWebVisitInfo;
 import com.shoestp.mains.entitys.metadata.WebVisitInfo;
 import com.shoestp.mains.entitys.metadata.enums.DeviceTypeEnum;
-import com.shoestp.mains.enums.flow.SourceTypeEnum;
 
 import org.springframework.stereotype.Repository;
 

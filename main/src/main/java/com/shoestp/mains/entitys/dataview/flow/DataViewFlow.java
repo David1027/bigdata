@@ -22,7 +22,9 @@ import lombok.Data;
 @Entity
 @Table(name = "data_view_flow")
 public class DataViewFlow {
-  @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private Integer id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer id;
   /** 设备类型：PC-电脑端，WAP-移动端 */
   @Enumerated(EnumType.STRING)
   @Column(name = "device_type")
@@ -37,6 +39,9 @@ public class DataViewFlow {
   /** 访客数 */
   @Column(name = "visitor_count")
   private Integer visitorCount;
+  /** 询盘数 */
+  @Column(name = "inquiry_count")
+  private Integer inquiryCount;
   /** 创建时间 */
   @Column(name = "create_time")
   private Date createTime;

@@ -16,6 +16,7 @@ import com.shoestp.mains.entitys.dataview.flow.DataViewFlowPage;
 import com.shoestp.mains.entitys.dataview.real.DataViewReal;
 import com.shoestp.mains.entitys.metadata.WebVisitInfo;
 import com.shoestp.mains.entitys.metadata.enums.DeviceTypeEnum;
+import com.shoestp.mains.enums.flow.AccessTypeEnum;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.service.transform.MetaToViewService;
 
@@ -153,6 +154,26 @@ public class MetaToViewServiceImpl implements MetaToViewService {
 
   @Override
   public List<DataViewFlowPage> toFlowPage(Date start, Date end) {
-    return null;
+    List<DataViewFlowPage> list = new ArrayList<>();
+
+    for (AccessTypeEnum a : AccessTypeEnum.values()) {
+      DataViewFlowPage flowPage = new DataViewFlowPage();
+      // 页面类型
+      flowPage.setAccessType(a);
+      // 浏览量
+
+      // 访客数
+      // 点击次数
+      // 点击人数
+      // 点击率
+      // 跳失率
+      // 平均停留时长
+
+      // 创建时间
+      flowPage.setCreateTime(new Date());
+      list.add(flowPage);
+    }
+
+    return list;
   }
 }

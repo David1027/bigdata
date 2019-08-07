@@ -1,15 +1,9 @@
 package com.shoestp.mains.entitys.metadata;
 
-import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
 import lombok.Data;
+
+import javax.persistence.*;
+import java.util.Date;
 
 @Data
 @Entity
@@ -27,6 +21,10 @@ public class Favorite {
   /** 产品id */
   @Column(name = "pdt_id")
   private Integer pdtId;
+  /** 和UserInfo进行关联,日后可以对该用户收藏进行追踪 */
+  @ManyToOne
+  @JoinColumn(name = "user_id")
+  private UserInfo userInfo;
   /** 产品名称 */
   private String name;
   /** 产品图片 */

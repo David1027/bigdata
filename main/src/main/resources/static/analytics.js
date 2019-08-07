@@ -79,13 +79,15 @@
                         /** 设置会话ID  */
                         _that.cookie.set("__" + _that.config.key + "_session", data.result.session)
                         /** 设置回话创建时间  */
-                        _that.cookie.set("__" + _that.config.key + "_session_create_time", new Date())
+                        var date = new Date();
+                        _that.cookie.set("__" + _that.config.key + "_session_time", date)
                         _that.cookie.set("__" + _that.config.key + "_UUID", data.result.sign,
                             "d360")
                         _that.data.userInfo = {
                             userName: data.result.sign
                         }
-                        console.log(_that.data.userInfo)
+                        _that.data.session = data.result.session
+                        _that.data.session_create_time = date
                     })
             }
             // window.onbeforeunload = this.send

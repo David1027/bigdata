@@ -8,5 +8,7 @@ public enum RegisterTypeEnum {
   /** 采购商 */
   PURCHASE,
   /** 供应商 */
-  SUPPLIER
+  SUPPLIER,
+  /** 游客 */
+  VISITOR
 }

@@ -4,7 +4,7 @@ import com.shoestp.mains.config.AppConfig;
 import com.shoestp.mains.controllers.analytics.view.WebVisitInfoView;
 import com.shoestp.mains.dao.shoestpdata.WebVisitInfoDao;
 import com.shoestp.mains.entitys.metadata.WebVisitInfo;
-import com.shoestp.mains.entitys.metadata.enums.EquipmentPlatform;
+import com.shoestp.mains.entitys.metadata.enums.DeviceTypeEnum;
 import com.shoestp.mains.service.metadata.AddressService;
 import com.shoestp.mains.service.metadata.UserInfoService;
 import com.shoestp.mains.service.metadata.WebVisitInfoService;
@@ -45,14 +45,14 @@ public class WebVisitInfoServiceImpl implements WebVisitInfoService {
     switch (UserAgent.parseUserAgentString(ua).getOperatingSystem().getDeviceType()) {
       case MOBILE:
       case TABLET:
-        webVisitInfo.setEquipmentPlatform(EquipmentPlatform.WAP);
+        webVisitInfo.setEquipmentPlatform(DeviceTypeEnum.WAP);
         break;
       case UNKNOWN:
       case COMPUTER:
       case WEARABLE:
       case GAME_CONSOLE:
       default:
-        webVisitInfo.setEquipmentPlatform(EquipmentPlatform.PC);
+        webVisitInfo.setEquipmentPlatform(DeviceTypeEnum.PC);
     }
     webVisitInfo.setIp(ip);
     webVisitInfo.setUserId(userInfoService.save(pojo.getUserInfo()));

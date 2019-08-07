@@ -1,6 +1,6 @@
 package com.shoestp.mains.entitys.metadata;
 
-import com.shoestp.mains.entitys.metadata.enums.EquipmentPlatform;
+import com.shoestp.mains.entitys.metadata.enums.DeviceTypeEnum;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -39,7 +39,7 @@ public class WebVisitInfo {
   /** 设备平台标识 */
   @Enumerated(EnumType.ORDINAL)
   @Column(name = "equipment_platform")
-  private EquipmentPlatform equipmentPlatform;
+  private DeviceTypeEnum equipmentPlatform;
 
   /** * 访客来自于 */
   @Column(columnDefinition = " text null ")

@@ -1,7 +1,7 @@
 package com.shoestp.mains.dao.shoestpdata;
 
 import com.shoestp.mains.entitys.metadata.InquiryInfo;
-import com.shoestp.mains.enums.flow.DeviceTypeEnum;
+import com.shoestp.mains.entitys.metadata.enums.DeviceTypeEnum;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
 import com.shoestp.mains.views.dataview.metadata.Data;

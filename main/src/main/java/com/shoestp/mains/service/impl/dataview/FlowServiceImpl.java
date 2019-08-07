@@ -3,7 +3,7 @@ package com.shoestp.mains.service.impl.dataview;
 import com.shoestp.mains.dao.dataview.flow.FlowDao;
 import com.shoestp.mains.dao.dataview.flow.FlowPageDao;
 import com.shoestp.mains.enums.flow.AccessTypeEnum;
-import com.shoestp.mains.enums.flow.DeviceTypeEnum;
+import com.shoestp.mains.entitys.metadata.enums.DeviceTypeEnum;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.service.dataview.FlowService;
 import com.shoestp.mains.utils.dateUtils.CustomDoubleSerialize;

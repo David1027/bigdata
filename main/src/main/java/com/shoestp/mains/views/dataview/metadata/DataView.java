@@ -1,6 +1,6 @@
 package com.shoestp.mains.views.dataview.metadata;
 
-import com.shoestp.mains.enums.flow.DeviceTypeEnum;
+import com.shoestp.mains.entitys.metadata.enums.DeviceTypeEnum;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import lombok.Data;
 

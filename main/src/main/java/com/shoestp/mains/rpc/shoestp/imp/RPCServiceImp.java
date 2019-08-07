@@ -1,21 +1,14 @@
 package com.shoestp.mains.rpc.shoestp.imp;
 
-import java.util.Date;
-
-import javax.annotation.Resource;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.shoestp.mains.dao.metadata.FavoriteDao;
 import com.shoestp.mains.dao.metadata.UserInfoDao;
 import com.shoestp.mains.dao.shoestpdata.InquiryInfoDao;
 import com.shoestp.mains.entitys.metadata.InquiryInfo;
 import com.shoestp.mains.entitys.metadata.SearchWordInfo;
 import com.shoestp.mains.entitys.metadata.WebVisitInfo;
-import com.shoestp.mains.enums.flow.DeviceTypeEnum;
+import com.shoestp.mains.entitys.metadata.enums.DeviceTypeEnum;
+import com.shoestp.mains.entitys.metadata.enums.RegisterTypeEnum;
+import com.shoestp.mains.entitys.metadata.enums.SexEnum;
 import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
 import com.shoestp.mains.rpc.shoestp.pojo.GRPC_ResultProto;
 import com.shoestp.mains.rpc.shoestp.pojo.GRPC_SendDataProto;
@@ -26,8 +19,14 @@ import com.shoestp.mains.service.metadata.InquiryInfoService;
 import com.shoestp.mains.service.metadata.SearchWordInfoService;
 import com.shoestp.mains.service.metadata.WebVisitInfoService;
 import com.shoestp.mains.utils.iputils.City;
-
 import io.grpc.stub.StreamObserver;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
+import java.util.Date;
 
 /** Created by IntelliJ IDEA. User: lijie@shoestp.cn Date: 2019/5/14 Time: 15:00 */
 @Component
@@ -55,7 +54,7 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
         SearchWordInfo searchWordInfo = new SearchWordInfo();
         searchWordInfo.setIp(searchInfo.getIp());
         searchWordInfo.setKeyword(searchInfo.getKeyword());
-        searchWordInfo.setUserId(searchInfo.getUserId());
+//        searchWordInfo.setUserId(searchInfo.getUserId());
         searchWordInfo.setCountry(city.find(searchInfo.getIp())[0]);
         searchWordInfo.setCreateTime(new Date());
         searchWordInfoService.save(searchWordInfo);
@@ -86,12 +85,6 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
         webVisitInfo.setUserAgent(viewInfo.getUseragent());
         webVisitInfo.setReferer(viewInfo.getReferer());
         webVisitInfo.setIp(viewInfo.getIp());
-//        webVisitInfo.setUserId(viewInfo.getUserId());
-//        webVisitInfo.setVisitName(viewInfo.getVisitName());
-        String[] str = city.find(viewInfo.getIp());
-        if (str != null && str.length > 0) {
-//          webVisitInfo.setLocation(str[0]);
-        }
         webVisitInfo.setCreateTime(new Date());
         webVisitInfoService.save(webVisitInfo);
       }
@@ -117,7 +110,7 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
       @Override
       public void onNext(GRPC_SendDataProto.Inquiry inquiry) {
         InquiryInfo inquiryInfo = new InquiryInfo();
-        inquiryInfo.setType(InquiryTypeEnum.OTHER);
+        //        inquiryInfo.setType(InquiryTypeEnum.OTHER);
         boolean b = true;
         switch (inquiry.getType()) {
           case 1:
@@ -139,10 +132,10 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
         }
         if (b) {
           for (InquiryTypeEnum item : InquiryTypeEnum.values()) {
-            if (inquiry.getType() == item.getSup()) {
-              inquiryInfo.setType(item);
-              break;
-            }
+            //                if (inquiry.getType() == item.getSup()) {
+            //              inquiryInfo.setType(item);
+            //              break;
+            //            }
           }
         }
         inquiryInfo.setInquiryId(inquiry.getInquiryId());
@@ -151,12 +144,12 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
         inquiryInfo.setName(inquiry.getName());
         inquiryInfo.setPkey(inquiry.getPkey());
         inquiryInfo.setMoney(inquiry.getMoney());
-        inquiryInfo.setIp(inquiry.getIp());
-        inquiryInfo.setCountry(city.find(inquiry.getIp())[0]);
+        //        inquiryInfo.setIp(inquiry.getIp());
+        //        inquiryInfo.setCountry(city.find(inquiry.getIp())[0]);
         inquiryInfo.setImg(inquiry.getImg());
-        inquiryInfo.setUsrMainPurchase(inquiry.getUsrMainPurchase());
-        inquiryInfo.setUsrMainSupplier(inquiry.getUsrMainSupplier());
-        inquiryInfo.setKeyword(inquiry.getKeyword());
+        //        inquiryInfo.setUsrMainPurchase(inquiry.getUsrMainPurchase());
+        //        inquiryInfo.setUsrMainSupplier(inquiry.getUsrMainSupplier());
+        //        inquiryInfo.setKeyword(inquiry.getKeyword());
         inquiryInfo.setDeviceType(DeviceTypeEnum.PC);
         inquiryDao.save(inquiryInfo);
       }
@@ -182,29 +175,29 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
       public void onNext(UserInfo info) {
         com.shoestp.mains.entitys.metadata.UserInfo userInfo =
             new com.shoestp.mains.entitys.metadata.UserInfo();
-//        userInfo.setCountry(info.getCountry());
-//        switch (info.getSex()) {
-//          case 0:
-//            userInfo.setSex(SexEnum.UNKNOWN);
-//            break;
-//          case 1:
-//            userInfo.setSex(SexEnum.MAN);
-//            break;
-//          case 2:
-//            userInfo.setSex(SexEnum.WOMAN);
-//            break;
-//          default:
-//            userInfo.setSex(SexEnum.UNKNOWN);
-//            break;
-//        }
-//        if (info.getType() == 0) {
-//          userInfo.setType(RegisterTypeEnum.PURCHASE);
-//        } else {
-//          userInfo.setType(RegisterTypeEnum.SUPPLIER);
-//        }
+        //        userInfo.setCountry(info.getCountry());
+        switch (info.getSex()) {
+          case 0:
+            userInfo.setSex(SexEnum.UNKNOWN);
+            break;
+          case 1:
+            userInfo.setSex(SexEnum.MAN);
+            break;
+          case 2:
+            userInfo.setSex(SexEnum.WOMAN);
+            break;
+          default:
+            userInfo.setSex(SexEnum.UNKNOWN);
+            break;
+        }
+        if (info.getType() == 0) {
+          userInfo.setType(RegisterTypeEnum.PURCHASE);
+        } else {
+          userInfo.setType(RegisterTypeEnum.SUPPLIER);
+        }
         userInfo.setUserId(info.getUserId());
         userInfo.setName(info.getName());
-//        userInfo.setProvince(info.getProvince());
+        //        userInfo.setProvince(info.getProvince());
         userInfo.setCreateTime(new Date(info.getCreateDate()));
         userInfoDao.save(userInfo);
       }

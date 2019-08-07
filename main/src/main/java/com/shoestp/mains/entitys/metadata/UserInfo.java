@@ -6,6 +6,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Set;
 
 /**
  * The type User info.
@@ -55,4 +56,10 @@ public class UserInfo {
    * @modify Lijie HelloBox@outlook.com 2019-08-05 14:03 用户签名用于追踪
    */
   private String sign;
+  /** 最后访问时间 */
+  @Column(name = "last_visit_time")
+  private Date lastVisitTime;
+
+  @OneToMany(mappedBy = "userId")
+  private Set<WebVisitInfo> webVisitInfos;
 }

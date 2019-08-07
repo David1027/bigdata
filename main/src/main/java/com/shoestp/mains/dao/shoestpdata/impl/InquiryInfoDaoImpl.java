@@ -13,7 +13,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.shoestp.mains.entitys.metadata.InquiryInfo;
 import com.shoestp.mains.entitys.metadata.QInquiryInfo;
-import com.shoestp.mains.enums.flow.DeviceTypeEnum;
+import com.shoestp.mains.entitys.metadata.enums.DeviceTypeEnum;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
 import com.shoestp.mains.views.dataview.metadata.Data;

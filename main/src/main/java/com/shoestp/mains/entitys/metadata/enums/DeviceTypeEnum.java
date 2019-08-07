@@ -1,4 +1,4 @@
-package com.shoestp.mains.enums.flow;
+package com.shoestp.mains.entitys.metadata.enums;
 
 /**
  * @description: 设备来源
@@ -9,5 +9,7 @@ public enum DeviceTypeEnum {
   /** 电脑端 */
   PC,
   /** 移动端 */
-  WAP
+  WAP,
+  IOS,
+  ANDROID
 }

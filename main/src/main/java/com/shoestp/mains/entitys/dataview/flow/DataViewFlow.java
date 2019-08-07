@@ -1,6 +1,6 @@
 package com.shoestp.mains.entitys.dataview.flow;
 
-import com.shoestp.mains.enums.flow.DeviceTypeEnum;
+import com.shoestp.mains.entitys.metadata.enums.DeviceTypeEnum;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import java.util.Date;
 import javax.persistence.Column;

@@ -1,6 +1,6 @@
 package com.shoestp.mains.service.urlmatchdatautil;
 
-import com.shoestp.mains.Runs;
+import base.BaseTest;
 import com.shoestp.mains.dao.urlmatchdatautil.URLMatchDataDao;
 import com.shoestp.mains.entitys.urlmatchdatautil.URLMatchDataEntity;
 import com.shoestp.mains.entitys.urlmatchdatautil.enums.URLDataTypeEnum;
@@ -8,21 +8,10 @@ import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
-import javax.transaction.Transactional;
 
-@Rollback
-@Transactional
-@RunWith(SpringRunner.class)
-@ActiveProfiles("dev")
-@SpringBootTest(classes = Runs.class)
-class URLMatchDataUtilServiceTest {
+public class URLMatchDataUtilServiceTest extends BaseTest {
 
   @Resource private URLMatchDataDao matchDataDao;
   @Resource private URLMatchDataUtilService urlMatchDataUtilService;

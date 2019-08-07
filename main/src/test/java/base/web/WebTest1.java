@@ -1,4 +1,4 @@
-package web;
+package base.web;
 
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;

@@ -195,7 +195,7 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
         } else {
           userInfo.setType(RegisterTypeEnum.SUPPLIER);
         }
-        userInfo.setUserId(info.getUserId());
+//        userInfo.setUserId(info.getUserId());
         userInfo.setName(info.getName());
         //        userInfo.setProvince(info.getProvince());
         userInfo.setCreateTime(new Date(info.getCreateDate()));

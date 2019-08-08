@@ -3,9 +3,11 @@ package com.shoestp.mains.dao.transform;
 import java.util.Date;
 import java.util.List;
 
+import com.querydsl.jpa.impl.JPAQuery;
 import com.shoestp.mains.dao.BaseDao;
 import com.shoestp.mains.entitys.metadata.QUserInfo;
 import com.shoestp.mains.entitys.metadata.UserInfo;
+import com.shoestp.mains.entitys.metadata.enums.RegisterTypeEnum;
 
 import org.springframework.stereotype.Repository;
 
@@ -17,20 +19,37 @@ import org.springframework.stereotype.Repository;
 public class NewUserInfoDao extends BaseDao<UserInfo> {
 
   /**
-   * 根据设备来源,国家，时间获取访客数
+   * 根据注册类型，时间获取注册量
    *
+   * @author: lingjian @Date: 2019/8/8 15:48
+   * @param registerTypeEnum 注册类型
    * @param start 开始时间
    * @param end 结束时间
    * @return Integer
    */
-  public Integer countRegister(Date start, Date end) {
+  public Integer countRegister(RegisterTypeEnum registerTypeEnum, Date start, Date end) {
     QUserInfo qUserInfo = QUserInfo.userInfo;
-    return (int)
+    JPAQuery<UserInfo> query =
         getQuery()
             .select(qUserInfo)
             .where(qUserInfo.createTime.between(start, end))
-            .from(qUserInfo)
-            .fetchCount();
+            .from(qUserInfo);
+    if (registerTypeEnum != null) {
+      query.where(qUserInfo.type.eq(registerTypeEnum));
+    } else {
+      query.where(qUserInfo.type.ne(RegisterTypeEnum.VISITOR));
+    }
+    return (int) query.fetchCount();
+  }
+
+  public List<UserInfo> getRegisterList(Date start, Date end) {
+    QUserInfo qUserInfo = QUserInfo.userInfo;
+    return getQuery()
+        .select(qUserInfo)
+        .where(qUserInfo.createTime.between(start, end))
+        .from(qUserInfo)
+        .fetchResults()
+        .getResults();
   }
 
   @Override

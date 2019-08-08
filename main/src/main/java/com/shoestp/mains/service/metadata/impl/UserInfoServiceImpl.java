@@ -45,7 +45,7 @@ public class UserInfoServiceImpl implements UserInfoService {
         return info;
       }
       info = new UserInfo();
-      info.setUserId(pojo.getUserId());
+//      info.setUserId(pojo.getUserId());
       info.setName(pojo.getUserName());
       info.setLastVisitTime(new Date());
       return userInfoDao.save(info);

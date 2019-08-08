@@ -46,7 +46,6 @@ public class WebVisitInfo {
   @Enumerated(EnumType.ORDINAL)
   @Column(name = "equipment_platform")
   private DeviceTypeEnum equipmentPlatform;
-
   /** * 访客来自于 */
   @Column(columnDefinition = " text null ")
   private String referer;
@@ -96,5 +95,5 @@ public class WebVisitInfo {
    * <p>该页面总的点击次数,现在未对点击元素进行跟踪
    */
   @Column(name = "click_count")
-  private Long clickCount;
+  private Integer clickCount;
 }

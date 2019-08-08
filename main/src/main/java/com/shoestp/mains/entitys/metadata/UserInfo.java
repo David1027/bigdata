@@ -34,8 +34,8 @@ public class UserInfo {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
   /** 鞋贸港 usr_main表id */
-  @Column(name = "user_id")
-  private Integer userId;
+  @Column(name = "user_main_id")
+  private Integer userMainId;
   /** 用户类型 */
   @Enumerated(EnumType.STRING)
   private RegisterTypeEnum type;
@@ -75,5 +75,4 @@ public class UserInfo {
 
   @OneToMany(mappedBy = "userInfo")
   private Set<Favorite> favorites;
-
 }

@@ -21,6 +21,16 @@ public class InquiryRankDao extends BaseDao<DataViewInquiryRank> {
   @Resource private InquiryRankRepository inquiryRankRepository;
 
   /**
+   * 新增询盘排行表
+   *
+   * @author: lingjian @Date: 2019/8/8 15:08
+   * @param dataViewInquiryRank 询盘排行对象
+   */
+  public void saveInquiryRank(DataViewInquiryRank dataViewInquiryRank) {
+    inquiryRankRepository.save(dataViewInquiryRank);
+  }
+
+  /**
    * 根据时间，询盘类型获取数据（降序排序，取前50条，在时间之前的总和）
    *
    * @param inquiryType

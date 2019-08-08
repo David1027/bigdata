@@ -32,6 +32,7 @@ public class MetaToViewController {
   /**
    * 源数据转化real数据总表
    *
+   * @author: lingjian @Date: 2019/8/8 13:41
    * @param httpRequest 请求参数
    * @param start 开始时间
    * @param end 结束时间
@@ -48,6 +49,8 @@ public class MetaToViewController {
 
   /**
    * 源数据转化flow流量表
+   *
+   * @author: lingjian @Date: 2019/8/8 13:42
    * @param httpRequest 请求参数
    * @param start 开始时间
    * @param end 结束时间
@@ -62,12 +65,69 @@ public class MetaToViewController {
     return MessageResult.builder().code(1).result(metaToViewService.toFlow(start, end)).build();
   }
 
+  /**
+   * 源数据转化flowpage页面分析表
+   *
+   * @author: lingjian @Date: 2019/8/8 13:42
+   * @param httpRequest 请求参数
+   * @param start 开始时间
+   * @param end 结束时间
+   * @return Object对象
+   */
   @GetMapping(value = "/toflowpage")
   public Object toFlowPage(
-          HttpServletRequest httpRequest,
-          @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") Date start,
-          @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") Date end) {
+      HttpServletRequest httpRequest,
+      @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") Date start,
+      @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") Date end) {
     logger.debug(httpRequest.getCookies());
     return MessageResult.builder().code(1).result(metaToViewService.toFlowPage(start, end)).build();
+  }
+
+  /**
+   * 源数据转化inquiry询盘表
+   *
+   * @author: lingjian @Date: 2019/8/8 14:17
+   * @param httpRequest 请求参数
+   * @param start 开始时间
+   * @param end 结束时间
+   * @return Object对象
+   */
+  @GetMapping(value = "/toinquiry")
+  public Object toInquiry(
+      HttpServletRequest httpRequest,
+      @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") Date start,
+      @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") Date end) {
+    logger.debug(httpRequest.getCookies());
+    return MessageResult.builder().code(1).result(metaToViewService.toInquiry(start, end)).build();
+  }
+
+  /**
+   * 源数据转化inquiryrank询盘排行表
+   *
+   * @author: lingjian @Date: 2019/8/8 15:14
+   * @param httpRequest 请求参数
+   * @param start 开始时间
+   * @param end 结束时间
+   * @return Object对象
+   */
+  @GetMapping(value = "/toinquiryrank")
+  public Object toInquiryRank(
+      HttpServletRequest httpRequest,
+      @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") Date start,
+      @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") Date end) {
+    logger.debug(httpRequest.getCookies());
+    return MessageResult.builder()
+        .code(1)
+        .result(metaToViewService.toInquiryRank(start, end))
+        .build();
+  }
+
+  @GetMapping(value = "/touser")
+  public Object toUser(
+      HttpServletRequest httpRequest,
+      @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") Date start,
+      @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") Date end) {
+    logger.debug(httpRequest.getCookies());
+    return MessageResult.builder().code(1).result(metaToViewService.toUser(start, end)).build();
   }
 }

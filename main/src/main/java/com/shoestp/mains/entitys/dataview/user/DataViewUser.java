@@ -23,7 +23,7 @@ public class DataViewUser {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
-  /** 总访客数 */
+  /** 访客数 */
   @Column(name = "visitor_count")
   private Integer visitorCount;
   /** 新用户数 */
@@ -41,19 +41,6 @@ public class DataViewUser {
   /** 供应商数量 */
   @Column(name = "supplier_count")
   private Integer supplierCount;
-  ////////////////////////////////////////////////////
-  /** 新用户数 */
-  @Column(name = "new_visitor_count_total")
-  private Integer newVisitorCountTotal;
-  /** 老用户数 */
-  @Column(name = "old_visitor_count_total")
-  private Integer oldVisitorCountTotal;
-  /** 采购商数量 */
-  @Column(name = "purchase_count_total")
-  private Integer purchaseCountTotal;
-  /** 供应商数量 */
-  @Column(name = "supplier_count_total")
-  private Integer supplierCountTotal;
   /** 创建时间 */
   @Column(name = "create_time")
   private Date createTime;

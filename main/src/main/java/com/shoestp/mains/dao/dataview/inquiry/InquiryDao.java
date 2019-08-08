@@ -22,6 +22,16 @@ public class InquiryDao extends BaseDao<DataViewInquiry> {
   @Resource private InquiryRepository inquiryRepository;
 
   /**
+   * 新增询盘表
+   *
+   * @author: lingjian @Date: 2019/8/8 14:11
+   * @param dataViewInquiry 询盘对象
+   */
+  public void saveInquiry(DataViewInquiry dataViewInquiry) {
+    inquiryRepository.save(dataViewInquiry);
+  }
+
+  /**
    * 根据时间获取访客数，询盘数，询盘人数,返回集合
    *
    * @author: lingjian @Date: 2019/5/14 10:10

@@ -23,6 +23,16 @@ public class FlowPageDao extends BaseDao<DataViewFlowPage> {
   @Resource private FlowPageRepository flowPageRepository;
 
   /**
+   * 新增页面分析表
+   *
+   * @author: lingjian @Date: 2019/8/8 13:34
+   * @param dataViewFlowPage 页面分析对象
+   */
+  public void saveFlowPage(DataViewFlowPage dataViewFlowPage) {
+    flowPageRepository.save(dataViewFlowPage);
+  }
+
+  /**
    * 根据时间获取总访客数
    *
    * @author: lingjian @Date: 2019/5/17 11:40

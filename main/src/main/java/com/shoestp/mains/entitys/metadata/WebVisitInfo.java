@@ -2,7 +2,6 @@ package com.shoestp.mains.entitys.metadata;
 
 import com.shoestp.mains.entitys.metadata.enums.DeviceTypeEnum;
 import com.shoestp.mains.enums.flow.AccessTypeEnum;
-
 import lombok.Data;
 
 import javax.persistence.*;
@@ -14,11 +13,12 @@ import java.util.Date;
  *
  * @author lijie
  * @date 2019 /08/05
- * @modify Lijie HelloBox@outlook.com 2019-08-05 13:59 删除UsrmainId 字段
+ * @since
  * @modify Lijie HelloBox@outlook.com 2019-08-06 10:46 添加设备平台标识,页面URI,
  * @modify Lijie HelloBox@outlook.com 2019-08-06 11:01 添加会话次数
  * @modify Lijie HelloBox@outlook.com 2019-08-06 11:12 添加会话创建时间
  * @modify Lijie HelloBox@outlook.com 2019-08-06 11:38 删除访客名称
+ * @modify Lijie HelloBox@outlook.com 2019-08-08 09:57 添加点击次数
  */
 @Data
 @Entity
@@ -33,12 +33,12 @@ public class WebVisitInfo {
   /** * 页面URL */
   @Column(columnDefinition = " text null ")
   private String url;
-  /** 页面类型 */
-  @Enumerated(EnumType.STRING)
-  @Column(name = "page_type")
-  private AccessTypeEnum pageType;
   /** 页面的URI 没有HOST数据 */
   private String uri;
+  /** 页面类型 */
+  @Column(name = "page_type")
+  @Enumerated(EnumType.STRING)
+  private AccessTypeEnum pageType;
   /** * 访客UA */
   @Column(name = "user_agent", columnDefinition = " text null ")
   private String userAgent;
@@ -46,6 +46,7 @@ public class WebVisitInfo {
   @Enumerated(EnumType.ORDINAL)
   @Column(name = "equipment_platform")
   private DeviceTypeEnum equipmentPlatform;
+
   /** * 访客来自于 */
   @Column(columnDefinition = " text null ")
   private String referer;
@@ -89,4 +90,11 @@ public class WebVisitInfo {
   /** 会话创建时间 格式:2019-05-12 12:40:22 */
   @Column(name = "session_create_time")
   private LocalDateTime sessionCreateTime;
+  /**
+   * The Click count.
+   *
+   * <p>该页面总的点击次数,现在未对点击元素进行跟踪
+   */
+  @Column(name = "click_count")
+  private Long clickCount;
 }

@@ -14,7 +14,7 @@ import javax.transaction.Transactional;
 @Transactional
 @RunWith(SpringRunner.class)
 @ActiveProfiles("dev")
-@SpringBootTest(classes = Runs.class)
+@SpringBootTest(classes = Runs.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class BaseTest {
   @Test
   public void say() {};

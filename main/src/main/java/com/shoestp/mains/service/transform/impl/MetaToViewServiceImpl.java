@@ -28,8 +28,10 @@ import com.shoestp.mains.entitys.metadata.enums.RegisterTypeEnum;
 import com.shoestp.mains.enums.flow.AccessTypeEnum;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
+import com.shoestp.mains.pojo.PageSourcePojo;
 import com.shoestp.mains.service.transform.MetaToViewService;
 
+import com.shoestp.mains.service.urlmatchdatautil.URLMatchDataUtilService;
 import org.apache.tomcat.util.descriptor.web.SecurityRoleRef;
 import org.springframework.stereotype.Service;
 
@@ -49,6 +51,7 @@ public class MetaToViewServiceImpl implements MetaToViewService {
   @Resource private FlowPageDao flowPageDao;
   @Resource private InquiryDao inquiryDao;
   @Resource private InquiryRankDao inquiryRankDao;
+  @Resource private URLMatchDataUtilService urlMatchDataUtilService;
 
   /**
    * 判断DataViewReal的数据是否为空
@@ -196,13 +199,17 @@ public class MetaToViewServiceImpl implements MetaToViewService {
   /**
    * 源数据转化flow流量表
    *
-   * @author: lingjian @Date: 2019/8/8 13:35
    * @param start 开始时间
    * @param end 结束时间
    * @return List<DataViewFlow> flow流量表集合对象
    */
   @Override
   public List<DataViewFlow> toFlow(Date start, Date end) {
+    /**
+     * @modify Lijie HelloBox@outlook.com 2019-08-08 09:26
+     *     <p>添加逻辑注释
+     *     <p>从用元数据表页面访问表,转换规定时间内的数据到流量展示层
+     */
     List<DataViewFlow> list = new ArrayList<>();
     String[] arr = new String[] {"直接访问", "自然搜索"};
     for (DeviceTypeEnum d : DeviceTypeEnum.values()) {
@@ -222,20 +229,11 @@ public class MetaToViewServiceImpl implements MetaToViewService {
           for (WebVisitInfo w : webVisitInfo) {
             if (w.getEquipmentPlatform().equals(d)) {
               DataViewFlow temp = new DataViewFlow();
-              if (w.getReferer() == null) {
-                temp.setSourceType(SourceTypeEnum.INTERVIEW);
-                temp.setSourcePage("直接访问");
-              } else if (w.getReferer().indexOf("www.baidu") > 0) {
-                temp.setSourceType(SourceTypeEnum.BAIDU);
-                temp.setSourcePage("自然搜索");
-              } else if (w.getReferer().indexOf("www.google") > 0) {
-                temp.setSourceType(SourceTypeEnum.GOOGLE);
-                temp.setSourcePage("自然搜索");
-              } else {
-                temp.setSourceType(SourceTypeEnum.OTHER);
-                temp.setSourcePage("自然搜索");
-              }
-              if (temp.getSourceType().equals(s) && temp.getSourcePage().equals(a)) {
+              /** @modify Lijie HelloBox@outlook.com 2019-08-08 09:21 去查询页面来源及原页面 */
+              PageSourcePojo sourcePojo = urlMatchDataUtilService.getUrlType(w.getReferer());
+              temp.setSourcePage(sourcePojo.getSourcePage());
+              temp.setSourceType(sourcePojo.getSourceType());
+              if (s.equals(temp.getSourceType()) && a.equals(temp.getSourcePage())) {
                 if (!l.contains(w.getIp())) {
                   l.add(w.getIp());
                   count++;
@@ -320,6 +318,7 @@ public class MetaToViewServiceImpl implements MetaToViewService {
         flowPageDao.save(flowPage);
       }
     }
+
     return list;
   }
 

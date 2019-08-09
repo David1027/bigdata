@@ -6,5 +6,5 @@ import com.shoestp.mains.entitys.metadata.UserInfo;
 public interface UserInfoService {
   void save(UserInfo u);
 
-    UserInfo save(UserInfoPojo userInfo);
+  UserInfo save(UserInfoPojo userInfo);
 }

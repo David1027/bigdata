@@ -11,5 +11,5 @@ import java.util.List;
 @CacheDefaults(cacheName = "One_Minutes")
 public interface URLMatchDataDao extends PagingAndSortingRepository<URLMatchDataEntity, Integer> {
   @CacheResult
-  List<URLMatchDataEntity> findByType(URLDataTypeEnum type);
+  List<URLMatchDataEntity> findByTypeOrderByPriorityDesc(URLDataTypeEnum type);
 }

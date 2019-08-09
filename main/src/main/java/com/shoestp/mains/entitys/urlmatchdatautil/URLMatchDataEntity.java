@@ -28,4 +28,6 @@ public class URLMatchDataEntity {
   /** 该规则的类型 */
   @Enumerated(EnumType.STRING)
   private URLDataTypeEnum type;
+  /** 规则优先级 */
+  private Integer priority;
 }

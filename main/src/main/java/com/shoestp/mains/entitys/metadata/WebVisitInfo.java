@@ -46,12 +46,13 @@ public class WebVisitInfo {
   @Enumerated(EnumType.ORDINAL)
   @Column(name = "equipment_platform")
   private DeviceTypeEnum equipmentPlatform;
-  /** * 访客来自于 */
+
+  /** * 访客来自于 Http Referer头 */
   @Column(columnDefinition = " text null ")
   private String referer;
   /** * 访客IP */
   private String ip;
-  /** 多对一关系,用户标识 */
+  /** 多对一关系,用户唯一标识,存放于Cookie */
   @ManyToOne
   @JoinColumn(name = "user_id")
   private UserInfo userId;

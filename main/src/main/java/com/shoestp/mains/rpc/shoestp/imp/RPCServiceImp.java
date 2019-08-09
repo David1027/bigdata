@@ -5,7 +5,6 @@ import com.shoestp.mains.dao.metadata.UserInfoDao;
 import com.shoestp.mains.dao.shoestpdata.InquiryInfoDao;
 import com.shoestp.mains.entitys.metadata.InquiryInfo;
 import com.shoestp.mains.entitys.metadata.SearchWordInfo;
-import com.shoestp.mains.entitys.metadata.WebVisitInfo;
 import com.shoestp.mains.entitys.metadata.enums.DeviceTypeEnum;
 import com.shoestp.mains.entitys.metadata.enums.RegisterTypeEnum;
 import com.shoestp.mains.entitys.metadata.enums.SexEnum;
@@ -22,7 +21,6 @@ import com.shoestp.mains.utils.iputils.City;
 import io.grpc.stub.StreamObserver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -36,9 +34,11 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
   @Resource private WebVisitInfoService webVisitInfoService;
   @Resource private SearchWordInfoService searchWordInfoService;
   @Resource private InquiryInfoService inquiryInfoService;
-  @Autowired private UserInfoDao userInfoDao;
-  @Autowired private FavoriteDao favoriteDao;
-  @Autowired private InquiryInfoDao inquiryDao;
+  @Resource private UserInfoDao userInfoDao;
+  @Resource private FavoriteDao favoriteDao;
+
+  @Resource(name = "com.shoestp.mains.dao.shoestpdata.InquiryInfoDao")
+  private InquiryInfoDao inquiryDao;
 
   @Resource(name = "ipCity")
   private City city;
@@ -54,39 +54,10 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
         SearchWordInfo searchWordInfo = new SearchWordInfo();
         searchWordInfo.setIp(searchInfo.getIp());
         searchWordInfo.setKeyword(searchInfo.getKeyword());
-//        searchWordInfo.setUserId(searchInfo.getUserId());
+        //        searchWordInfo.setUserId(searchInfo.getUserId());
         searchWordInfo.setCountry(city.find(searchInfo.getIp())[0]);
         searchWordInfo.setCreateTime(new Date());
         searchWordInfoService.save(searchWordInfo);
-      }
-
-      @Override
-      public void onError(Throwable throwable) {
-        logger.error(throwable);
-      }
-
-      @Override
-      public void onCompleted() {
-        responseObserver.onCompleted();
-      }
-    };
-  }
-
-  @Override
-  public StreamObserver<GRPC_SendDataProto.ViewInfo> sendViewInfo(
-      StreamObserver<GRPC_ResultProto.Result> responseObserver) {
-    return new StreamObserver<GRPC_SendDataProto.ViewInfo>() {
-      @Override
-      public void onNext(GRPC_SendDataProto.ViewInfo viewInfo) {
-        logger.debug("++++++++++++++++++++++++++++++++++++++++++");
-        logger.debug(viewInfo);
-        WebVisitInfo webVisitInfo = new WebVisitInfo();
-        webVisitInfo.setUrl(viewInfo.getUrl());
-        webVisitInfo.setUserAgent(viewInfo.getUseragent());
-        webVisitInfo.setReferer(viewInfo.getReferer());
-        webVisitInfo.setIp(viewInfo.getIp());
-        webVisitInfo.setCreateTime(new Date());
-        webVisitInfoService.save(webVisitInfo);
       }
 
       @Override

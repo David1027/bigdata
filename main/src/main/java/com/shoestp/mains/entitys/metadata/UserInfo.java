@@ -54,6 +54,7 @@ public class UserInfo {
   /** * 创建时间 */
   @Column(name = "create_time")
   private Date createTime;
+
   /**
    * 用户签名,规则为UUID
    *

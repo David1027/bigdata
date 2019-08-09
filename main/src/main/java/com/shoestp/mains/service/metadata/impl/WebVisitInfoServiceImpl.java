@@ -8,6 +8,7 @@ import com.shoestp.mains.entitys.metadata.enums.DeviceTypeEnum;
 import com.shoestp.mains.service.metadata.AddressService;
 import com.shoestp.mains.service.metadata.UserInfoService;
 import com.shoestp.mains.service.metadata.WebVisitInfoService;
+import com.shoestp.mains.service.urlmatchdatautil.URLMatchDataUtilService;
 import com.shoestp.mains.utils.iputils.City;
 import eu.bitwalker.useragentutils.UserAgent;
 import org.apache.logging.log4j.LogManager;
@@ -26,6 +27,7 @@ public class WebVisitInfoServiceImpl implements WebVisitInfoService {
   @Resource private WebVisitInfoDao webVisitInfoDao;
   @Resource private UserInfoService userInfoService;
   @Resource private AddressService addressService;
+  @Resource private URLMatchDataUtilService urlMatchDataUtilService;
   @Resource private AppConfig appConfig;
 
   @Resource(name = "ipCity")
@@ -72,6 +74,8 @@ public class WebVisitInfoServiceImpl implements WebVisitInfoService {
         DateTimeUtil.toLocalDateTime(Instant.ofEpochMilli(pojo.getSession_create_time())));
     webVisitInfo.setSession(pojo.getSession());
     webVisitInfo.setCreateTime(new Date());
+    /** @modify Lijie HelloBox@outlook.com 2019-08-07 16:53 根据lingjiang要求添加页面类型 */
+    webVisitInfo.setPageType(urlMatchDataUtilService.getPageType(pojo.getUri()));
     return webVisitInfoDao.save(webVisitInfo);
   }
 }

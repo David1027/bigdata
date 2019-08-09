@@ -13,7 +13,8 @@
             /** 工程名称  */
             project: 'bigdata',
             /** 页面超时时间  */
-            timeout: 15
+            timeout: 15,
+            issend:true
         },
         /** 初始化数据  */
         init: function () {
@@ -98,7 +99,7 @@
                  *  浏览器将 Beacon 请求排队让它在空闲的时候执行并立即返回控制
                  *  它在unload状态下也可以异步发送，不阻塞页面刷新/跳转等操作。
                  * */
-                if (_that.issend) {
+                if (_that.config.issend) {
                     navigator.sendBeacon(_that.config.host + _that.config.url,
                         JSON.stringify(_that.data));
                 }
@@ -114,13 +115,12 @@
                 _that.cookie.set("__" + _that.config.key + "_session", null, -1)
                 _that.cookie.set("__" + _that.config.key + "_session_time", null, -1)
                 clearTimeout(t)
-                _that.issend = false
+                _that.config.issend = false
             }, _that.config.timeout * 60 * 1000)
 
         },
         /** 数据  */
         data: {
-            issend: true,
             /** 标题  */
             "title": document.title,
             /** url  */

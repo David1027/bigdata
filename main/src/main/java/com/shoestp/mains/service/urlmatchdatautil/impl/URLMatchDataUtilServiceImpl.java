@@ -3,6 +3,7 @@ package com.shoestp.mains.service.urlmatchdatautil.impl;
 import com.shoestp.mains.dao.urlmatchdatautil.URLMatchDataDao;
 import com.shoestp.mains.entitys.urlmatchdatautil.URLMatchDataEntity;
 import com.shoestp.mains.entitys.urlmatchdatautil.enums.URLDataTypeEnum;
+import com.shoestp.mains.enums.flow.AccessTypeEnum;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.pojo.PageSourcePojo;
 import com.shoestp.mains.service.urlmatchdatautil.URLMatchDataUtilService;
@@ -28,17 +29,17 @@ public class URLMatchDataUtilServiceImpl implements URLMatchDataUtilService {
   /**
    * Gets land name. 传入Url获取 该着陆页商家名称
    *
-   * @param url the url
+   * @param uri the url
    * @return the land name
    * @author lijie
    * @date 2019 /08/07
    * @since *
    */
   @Override
-  public String getLandingPageSupplierName(String url) {
+  public String getLandingPageSupplierName(String uri) {
     for (URLMatchDataEntity urlMatchDataEntity :
-        urlMatchDataDao.findByType(URLDataTypeEnum.LANDINGPAGE)) {
-      if (MyStringUtils.isMatch3(urlMatchDataEntity.getRegex(), url)) {
+        urlMatchDataDao.findByTypeOrderByPriorityDesc(URLDataTypeEnum.LANDINGPAGE)) {
+      if (MyStringUtils.isMatch3(urlMatchDataEntity.getRegex(), uri)) {
         return urlMatchDataEntity.getName();
       }
     }
@@ -73,12 +74,29 @@ public class URLMatchDataUtilServiceImpl implements URLMatchDataUtilService {
   @Override
   public SourceTypeEnum getSourceType(String url) {
     for (URLMatchDataEntity urlMatchDataEntity :
-        urlMatchDataDao.findByType(URLDataTypeEnum.SEARCHENGINE)) {
+        urlMatchDataDao.findByTypeOrderByPriorityDesc(URLDataTypeEnum.SEARCHENGINE)) {
       logger.debug("Name:{},Regex:{}", urlMatchDataEntity.getName(), urlMatchDataEntity.getRegex());
       if (MyStringUtils.isMatch3(urlMatchDataEntity.getRegex(), url)) {
         return SourceTypeEnum.valueOf(urlMatchDataEntity.getName());
       }
     }
     return SourceTypeEnum.OTHER;
+  }
+  /**
+   * @title getPageType
+   * @description 获取页面类型
+   * @author Lijie HelloBox@outlook.com
+   * @param: uri
+   * @return: com.shoestp.mains.enums.flow.AccessTypeEnum
+   */
+  @Override
+  public AccessTypeEnum getPageType(String uri) {
+    for (URLMatchDataEntity urlMatchDataEntity :
+        urlMatchDataDao.findByTypeOrderByPriorityDesc(URLDataTypeEnum.PAGETYPE)) {
+      if (MyStringUtils.isMatch3(urlMatchDataEntity.getRegex(), uri)) {
+        return AccessTypeEnum.valueOf(urlMatchDataEntity.getName());
+      }
+    }
+    return AccessTypeEnum.OTHER;
   }
 }

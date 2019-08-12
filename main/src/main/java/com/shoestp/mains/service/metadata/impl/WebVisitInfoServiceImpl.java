@@ -1,15 +1,13 @@
 package com.shoestp.mains.service.metadata.impl;
 
-import com.shoestp.mains.config.AppConfig;
 import com.shoestp.mains.controllers.analytics.view.WebVisitInfoView;
 import com.shoestp.mains.dao.shoestpdata.WebVisitInfoDao;
 import com.shoestp.mains.entitys.metadata.WebVisitInfo;
 import com.shoestp.mains.entitys.metadata.enums.DeviceTypeEnum;
-import com.shoestp.mains.service.metadata.AddressService;
+import com.shoestp.mains.service.metadata.LocationService;
 import com.shoestp.mains.service.metadata.UserInfoService;
 import com.shoestp.mains.service.metadata.WebVisitInfoService;
 import com.shoestp.mains.service.urlmatchdatautil.URLMatchDataUtilService;
-import com.shoestp.mains.utils.iputils.City;
 import eu.bitwalker.useragentutils.UserAgent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,12 +24,8 @@ public class WebVisitInfoServiceImpl implements WebVisitInfoService {
   private static final Logger logger = LogManager.getLogger(WebVisitInfoServiceImpl.class);
   @Resource private WebVisitInfoDao webVisitInfoDao;
   @Resource private UserInfoService userInfoService;
-  @Resource private AddressService addressService;
+  @Resource private LocationService locationService;
   @Resource private URLMatchDataUtilService urlMatchDataUtilService;
-  @Resource private AppConfig appConfig;
-
-  @Resource(name = "ipCity")
-  private City city;
 
   @Override
   public WebVisitInfo save(WebVisitInfo webVisitInfo) {
@@ -60,10 +54,12 @@ public class WebVisitInfoServiceImpl implements WebVisitInfoService {
     }
     webVisitInfo.setIp(ip);
     webVisitInfo.setUserId(userInfoService.save(pojo.getUserInfo()));
-    String[] address = city.find(ip);
-    if (address != null && address.length > 1) {
-      webVisitInfo.setLocation(addressService.getCountry(address[0]));
-      webVisitInfo.setProvince(addressService.getProvince(address[1]));
+    String[] address = locationService.getAddress(ip);
+    if (address != null && address.length > 0) {
+      webVisitInfo.setLocation(locationService.getCountry(address[0]));
+      if (address.length > 1) {
+        webVisitInfo.setProvince(locationService.getProvince(address[1]));
+      }
     } else {
       logger.info("该IP{},未能找到响应国家", ip);
     }

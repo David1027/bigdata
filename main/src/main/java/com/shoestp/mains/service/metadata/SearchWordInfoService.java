@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.shoestp.mains.entitys.metadata.SearchWordInfo;
+import com.shoestp.mains.rpc.shoestp.pojo.GRPC_SendDataProto;
 import com.shoestp.mains.views.Page;
 import com.shoestp.mains.views.dataview.utils.KeyValue;
 
@@ -14,4 +15,6 @@ public interface SearchWordInfoService {
    Page<KeyValue> getRanking(Date endTime, Integer num, int start, int limit);
 
    List<KeyValue> getRankingByCountry(String country);
+
+    void save(GRPC_SendDataProto.SearchInfo searchInfo);
 }

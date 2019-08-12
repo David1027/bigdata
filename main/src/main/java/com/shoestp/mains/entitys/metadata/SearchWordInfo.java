@@ -26,7 +26,7 @@ public class SearchWordInfo {
   @JoinColumn(name = "user_id")
   private UserInfo userId;
   /** * 国家 */
-  private String country;
+  @OneToOne @JoinColumn private PltCountry country;
   /** 插入时间 */
   @Column(name = "create_time")
   private Date createTime;

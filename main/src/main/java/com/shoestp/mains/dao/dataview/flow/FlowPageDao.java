@@ -8,10 +8,11 @@ import com.shoestp.mains.entitys.dataview.flow.QDataViewFlowPage;
 import com.shoestp.mains.enums.flow.AccessTypeEnum;
 import com.shoestp.mains.repositorys.dataview.flow.FlowPageRepository;
 import com.shoestp.mains.views.dataview.flow.PageViewObject;
+import org.springframework.stereotype.Repository;
+
+import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
-import javax.annotation.Resource;
-import org.springframework.stereotype.Repository;
 
 /**
  * @description: 流量-数据层
@@ -155,36 +156,6 @@ public class FlowPageDao extends BaseDao<DataViewFlowPage> {
         .where(qDataViewFlowPage.createTime.between(start, end))
         .fetchResults()
         .getResults();
-  }
-
-  @Override
-  public DataViewFlowPage find(DataViewFlowPage dataViewFlowPage) {
-    return null;
-  }
-
-  @Override
-  public DataViewFlowPage findById(Integer id) {
-    return null;
-  }
-
-  @Override
-  public int update(DataViewFlowPage dataViewFlowPage) {
-    return 0;
-  }
-
-  @Override
-  public int updateByList(List<DataViewFlowPage> list) {
-    return 0;
-  }
-
-  @Override
-  public int remove(DataViewFlowPage dataViewFlowPage) {
-    return 0;
-  }
-
-  @Override
-  public int removeByIds(Integer... id) {
-    return 0;
   }
 
   public void save(DataViewFlowPage flowPage) {

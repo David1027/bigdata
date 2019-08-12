@@ -1,16 +1,15 @@
 package com.shoestp.mains.dao.transform;
 
-import java.util.Date;
-import java.util.List;
-
 import com.querydsl.jpa.impl.JPAQuery;
 import com.shoestp.mains.dao.BaseDao;
 import com.shoestp.mains.entitys.metadata.QWebVisitInfo;
 import com.shoestp.mains.entitys.metadata.WebVisitInfo;
 import com.shoestp.mains.entitys.metadata.enums.DeviceTypeEnum;
 import com.shoestp.mains.enums.flow.AccessTypeEnum;
-
 import org.springframework.stereotype.Repository;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * @description: 源数据层 - 数据访问层
@@ -211,44 +210,16 @@ public class WebVisitDao extends BaseDao<WebVisitInfo> {
     return result == null ? 0 : result;
   }
 
-  public List<WebVisitInfo> getWebVisitUserId(Date start, Date end) {
+  public List<WebVisitInfo> getWebVisitUserId(Date start, Date end, Long offset, int limit) {
     QWebVisitInfo qWebVisitInfo = QWebVisitInfo.webVisitInfo;
     return getQuery()
         .select(qWebVisitInfo)
         .where(qWebVisitInfo.createTime.between(start, end))
         .groupBy(qWebVisitInfo.userId)
         .from(qWebVisitInfo)
+        .limit(limit)
+        .offset(offset)
         .fetchResults()
         .getResults();
-  }
-
-  @Override
-  public WebVisitInfo find(WebVisitInfo webVisitInfo) {
-    return null;
-  }
-
-  @Override
-  public WebVisitInfo findById(Integer id) {
-    return null;
-  }
-
-  @Override
-  public int update(WebVisitInfo webVisitInfo) {
-    return 0;
-  }
-
-  @Override
-  public int updateByList(List<WebVisitInfo> list) {
-    return 0;
-  }
-
-  @Override
-  public int remove(WebVisitInfo webVisitInfo) {
-    return 0;
-  }
-
-  @Override
-  public int removeByIds(Integer... id) {
-    return 0;
   }
 }

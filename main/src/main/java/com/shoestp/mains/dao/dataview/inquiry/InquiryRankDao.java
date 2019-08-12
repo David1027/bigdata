@@ -6,10 +6,11 @@ import com.shoestp.mains.entitys.dataview.inquiry.DataViewInquiryRank;
 import com.shoestp.mains.entitys.dataview.inquiry.QDataViewInquiryRank;
 import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
 import com.shoestp.mains.repositorys.dataview.inquory.InquiryRankRepository;
+import org.springframework.stereotype.Repository;
+
+import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
-import javax.annotation.Resource;
-import org.springframework.stereotype.Repository;
 
 /**
  * @description: 询盘-数据层
@@ -131,36 +132,6 @@ public class InquiryRankDao extends BaseDao<DataViewInquiryRank> {
         .limit(50)
         .fetchResults()
         .getResults();
-  }
-
-  @Override
-  public DataViewInquiryRank find(DataViewInquiryRank dataViewInquiryRank) {
-    return null;
-  }
-
-  @Override
-  public DataViewInquiryRank findById(Integer id) {
-    return null;
-  }
-
-  @Override
-  public int update(DataViewInquiryRank dataViewInquiryRank) {
-    return 0;
-  }
-
-  @Override
-  public int updateByList(List<DataViewInquiryRank> list) {
-    return 0;
-  }
-
-  @Override
-  public int remove(DataViewInquiryRank dataViewInquiryRank) {
-    return 0;
-  }
-
-  @Override
-  public int removeByIds(Integer... id) {
-    return 0;
   }
 
   public void save(DataViewInquiryRank rank) {

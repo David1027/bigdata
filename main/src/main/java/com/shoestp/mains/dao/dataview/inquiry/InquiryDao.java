@@ -7,10 +7,11 @@ import com.shoestp.mains.entitys.dataview.inquiry.DataViewInquiry;
 import com.shoestp.mains.entitys.dataview.inquiry.QDataViewInquiry;
 import com.shoestp.mains.repositorys.dataview.inquory.InquiryRepository;
 import com.shoestp.mains.views.dataview.inquiry.InquiryView;
+import org.springframework.stereotype.Repository;
+
+import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
-import javax.annotation.Resource;
-import org.springframework.stereotype.Repository;
 
 /**
  * @description: 询盘-数据层
@@ -87,36 +88,6 @@ public class InquiryDao extends BaseDao<DataViewInquiry> {
         .from(qDataViewInquiry)
         .fetchResults()
         .getResults();
-  }
-
-  @Override
-  public DataViewInquiry find(DataViewInquiry dataViewInquiry) {
-    return null;
-  }
-
-  @Override
-  public DataViewInquiry findById(Integer id) {
-    return null;
-  }
-
-  @Override
-  public int update(DataViewInquiry dataViewInquiry) {
-    return 0;
-  }
-
-  @Override
-  public int updateByList(List<DataViewInquiry> list) {
-    return 0;
-  }
-
-  @Override
-  public int remove(DataViewInquiry dataViewInquiry) {
-    return 0;
-  }
-
-  @Override
-  public int removeByIds(Integer... id) {
-    return 0;
   }
 
   public void save(DataViewInquiry in) {

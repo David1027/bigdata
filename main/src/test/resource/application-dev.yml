@@ -1,0 +1,83 @@
+server:
+  address: 0.0.0.0
+  http2:
+    enabled: true
+  port: 80
+  servlet:
+    context-path: /
+spring:
+  cache:
+    jcache:
+      config: classpath:/ehcacheConfig.xml
+  datasource:
+    #    url: jdbc:mysql://192.168.99.100:3306/test?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/bigdata_test?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
+    username: root
+    password: 123
+    driver-class-name: com.mysql.jdbc.Driver
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 15
+      idle-timeout: 30000
+      auto-commit: true
+      pool-name: bigdata
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+  jpa:
+    hibernate:
+      ddl-auto: validate
+      use-new-id-generator-mappings: true
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    show-sql: true
+  messages: lang
+  quartz:
+    job-store-type: memory
+application:
+  errorCode-path:
+    com.shoestp.mains.utils.errorcode.langs
+rpc:
+  host: 0.0.0.0
+  port: 888
+proxy:
+  enable: true
+  host: 127.0.0.1
+  port: 1088
+shoestp:
+  scheduler:
+    #    谷歌元数据拉去时间
+    googlemete:
+      enable: true
+      timing: 5
+      #      185165418 原先老数据视图,现在新增新的数据视图
+      viewId: 196630472
+    #    数据转换时间
+    dataconver:
+      enable: true
+      timing: 60
+    #    商家数据转换时间
+    sellerconver:
+      enable: true
+      timing: 60
+
+management:
+  endpoints:
+    enabled-by-default: false
+    web:
+      exposure:
+        include: shutdown
+  server:
+    port: 9000
+    address: 127.0.0.1
+  endpoint:
+    shutdown:
+      enabled: true
+#logging:
+#  config: classpath*:/log4j2.xml
+appconfig:
+  domain:
+  - www.shoestp.com
+  - w3.shoestp.com
+  - shoestp.com
+

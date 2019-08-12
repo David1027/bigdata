@@ -1,13 +1,5 @@
 package com.shoestp.mains.dao.dataview.realcountry;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-
-import javax.annotation.Resource;
-
-import org.springframework.stereotype.Repository;
-
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.shoestp.mains.dao.BaseDao;
@@ -16,6 +8,12 @@ import com.shoestp.mains.entitys.dataview.country.QDataViewCountry;
 import com.shoestp.mains.repositorys.dataview.realcountry.RealCountryRepository;
 import com.shoestp.mains.views.dataview.real.IndexGrand;
 import com.shoestp.mains.views.dataview.real.RealView;
+import org.springframework.stereotype.Repository;
+
+import javax.annotation.Resource;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * @description: 国家-数据层
@@ -95,36 +93,6 @@ public class RealCountryDao extends BaseDao<DataViewCountry> {
         .from(qDataViewCountry)
         .where(qDataViewCountry.createTime.before(date))
         .fetchOne();
-  }
-
-  @Override
-  public DataViewCountry find(DataViewCountry dataViewCountry) {
-    return null;
-  }
-
-  @Override
-  public DataViewCountry findById(Integer id) {
-    return null;
-  }
-
-  @Override
-  public int update(DataViewCountry dataViewCountry) {
-    return 0;
-  }
-
-  @Override
-  public int updateByList(List<DataViewCountry> list) {
-    return 0;
-  }
-
-  @Override
-  public int remove(DataViewCountry dataViewCountry) {
-    return 0;
-  }
-
-  @Override
-  public int removeByIds(Integer... id) {
-    return 0;
   }
 
   public void save(DataViewCountry country) {

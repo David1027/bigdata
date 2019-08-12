@@ -6,57 +6,85 @@ option java_outer_classname = "GRPC_SendDataProto";
 option objc_class_prefix = "SearchInfo";
 import "result.proto";
 service SendDataUtil {
-  rpc sendSearch (stream  SearchInfo) returns (stream  Result);
-  rpc sendViewInfo (stream  ViewInfo) returns (stream  Result);
-  rpc sendInquiry (stream  Inquiry) returns (stream  Result);
-  rpc sendUserInfo (stream  UserInfo) returns (stream  Result);
-  rpc sendFavorite (stream  Favorite) returns (stream  Result);
+    rpc sendSearch (stream  SearchInfo) returns (stream  Result);
+    rpc sendInquiry (stream  Inquiry) returns (stream  Result);
+    rpc sendUserInfo (stream  UserInfo) returns (stream  Result);
+    rpc sendFavorite (stream  Favorite) returns (stream  Result);
 }
 
 message SearchInfo {
-  string keyword = 1;
-  string ip = 2;
-  uint32 userId = 3;
-  string sign=4;
-}
-message ViewInfo {
-  string url = 1;
-  string useragent = 2;
-  string ip = 3;
-  uint32 userId = 4;
-  string referer = 5;
-  string visitName = 6;
+    string keyword = 1;
+    string ip = 2;
+    uint32 userId = 3;
+    string sign = 4;
 }
 message Inquiry {
-  uint32 type = 1;
-  uint32 inquiryId = 2;
-  string referer = 3;
-  string url = 4;
-  string name = 5;
-  uint32 pkey = 6;
-  double money = 7;
-  string ip = 8;
-  string img = 9;
-  uint32 usrMainSupplier = 10;
-  uint32 usrMainPurchase = 11;
-  string keyword = 12;
-  uint64 createDate = 13;
+    /** 动作 0新增
+    1 检查同步
+    没有数据新增,有数据则为跳过
+     */
+    uint32 action = 12;
+    /** 询盘类型  */
+    uint32 type = 1;
+    /** 询盘表的ID  */
+    uint32 inquiryId = 2;
+    /** 来自于哪个页面  */
+    string referer = 3;
+    /** 发起询盘的url地址  */
+    string url = 4;
+    /**询盘名称  */
+    string name = 5;
+    /** 商品或者供应商ID  */
+    uint32 pkey = 6;
+    /** 金额  */
+    double money = 7;
+    /** id  */
+    string ip = 8;
+    /** 商品图片,或者供应商图片  */
+    string img = 9;
+    /** 用户询盘者的ID  */
+    uint32 userId = 10;
+    /** 用户唯一标识  */
+    string sign = 11;
+    /** 创建时间  */
+    uint64 createDate = 13;
 }
 message UserInfo {
-  uint32 type = 1;
-  string country = 2;
-  uint32 sex = 4;
-  uint32 userId = 5;
-  string name = 6;
-  string province = 7;
-  uint64 createDate = 13;
+    /** 动作 0新增
+     1 检查同步
+     没有数据新增,有数据则为跳过
+      */
+    uint32 action = 10;
+    /** 用户类型   供应商 采购商  */
+    uint32 type = 1;
+    /** 国家  */
+    string country = 2;
+    /** 性别  */
+    uint32 sex = 4;
+    /** 用户usr_main表Id  */
+    uint32 userId = 5;
+    /** 姓名  */
+    string name = 6;
+    /** 省份  */
+    string province = 7;
+    /** 优先验证状态  */
+    uint32 status = 8;
+    /** 创建时间  */
+    uint64 createDate = 13;
+    /** 用户唯一签名标志  */
+    string sign = 9;
 }
-message Favorite{
-  string ip = 1;
-  string pkey = 2;
-  uint32 supId = 3;
-  uint32 pdtId = 4;
-  string name = 5;
-  string img = 6;
-  uint32 status = 7;
+message Favorite {
+    /** 动作 0新增
+    1 检查同步
+    没有数据新增,有数据则为跳过
+     */
+    uint32 action = 8;
+    string ip = 1;
+    string pkey = 2;
+    uint32 supId = 3;
+    uint32 pdtId = 4;
+    string name = 5;
+    string img = 6;
+    uint32 status = 7;
 }

@@ -1,11 +1,5 @@
 package com.shoestp.mains.service.transform.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import com.shoestp.mains.dao.dataview.flow.FlowDao;
 import com.shoestp.mains.dao.dataview.flow.FlowPageDao;
 import com.shoestp.mains.dao.dataview.inquiry.InquiryDao;
@@ -21,7 +15,6 @@ import com.shoestp.mains.entitys.dataview.inquiry.DataViewInquiryRank;
 import com.shoestp.mains.entitys.dataview.real.DataViewReal;
 import com.shoestp.mains.entitys.dataview.user.DataViewUser;
 import com.shoestp.mains.entitys.metadata.InquiryInfo;
-import com.shoestp.mains.entitys.metadata.UserInfo;
 import com.shoestp.mains.entitys.metadata.WebVisitInfo;
 import com.shoestp.mains.entitys.metadata.enums.DeviceTypeEnum;
 import com.shoestp.mains.entitys.metadata.enums.RegisterTypeEnum;
@@ -30,10 +23,16 @@ import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
 import com.shoestp.mains.pojo.PageSourcePojo;
 import com.shoestp.mains.service.transform.MetaToViewService;
-
 import com.shoestp.mains.service.urlmatchdatautil.URLMatchDataUtilService;
-import org.apache.tomcat.util.descriptor.web.SecurityRoleRef;
 import org.springframework.stereotype.Service;
+import org.start2do.utils.DateTimeUtil;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @description: 源数据转化展示数据 - 服务层实现类
@@ -390,22 +389,57 @@ public class MetaToViewServiceImpl implements MetaToViewService {
     }
     return list;
   }
-
+  /**
+   * @title
+   * @description
+   * @author Lijie HelloBox@outlook.com
+   * @updateTime 2019-08-09 09:29
+   * @throws
+   */
   @Override
   public DataViewUser toUser(Date start, Date end) {
     DataViewUser user = new DataViewUser();
+    /** 定义每次查询多少条 */
+    int count = 1000;
+    List<WebVisitInfo> webVisitInfos = null;
+    /** 新用户数 */
+    AtomicInteger newCount = new AtomicInteger();
+    /** 老用户数 */
+    AtomicInteger oldCount = new AtomicInteger();
+    /** 数据库查询的起始位置 */
+    Long offset = 0L;
+    do {
+      /** 查询数据 */
+      webVisitInfos = webVisitDao.getWebVisitUserId(start, end, offset, count);
+      CountDownLatch countDownLatch = new CountDownLatch(webVisitInfos.size());
+      webVisitInfos
+          .parallelStream()
+          .forEach(
+              webVisitInfo -> {
+                /** 比较时间,和起始时间作比较,然后早于start的时间,为老用户,晚于的是新用户 */
+                if (DateTimeUtil.timeDifferent(start, webVisitInfo.getUserId().getCreateTime())
+                        .toNanos()
+                    >= 0) {
+                  newCount.getAndIncrement();
+                } else {
+                  oldCount.getAndIncrement();
+                }
+                countDownLatch.countDown();
+              });
+      offset += count;
+      try {
+        /** 等待处理完成 */
+        countDownLatch.await();
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+      /** 只有查询出结果等于每次查询条数的时候才会继续查询,否则 */
+    } while (webVisitInfos.size() == count);
+    user.setNewVisitorCount(newCount.intValue());
+    user.setOldVisitorCount(oldCount.intValue());
 
     // 访客数
     user.setVisitorCount(getVisitorCount(start, end, null));
-    // 新用户数
-    // 老用户数
-    int newCount = 0;
-    int oldCount = 0;
-    List<WebVisitInfo> list = webVisitDao.getWebVisitUserId(start, end);
-    for (WebVisitInfo w : list) {
-      System.err.println(w);
-    }
-
     // 总注册量
     user.setRegisterCount(getRegisterCount(null, start, end));
     // 采购商数量

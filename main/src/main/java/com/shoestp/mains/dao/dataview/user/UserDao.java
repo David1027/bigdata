@@ -1,13 +1,5 @@
 package com.shoestp.mains.dao.dataview.user;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-
-import javax.annotation.Resource;
-
-import org.springframework.stereotype.Repository;
-
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.shoestp.mains.dao.BaseDao;
@@ -16,6 +8,12 @@ import com.shoestp.mains.entitys.dataview.user.QDataViewUser;
 import com.shoestp.mains.repositorys.dataview.user.UserRepository;
 import com.shoestp.mains.views.dataview.real.IndexGrand;
 import com.shoestp.mains.views.dataview.user.DataViewUserView;
+import org.springframework.stereotype.Repository;
+
+import javax.annotation.Resource;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * @description: 用户概况-数据层
@@ -92,36 +90,6 @@ public class UserDao extends BaseDao<DataViewUser> {
         .where(qDataViewUser.createTime.between(start, end))
         .fetchResults()
         .getResults();
-  }
-
-  @Override
-  public DataViewUser find(DataViewUser dataViewUser) {
-    return null;
-  }
-
-  @Override
-  public DataViewUser findById(Integer id) {
-    return null;
-  }
-
-  @Override
-  public int update(DataViewUser dataViewUser) {
-    return 0;
-  }
-
-  @Override
-  public int updateByList(List<DataViewUser> list) {
-    return 0;
-  }
-
-  @Override
-  public int remove(DataViewUser dataViewUser) {
-    return 0;
-  }
-
-  @Override
-  public int removeByIds(Integer... id) {
-    return 0;
   }
 
   public void save(DataViewUser user) {

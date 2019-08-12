@@ -1,18 +1,16 @@
 package com.shoestp.mains.dao.dataview.user;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-
-import javax.annotation.Resource;
-
-import org.springframework.stereotype.Repository;
-
 import com.querydsl.core.Tuple;
 import com.shoestp.mains.dao.BaseDao;
 import com.shoestp.mains.entitys.dataview.user.DataViewUserArea;
 import com.shoestp.mains.entitys.dataview.user.QDataViewUserArea;
 import com.shoestp.mains.repositorys.dataview.user.UserAreaRepository;
+import org.springframework.stereotype.Repository;
+
+import javax.annotation.Resource;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * @description: 用户性别-数据层
@@ -40,36 +38,6 @@ public class UserAreaDao extends BaseDao<DataViewUserArea> {
         .groupBy(qDataViewUserArea.area)
         .fetchResults()
         .getResults();
-  }
-
-  @Override
-  public DataViewUserArea find(DataViewUserArea dataViewUserArea) {
-    return null;
-  }
-
-  @Override
-  public DataViewUserArea findById(Integer id) {
-    return null;
-  }
-
-  @Override
-  public int update(DataViewUserArea dataViewUserArea) {
-    return 0;
-  }
-
-  @Override
-  public int updateByList(List<DataViewUserArea> list) {
-    return 0;
-  }
-
-  @Override
-  public int remove(DataViewUserArea dataViewUserArea) {
-    return 0;
-  }
-
-  @Override
-  public int removeByIds(Integer... id) {
-    return 0;
   }
 
   public void save(DataViewUserArea area) {

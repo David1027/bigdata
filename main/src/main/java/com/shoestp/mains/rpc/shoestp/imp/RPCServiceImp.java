@@ -1,47 +1,30 @@
 package com.shoestp.mains.rpc.shoestp.imp;
 
-import com.shoestp.mains.dao.metadata.FavoriteDao;
-import com.shoestp.mains.dao.metadata.UserInfoDao;
-import com.shoestp.mains.dao.shoestpdata.InquiryInfoDao;
-import com.shoestp.mains.entitys.metadata.InquiryInfo;
-import com.shoestp.mains.entitys.metadata.SearchWordInfo;
-import com.shoestp.mains.entitys.metadata.enums.DeviceTypeEnum;
-import com.shoestp.mains.entitys.metadata.enums.RegisterTypeEnum;
-import com.shoestp.mains.entitys.metadata.enums.SexEnum;
-import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
 import com.shoestp.mains.rpc.shoestp.pojo.GRPC_ResultProto;
 import com.shoestp.mains.rpc.shoestp.pojo.GRPC_SendDataProto;
 import com.shoestp.mains.rpc.shoestp.pojo.GRPC_SendDataProto.Favorite;
 import com.shoestp.mains.rpc.shoestp.pojo.GRPC_SendDataProto.UserInfo;
 import com.shoestp.mains.rpc.shoestp.pojo.SendDataUtilGrpc;
+import com.shoestp.mains.service.metadata.FavoriteService;
 import com.shoestp.mains.service.metadata.InquiryInfoService;
 import com.shoestp.mains.service.metadata.SearchWordInfoService;
-import com.shoestp.mains.service.metadata.WebVisitInfoService;
-import com.shoestp.mains.utils.iputils.City;
+import com.shoestp.mains.service.metadata.UserInfoService;
 import io.grpc.stub.StreamObserver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.Date;
 
 /** Created by IntelliJ IDEA. User: lijie@shoestp.cn Date: 2019/5/14 Time: 15:00 */
 @Component
 public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
 
   private static final Logger logger = LogManager.getLogger(RPCServiceImp.class);
-  @Resource private WebVisitInfoService webVisitInfoService;
   @Resource private SearchWordInfoService searchWordInfoService;
+  @Resource private UserInfoService userInfoService;
   @Resource private InquiryInfoService inquiryInfoService;
-  @Resource private UserInfoDao userInfoDao;
-  @Resource private FavoriteDao favoriteDao;
-
-  @Resource(name = "com.shoestp.mains.dao.shoestpdata.InquiryInfoDao")
-  private InquiryInfoDao inquiryDao;
-
-  @Resource(name = "ipCity")
-  private City city;
+  @Resource private FavoriteService favoriteService;
 
   @Override
   public StreamObserver<GRPC_SendDataProto.SearchInfo> sendSearch(
@@ -49,15 +32,7 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
     return new StreamObserver<GRPC_SendDataProto.SearchInfo>() {
       @Override
       public void onNext(GRPC_SendDataProto.SearchInfo searchInfo) {
-        logger.debug("++++++++++++++++++++++++++++++++++++++++++");
-        logger.debug(searchInfo);
-        SearchWordInfo searchWordInfo = new SearchWordInfo();
-        searchWordInfo.setIp(searchInfo.getIp());
-        searchWordInfo.setKeyword(searchInfo.getKeyword());
-        //        searchWordInfo.setUserId(searchInfo.getUserId());
-        searchWordInfo.setCountry(city.find(searchInfo.getIp())[0]);
-        searchWordInfo.setCreateTime(new Date());
-        searchWordInfoService.save(searchWordInfo);
+        searchWordInfoService.save(searchInfo);
       }
 
       @Override
@@ -72,57 +47,20 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
     };
   }
 
-  int i = 0;
-
   @Override
   public StreamObserver<GRPC_SendDataProto.Inquiry> sendInquiry(
       StreamObserver<GRPC_ResultProto.Result> responseObserver) {
     return new StreamObserver<GRPC_SendDataProto.Inquiry>() {
       @Override
-      public void onNext(GRPC_SendDataProto.Inquiry inquiry) {
-        InquiryInfo inquiryInfo = new InquiryInfo();
-        //        inquiryInfo.setType(InquiryTypeEnum.OTHER);
-        boolean b = true;
-        switch (inquiry.getType()) {
+      public void onNext(GRPC_SendDataProto.Inquiry info) {
+        switch (info.getAction()) {
           case 1:
-            inquiryInfo.setType(InquiryTypeEnum.RFQ);
-            b = false;
+            inquiryInfoService.syncUserInfo(info);
             break;
-          case 2:
-            inquiryInfo.setType(InquiryTypeEnum.COMMODITY);
-            b = false;
-            break;
-          case 3:
-            inquiryInfo.setType(InquiryTypeEnum.COMMODITY);
-            b = false;
-            break;
-          case 4:
-            inquiryInfo.setType(InquiryTypeEnum.SUPPLIER);
-            b = false;
-            break;
+          case 0:
+          default:
+            inquiryInfoService.save(info);
         }
-        if (b) {
-          for (InquiryTypeEnum item : InquiryTypeEnum.values()) {
-            //                if (inquiry.getType() == item.getSup()) {
-            //              inquiryInfo.setType(item);
-            //              break;
-            //            }
-          }
-        }
-        inquiryInfo.setInquiryId(inquiry.getInquiryId());
-        inquiryInfo.setReferer(inquiry.getReferer());
-        inquiryInfo.setCreateTime(new Date(inquiry.getCreateDate()));
-        inquiryInfo.setName(inquiry.getName());
-        inquiryInfo.setPkey(inquiry.getPkey());
-        inquiryInfo.setMoney(inquiry.getMoney());
-        //        inquiryInfo.setIp(inquiry.getIp());
-        //        inquiryInfo.setCountry(city.find(inquiry.getIp())[0]);
-        inquiryInfo.setImg(inquiry.getImg());
-        //        inquiryInfo.setUsrMainPurchase(inquiry.getUsrMainPurchase());
-        //        inquiryInfo.setUsrMainSupplier(inquiry.getUsrMainSupplier());
-        //        inquiryInfo.setKeyword(inquiry.getKeyword());
-        inquiryInfo.setDeviceType(DeviceTypeEnum.PC);
-        inquiryDao.save(inquiryInfo);
       }
 
       @Override
@@ -144,33 +82,14 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
 
       @Override
       public void onNext(UserInfo info) {
-        com.shoestp.mains.entitys.metadata.UserInfo userInfo =
-            new com.shoestp.mains.entitys.metadata.UserInfo();
-        //        userInfo.setCountry(info.getCountry());
-        switch (info.getSex()) {
-          case 0:
-            userInfo.setSex(SexEnum.UNKNOWN);
-            break;
+        switch (info.getAction()) {
           case 1:
-            userInfo.setSex(SexEnum.MAN);
+            userInfoService.syncUserInfo(info);
             break;
-          case 2:
-            userInfo.setSex(SexEnum.WOMAN);
-            break;
+          case 0:
           default:
-            userInfo.setSex(SexEnum.UNKNOWN);
-            break;
+            userInfoService.save(info);
         }
-        if (info.getType() == 0) {
-          userInfo.setType(RegisterTypeEnum.PURCHASE);
-        } else {
-          userInfo.setType(RegisterTypeEnum.SUPPLIER);
-        }
-//        userInfo.setUserId(info.getUserId());
-        userInfo.setName(info.getName());
-        //        userInfo.setProvince(info.getProvince());
-        userInfo.setCreateTime(new Date(info.getCreateDate()));
-        userInfoDao.save(userInfo);
       }
 
       @Override
@@ -191,24 +110,15 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
     return new StreamObserver<GRPC_SendDataProto.Favorite>() {
 
       @Override
-      public void onNext(Favorite fa) {
-        com.shoestp.mains.entitys.metadata.Favorite favorite =
-            new com.shoestp.mains.entitys.metadata.Favorite();
-        if (fa.getStatus() == 0) {
-          String[] splitPkye = fa.getPkey().split(",");
-          for (String str : splitPkye) {
-            favoriteDao.delByPkey(Integer.valueOf(str));
-          }
-          return;
+      public void onNext(Favorite info) {
+        switch (info.getAction()) {
+          case 1:
+            favoriteService.syncUserInfo(info);
+            break;
+          case 0:
+          default:
+            favoriteService.save(info);
         }
-        favorite.setPkey(Integer.valueOf(fa.getPkey()));
-        favorite.setImg(fa.getImg());
-        favorite.setName(fa.getName());
-        favorite.setPdtId(fa.getPdtId());
-        favorite.setSupId(fa.getSupId());
-        favorite.setCountry(city.find(fa.getIp())[0]);
-        favorite.setCreateTime(new Date());
-        favoriteDao.save(favorite);
       }
 
       @Override

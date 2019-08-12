@@ -1,13 +1,5 @@
 package com.shoestp.mains.dao.sellerdataview.supplier;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-
-import javax.annotation.Resource;
-
-import org.springframework.stereotype.Repository;
-
 import com.querydsl.core.types.Projections;
 import com.shoestp.mains.dao.BaseDao;
 import com.shoestp.mains.entitys.sellerdataview.supplier.QSellerDataViewSupplier;
@@ -15,6 +7,12 @@ import com.shoestp.mains.entitys.sellerdataview.supplier.SellerDataViewSupplier;
 import com.shoestp.mains.repositorys.sellerdataview.supplier.SupplierRepository;
 import com.shoestp.mains.views.sellerdataview.supplier.CountryView;
 import com.shoestp.mains.views.sellerdataview.supplier.OverviewView;
+import org.springframework.stereotype.Repository;
+
+import javax.annotation.Resource;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * @description: 商家后台供应商总数据类数据层
@@ -80,36 +78,6 @@ public class SupplierDao extends BaseDao<SellerDataViewSupplier> {
   }
 
   @Resource private SupplierRepository supplierRepository;
-
-  @Override
-  public SellerDataViewSupplier find(SellerDataViewSupplier sellerDataViewSupplier) {
-    return null;
-  }
-
-  @Override
-  public SellerDataViewSupplier findById(Integer id) {
-    return null;
-  }
-
-  @Override
-  public int update(SellerDataViewSupplier sellerDataViewSupplier) {
-    return 0;
-  }
-
-  @Override
-  public int updateByList(List<SellerDataViewSupplier> list) {
-    return 0;
-  }
-
-  @Override
-  public int remove(SellerDataViewSupplier sellerDataViewSupplier) {
-    return 0;
-  }
-
-  @Override
-  public int removeByIds(Integer... id) {
-    return 0;
-  }
 
   public void save(SellerDataViewSupplier sup) {
     supplierRepository.save(sup);

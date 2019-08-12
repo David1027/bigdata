@@ -30,7 +30,7 @@ public class Favorite {
   /** 产品图片 */
   private String img;
   /** 国家 根据ip获得 */
-  private String country;
+  @OneToOne @JoinColumn private PltCountry country;
   /** * 创建时间 */
   @Column(name = "create_time")
   private Date createTime;

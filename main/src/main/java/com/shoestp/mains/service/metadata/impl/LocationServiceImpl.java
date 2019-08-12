@@ -1,0 +1,77 @@
+package com.shoestp.mains.service.metadata.impl;
+
+import com.shoestp.mains.dao.metadata.PltCountryDao;
+import com.shoestp.mains.dao.metadata.ProvinceDao;
+import com.shoestp.mains.entitys.metadata.PltCountry;
+import com.shoestp.mains.entitys.metadata.Province;
+import com.shoestp.mains.service.metadata.LocationService;
+import com.shoestp.mains.utils.iputils.City;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import javax.cache.annotation.CacheDefaults;
+import javax.cache.annotation.CacheResult;
+import java.util.List;
+import java.util.Optional;
+
+@Service
+@CacheDefaults(cacheName = "month")
+public class LocationServiceImpl implements LocationService {
+  @Resource private PltCountryDao countryDao;
+  @Resource private ProvinceDao provinceDao;
+
+  @Resource(name = "ipCity")
+  private City city;
+
+  @Override
+  @CacheResult
+  public PltCountry getCountry(String name) {
+    if (name != null) {
+      Optional<PltCountry> result = countryDao.findByName(name);
+      if (result.isPresent()) {
+        return result.get();
+      }
+    }
+    return countryDao.findById(6).get();
+  }
+
+  @Override
+  public Province getProvince(String address) {
+    Optional<Province> result = provinceDao.findByName(address);
+    if (result.isPresent()) {
+      return result.get();
+    }
+    return null;
+  }
+
+  @Override
+  @CacheResult
+  public List<PltCountry> getCountryList() {
+    return countryDao.findAll();
+  }
+
+  @Override
+  @CacheResult
+  public PltCountry getCountryByIp(String ip) {
+    String[] strings = getAddress(ip);
+    if (strings.length == 0) {
+      return getCountry(null);
+    }
+    return getCountry(strings[0]);
+  }
+
+  /**
+   * Get address 根据Ip获取国家地区
+   *
+   * @param ip the ip
+   * @return the string [ ]
+   * @author lijie
+   * @date 2019 /08/09
+   * @since string [ ].
+   */
+  @Override
+  @CacheResult
+  public String[] getAddress(String ip) {
+    return city.find(ip);
+  }
+}

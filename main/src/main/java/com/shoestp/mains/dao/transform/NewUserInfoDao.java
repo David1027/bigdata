@@ -1,15 +1,14 @@
 package com.shoestp.mains.dao.transform;
 
-import java.util.Date;
-import java.util.List;
-
 import com.querydsl.jpa.impl.JPAQuery;
 import com.shoestp.mains.dao.BaseDao;
 import com.shoestp.mains.entitys.metadata.QUserInfo;
 import com.shoestp.mains.entitys.metadata.UserInfo;
 import com.shoestp.mains.entitys.metadata.enums.RegisterTypeEnum;
-
 import org.springframework.stereotype.Repository;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * @description: 用户注册 - 数据访问层
@@ -50,35 +49,5 @@ public class NewUserInfoDao extends BaseDao<UserInfo> {
         .from(qUserInfo)
         .fetchResults()
         .getResults();
-  }
-
-  @Override
-  public UserInfo find(UserInfo userInfo) {
-    return null;
-  }
-
-  @Override
-  public UserInfo findById(Integer id) {
-    return null;
-  }
-
-  @Override
-  public int update(UserInfo userInfo) {
-    return 0;
-  }
-
-  @Override
-  public int updateByList(List<UserInfo> list) {
-    return 0;
-  }
-
-  @Override
-  public int remove(UserInfo userInfo) {
-    return 0;
-  }
-
-  @Override
-  public int removeByIds(Integer... id) {
-    return 0;
   }
 }

@@ -7,11 +7,12 @@ import com.shoestp.mains.entitys.dataview.flow.QDataViewFlow;
 import com.shoestp.mains.entitys.metadata.enums.DeviceTypeEnum;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.repositorys.dataview.flow.FlowRepository;
+import org.springframework.stereotype.Repository;
+
+import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import javax.annotation.Resource;
-import org.springframework.stereotype.Repository;
 
 /**
  * @description: 流量-数据层
@@ -166,36 +167,6 @@ public class FlowDao extends BaseDao<DataViewFlow> {
         .groupBy(dataViewFlow.sourcePage)
         .fetchResults()
         .getResults();
-  }
-
-  @Override
-  public DataViewFlow find(DataViewFlow dataViewFlow) {
-    return null;
-  }
-
-  @Override
-  public DataViewFlow findById(Integer id) {
-    return null;
-  }
-
-  @Override
-  public int update(DataViewFlow dataViewFlow) {
-    return 0;
-  }
-
-  @Override
-  public int updateByList(List<DataViewFlow> list) {
-    return 0;
-  }
-
-  @Override
-  public int remove(DataViewFlow dataViewFlow) {
-    return 0;
-  }
-
-  @Override
-  public int removeByIds(Integer... id) {
-    return 0;
   }
 
   public Optional<DataViewFlow> getFlowTopOne() {

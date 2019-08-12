@@ -11,9 +11,10 @@ public enum InquiryTypeEnum {
   /** 商品询盘 */
   COMMODITY,
   /** 热门关键词 */
-  //  SEARCHTERM(3, "热门关键词"),
   /** RFQ */
   RFQ,
   /** 私人展厅询盘 */
-  PRIVATE
+  PRIVATE,
+  /** 着陆页询盘 */
+  LANDING
 }

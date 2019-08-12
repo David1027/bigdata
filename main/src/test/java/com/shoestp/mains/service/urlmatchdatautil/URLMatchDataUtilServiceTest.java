@@ -9,6 +9,7 @@ import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.annotation.Rollback;
 
 import javax.annotation.Resource;
 

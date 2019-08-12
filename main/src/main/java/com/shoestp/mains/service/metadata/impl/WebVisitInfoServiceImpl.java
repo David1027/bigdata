@@ -1,7 +1,7 @@
 package com.shoestp.mains.service.metadata.impl;
 
 import com.shoestp.mains.controllers.analytics.view.WebVisitInfoView;
-import com.shoestp.mains.dao.shoestpdata.WebVisitInfoDao;
+import com.shoestp.mains.dao.metadata.WebVisitInfoDao;
 import com.shoestp.mains.entitys.metadata.WebVisitInfo;
 import com.shoestp.mains.entitys.metadata.enums.DeviceTypeEnum;
 import com.shoestp.mains.service.metadata.LocationService;
@@ -22,7 +22,10 @@ import java.util.Date;
 @Service
 public class WebVisitInfoServiceImpl implements WebVisitInfoService {
   private static final Logger logger = LogManager.getLogger(WebVisitInfoServiceImpl.class);
-  @Resource private WebVisitInfoDao webVisitInfoDao;
+
+  @Resource(name = "com.shoestp.mains.dao.metadata.WebVisitDao")
+  private WebVisitInfoDao webVisitInfoDao;
+
   @Resource private UserInfoService userInfoService;
   @Resource private LocationService locationService;
   @Resource private URLMatchDataUtilService urlMatchDataUtilService;

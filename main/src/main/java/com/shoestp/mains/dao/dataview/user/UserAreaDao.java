@@ -22,6 +22,16 @@ public class UserAreaDao extends BaseDao<DataViewUserArea> {
   @Resource private UserAreaRepository userAreaRepository;
 
   /**
+   * 新增用户地域表记录
+   *
+   * @author: lingjian @Date: 2019/8/13 9:20
+   * @param dataViewUserArea 用户地域对象
+   */
+  public void save(DataViewUserArea dataViewUserArea) {
+    userAreaRepository.save(dataViewUserArea);
+  }
+
+  /**
    * 根据时间获取用户地域表的数据总和
    *
    * @author: lingjian @Date: 2019/5/13 15:59
@@ -38,10 +48,6 @@ public class UserAreaDao extends BaseDao<DataViewUserArea> {
         .groupBy(qDataViewUserArea.area)
         .fetchResults()
         .getResults();
-  }
-
-  public void save(DataViewUserArea area) {
-    userAreaRepository.save(area);
   }
 
   public Optional<DataViewUserArea> getLastUserArea(String area) {

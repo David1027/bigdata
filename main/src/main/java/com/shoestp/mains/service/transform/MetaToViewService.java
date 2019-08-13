@@ -9,6 +9,7 @@ import com.shoestp.mains.entitys.dataview.inquiry.DataViewInquiry;
 import com.shoestp.mains.entitys.dataview.inquiry.DataViewInquiryRank;
 import com.shoestp.mains.entitys.dataview.real.DataViewReal;
 import com.shoestp.mains.entitys.dataview.user.DataViewUser;
+import com.shoestp.mains.entitys.dataview.user.DataViewUserArea;
 
 /**
  * @description: 源数据转化展示数据 - 服务层接口
@@ -67,5 +68,23 @@ public interface MetaToViewService {
    */
   List<DataViewInquiryRank> toInquiryRank(Date start, Date end);
 
+  /**
+   * 源数据转化user用户表
+   *
+   * @author: lingjian @Date: 2019/8/12 14:20
+   * @param start 开始时间
+   * @param end 结束时间
+   * @return DataViewUser 用户表对象
+   */
   DataViewUser toUser(Date start, Date end);
+
+  /**
+   * 源数据转化userarea用户地域表
+   *
+   * @author: lingjian @Date: 2019/8/13 9:41
+   * @param start 开始时间
+   * @param end 结束时间
+   * @return List<DataViewUserArea> 用户地域表集合对象
+   */
+  List<DataViewUserArea> toUserArea(Date start, Date end);
 }

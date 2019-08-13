@@ -41,6 +41,13 @@ public class NewUserInfoDao extends BaseDao<UserInfo> {
     return (int) query.fetchCount();
   }
 
+  /**
+   * 根据时间获取注册表记录
+   *
+   * @param start 开始时间
+   * @param end 结束时间
+   * @return List<UserInfo> 注册表集合对象
+   */
   public List<UserInfo> getRegisterList(Date start, Date end) {
     QUserInfo qUserInfo = QUserInfo.userInfo;
     return getQuery()

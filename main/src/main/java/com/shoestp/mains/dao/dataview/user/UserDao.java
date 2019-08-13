@@ -25,6 +25,16 @@ public class UserDao extends BaseDao<DataViewUser> {
   @Resource private UserRepository userRepository;
 
   /**
+   * 新增用户表
+   *
+   * @author: lingjian @Date: 2019/8/13 9:22
+   * @param dataViewUser 用户表对象
+   */
+  public void save(DataViewUser dataViewUser) {
+    userRepository.save(dataViewUser);
+  }
+
+  /**
    * 获取今天之前累计的询盘量，RFQ数，注册量
    *
    * @author: lingjian @Date: 2019/5/23 14:23
@@ -90,10 +100,6 @@ public class UserDao extends BaseDao<DataViewUser> {
         .where(qDataViewUser.createTime.between(start, end))
         .fetchResults()
         .getResults();
-  }
-
-  public void save(DataViewUser user) {
-    userRepository.save(user);
   }
 
   public Optional<DataViewUser> getLastUser() {

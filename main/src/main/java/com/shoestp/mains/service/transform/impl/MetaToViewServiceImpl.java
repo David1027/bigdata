@@ -5,6 +5,8 @@ import com.shoestp.mains.dao.dataview.flow.FlowPageDao;
 import com.shoestp.mains.dao.dataview.inquiry.InquiryDao;
 import com.shoestp.mains.dao.dataview.inquiry.InquiryRankDao;
 import com.shoestp.mains.dao.dataview.real.RealDao;
+import com.shoestp.mains.dao.dataview.user.UserAreaDao;
+import com.shoestp.mains.dao.dataview.user.UserDao;
 import com.shoestp.mains.dao.transform.NewInquiryInfoDao;
 import com.shoestp.mains.dao.transform.NewUserInfoDao;
 import com.shoestp.mains.dao.transform.WebVisitDao;
@@ -14,6 +16,7 @@ import com.shoestp.mains.entitys.dataview.inquiry.DataViewInquiry;
 import com.shoestp.mains.entitys.dataview.inquiry.DataViewInquiryRank;
 import com.shoestp.mains.entitys.dataview.real.DataViewReal;
 import com.shoestp.mains.entitys.dataview.user.DataViewUser;
+import com.shoestp.mains.entitys.dataview.user.DataViewUserArea;
 import com.shoestp.mains.entitys.metadata.InquiryInfo;
 import com.shoestp.mains.entitys.metadata.WebVisitInfo;
 import com.shoestp.mains.entitys.metadata.enums.DeviceTypeEnum;
@@ -51,6 +54,8 @@ public class MetaToViewServiceImpl implements MetaToViewService {
   @Resource private InquiryDao inquiryDao;
   @Resource private InquiryRankDao inquiryRankDao;
   @Resource private URLMatchDataUtilService urlMatchDataUtilService;
+  @Resource private UserDao userDao;
+  @Resource private UserAreaDao userAreaDao;
 
   /**
    * 判断DataViewReal的数据是否为空
@@ -105,6 +110,41 @@ public class MetaToViewServiceImpl implements MetaToViewService {
     if (inquiry.getVisitorCount() == 0
         && inquiry.getInquiryCount() == 0
         && inquiry.getInquiryNumber() == 0) {
+      flag = false;
+    }
+    return flag;
+  }
+
+  /**
+   * 判断DataViewUser的数据是否为空
+   *
+   * @author: lingjian @Date: 2019/8/13 9:33
+   * @param user 用户表
+   * @return boolean
+   */
+  private boolean decideIsNull(DataViewUser user) {
+    boolean flag = true;
+    if (user.getVisitorCount() == 0
+        && user.getNewVisitorCount() == 0
+        && user.getOldVisitorCount() == 0
+        && user.getRegisterCount() == 0
+        && user.getPurchaseCount() == 0
+        && user.getSupplierCount() == 0) {
+      flag = false;
+    }
+    return flag;
+  }
+
+  /**
+   * 判断DataViewUserArea的数据是否为空
+   *
+   * @author: lingjian @Date: 2019/8/13 9:35
+   * @param userArea 用户地域表
+   * @return boolean
+   */
+  private boolean decideIsNull(DataViewUserArea userArea) {
+    boolean flag = true;
+    if (userArea.getAreaCount() == 0 && userArea.getAreaCountTotal() == 0) {
       flag = false;
     }
     return flag;
@@ -390,33 +430,37 @@ public class MetaToViewServiceImpl implements MetaToViewService {
     return list;
   }
   /**
-   * @title
-   * @description
+   * 源数据转化user用户表
+   *
+   * @author: lingjian @Date: 2019/8/13 9:36
+   * @param start 开始时间
+   * @param end 结束时间
+   * @return DataViewUser 用户表对象
+   * @title 新增新用户数，老用户数
    * @author Lijie HelloBox@outlook.com
    * @updateTime 2019-08-09 09:29
-   * @throws
    */
   @Override
   public DataViewUser toUser(Date start, Date end) {
     DataViewUser user = new DataViewUser();
-    /** 定义每次查询多少条 */
+    /* 定义每次查询多少条 */
     int count = 1000;
     List<WebVisitInfo> webVisitInfos = null;
-    /** 新用户数 */
+    /* 新用户数 */
     AtomicInteger newCount = new AtomicInteger();
-    /** 老用户数 */
+    /* 老用户数 */
     AtomicInteger oldCount = new AtomicInteger();
-    /** 数据库查询的起始位置 */
+    /* 数据库查询的起始位置 */
     Long offset = 0L;
     do {
-      /** 查询数据 */
+      /* 查询数据 */
       webVisitInfos = webVisitDao.getWebVisitUserId(start, end, offset, count);
       CountDownLatch countDownLatch = new CountDownLatch(webVisitInfos.size());
       webVisitInfos
           .parallelStream()
           .forEach(
               webVisitInfo -> {
-                /** 比较时间,和起始时间作比较,然后早于start的时间,为老用户,晚于的是新用户 */
+                /* 比较时间,和起始时间作比较,然后早于start的时间,为老用户,晚于的是新用户 */
                 if (DateTimeUtil.timeDifferent(start, webVisitInfo.getUserId().getCreateTime())
                         .toNanos()
                     >= 0) {
@@ -428,12 +472,12 @@ public class MetaToViewServiceImpl implements MetaToViewService {
               });
       offset += count;
       try {
-        /** 等待处理完成 */
+        /* 等待处理完成 */
         countDownLatch.await();
       } catch (InterruptedException e) {
         e.printStackTrace();
       }
-      /** 只有查询出结果等于每次查询条数的时候才会继续查询,否则 */
+      /* 只有查询出结果等于每次查询条数的时候才会继续查询,否则 */
     } while (webVisitInfos.size() == count);
     user.setNewVisitorCount(newCount.intValue());
     user.setOldVisitorCount(oldCount.intValue());
@@ -448,7 +492,40 @@ public class MetaToViewServiceImpl implements MetaToViewService {
     user.setSupplierCount(getRegisterCount(RegisterTypeEnum.SUPPLIER, start, end));
     // 创建时间
     user.setCreateTime(new Date());
-
+    if (decideIsNull(user)) {
+      userDao.save(user);
+    }
     return user;
+  }
+
+  /**
+   * 源数据转化userarea用户地域表
+   *
+   * @author: lingjian @Date: 2019/8/13 9:40
+   * @param start 开始时间
+   * @param end 结束时间
+   * @return List<DataViewUserArea> 用户地域表集合对象
+   */
+  @Override
+  public List<DataViewUserArea> toUserArea(Date start, Date end) {
+    List<DataViewUserArea> list = new ArrayList<>();
+    List<WebVisitInfo> webVisitUserArea = webVisitDao.getWebVisitUserArea(start, end);
+    for (WebVisitInfo w : webVisitUserArea) {
+      DataViewUserArea area = new DataViewUserArea();
+      // 地域名称
+      area.setArea(w.getLocation().getName());
+      // 地域访客数
+      area.setAreaCount(webVisitDao.countWebVisitUserArea(w.getLocation().getId(), start, end));
+      // TODO
+      // 地域访客总数
+      area.setAreaCountTotal(0);
+      // 创建时间
+      area.setCreateTime(new Date());
+      if (decideIsNull(area)) {
+        userAreaDao.save(area);
+      }
+      list.add(area);
+    }
+    return list;
   }
 }

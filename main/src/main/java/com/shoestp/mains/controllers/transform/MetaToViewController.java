@@ -122,6 +122,15 @@ public class MetaToViewController {
         .build();
   }
 
+  /**
+   * 源数据转化user用户表
+   *
+   * @author: lingjian @Date: 2019/8/12 14:20
+   * @param httpRequest 请求参数
+   * @param start 开始时间
+   * @param end 结束时间
+   * @return Object对象
+   */
   @GetMapping(value = "/touser")
   public Object toUser(
       HttpServletRequest httpRequest,
@@ -129,5 +138,23 @@ public class MetaToViewController {
       @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") Date end) {
     logger.debug(httpRequest.getCookies());
     return MessageResult.builder().code(1).result(metaToViewService.toUser(start, end)).build();
+  }
+
+  /**
+   * 源数据转化userarea用户地域表
+   *
+   * @author: lingjian @Date: 2019/8/13 9:41
+   * @param httpRequest 请求参数
+   * @param start 开始时间
+   * @param end 结束时间
+   * @return Object对象
+   */
+  @GetMapping(value = "/touserarea")
+  public Object toUserArea(
+      HttpServletRequest httpRequest,
+      @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") Date start,
+      @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") Date end) {
+    logger.debug(httpRequest.getCookies());
+    return MessageResult.builder().code(1).result(metaToViewService.toUserArea(start, end)).build();
   }
 }

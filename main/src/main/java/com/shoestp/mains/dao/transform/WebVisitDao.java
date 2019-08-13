@@ -210,6 +210,15 @@ public class WebVisitDao extends BaseDao<WebVisitInfo> {
     return result == null ? 0 : result;
   }
 
+  /**
+   * 根据时间分页获取源数据表记录
+   *
+   * @param start 开始时间
+   * @param end 结束时间
+   * @param offset 开始条数
+   * @param limit 显示条数
+   * @return List<WebVisitInfo> 源数据表集合对象
+   */
   public List<WebVisitInfo> getWebVisitUserId(Date start, Date end, Long offset, int limit) {
     QWebVisitInfo qWebVisitInfo = QWebVisitInfo.webVisitInfo;
     return getQuery()
@@ -221,5 +230,46 @@ public class WebVisitDao extends BaseDao<WebVisitInfo> {
         .offset(offset)
         .fetchResults()
         .getResults();
+  }
+
+  /**
+   * 根据地域，时间获取源数据表记录
+   *
+   * @author: lingjian @Date: 2019/8/13 9:19
+   * @param start 开始时间
+   * @param end 结束时间
+   * @return List<WebVisitInfo>
+   */
+  public List<WebVisitInfo> getWebVisitUserArea(Date start, Date end) {
+    QWebVisitInfo qWebVisitInfo = QWebVisitInfo.webVisitInfo;
+    return getQuery()
+        .select(qWebVisitInfo)
+        .where(qWebVisitInfo.createTime.between(start, end))
+        .groupBy(qWebVisitInfo.location)
+        .from(qWebVisitInfo)
+        .fetchResults()
+        .getResults();
+  }
+
+  /**
+   * 根据地域，时间获取访客数
+   *
+   * @author: lingjian
+   * @Date: 2019/8/13 9:14
+   * @param areaId 地域id
+   * @param start 开始时间
+   * @param end 结束时间
+   * @return Integer
+   */
+  public Integer countWebVisitUserArea(Integer areaId, Date start, Date end) {
+    QWebVisitInfo qWebVisitInfo = QWebVisitInfo.webVisitInfo;
+    return (int)
+        getQuery()
+            .select(qWebVisitInfo)
+            .where(qWebVisitInfo.location.id.eq(areaId))
+            .where(qWebVisitInfo.createTime.between(start, end))
+            .groupBy(qWebVisitInfo.ip)
+            .from(qWebVisitInfo)
+            .fetchCount();
   }
 }

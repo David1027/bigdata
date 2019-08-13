@@ -29,7 +29,7 @@ public class DataViewUserArea {
   /** 地域访客人数 */
   @Column(name = "area_count")
   private Integer areaCount;
-  /** 地域访客人数 */
+  /** 地域访客总人数 */
   @Column(name = "area_count_total")
   private Integer areaCountTotal;
   /** 创建时间 */

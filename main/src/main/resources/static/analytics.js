@@ -14,7 +14,7 @@
             project: 'bigdata',
             /** 页面超时时间  */
             timeout: 15,
-            issend:true
+            issend: true
         },
         /** 初始化数据  */
         init: function () {
@@ -22,8 +22,12 @@
             /** 获取用户第一次referrer进来的地址  */
             if (sessionStorage && !sessionStorage[_that.config.key
             + _that.config.project]) {
+                if (document.referrer) {
+                    document.referrer = ''
+                }
                 sessionStorage[_that.config.key
                 + _that.config.project] = document.referrer;
+                _that.cookie.set("_" + _that.config.key + "_first_referrer", document.referrer, "s900")
             }
             /** 再入用户标识  */
             if (localStorage && localStorage[_that.config.key + "userKey"]) {
@@ -68,11 +72,10 @@
                     userName: _that.cookie.get("__" + _that.config.key + "_UUID")
                 }
                 _that.data.session = _that.cookie.get("__" + _that.config.key + "_session")
-                _that.data.session_create_time = _that.cookie.get("__" + _that.config.key + "_UUID_create_time")
-
+                _that.data.session_create_time = _that.cookie.get("__" + _that.config.key + "_session_time")
             }
             /** 如果没有唯一标识获取用户唯一标识 */
-            if (!_that.data.userInfo || _that.data.userInfo.userName) {
+            if (!_that.data.userInfo || !_that.data.userInfo.userName) {
                 console.log("请求签名")
                 this.ajax.get(this.config.host + "/api/analytics/device_sign",
                     function (data) {
@@ -100,6 +103,7 @@
                  *  它在unload状态下也可以异步发送，不阻塞页面刷新/跳转等操作。
                  * */
                 if (_that.config.issend) {
+                    _that.data.time_on_page = new Date() - window.performance.timing.domComplete
                     navigator.sendBeacon(_that.config.host + _that.config.url,
                         JSON.stringify(_that.data));
                 }
@@ -110,6 +114,7 @@
             var t = setTimeout(function () {
                 _that.data.firstReferrer = sessionStorage[_that.config.key
                 + _that.config.project]
+                _that.data.time_on_page = new Date() - window.performance.timing.domComplete
                 _that.ajax.post(_that.config.host + _that.config.url,
                     JSON.stringify(_that.data))
                 _that.cookie.set("__" + _that.config.key + "_session", null, -1)
@@ -133,6 +138,7 @@
             "pageReferrer": document.referrer,
             /** 页面请求加载的一些统一时间  */
             "pageLoadInfo": window.performance.timing,
+
             /**   */
             "mouseClick": [],
             "windows": {
@@ -148,7 +154,12 @@
             /** 会话Id  */
             "session": null,
             /** 会话创建时间  */
-            "session_create_time": null
+            "session_create_time": null,
+            /** 页面停留时间  */
+            time_on_page: 0
+        },
+        saveData:function(){
+
         },
         ScollPostion: function () {
             var t, l, w, h;
@@ -209,7 +220,7 @@
                     return null;
                 }
             },
-            set: function (name, value, time) {
+            set: function (name, value, time, path) {
                 function getsec(str) {
                     if (!str) return null
                     var str1 = str.substring(1, str.length) * 1;
@@ -233,7 +244,13 @@
                     exp.setTime(exp.getTime() + strsec * 1);
                     _t = ";expires=" + exp.toUTCString();
                 }
-                document.cookie = name + "=" + escape(value) + _t
+                if (!path) {
+                    path = ";path=/"
+                } else {
+                    path = ";path=" + path
+                }
+                console.log(name + "=" + escape(value) + path + _t)
+                document.cookie = name + "=" + escape(value) + path + _t
             }
         }
     }

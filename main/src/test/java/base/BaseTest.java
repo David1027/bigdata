@@ -13,7 +13,7 @@ import javax.transaction.Transactional;
 @Rollback
 @Transactional
 @RunWith(SpringRunner.class)
-@ActiveProfiles("dev")
+@ActiveProfiles("test")
 @SpringBootTest(classes = Runs.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class BaseTest {
   @Test

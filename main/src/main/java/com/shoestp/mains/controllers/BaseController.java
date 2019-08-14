@@ -1,9 +1,10 @@
 package com.shoestp.mains.controllers;
 
-import java.util.Enumeration;
-import javax.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Enumeration;
 
 /** Created by IntelliJ IDEA. User: lijie@shoestp.cn Date: 2019/5/20 Time: 14:12 */
 public class BaseController {
@@ -13,27 +14,32 @@ public class BaseController {
   protected String getIpByHeader(HttpServletRequest httpRequest) {
     Enumeration<String> enumeration = httpRequest.getHeaders("X-Forwarded-For");
     String ip = null;
-    Enumeration<String> stringEnumeration = httpRequest.getHeaderNames();
-    // ;
-    //      return ip;
-    //    }hile (stringEnumeration.hasMoreElements()) {
-    ////      String next = stringEnumeration.nextElement();
-    ////      logger.debug("Header Info:{}  {}", next, httpRequest.getHeader(next));
-    ////    }
-    ////    if (enumeration.hasMoreElements()) {
-    ////      ip = enumeration.nextElement();
-    ////      logger.debug("X-Forwarded-For Header Info {}", ip);
-    ////      return ip;
-    ////    }
-    //    logger.debug("Not Found Header Info:{}", "X-Forwarded-For");
+    //    Enumeration<String> stringEnumeration = httpRequest.getHeaderNames();
+    //    while (stringEnumeration.hasMoreElements()) {
+    //      String next = stringEnumeration.nextElement();
+    //      logger.debug("Header Info:{}  {}", next, httpRequest.getHeader(next));
+    //    }
+    if (enumeration.hasMoreElements()) {
+      ip = getFirstIp(enumeration.nextElement());
+      logger.debug("X-Forwarded-For Header Info {}", ip);
+      return ip;
+    }
+    logger.debug("Not Found Header Info:{}", "X-Forwarded-For");
     enumeration = httpRequest.getHeaders("X-Real-IP");
     if (enumeration.hasMoreElements()) {
-      ip = enumeration.nextElement();
+      ip = getFirstIp(enumeration.nextElement());
       logger.debug("X-Real-IP Header Info ", ip);
       return ip;
     }
     logger.debug("Not Found Header Info:{}", "X-Real-IP");
     return httpRequest.getRemoteHost();
+  }
+
+  private String getFirstIp(String ip) {
+    if (ip == null) {
+      return ip;
+    }
+    return ip.split(",")[0];
   }
 
   protected String getUserAgentByHeader(HttpServletRequest httpRequest) {

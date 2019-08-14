@@ -42,6 +42,7 @@ public class WebVisitInfoView {
   /** 会话创建时间 */
   private Long session_create_time;
   /** 页面停留时间 */
+
   private Long timeOnPage;
   /** 页面等待时间 */
   private Long pageWaitTime;

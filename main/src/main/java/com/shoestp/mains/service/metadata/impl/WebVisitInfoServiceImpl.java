@@ -65,6 +65,8 @@ public class WebVisitInfoServiceImpl implements WebVisitInfoService {
       }
     } else {
       logger.info("该IP{},未能找到响应国家", ip);
+      /** 没有找到国家设置为Unkonw */
+      webVisitInfo.setLocation(locationService.getCountry(null));
     }
     webVisitInfo.setImg(pojo.getImg());
     webVisitInfo.setPageWaitTime(pojo.getPageWaitTime());

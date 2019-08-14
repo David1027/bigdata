@@ -266,3 +266,12 @@ INSERT INTO meta_data_province (id, name) VALUES (650000, '新疆维吾尔自治
 INSERT INTO meta_data_province (id, name) VALUES (710000, '台湾省');
 INSERT INTO meta_data_province (id, name) VALUES (810000, '香港特别行政区');
 INSERT INTO meta_data_province (id, name) VALUES (820000, '澳门特别行政区');
+--
+INSERT INTO urlmatch_data_entity (id, name, priority, regex, type) VALUES (1, '迪胜', null, '/activity/html/ds*', 'LANDINGPAGE');
+INSERT INTO urlmatch_data_entity (id, name, priority, regex, type) VALUES (2, '美廉美', null, '/activity/html/mlm*', 'LANDINGPAGE');
+INSERT INTO urlmatch_data_entity (id, name, priority, regex, type) VALUES (3, 'GOOGLE', null, 'http*//www.google.*', 'SEARCHENGINE');
+INSERT INTO urlmatch_data_entity (id, name, priority, regex, type) VALUES (4, 'DETAIL', null, '/*_p*.html', 'PAGETYPE');
+INSERT INTO urlmatch_data_entity (id, name, priority, regex, type) VALUES (5, 'INDEX', null, '/', 'PAGETYPE');
+INSERT INTO urlmatch_data_entity (id, name, priority, regex, type) VALUES (6, 'INDEX', null, '/home/usr_UsrPurchase', 'PAGETYPE');
+INSERT INTO urlmatch_data_entity (id, name, priority, regex, type) VALUES (7, 'LIST', null, '/home/pdt_PdtProduct?cated=*', 'PAGETYPE');
+INSERT INTO urlmatch_data_entity (id, name, priority, regex, type) VALUES (8, 'INQUIRY', 10, '/home/usr_UsrSupplier_goContactSupplier*', 'PAGETYPE');

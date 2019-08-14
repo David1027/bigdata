@@ -40,10 +40,15 @@ public class InquiryInfo {
   private PltCountry country;
   /** 图片,商品询盘:商品主图,供应商询盘:供应商Logo,着陆页:供应商Logo */
   private String img;
-  /** 商家id usr_main */
+  /** 询盘发起人ID usr_main */
   @ManyToOne
-  @JoinColumn(name = "user_info")
-  private UserInfo userInfo;
+  @JoinColumn(name = "submit_user")
+  private UserInfo submit_user;
+  /** 询盘发起人ID usr_main */
+  @ManyToOne
+  /** 询盘接受人 一般为商家,Usr_main表的Id */
+  @JoinColumn(name = "recipient")
+  private UserInfo recipient_user;
 
   /** 设备类型：PC-电脑端，WAP-移动端 */
   @Enumerated(EnumType.ORDINAL)

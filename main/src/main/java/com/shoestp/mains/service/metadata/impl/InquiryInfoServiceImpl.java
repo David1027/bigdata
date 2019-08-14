@@ -45,7 +45,8 @@ public class InquiryInfoServiceImpl implements InquiryInfoService {
       default:
         inquiryInfo.setType(InquiryTypeEnum.LANDING);
     }
-    inquiryInfo.setUserInfo(userInfoServicel.getUserInfo(inquiry.getUserId(), inquiry.getSign()));
+    inquiryInfo.setSubmit_user(
+        userInfoServicel.getUserInfo(inquiry.getSubmitUser(), inquiry.getSign()));
     inquiryInfo.setUrl(inquiry.getUrl());
     /** Shoestp 询盘表单的ID */
     inquiryInfo.setInquiryId(inquiry.getInquiryId());

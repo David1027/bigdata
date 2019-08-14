@@ -28,7 +28,7 @@ import java.time.LocalDateTime;
  * @date 2019 /08/09
  * @since
  */
-class MetaToViewServiceImplTest extends BaseTest {
+public class MetaToViewServiceImplTest extends BaseTest {
   /** The constant logger. */
   private static final Logger logger = LogManager.getLogger(MetaToViewServiceImplTest.class);
 

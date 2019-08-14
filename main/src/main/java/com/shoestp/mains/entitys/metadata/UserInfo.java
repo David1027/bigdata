@@ -68,7 +68,7 @@ public class UserInfo {
   @OneToMany(mappedBy = "userId")
   private Set<WebVisitInfo> webVisitInfos;
 
-  @OneToMany(mappedBy = "userInfo")
+  @OneToMany(mappedBy = "submit_user")
   private Set<InquiryInfo> inquiryInfos;
 
   @OneToMany(mappedBy = "userId")

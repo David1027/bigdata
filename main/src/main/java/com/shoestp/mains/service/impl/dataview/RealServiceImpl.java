@@ -2,6 +2,7 @@ package com.shoestp.mains.service.impl.dataview;
 
 import com.shoestp.mains.constant.dataview.Contants;
 import com.shoestp.mains.dao.dataview.flow.FlowPageDao;
+import com.shoestp.mains.dao.dataview.real.RealDao;
 import com.shoestp.mains.dao.dataview.realcountry.RealCountryDao;
 import com.shoestp.mains.dao.dataview.user.UserDao;
 import com.shoestp.mains.service.dataview.RealService;
@@ -29,6 +30,7 @@ import org.springframework.stereotype.Service;
 public class RealServiceImpl implements RealService {
 
   @Resource private RealCountryDao realCountryDao;
+  @Resource private RealDao realDao;
   @Resource private FlowPageDao flowPageDao;
   @Resource private UserDao userDao;
 
@@ -277,35 +279,40 @@ public class RealServiceImpl implements RealService {
     // 获取当天，昨天，上周同一天所有的累加值
     RealView today =
         isNullTo(
-            realCountryDao.findAllByCreateTimeBetween(
+            realDao.findAllByCreateTimeBetween(
                 DateTimeUtil.getTimesmorning(), DateTimeUtil.getTimesnight()));
     RealView yesterday =
         isNullTo(
-            realCountryDao.findAllByCreateTimeBetween(
+            realDao.findAllByCreateTimeBetween(
                 DateTimeUtil.getYesterdaymorning(), DateTimeUtil.getYesterdaynight()));
     RealView week =
         isNullTo(
-            realCountryDao.findAllByCreateTimeBetween(
+            realDao.findAllByCreateTimeBetween(
                 DateTimeUtil.getWeekmorning(), DateTimeUtil.getWeeknight()));
     // 创建返回前端对象
     RealOverView realOverView = new RealOverView();
+    // 访客数，与昨日的比较值，与上周同一日的比较值
     realOverView.setVisitorCount(today.getVisitorCount());
     realOverView.setVisitorCompareYesterday(
         getCompare(today.getVisitorCount(), yesterday.getVisitorCount()));
     realOverView.setVisitorCompareWeek(getCompare(today.getVisitorCount(), week.getVisitorCount()));
+    // 浏览量，与昨日的比较值，与上周同一日的比较值
     realOverView.setViewCount(today.getViewCount());
     realOverView.setViewCompareYesterday(
         getCompare(today.getViewCount(), yesterday.getViewCount()));
     realOverView.setViewCompareWeek(getCompare(today.getViewCount(), week.getViewCount()));
+    // 注册量，与昨日的比较值，与上周同一日的比较值
     realOverView.setRegisterCount(today.getRegisterCount());
     realOverView.setRegisterCompareYesterday(
         getCompare(today.getRegisterCount(), yesterday.getRegisterCount()));
     realOverView.setRegisterCompareWeek(
         getCompare(today.getRegisterCount(), week.getRegisterCount()));
+    // 询盘量，与昨日的比较值，与上周同一日的比较值
     realOverView.setInquiryCount(today.getInquiryCount());
     realOverView.setInquiryCompareYesterday(
         getCompare(today.getInquiryCount(), yesterday.getInquiryCount()));
     realOverView.setInquiryCompareWeek(getCompare(today.getInquiryCount(), week.getInquiryCount()));
+    // rfq数，与昨日的比较值，与上周同一日的比较值
     realOverView.setRfqCount(today.getRfqCount());
     realOverView.setRfqCompareYesterday(getCompare(today.getRfqCount(), yesterday.getRfqCount()));
     realOverView.setRfqCompareWeek(getCompare(today.getRfqCount(), week.getRfqCount()));
@@ -323,7 +330,7 @@ public class RealServiceImpl implements RealService {
    */
   public RealView getAddByTime(Date date, int start, int end) {
     return isNullTo(
-        realCountryDao.findAllByCreateTimeBetween(
+        realDao.findAllByCreateTimeBetween(
             DateTimeUtil.getTimesOfDay(date, start), DateTimeUtil.getTimesOfDay(date, end)));
   }
 

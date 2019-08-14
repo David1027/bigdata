@@ -12,6 +12,8 @@ import lombok.Data;
 public class AccessView {
   /** 页面类型：INDEX-首页, DETAIL-商品详情页, SEARCH-搜索结果页, SVS-SVS专题页, CATEGORY-商品分类页, OTHER-其他页 */
   private String accessType;
+  /** 页面类型名称 */
+  private String accessName;
   /** 访客数 */
   private Integer visitorCount;
   /** 访客占比 */

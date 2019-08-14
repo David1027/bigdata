@@ -78,22 +78,23 @@ public class FlowPageDao extends BaseDao<DataViewFlowPage> {
   }
 
   /**
-   * 根据页面类型，当前时间获取访客数
+   * 根据页面类型，时间获取访客数
    *
-   * @author: lingjian @Date: 2019/5/21 9:46
-   * @param start
-   * @param end
-   * @return
+   * @param accessTypeEnum 页面类型
+   * @param start 开始时间
+   * @param end 结束时间
+   * @return Integer
    */
-  public List<Tuple> findAllByAccessBy(Date start, Date end) {
+  public Integer countAccessByType(AccessTypeEnum accessTypeEnum, Date start, Date end) {
     QDataViewFlowPage qDataViewFlowPage = QDataViewFlowPage.dataViewFlowPage;
-    return getQuery()
-        .select(qDataViewFlowPage.accessType.stringValue(), qDataViewFlowPage.visitorCount.sum())
-        .from(qDataViewFlowPage)
-        .where(qDataViewFlowPage.createTime.between(start, end))
-        .groupBy(qDataViewFlowPage.accessType)
-        .fetchResults()
-        .getResults();
+    Integer result =
+        getQuery()
+            .select(qDataViewFlowPage.visitorCount.sum())
+            .from(qDataViewFlowPage)
+            .where(qDataViewFlowPage.accessType.eq(accessTypeEnum))
+            .where(qDataViewFlowPage.createTime.between(start, end))
+            .fetchFirst();
+    return result == null ? 0 : result;
   }
 
   /**

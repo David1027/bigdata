@@ -19,10 +19,8 @@ public class URLMatchDataEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
-
   /** The Result. 名称 */
   private String name;
-
   /** The Regex. 匹配表达式 */
   private String regex;
   /** 该规则的类型 */

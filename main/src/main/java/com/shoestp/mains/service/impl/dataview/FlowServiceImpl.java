@@ -1,30 +1,22 @@
 package com.shoestp.mains.service.impl.dataview;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
+import javax.annotation.Resource;
+
 import com.shoestp.mains.dao.dataview.flow.FlowDao;
 import com.shoestp.mains.dao.dataview.flow.FlowPageDao;
-import com.shoestp.mains.enums.flow.AccessTypeEnum;
 import com.shoestp.mains.entitys.metadata.enums.DeviceTypeEnum;
+import com.shoestp.mains.enums.flow.AccessTypeEnum;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.service.dataview.FlowService;
 import com.shoestp.mains.utils.dateUtils.CustomDoubleSerialize;
 import com.shoestp.mains.utils.dateUtils.DateTimeUtil;
 import com.shoestp.mains.utils.dateUtils.KeyValueViewUtil;
-import com.shoestp.mains.views.dataview.flow.AccessPageView;
-import com.shoestp.mains.views.dataview.flow.AccessView;
-import com.shoestp.mains.views.dataview.flow.FlowDeviceView;
-import com.shoestp.mains.views.dataview.flow.FlowSourcePageView;
-import com.shoestp.mains.views.dataview.flow.FlowSourceView;
-import com.shoestp.mains.views.dataview.flow.PageParameterView;
-import com.shoestp.mains.views.dataview.flow.PageView;
-import com.shoestp.mains.views.dataview.flow.PageViewObject;
+import com.shoestp.mains.views.dataview.flow.*;
 import com.shoestp.mains.views.dataview.utils.KeyValue;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import javax.annotation.Resource;
+
 import org.springframework.stereotype.Service;
 
 /**
@@ -44,14 +36,16 @@ public class FlowServiceImpl implements FlowService {
    * @return Map<String, List>
    */
   @Override
-  public Map<String, List> getRealSource() {
+  public Map<String, List> getRealSource(Date startDate, Date endDate) {
     Map<String, List> flowViewMap = new HashMap<>();
     for (DeviceTypeEnum device : DeviceTypeEnum.values()) {
       flowViewMap.put(
           device.name(),
           flowDao
               .findAllByDeviceType(
-                  device, DateTimeUtil.getTimesmorning(), DateTimeUtil.getTimesnight())
+                  device,
+                  DateTimeUtil.getTimesOfDay(startDate, 0),
+                  DateTimeUtil.getTimesOfDay(endDate, 24))
               .stream()
               .map(
                   bean -> {
@@ -87,6 +81,15 @@ public class FlowServiceImpl implements FlowService {
               return flowDeviceView;
             })
         .collect(Collectors.toList());
+  }
+
+  @Override
+  public List<FlowDeviceView> getFlowDevice(Date date, Integer num) {
+    if (num == null) {
+      return getFlowDevice(date, date);
+    } else {
+      return getFlowDevice(DateTimeUtil.getDayFromNum(date, num), date);
+    }
   }
 
   /**
@@ -509,6 +512,21 @@ public class FlowServiceImpl implements FlowService {
   }
 
   /**
+   * 获取所有的页面类型
+   *
+   * @author: lingjian @Date: 2019/8/14 11:24
+   * @return List集合
+   */
+  @Override
+  public List getFlowPageType() {
+    List list = new ArrayList();
+    for (AccessTypeEnum a : AccessTypeEnum.values()) {
+      list.add(a);
+    }
+    return list;
+  }
+
+  /**
    * 计算页面分析的占比率
    *
    * @author: lingjian @Date: 2019/5/17 14:04
@@ -533,26 +551,26 @@ public class FlowServiceImpl implements FlowService {
    */
   public Map<String, List<AccessView>> getFlowPageAnalysisByDate(Date startDate, Date endDate) {
     Map<String, List<AccessView>> accessPageMap = new HashMap<>();
-    List<AccessView> list =
-        flowPageDao
-            .findAllByAccessBy(
-                DateTimeUtil.getTimesOfDay(startDate, 0), DateTimeUtil.getTimesOfDay(endDate, 24))
-            .stream()
-            .map(
-                bean -> {
-                  AccessView accessView = new AccessView();
-                  Integer i =
-                      flowPageDao.findAllByAccessTotal(
-                          DateTimeUtil.getTimesOfDay(startDate, 0),
-                          DateTimeUtil.getTimesOfDay(endDate, 24));
-                  accessView.setAccessType(bean.get(0, String.class));
-                  accessView.setVisitorCount(bean.get(1, Integer.class));
-                  accessView.setVisitorRate(
-                      CustomDoubleSerialize.setDouble(
-                          getCompareRate(bean.get(1, Integer.class), i)));
-                  return accessView;
-                })
-            .collect(Collectors.toList());
+    List<AccessView> list = new ArrayList<>();
+    for (AccessTypeEnum a : AccessTypeEnum.values()) {
+      System.err.println(a);
+      AccessView access = new AccessView();
+      // 页面类型
+      access.setAccessType(a.toString());
+      access.setAccessName(a.getName());
+      // 访客数
+      Integer visitor =
+          flowPageDao.countAccessByType(
+              a, DateTimeUtil.getTimesOfDay(startDate, 0), DateTimeUtil.getTimesOfDay(endDate, 24));
+      access.setVisitorCount(visitor);
+      // 访客占比率
+      // 一天内的总访客数
+      Integer visitorTotal =
+          flowPageDao.findAllByAccessTotal(
+              DateTimeUtil.getTimesOfDay(startDate, 0), DateTimeUtil.getTimesOfDay(endDate, 24));
+      access.setVisitorRate(CustomDoubleSerialize.setDouble(getCompareRate(visitor, visitorTotal)));
+      list.add(access);
+    }
     accessPageMap.put("access", list);
     return accessPageMap;
   }
@@ -828,7 +846,7 @@ public class FlowServiceImpl implements FlowService {
   }
 
   /**
-   * 计算平均浏览量
+   * 计算平均值
    *
    * @author: lingjian @Date: 2019/5/14 16:53
    * @param num1
@@ -852,7 +870,7 @@ public class FlowServiceImpl implements FlowService {
    */
   public Double getCompareTwo(double num1, double num2) {
     if (num2 == 0) {
-      num2 = 1.0;
+      return 1.0;
     }
     return (num1 - num2) / num2;
   }
@@ -905,13 +923,16 @@ public class FlowServiceImpl implements FlowService {
     Double compareWeek = getCompare(week.getViewCount(), week.getVisitorCount());
 
     PageParameterView pageParameterView = new PageParameterView();
+    // 平均浏览量，与昨日的比较值，与上周同一日的比较值
     pageParameterView.setViewAvgCount(compareToday);
     pageParameterView.setViewCompareYesterday(getCompareTwo(compareToday, compareYesterday));
     pageParameterView.setViewCompareWeek(getCompareTwo(compareToday, compareWeek));
+    // 跳失率，与昨日的比较值，与上周同一日的比较值
     pageParameterView.setJumpRate(today.getJumpRate());
     pageParameterView.setJumpCompareYesterday(
         getCompareTwo(today.getJumpRate(), yesterday.getJumpRate()));
     pageParameterView.setJumpCompareWeek(getCompareTwo(today.getJumpRate(), week.getJumpRate()));
+    // 平均停留时长，与昨日的比较值，与上周同一日的比较值
     pageParameterView.setAverageStayTime(today.getAverageStayTime());
     pageParameterView.setTimeCompareYesterday(
         getCompareTwo(today.getAverageStayTime(), yesterday.getAverageStayTime()));

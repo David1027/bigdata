@@ -7,6 +7,8 @@ import com.shoestp.mains.service.dataview.FlowService;
 import java.util.Date;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -33,10 +35,16 @@ public class FlowController {
    * @param httpRequest
    * @return
    */
-  @GetMapping(value = "/realsource")
-  public Object getRealSource(HttpServletRequest httpRequest) {
+  @PostMapping(value = "/realsource")
+  public Object getRealSource(
+      HttpServletRequest httpRequest,
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
     logger.debug(httpRequest.getCookies());
-    return MessageResult.builder().code(1).result(flowService.getRealSource()).build();
+    return MessageResult.builder()
+        .code(1)
+        .result(flowService.getRealSource(startDate, endDate))
+        .build();
   }
 
   /**
@@ -56,6 +64,12 @@ public class FlowController {
         .code(1)
         .result(flowService.getFlowDevice(startDate, endDate))
         .build();
+  }
+
+  @PostMapping(value = "/flowdevicebynum")
+  public Object getFlowDevice(@DateTimeFormat(pattern = "yyyy-MM-dd") Date date, Integer num) {
+    logger.debug(date);
+    return MessageResult.builder().code(1).result(flowService.getFlowDevice(date, num)).build();
   }
 
   /**
@@ -161,6 +175,19 @@ public class FlowController {
         .code(1)
         .result(flowService.getFlowSourcePageByDay(num, date, sourceType, sourcePage))
         .build();
+  }
+
+  /**
+   * 获取所有的页面类型
+   *
+   * @author: lingjian @Date: 2019/8/14 11:23
+   * @param httpRequest 请求参数
+   * @return Object对象
+   */
+  @GetMapping(value = "/flowpagetype")
+  public Object getFlowPageType(HttpServletRequest httpRequest) {
+    logger.debug(httpRequest);
+    return MessageResult.builder().code(1).result(flowService.getFlowPageType()).build();
   }
 
   /**

@@ -58,6 +58,7 @@ public class WebVisitInfoServiceImpl implements WebVisitInfoService {
     webVisitInfo.setIp(ip);
     webVisitInfo.setUserId(userInfoService.save(pojo.getUserInfo()));
     String[] address = locationService.getAddress(ip);
+    logger.debug("address Info:{}", address);
     if (address != null && address.length > 0) {
       webVisitInfo.setLocation(locationService.getCountry(address[0]));
       if (address.length > 1) {
@@ -69,8 +70,8 @@ public class WebVisitInfoServiceImpl implements WebVisitInfoService {
       webVisitInfo.setLocation(locationService.getCountry(null));
     }
     webVisitInfo.setImg(pojo.getImg());
-    webVisitInfo.setPageWaitTime(pojo.getPageWaitTime());
-    webVisitInfo.setTimeOnPage(pojo.getTimeOnPage());
+    webVisitInfo.setPageWaitTime(pojo.getPage_wait_time());
+    webVisitInfo.setTimeOnPage(pojo.getTime_on_page());
     webVisitInfo.setSessionCreateTime(
         DateTimeUtil.toLocalDateTime(Instant.ofEpochMilli(pojo.getSession_create_time())));
     webVisitInfo.setSession(pojo.getSession());

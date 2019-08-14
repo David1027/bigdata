@@ -43,9 +43,9 @@ public class WebVisitInfoView {
   private Long session_create_time;
   /** 页面停留时间 */
 
-  private Long timeOnPage;
+  private Long time_on_page;
   /** 页面等待时间 */
-  private Long pageWaitTime;
+  private Long page_wait_time;
   /** 页面图片信息 */
   private String img;
 }

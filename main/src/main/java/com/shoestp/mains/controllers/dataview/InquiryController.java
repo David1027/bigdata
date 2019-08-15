@@ -92,7 +92,7 @@ public class InquiryController {
   }
 
   /**
-   * 根据询盘类型,时间获取询盘排行
+   * 根据询盘类型,时间获取询盘排行（实时）
    *
    * @author: lingjian @Date: 2019/5/16 14:15
    * @param inquiryType

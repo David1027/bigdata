@@ -259,8 +259,10 @@ public class MetaToViewServiceImpl implements MetaToViewService {
           flow.setDeviceType(d);
           // 来源类型
           flow.setSourceType(s);
+          // TODO
           // 来源渠道
           flow.setSourcePage(a);
+          // TODO
           // 访客数
           int count = 0;
           List<WebVisitInfo> webVisitInfo = webVisitDao.getWebVisitInfo(d, start, end);
@@ -268,10 +270,19 @@ public class MetaToViewServiceImpl implements MetaToViewService {
           for (WebVisitInfo w : webVisitInfo) {
             if (w.getEquipmentPlatform().equals(d)) {
               DataViewFlow temp = new DataViewFlow();
-              /** @modify Lijie HelloBox@outlook.com 2019-08-08 09:21 去查询页面来源及原页面 */
-              PageSourcePojo sourcePojo = urlMatchDataUtilService.getUrlType(w.getReferer());
-              temp.setSourcePage(sourcePojo.getSourcePage());
-              temp.setSourceType(sourcePojo.getSourceType());
+              if (w.getReferer() == null) {
+                temp.setSourceType(SourceTypeEnum.INTERVIEW);
+                temp.setSourcePage("直接访问");
+              } else if (w.getReferer().indexOf("baidu") > 0) {
+                temp.setSourceType(SourceTypeEnum.BAIDU);
+                temp.setSourcePage("自然搜索");
+              } else if (w.getReferer().indexOf("google") > 0) {
+                temp.setSourceType(SourceTypeEnum.GOOGLE);
+                temp.setSourcePage("自然搜索");
+              } else {
+                temp.setSourceType(SourceTypeEnum.OTHER);
+                temp.setSourcePage("自然搜索");
+              }
               if (s.equals(temp.getSourceType()) && a.equals(temp.getSourcePage())) {
                 if (!l.contains(w.getIp())) {
                   l.add(w.getIp());
@@ -280,6 +291,7 @@ public class MetaToViewServiceImpl implements MetaToViewService {
               }
             }
           }
+
           flow.setVisitorCount(count);
           // 询盘量
           flow.setInquiryCount(0);
@@ -352,9 +364,9 @@ public class MetaToViewServiceImpl implements MetaToViewService {
       }
       // 创建时间
       flowPage.setCreateTime(new Date());
-      list.add(flowPage);
       if (decideIsNull(flowPage)) {
         flowPageDao.save(flowPage);
+        list.add(flowPage);
       }
     }
 
@@ -429,6 +441,7 @@ public class MetaToViewServiceImpl implements MetaToViewService {
     }
     return list;
   }
+
   /**
    * 源数据转化user用户表
    *

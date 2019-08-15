@@ -198,22 +198,19 @@ public class InquiryServiceImpl implements InquiryService {
     return inquiryTimeMap;
   }
 
-  public List<InquiryRankView> getInquiryRankPage(
+  /**
+   * 获取询盘排行（全部）
+   *
+   * @author: lingjian @Date: 2019/8/14 16:40
+   * @param inquiryType 询盘类型
+   * @param page 开始条数
+   * @param pageSize 显示条数
+   * @return List<InquiryRankView>
+   */
+  public List<InquiryTypeView> getInquiryRankPage(
       InquiryTypeEnum inquiryType, Integer page, Integer pageSize) {
-    return inquiryRankDao
-        .findAllByInquiryType(inquiryType, DateTimeUtil.getTimesmorning(), page, pageSize).stream()
-        .map(
-            bean -> {
-              InquiryRankView inquiryRankView = new InquiryRankView();
-              inquiryRankView.setInquiryName(bean.getInquiryName());
-              inquiryRankView.setVisitorCount(bean.getVisitorCount());
-              inquiryRankView.setViewCount(bean.getViewCount());
-              inquiryRankView.setInquiryCount(bean.getInquiryCount());
-              inquiryRankView.setInquiryNumber(bean.getInquiryNumber());
-              inquiryRankView.setInquiryAmount(bean.getInquiryAmount());
-              return inquiryRankView;
-            })
-        .collect(Collectors.toList());
+    return inquiryRankDao.findAllByInquiryType(
+        inquiryType, DateTimeUtil.getTimesmorning(), page, pageSize);
   }
 
   /**
@@ -240,26 +237,12 @@ public class InquiryServiceImpl implements InquiryService {
    */
   public List getInquiryRealRankPage(
       InquiryTypeEnum inquiryType, Date startDate, Date endDate, Integer page, Integer pageSize) {
-    return inquiryRankDao
-        .findAllByInquiryTypeBetween(
-            inquiryType,
-            DateTimeUtil.getTimesOfDay(startDate, 0),
-            DateTimeUtil.getTimesOfDay(endDate, 24),
-            page,
-            pageSize)
-        .stream()
-        .map(
-            bean -> {
-              InquiryRankView inquiryRankView = new InquiryRankView();
-              inquiryRankView.setInquiryName(bean.getInquiryName());
-              inquiryRankView.setVisitorCount(bean.getVisitorCount());
-              inquiryRankView.setViewCount(bean.getViewCount());
-              inquiryRankView.setInquiryCount(bean.getInquiryCount());
-              inquiryRankView.setInquiryNumber(bean.getInquiryNumber());
-              inquiryRankView.setInquiryAmount(bean.getInquiryAmount());
-              return inquiryRankView;
-            })
-        .collect(Collectors.toList());
+    return inquiryRankDao.findAllByInquiryTypeBetween(
+        inquiryType,
+        DateTimeUtil.getTimesOfDay(startDate, 0),
+        DateTimeUtil.getTimesOfDay(endDate, 24),
+        page,
+        pageSize);
   }
 
   /**
@@ -288,27 +271,13 @@ public class InquiryServiceImpl implements InquiryService {
    * @param end
    * @return
    */
-  public List<InquiryRankView> getInquiryRealRankByHour(
+  public List<InquiryTypeView> getInquiryRealRankByHour(
       InquiryTypeEnum inquiryType, String inquiryName, Date date, int start, int end) {
-    return inquiryRankDao
-        .findAllByInquiryTypeAndInquiryNameBetween(
-            inquiryType,
-            inquiryName,
-            DateTimeUtil.getTimesOfDay(date, start),
-            DateTimeUtil.getTimesOfDay(date, end))
-        .stream()
-        .map(
-            bean -> {
-              InquiryRankView inquiryRankView = new InquiryRankView();
-              inquiryRankView.setInquiryName(bean.getInquiryName());
-              inquiryRankView.setVisitorCount(bean.getVisitorCount());
-              inquiryRankView.setViewCount(bean.getViewCount());
-              inquiryRankView.setInquiryCount(bean.getInquiryCount());
-              inquiryRankView.setInquiryNumber(bean.getInquiryNumber());
-              inquiryRankView.setInquiryAmount(bean.getInquiryAmount());
-              return inquiryRankView;
-            })
-        .collect(Collectors.toList());
+    return inquiryRankDao.findAllByInquiryTypeAndInquiryNameBetween(
+        inquiryType,
+        inquiryName,
+        DateTimeUtil.getTimesOfDay(date, start),
+        DateTimeUtil.getTimesOfDay(date, end));
   }
 
   /**
@@ -423,28 +392,13 @@ public class InquiryServiceImpl implements InquiryService {
    */
   @Override
   public List getInquirySearch(String inquirySearch, String type, int page, int pageSize) {
-    return inquiryRankDao
-        .findInquiryByInquiryName(
-            inquirySearch,
-            type,
-            DateTimeUtil.getTimesmorning(),
-            DateTimeUtil.getTimesnight(),
-            page,
-            pageSize)
-        .stream()
-        .map(
-            bean -> {
-              InquiryTypeView inquiryTypeView = new InquiryTypeView();
-              inquiryTypeView.setInquiryType(bean.getInquiryType());
-              inquiryTypeView.setInquiryName(bean.getInquiryName());
-              inquiryTypeView.setVisitorCount(bean.getVisitorCount());
-              inquiryTypeView.setViewCount(bean.getViewCount());
-              inquiryTypeView.setInquiryCount(bean.getInquiryCount());
-              inquiryTypeView.setInquiryNumber(bean.getInquiryNumber());
-              inquiryTypeView.setInquiryAmount(bean.getInquiryAmount());
-              return inquiryTypeView;
-            })
-        .collect(Collectors.toList());
+    return inquiryRankDao.findInquiryByInquiryName(
+        inquirySearch,
+        type,
+        DateTimeUtil.getTimesmorning(),
+        DateTimeUtil.getTimesnight(),
+        page,
+        pageSize);
   }
 
   @Override

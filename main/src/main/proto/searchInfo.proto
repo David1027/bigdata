@@ -43,7 +43,9 @@ message Inquiry {
     /** 商品图片,或者供应商图片  */
     string img = 9;
     /** 用户询盘者的ID  */
-    uint32 userId = 10;
+    uint32 submit_user = 10;
+    /** 询盘接受者ID,即商家ID  */
+    uint32 recipient_user = 14;
     /** 用户唯一标识  */
     string sign = 11;
     /** 创建时间  */

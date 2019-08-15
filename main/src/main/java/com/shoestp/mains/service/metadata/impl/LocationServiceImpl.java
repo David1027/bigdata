@@ -6,6 +6,8 @@ import com.shoestp.mains.entitys.metadata.PltCountry;
 import com.shoestp.mains.entitys.metadata.Province;
 import com.shoestp.mains.service.metadata.LocationService;
 import com.shoestp.mains.utils.iputils.City;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -15,8 +17,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@CacheDefaults(cacheName = "month")
+@CacheDefaults(cacheName = "15_Minutes")
 public class LocationServiceImpl implements LocationService {
+  private static final Logger logger = LogManager.getLogger(LocationServiceImpl.class);
   @Resource private PltCountryDao countryDao;
   @Resource private ProvinceDao provinceDao;
 
@@ -26,6 +29,7 @@ public class LocationServiceImpl implements LocationService {
   @Override
   @CacheResult
   public PltCountry getCountry(String name) {
+    logger.debug("getCountry=>name:{}", name);
     if (name != null) {
       Optional<PltCountry> result = countryDao.findByName(name);
       if (result.isPresent()) {

@@ -19,9 +19,9 @@
         </ehcache:expiry>
     </ehcache:cache>
 
-    <ehcache:cache alias="month" uses-template="DefaultTemplate">
+    <ehcache:cache alias="15_Minutes" uses-template="DefaultTemplate">
         <ehcache:expiry>
-            <ehcache:tti unit="minutes">43200</ehcache:tti>
+            <ehcache:tti unit="minutes">15</ehcache:tti>
         </ehcache:expiry>
     </ehcache:cache>
 

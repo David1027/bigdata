@@ -69,6 +69,7 @@ public class RealController {
     return MessageResult.builder().code(1).result(realService.getIndexOverview(date, num)).build();
   }
 
+
   /**
    * 获取首页整体看板时段分布
    *

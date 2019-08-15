@@ -11,6 +11,7 @@ import com.shoestp.mains.entitys.metadata.enums.DeviceTypeEnum;
 import com.shoestp.mains.enums.flow.AccessTypeEnum;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.service.dataview.FlowService;
+import com.shoestp.mains.utils.dateUtils.CalculateUtil;
 import com.shoestp.mains.utils.dateUtils.CustomDoubleSerialize;
 import com.shoestp.mains.utils.dateUtils.DateTimeUtil;
 import com.shoestp.mains.utils.dateUtils.KeyValueViewUtil;
@@ -527,21 +528,6 @@ public class FlowServiceImpl implements FlowService {
   }
 
   /**
-   * 计算页面分析的占比率
-   *
-   * @author: lingjian @Date: 2019/5/17 14:04
-   * @param num1
-   * @param num2
-   * @return
-   */
-  public Double getCompareRate(int num1, int num2) {
-    if (num2 == 0) {
-      num2 = 1;
-    }
-    return num1 / (num2 * 1.0);
-  }
-
-  /**
    * 根据时间获取页面分析
    *
    * @author: lingjian @Date: 2019/5/20 16:41
@@ -568,7 +554,8 @@ public class FlowServiceImpl implements FlowService {
       Integer visitorTotal =
           flowPageDao.findAllByAccessTotal(
               DateTimeUtil.getTimesOfDay(startDate, 0), DateTimeUtil.getTimesOfDay(endDate, 24));
-      access.setVisitorRate(CustomDoubleSerialize.setDouble(getCompareRate(visitor, visitorTotal)));
+      access.setVisitorRate(
+          CustomDoubleSerialize.setDouble(CalculateUtil.getExcept(visitor, visitorTotal)));
       list.add(access);
     }
     accessPageMap.put("access", list);
@@ -846,36 +833,6 @@ public class FlowServiceImpl implements FlowService {
   }
 
   /**
-   * 计算平均值
-   *
-   * @author: lingjian @Date: 2019/5/14 16:53
-   * @param num1
-   * @param num2
-   * @return
-   */
-  public Double getCompare(int num1, int num2) {
-    if (num2 == 0) {
-      num2 = 1;
-    }
-    return num1 / (num2 * 1.0);
-  }
-
-  /**
-   * 计算对比值
-   *
-   * @author: lingjian @Date: 2019/5/17 15:27
-   * @param num1
-   * @param num2
-   * @return
-   */
-  public Double getCompareTwo(double num1, double num2) {
-    if (num2 == 0) {
-      return 1.0;
-    }
-    return (num1 - num2) / num2;
-  }
-
-  /**
    * 判断非空处理
    *
    * @author: lingjian @Date: 2019/5/17 15:38
@@ -918,26 +875,32 @@ public class FlowServiceImpl implements FlowService {
     PageViewObject yesterday = getFlowPageObject(DateTimeUtil.getDayFromNum(date, 1));
     PageViewObject week = getFlowPageObject(DateTimeUtil.getDayFromNum(date, 7));
 
-    Double compareToday = getCompare(today.getViewCount(), today.getVisitorCount());
-    Double compareYesterday = getCompare(yesterday.getViewCount(), yesterday.getVisitorCount());
-    Double compareWeek = getCompare(week.getViewCount(), week.getVisitorCount());
+    // 计算(浏览量 / 访客数)
+    Double compareToday = CalculateUtil.getExcept(today.getViewCount(), today.getVisitorCount());
+    Double compareYesterday =
+        CalculateUtil.getExcept(yesterday.getViewCount(), yesterday.getVisitorCount());
+    Double compareWeek = CalculateUtil.getExcept(week.getViewCount(), week.getVisitorCount());
 
     PageParameterView pageParameterView = new PageParameterView();
     // 平均浏览量，与昨日的比较值，与上周同一日的比较值
     pageParameterView.setViewAvgCount(compareToday);
-    pageParameterView.setViewCompareYesterday(getCompareTwo(compareToday, compareYesterday));
-    pageParameterView.setViewCompareWeek(getCompareTwo(compareToday, compareWeek));
+    pageParameterView.setViewCompareYesterday(
+        CalculateUtil.getDifferenceExcept(compareToday, compareYesterday));
+    pageParameterView.setViewCompareWeek(
+        CalculateUtil.getDifferenceExcept(compareToday, compareWeek));
     // 跳失率，与昨日的比较值，与上周同一日的比较值
     pageParameterView.setJumpRate(today.getJumpRate());
     pageParameterView.setJumpCompareYesterday(
-        getCompareTwo(today.getJumpRate(), yesterday.getJumpRate()));
-    pageParameterView.setJumpCompareWeek(getCompareTwo(today.getJumpRate(), week.getJumpRate()));
+        CalculateUtil.getDifferenceExcept(today.getJumpRate(), yesterday.getJumpRate()));
+    pageParameterView.setJumpCompareWeek(
+        CalculateUtil.getDifferenceExcept(today.getJumpRate(), week.getJumpRate()));
     // 平均停留时长，与昨日的比较值，与上周同一日的比较值
     pageParameterView.setAverageStayTime(today.getAverageStayTime());
     pageParameterView.setTimeCompareYesterday(
-        getCompareTwo(today.getAverageStayTime(), yesterday.getAverageStayTime()));
+        CalculateUtil.getDifferenceExcept(
+            today.getAverageStayTime(), yesterday.getAverageStayTime()));
     pageParameterView.setTimeCompareWeek(
-        getCompareTwo(today.getAverageStayTime(), week.getAverageStayTime()));
+        CalculateUtil.getDifferenceExcept(today.getAverageStayTime(), week.getAverageStayTime()));
 
     return pageParameterView;
   }
@@ -946,8 +909,8 @@ public class FlowServiceImpl implements FlowService {
    * 根据时间获取流量概况参数
    *
    * @author: lingjian @Date: 2019/5/14 16:47
-   * @param date
-   * @return
+   * @param date 时间
+   * @return List<PageView>
    */
   public List<PageView> getFlowPageParameter(Date date) {
     return flowPageDao
@@ -957,12 +920,16 @@ public class FlowServiceImpl implements FlowService {
         .map(
             bean -> {
               PageView pageView = new PageView();
+              // 平均浏览量
               if (bean.get(0, Integer.class) != null && bean.get(1, Integer.class) != null) {
                 pageView.setViewAvgCount(
                     CustomDoubleSerialize.setDouble(
-                        getCompare(bean.get(0, Integer.class), bean.get(1, Integer.class))));
+                        CalculateUtil.getExcept(
+                            bean.get(0, Integer.class), bean.get(1, Integer.class))));
               }
+              // 跳失率
               pageView.setJumpRate(CustomDoubleSerialize.setDouble(bean.get(2, Double.class)));
+              // 平均时长
               pageView.setAverageStayTime(
                   CustomDoubleSerialize.setDouble(bean.get(3, Double.class)));
               return pageView;

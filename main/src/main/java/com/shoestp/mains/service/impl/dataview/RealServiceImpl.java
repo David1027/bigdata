@@ -1,11 +1,16 @@
 package com.shoestp.mains.service.impl.dataview;
 
+import java.util.*;
+
+import javax.annotation.Resource;
+
 import com.shoestp.mains.constant.dataview.Contants;
 import com.shoestp.mains.dao.dataview.flow.FlowPageDao;
 import com.shoestp.mains.dao.dataview.real.RealDao;
 import com.shoestp.mains.dao.dataview.realcountry.RealCountryDao;
 import com.shoestp.mains.dao.dataview.user.UserDao;
 import com.shoestp.mains.service.dataview.RealService;
+import com.shoestp.mains.utils.dateUtils.CalculateUtil;
 import com.shoestp.mains.utils.dateUtils.CustomDoubleSerialize;
 import com.shoestp.mains.utils.dateUtils.DateTimeUtil;
 import com.shoestp.mains.utils.dateUtils.KeyValueViewUtil;
@@ -14,12 +19,7 @@ import com.shoestp.mains.views.dataview.real.IndexOverView;
 import com.shoestp.mains.views.dataview.real.RealOverView;
 import com.shoestp.mains.views.dataview.real.RealView;
 import com.shoestp.mains.views.dataview.utils.KeyValue;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.annotation.Resource;
+
 import org.springframework.stereotype.Service;
 
 /**
@@ -35,28 +35,13 @@ public class RealServiceImpl implements RealService {
   @Resource private UserDao userDao;
 
   /**
-   * 获取两个值的比较率
-   *
-   * @author: lingjian @Date: 2019/5/10 9:21
-   * @param num1
-   * @param num2
-   * @return
-   */
-  public Double getCompare(double num1, double num2) {
-    if (num2 == 0) {
-      return 1.0;
-    }
-    return (num1 - num2) / (num2 * 1.0);
-  }
-
-  /**
    * 判断是否为空处理
    *
    * @author: lingjian @Date: 2019/5/16 16:20
-   * @param real
-   * @return
+   * @param real RealView实时前端展示类
+   * @return RealView
    */
-  public RealView isNullTo(RealView real) {
+  private RealView isNullTo(RealView real) {
     if (real.getVisitorCount() == null) {
       real.setVisitorCount(0);
       real.setViewCount(0);
@@ -71,10 +56,10 @@ public class RealServiceImpl implements RealService {
    * 判断是否为空处理
    *
    * @author: lingjian @Date: 2019/5/16 16:20
-   * @param d
-   * @return
+   * @param d Double
+   * @return Double
    */
-  public Double isNullToDouble(Double d) {
+  private Double isNullToDouble(Double d) {
     if (d == null) {
       d = 0.0;
     }
@@ -84,24 +69,26 @@ public class RealServiceImpl implements RealService {
   /**
    * 获取访客数，浏览量，注册量，询盘数
    *
-   * @param startDate
-   * @param endDate
-   * @return
+   * @author: lingjian @Date: 2019/8/15 9:44
+   * @param startDate 开始时间
+   * @param endDate 结束时间
+   * @return RealView实时前端展示类
    */
-  public RealView getIndexObject(Date startDate, Date endDate) {
+  private RealView getIndexObject(Date startDate, Date endDate) {
     return isNullTo(
-        realCountryDao.findAllByCreateTimeBetween(
+        realDao.findAllByCreateTimeBetween(
             DateTimeUtil.getTimesOfDay(startDate, 0), DateTimeUtil.getTimesOfDay(endDate, 24)));
   }
 
   /**
    * 获取跳失率
    *
-   * @param startDate
-   * @param endDate
-   * @return
+   * @author: lingjian @Date: 2019/8/15 9:44
+   * @param startDate 开始时间
+   * @param endDate 结束时间
+   * @return Double
    */
-  public Double getFlowPageObject(Date startDate, Date endDate) {
+  private Double getFlowPageObject(Date startDate, Date endDate) {
     return isNullToDouble(
         flowPageDao.findByCreateTimeObject(
             DateTimeUtil.getTimesOfDay(startDate, 0), DateTimeUtil.getTimesOfDay(endDate, 24)));
@@ -111,41 +98,41 @@ public class RealServiceImpl implements RealService {
    * 每num周期的数据
    *
    * @author: lingjian @Date: 2019/5/22 16:18
-   * @param date
-   * @param parameter
-   * @return
+   * @param date 开始时间
+   * @param parameter 分类关键词
+   * @return List<Number>
    */
-  public List getIndex(Date date, String parameter, int num, int day, int start, int end) {
-    List list = new ArrayList();
+  private List<Number> getIndex(Date date, String parameter, int num, int day, int end) {
+    List<Number> list = new ArrayList<>();
     for (int i = 0; i < num; i++) {
       if (Contants.VISITOR.equals(parameter)) {
         list.add(
             getIndexObject(
-                    DateTimeUtil.getDayFromNum(date, (num - i) * day - start),
+                    DateTimeUtil.getDayFromNum(date, (num - i) * day - 1),
                     DateTimeUtil.getDayFromNum(date, (num - i) * day - end))
                 .getVisitorCount());
       } else if (Contants.VIEW.equals(parameter)) {
         list.add(
             getIndexObject(
-                    DateTimeUtil.getDayFromNum(date, (num - i) * day - start),
+                    DateTimeUtil.getDayFromNum(date, (num - i) * day - 1),
                     DateTimeUtil.getDayFromNum(date, (num - i) * day - end))
                 .getViewCount());
       } else if (Contants.REGISTER.equals(parameter)) {
         list.add(
             getIndexObject(
-                    DateTimeUtil.getDayFromNum(date, (num - i) * day - start),
+                    DateTimeUtil.getDayFromNum(date, (num - i) * day - 1),
                     DateTimeUtil.getDayFromNum(date, (num - i) * day - end))
                 .getRegisterCount());
       } else if (Contants.INQUIRY.equals(parameter)) {
         list.add(
             getIndexObject(
-                    DateTimeUtil.getDayFromNum(date, (num - i) * day - start),
+                    DateTimeUtil.getDayFromNum(date, (num - i) * day - 1),
                     DateTimeUtil.getDayFromNum(date, (num - i) * day - end))
                 .getInquiryCount());
       } else if (Contants.JUMP.equals(parameter)) {
         list.add(
             getFlowPageObject(
-                DateTimeUtil.getDayFromNum(date, (num - i) * day - start),
+                DateTimeUtil.getDayFromNum(date, (num - i) * day - 1),
                 DateTimeUtil.getDayFromNum(date, (num - i) * day - end)));
       }
     }
@@ -156,37 +143,35 @@ public class RealServiceImpl implements RealService {
    * 获取每个参数的数据集合
    *
    * @author: lingjian @Date: 2019/5/23 10:03
-   * @param date
-   * @return
+   * @param date 时间
+   * @return List<KeyValue>
    */
-  public List getIndexList(String indexCode, Date date, int num, int day, int start, int end) {
+  private List<KeyValue> getIndexList(String indexCode, Date date, int num, int day, int end) {
     List<KeyValue> keyValues = new ArrayList<>();
     keyValues.add(
-        KeyValueViewUtil.getFlowKeyValue(
-            indexCode, getIndex(date, indexCode, num, day, start, end)));
+        KeyValueViewUtil.getFlowKeyValue(indexCode, getIndex(date, indexCode, num, day, end)));
     return keyValues;
   }
-
   /**
    * 获取首页整体看板时段分布
    *
    * @author: lingjian @Date: 2019/5/23 10:03
-   * @param date
-   * @param num
-   * @return
+   * @param date 时间
+   * @param num 天数
+   * @return Map
    */
   @Override
   public Map getIndexOverviewTime(Date date, Integer num, String indexCode) {
-    Map<String, List> map = new HashMap<>();
+    Map<String, List> map = new HashMap<>(16);
     if (Contants.SEVEN.equals(num)) {
       map.put(Contants.ABSCISSA, DateTimeUtil.getWeek(date));
-      map.put(Contants.LIST, getIndexList(indexCode, date, Contants.TWELVE, num, 1, num));
+      map.put(Contants.LIST, getIndexList(indexCode, date, Contants.TWELVE, num, num));
     } else if (Contants.THIRTY.equals(num)) {
       map.put(Contants.ABSCISSA, DateTimeUtil.getMonth(date));
-      map.put(Contants.LIST, getIndexList(indexCode, date, Contants.TWELVE, num, 1, num));
+      map.put(Contants.LIST, getIndexList(indexCode, date, Contants.TWELVE, num, num));
     } else {
       map.put(Contants.ABSCISSA, DateTimeUtil.getDay(date));
-      map.put(Contants.LIST, getIndexList(indexCode, date, Contants.THIRTY, 1, 1, 1));
+      map.put(Contants.LIST, getIndexList(indexCode, date, Contants.THIRTY, 1, 1));
     }
     return map;
   }
@@ -195,19 +180,23 @@ public class RealServiceImpl implements RealService {
    * 根据开始时间和结束时间获取实时概况
    *
    * @author: lingjian @Date: 2019/5/22 14:28
-   * @param startDate
-   * @param endDate
-   * @return
+   * @param startDate 开始时间
+   * @param endDate 结束时间
+   * @return IndexOverView 首页整体看板前端展示类
    */
-  public IndexOverView getIndexOverviewObject(Date startDate, Date endDate, int ynum, int wnum) {
+  private IndexOverView getIndexOverviewObject(Date startDate, Date endDate, int ynum, int wnum) {
+    // 获取今天的值
     RealView today = getIndexObject(startDate, endDate);
+    // 获取昨天的值
     RealView yesterday =
         getIndexObject(
             DateTimeUtil.getDayFromNum(startDate, ynum), DateTimeUtil.getDayFromNum(endDate, ynum));
+    // 获取上周同期的值
     RealView week =
         getIndexObject(
             DateTimeUtil.getDayFromNum(startDate, wnum), DateTimeUtil.getDayFromNum(endDate, wnum));
 
+    // 获取跳失率
     Double todatJump = getFlowPageObject(startDate, endDate);
     Double yesterdayJump =
         getFlowPageObject(
@@ -215,39 +204,50 @@ public class RealServiceImpl implements RealService {
     Double weekJump =
         getFlowPageObject(
             DateTimeUtil.getDayFromNum(startDate, wnum), DateTimeUtil.getDayFromNum(endDate, wnum));
+
     IndexOverView indexOverView = new IndexOverView();
+    // 访客数
     indexOverView.setVisitorCount(today.getVisitorCount());
     indexOverView.setVisitorCompareYesterday(
         CustomDoubleSerialize.setDouble(
-            getCompare(today.getVisitorCount(), yesterday.getVisitorCount())));
+            CalculateUtil.getDifferenceExcept(
+                today.getVisitorCount(), yesterday.getVisitorCount())));
     indexOverView.setVisitorCompareWeek(
         CustomDoubleSerialize.setDouble(
-            getCompare(today.getVisitorCount(), week.getVisitorCount())));
+            CalculateUtil.getDifferenceExcept(today.getVisitorCount(), week.getVisitorCount())));
+    // 浏览量
     indexOverView.setViewCount(today.getViewCount());
     indexOverView.setViewCompareYesterday(
         CustomDoubleSerialize.setDouble(
-            getCompare(today.getViewCount(), yesterday.getViewCount())));
+            CalculateUtil.getDifferenceExcept(today.getViewCount(), yesterday.getViewCount())));
     indexOverView.setViewCompareWeek(
-        CustomDoubleSerialize.setDouble(getCompare(today.getViewCount(), week.getViewCount())));
+        CustomDoubleSerialize.setDouble(
+            CalculateUtil.getDifferenceExcept(today.getViewCount(), week.getViewCount())));
+    // 注册量
     indexOverView.setRegisterCount(today.getRegisterCount());
     indexOverView.setRegisterCompareYesterday(
         CustomDoubleSerialize.setDouble(
-            getCompare(today.getRegisterCount(), yesterday.getRegisterCount())));
+            CalculateUtil.getDifferenceExcept(
+                today.getRegisterCount(), yesterday.getRegisterCount())));
     indexOverView.setRegisterCompareWeek(
         CustomDoubleSerialize.setDouble(
-            getCompare(today.getRegisterCount(), week.getRegisterCount())));
+            CalculateUtil.getDifferenceExcept(today.getRegisterCount(), week.getRegisterCount())));
+    // 询盘量
     indexOverView.setInquiryCount(today.getInquiryCount());
     indexOverView.setInquiryCompareYesterday(
         CustomDoubleSerialize.setDouble(
-            getCompare(today.getInquiryCount(), yesterday.getInquiryCount())));
+            CalculateUtil.getDifferenceExcept(
+                today.getInquiryCount(), yesterday.getInquiryCount())));
     indexOverView.setInquiryCompareWeek(
         CustomDoubleSerialize.setDouble(
-            getCompare(today.getInquiryCount(), week.getInquiryCount())));
+            CalculateUtil.getDifferenceExcept(today.getInquiryCount(), week.getInquiryCount())));
+    // 跳失率
     indexOverView.setJumpRate(CustomDoubleSerialize.setDouble(todatJump));
     indexOverView.setJumpRateCompareYesterday(
-        CustomDoubleSerialize.setDouble(getCompare(todatJump, yesterdayJump)));
+        CustomDoubleSerialize.setDouble(
+            CalculateUtil.getDifferenceExcept(todatJump, yesterdayJump)));
     indexOverView.setJumpRateCompareWeek(
-        CustomDoubleSerialize.setDouble(getCompare(todatJump, weekJump)));
+        CustomDoubleSerialize.setDouble(CalculateUtil.getDifferenceExcept(todatJump, weekJump)));
     return indexOverView;
   }
 
@@ -255,9 +255,9 @@ public class RealServiceImpl implements RealService {
    * 根据时间，天数获取实时概况
    *
    * @author: lingjian @Date: 2019/5/22 14:27
-   * @param date
-   * @param num
-   * @return
+   * @param date 时间
+   * @param num 天数
+   * @return IndexOverView 首页整体看板前端展示类
    */
   @Override
   public IndexOverView getIndexOverview(Date date, Integer num) {
@@ -294,28 +294,33 @@ public class RealServiceImpl implements RealService {
     // 访客数，与昨日的比较值，与上周同一日的比较值
     realOverView.setVisitorCount(today.getVisitorCount());
     realOverView.setVisitorCompareYesterday(
-        getCompare(today.getVisitorCount(), yesterday.getVisitorCount()));
-    realOverView.setVisitorCompareWeek(getCompare(today.getVisitorCount(), week.getVisitorCount()));
+        CalculateUtil.getDifferenceExcept(today.getVisitorCount(), yesterday.getVisitorCount()));
+    realOverView.setVisitorCompareWeek(
+        CalculateUtil.getDifferenceExcept(today.getVisitorCount(), week.getVisitorCount()));
     // 浏览量，与昨日的比较值，与上周同一日的比较值
     realOverView.setViewCount(today.getViewCount());
     realOverView.setViewCompareYesterday(
-        getCompare(today.getViewCount(), yesterday.getViewCount()));
-    realOverView.setViewCompareWeek(getCompare(today.getViewCount(), week.getViewCount()));
+        CalculateUtil.getDifferenceExcept(today.getViewCount(), yesterday.getViewCount()));
+    realOverView.setViewCompareWeek(
+        CalculateUtil.getDifferenceExcept(today.getViewCount(), week.getViewCount()));
     // 注册量，与昨日的比较值，与上周同一日的比较值
     realOverView.setRegisterCount(today.getRegisterCount());
     realOverView.setRegisterCompareYesterday(
-        getCompare(today.getRegisterCount(), yesterday.getRegisterCount()));
+        CalculateUtil.getDifferenceExcept(today.getRegisterCount(), yesterday.getRegisterCount()));
     realOverView.setRegisterCompareWeek(
-        getCompare(today.getRegisterCount(), week.getRegisterCount()));
+        CalculateUtil.getDifferenceExcept(today.getRegisterCount(), week.getRegisterCount()));
     // 询盘量，与昨日的比较值，与上周同一日的比较值
     realOverView.setInquiryCount(today.getInquiryCount());
     realOverView.setInquiryCompareYesterday(
-        getCompare(today.getInquiryCount(), yesterday.getInquiryCount()));
-    realOverView.setInquiryCompareWeek(getCompare(today.getInquiryCount(), week.getInquiryCount()));
+        CalculateUtil.getDifferenceExcept(today.getInquiryCount(), yesterday.getInquiryCount()));
+    realOverView.setInquiryCompareWeek(
+        CalculateUtil.getDifferenceExcept(today.getInquiryCount(), week.getInquiryCount()));
     // rfq数，与昨日的比较值，与上周同一日的比较值
     realOverView.setRfqCount(today.getRfqCount());
-    realOverView.setRfqCompareYesterday(getCompare(today.getRfqCount(), yesterday.getRfqCount()));
-    realOverView.setRfqCompareWeek(getCompare(today.getRfqCount(), week.getRfqCount()));
+    realOverView.setRfqCompareYesterday(
+        CalculateUtil.getDifferenceExcept(today.getRfqCount(), yesterday.getRfqCount()));
+    realOverView.setRfqCompareWeek(
+        CalculateUtil.getDifferenceExcept(today.getRfqCount(), week.getRfqCount()));
     return realOverView;
   }
 
@@ -323,12 +328,12 @@ public class RealServiceImpl implements RealService {
    * 获取一定时间段以内的累加值
    *
    * @author: lingjian @Date: 2019/5/10 9:21
-   * @param date
-   * @param start
-   * @param end
-   * @return
+   * @param date 时间
+   * @param start 小时开始时间
+   * @param end 小时结束时间
+   * @return RealView 实时前端展示类
    */
-  public RealView getAddByTime(Date date, int start, int end) {
+  private RealView getAddByTime(Date date, int start, int end) {
     return isNullTo(
         realDao.findAllByCreateTimeBetween(
             DateTimeUtil.getTimesOfDay(date, start), DateTimeUtil.getTimesOfDay(date, end)));
@@ -338,11 +343,11 @@ public class RealServiceImpl implements RealService {
    * 获取24个小时中每一个小时的值
    *
    * @author: lingjian @Date: 2019/5/10 9:21
-   * @param date
-   * @return
+   * @param date 时间
+   * @return List<Integer>
    */
-  public List getEveryHour(Date date, String parameter) {
-    List list = new ArrayList();
+  private List<Integer> getEveryHour(Date date, String parameter) {
+    List<Integer> list = new ArrayList<>();
     for (int i = 0; i < Contants.TWELVE; i++) {
       if (Contants.VISITOR.equals(parameter)) {
         list.add(getAddByTime(date, i * 2, i * 2 + 2).getVisitorCount());
@@ -360,11 +365,12 @@ public class RealServiceImpl implements RealService {
   /**
    * 获取当前时间的实时趋势的值
    *
-   * @param date
-   * @return
+   * @author: lingjian @Date: 2019/8/15 9:38
+   * @param date 时间
+   * @return Map<String, List<Integer>>
    */
-  public Map<String, List> getRealTrendByDay(Date date) {
-    Map<String, List> visitorMap = new HashMap<>();
+  private Map<String, List<Integer>> getRealTrendByDay(Date date) {
+    Map<String, List<Integer>> visitorMap = new HashMap<>(16);
     visitorMap.put(Contants.VISITOR, getEveryHour(date, Contants.VISITOR));
     visitorMap.put(Contants.VIEW, getEveryHour(date, Contants.VIEW));
     visitorMap.put(Contants.REGISTER, getEveryHour(date, Contants.REGISTER));
@@ -376,12 +382,12 @@ public class RealServiceImpl implements RealService {
    * 根据关键字获取当前时间的实时趋势的值
    *
    * @author: lingjian @Date: 2019/5/23 13:56
-   * @param date
-   * @param indexCode
-   * @return
+   * @param date 时间
+   * @param indexCode 关键字
+   * @return Map<String, List<Integer>>
    */
-  public Map<String, List> getIndexTrendByDay(Date date, String indexCode) {
-    Map<String, List> visitorMap = new HashMap<>();
+  private Map<String, List<Integer>> getIndexTrendByDay(Date date, String indexCode) {
+    Map<String, List<Integer>> visitorMap = new HashMap<>(16);
     visitorMap.put(indexCode, getEveryHour(date, indexCode));
     return visitorMap;
   }
@@ -390,12 +396,12 @@ public class RealServiceImpl implements RealService {
    * 获取今日和对比日的实时趋势的值
    *
    * @author: lingjian @Date: 2019/5/9 16:08
-   * @param date
-   * @return
+   * @param date 时间
+   * @return Map<String, Map>
    */
   @Override
   public Map<String, Map> getRealTrend(Date date) {
-    Map<String, Map> visitorAllMap = new HashMap<>();
+    Map<String, Map> visitorAllMap = new HashMap<>(16);
     visitorAllMap.put(Contants.ABSCISSA, DateTimeUtil.getHourAbscissa(2));
     visitorAllMap.put(Contants.TODAY, getRealTrendByDay(new Date()));
     visitorAllMap.put(Contants.RATHERDAY, getRealTrendByDay(date));
@@ -406,13 +412,13 @@ public class RealServiceImpl implements RealService {
    * 根据时间，关键字获取实时数据分析时段分布
    *
    * @author: lingjian @Date: 2019/5/23 13:56
-   * @param date
-   * @param indexCode
-   * @return
+   * @param date 时间
+   * @param indexCode 关键字
+   * @return Map<String, Map>
    */
   @Override
   public Map<String, Map> getIndexTrend(Date date, String indexCode) {
-    Map<String, Map> visitorAllMap = new HashMap<>();
+    Map<String, Map> visitorAllMap = new HashMap<>(16);
     visitorAllMap.put(Contants.ABSCISSA, DateTimeUtil.getHourAbscissa(2));
     visitorAllMap.put(Contants.TODAY, getIndexTrendByDay(new Date(), indexCode));
     visitorAllMap.put(Contants.RATHERDAY, getIndexTrendByDay(date, indexCode));
@@ -423,12 +429,12 @@ public class RealServiceImpl implements RealService {
    * 获取首页累计数据
    *
    * @author: lingjian @Date: 2019/5/23 14:23
-   * @return
+   * @return IndexGrand 累计数据
    */
   @Override
   public IndexGrand getIndexGrand() {
     IndexGrand grand = new IndexGrand();
-    IndexGrand real = realCountryDao.findByCreateTimeBefore(DateTimeUtil.getTimesnight());
+    IndexGrand real = realDao.findByCreateTimeBefore(DateTimeUtil.getTimesnight());
     IndexGrand user = userDao.findByCreateTimeBefore(DateTimeUtil.getTimesnight());
     grand.setGrandInquiry(real.getGrandInquiry());
     grand.setGrandRfq(real.getGrandRfq());

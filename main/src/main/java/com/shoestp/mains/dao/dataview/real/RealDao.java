@@ -8,6 +8,7 @@ import com.shoestp.mains.entitys.dataview.country.QDataViewCountry;
 import com.shoestp.mains.entitys.dataview.real.DataViewReal;
 import com.shoestp.mains.entitys.dataview.real.QDataViewReal;
 import com.shoestp.mains.repositorys.dataview.real.RealRepository;
+import com.shoestp.mains.views.dataview.real.IndexGrand;
 import com.shoestp.mains.views.dataview.real.RealView;
 
 import org.springframework.stereotype.Repository;
@@ -36,6 +37,7 @@ public class RealDao extends BaseDao<DataViewReal> {
   /**
    * 根据时间间隔获取实时表所有的记录
    *
+   * @author: lingjian @Date: 2019/8/15 14:00
    * @param start 开始时间
    * @param end 结束时间
    * @return RealView 实时前端展示类
@@ -53,6 +55,27 @@ public class RealDao extends BaseDao<DataViewReal> {
                 qDataViewReal.rfqCount.sum().as("rfqCount")))
         .from(qDataViewReal)
         .where(qDataViewReal.createTime.between(start, end))
+        .fetchOne();
+  }
+
+  /**
+   * 获取今天之前累计的询盘量，RFQ数，注册量
+   *
+   * @author: lingjian @Date: 2019/8/15 10:14
+   * @param date 时间
+   * @return IndexGrand首页实时前端展示类
+   */
+  public IndexGrand findByCreateTimeBefore(Date date) {
+    QDataViewReal qDataViewReal = QDataViewReal.dataViewReal;
+    return getQuery()
+        .select(
+            Projections.bean(
+                IndexGrand.class,
+                qDataViewReal.registerCount.sum().as("grandRegister"),
+                qDataViewReal.inquiryCount.sum().as("grandInquiry"),
+                qDataViewReal.rfqCount.sum().as("grandRfq")))
+        .from(qDataViewReal)
+        .where(qDataViewReal.createTime.before(date))
         .fetchOne();
   }
 }

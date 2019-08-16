@@ -64,8 +64,8 @@ public class FlowServiceImpl implements FlowService {
    * 根据时间获取设备来源
    *
    * @author: lingjian @Date: 2019/5/13 9:56
-   * @param startDate
-   * @param endDate
+   * @param startDate 开始时间
+   * @param endDate 结束时间
    * @return List<FlowDeviceView>
    */
   @Override
@@ -84,6 +84,14 @@ public class FlowServiceImpl implements FlowService {
         .collect(Collectors.toList());
   }
 
+  /**
+   * 据单个时间获取设备来源
+   *
+   * @author: lingjian @Date: 2019/8/16 9:53
+   * @param date 时间
+   * @param num 数字类型
+   * @return List<FlowDeviceView>
+   */
   @Override
   public List<FlowDeviceView> getFlowDevice(Date date, Integer num) {
     if (num == null) {
@@ -97,9 +105,9 @@ public class FlowServiceImpl implements FlowService {
    * 根据时间获取流量来源
    *
    * @author: lingjian @Date: 2019/5/20 16:37
-   * @param startDate
-   * @param endDate
-   * @return
+   * @param startDate 开始时间
+   * @param endDate 结束时间
+   * @return List<FlowSourceView>
    */
   public List<FlowSourceView> getFlowSourceTypeByDate(Date startDate, Date endDate) {
     return flowDao
@@ -853,27 +861,31 @@ public class FlowServiceImpl implements FlowService {
    * 根据时间获取流量概况参数(访客数，浏览量，跳失率，平均停留时长)
    *
    * @author: lingjian @Date: 2019/5/17 15:39
-   * @param date
-   * @return
+   * @param startDate 开始时间
+   * @param endDate 结束时间
+   * @return PageViewObject 流量概况参数连接数据层类
    */
-  public PageViewObject getFlowPageObject(Date date) {
+  public PageViewObject getFlowPageObject(Date startDate, Date endDate) {
     return isNullTo(
         flowPageDao.findAllByCreateTimeObject(
-            DateTimeUtil.getTimesOfDay(date, 0), DateTimeUtil.getTimesOfDay(date, 24)));
+            DateTimeUtil.getTimesOfDay(startDate, 0), DateTimeUtil.getTimesOfDay(endDate, 24)));
   }
 
   /**
    * 根据时间获取流量概况参数（跳失率，平均浏览量，平均停留时长）
    *
    * @author: lingjian @Date: 2019/5/17 15:38
-   * @param date
+   * @param date 时间
    * @return
    */
-  @Override
-  public PageParameterView getFlowPage(Date date) {
-    PageViewObject today = getFlowPageObject(date);
-    PageViewObject yesterday = getFlowPageObject(DateTimeUtil.getDayFromNum(date, 1));
-    PageViewObject week = getFlowPageObject(DateTimeUtil.getDayFromNum(date, 7));
+  public PageParameterView getFlowPageByDate(Date date, Integer num) {
+    PageViewObject today = getFlowPageObject(DateTimeUtil.getDayFromNum(date, num),date);
+    PageViewObject yesterday =
+        getFlowPageObject(
+            DateTimeUtil.getDayFromNum(date, 1 + num), DateTimeUtil.getDayFromNum(date, 1));
+    PageViewObject week =
+        getFlowPageObject(
+            DateTimeUtil.getDayFromNum(date, 7 + num), DateTimeUtil.getDayFromNum(date, 7));
 
     // 计算(浏览量 / 访客数)
     Double compareToday = CalculateUtil.getExcept(today.getViewCount(), today.getVisitorCount());
@@ -903,6 +915,24 @@ public class FlowServiceImpl implements FlowService {
         CalculateUtil.getDifferenceExcept(today.getAverageStayTime(), week.getAverageStayTime()));
 
     return pageParameterView;
+  }
+
+  /**
+   * 根据时间,天数获取流量概况参数（跳失率，平均浏览量，平均停留时长）
+   *
+   * @author: lingjian @Date: 2019/8/16 9:31
+   * @param date 时间
+   * @param num 天数
+   * @return PageParameterView 流量概况参数+占比前端展示类
+   */
+  @Override
+  public PageParameterView getFlowPage(Date date, Integer num) {
+    System.err.println("num====>"+num);
+    if (num != null) {
+      return getFlowPageByDate(date, num);
+    } else {
+      return getFlowPageByDate(date, 0);
+    }
   }
 
   /**

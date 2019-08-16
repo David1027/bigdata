@@ -303,6 +303,20 @@ public final class DateTimeUtil {
   }
 
   /**
+   * 获取传入时间的num个小时时间
+   *
+   * @param num 小时数（正数：传入时间的num个小时后，负数：传入时间的num个小时前）
+   * @param date 时间
+   * @return Date
+   */
+  public static Date getPreviousHour(Date date, Integer num) {
+    Calendar cal = Calendar.getInstance();
+    cal.setTime(date);
+    cal.add(Calendar.HOUR_OF_DAY, num);
+    return cal.getTime();
+  }
+
+  /**
    * 获得昨天0点时间
    *
    * @return

@@ -30,7 +30,7 @@ public class RealDao extends BaseDao<DataViewReal> {
    * @author: lingjian @Date: 2019/8/13 10:08
    * @param dataViewReal real对象
    */
-  public void saveReal(DataViewReal dataViewReal) {
+  public void save(DataViewReal dataViewReal) {
     realRepository.save(dataViewReal);
   }
 

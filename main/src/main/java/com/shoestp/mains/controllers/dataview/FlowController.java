@@ -236,7 +236,7 @@ public class FlowController {
    */
   @PostMapping(value = "/flowpageanalysisbyday")
   public Object getFlowPageAnalysisByDay(
-      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date, AccessTypeEnum access, int num) {
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date, AccessTypeEnum access, Integer num) {
     logger.debug(date);
     return MessageResult.builder()
         .code(1)
@@ -252,9 +252,9 @@ public class FlowController {
    * @return
    */
   @PostMapping(value = "/flowpage")
-  public Object getFlowPage(@DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
+  public Object getFlowPage(@DateTimeFormat(pattern = "yyyy-MM-dd") Date date, Integer num) {
     logger.debug(date);
-    return MessageResult.builder().code(1).result(flowService.getFlowPage(date)).build();
+    return MessageResult.builder().code(1).result(flowService.getFlowPage(date, num)).build();
   }
 
   /**

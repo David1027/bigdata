@@ -60,6 +60,10 @@ shoestp:
     sellerconver:
       enable: true
       timing: 60
+    #    源数据转换时间
+    transformconver:
+      enable: true
+      timing: 60
 
 management:
   endpoints:

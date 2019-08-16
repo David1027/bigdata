@@ -230,7 +230,7 @@ public class MetaToViewServiceImpl implements MetaToViewService {
     // 转化时间
     real.setCreateTime(new Date());
     if (decideIsNull(real)) {
-      realDao.saveReal(real);
+      realDao.save(real);
     }
     return real;
   }

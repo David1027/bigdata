@@ -26,9 +26,10 @@ public class FlowDao extends BaseDao<DataViewFlow> {
   /**
    * 新增流量表
    *
+   * @author: lingjian @Date: 2019/8/16 15:10
    * @param dataViewFlow 流量表
    */
-  public void saveFlow(DataViewFlow dataViewFlow) {
+  public void save(DataViewFlow dataViewFlow) {
     flowRepository.save(dataViewFlow);
   }
 
@@ -39,7 +40,7 @@ public class FlowDao extends BaseDao<DataViewFlow> {
    * @param device 设备来源
    * @param start 开始时间
    * @param end 结束时间
-   * @return
+   * @return List<Tuple>
    */
   public List<Tuple> findAllByDeviceType(DeviceTypeEnum device, Date start, Date end) {
     QDataViewFlow dataViewFlow = QDataViewFlow.dataViewFlow;
@@ -59,9 +60,9 @@ public class FlowDao extends BaseDao<DataViewFlow> {
    * 根据时间获取设备来源的访客数
    *
    * @author: lingjian @Date: 2019/5/13 9:58
-   * @param start
-   * @param end
-   * @return
+   * @param start 开始时间
+   * @param end 结束时间
+   * @return List<Tuple>
    */
   public List<Tuple> findAllByDeviceCount(Date start, Date end) {
     QDataViewFlow dataViewFlow = QDataViewFlow.dataViewFlow;
@@ -80,9 +81,9 @@ public class FlowDao extends BaseDao<DataViewFlow> {
    * 根据当天时间，来源类型分组获取访客数
    *
    * @author: lingjian @Date: 2019/5/14 14:13
-   * @param start
-   * @param end
-   * @return
+   * @param start 开始时间
+   * @param end 结束时间
+   * @return List<Tuple>
    */
   public List<Tuple> findAllBySourceType(Date start, Date end) {
     QDataViewFlow dataViewFlow = QDataViewFlow.dataViewFlow;
@@ -102,10 +103,10 @@ public class FlowDao extends BaseDao<DataViewFlow> {
    * 根据来源类型，当天时间，分组获取来源类型的访客数
    *
    * @author: lingjian @Date: 2019/5/15 13:44
-   * @param source
-   * @param start
-   * @param end
-   * @return
+   * @param source 来源类型
+   * @param start 开始时间
+   * @param end 结束时间
+   * @return List<Tuple>
    */
   public List<Tuple> findAllBySource(SourceTypeEnum source, Date start, Date end) {
     QDataViewFlow dataViewFlow = QDataViewFlow.dataViewFlow;
@@ -123,9 +124,9 @@ public class FlowDao extends BaseDao<DataViewFlow> {
    * 根据当天时间，来源类型，来源渠道分组获取访客数
    *
    * @author: lingjian @Date: 2019/5/14 14:28
-   * @param start
-   * @param end
-   * @return
+   * @param start 开始时间
+   * @param end 结束时间
+   * @return List<Tuple>
    */
   public List<Tuple> findAllBySourcePage(SourceTypeEnum source, Date start, Date end) {
     QDataViewFlow dataViewFlow = QDataViewFlow.dataViewFlow;
@@ -146,11 +147,11 @@ public class FlowDao extends BaseDao<DataViewFlow> {
    * 根据来源类型，来源渠道，时间，获取来源渠道的访客数
    *
    * @author: lingjian @Date: 2019/5/17 16:24
-   * @param sourceType
-   * @param sourcePage
-   * @param start
-   * @param end
-   * @return
+   * @param sourceType 来源类型
+   * @param sourcePage 来源名称
+   * @param start 开始时间
+   * @param end 结束时间
+   * @return List<Tuple>
    */
   public List<Tuple> findAllBySourceTypeAndSourcePage(
       SourceTypeEnum sourceType, String sourcePage, Date start, Date end) {
@@ -170,11 +171,6 @@ public class FlowDao extends BaseDao<DataViewFlow> {
   }
 
   public Optional<DataViewFlow> getFlowTopOne() {
-    Optional<DataViewFlow> flow = flowRepository.findTopByOrderByCreateTimeDesc();
-    return flow;
-  }
-
-  public void save(DataViewFlow flow) {
-    flowRepository.save(flow);
+    return flowRepository.findTopByOrderByCreateTimeDesc();
   }
 }

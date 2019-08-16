@@ -26,8 +26,8 @@ public class CountryController {
    * 获取国家地区访客数
    *
    * @author: lingjian @Date: 2019/5/13 11:15
-   * @param httpRequest
-   * @return
+   * @param httpRequest 请求参数
+   * @return Object
    */
   @GetMapping(value = "/countryarea")
   public Object getCountryArea(HttpServletRequest httpRequest) {

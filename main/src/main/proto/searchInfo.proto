@@ -65,7 +65,7 @@ message UserInfo {
     uint32 sex = 4;
     /** 用户usr_main表Id  */
     uint32 userId = 5;
-    /** 姓名  */
+    /** email  */
     string name = 6;
     /** 省份  */
     string province = 7;
@@ -82,11 +82,20 @@ message Favorite {
     没有数据新增,有数据则为跳过
      */
     uint32 action = 8;
+    /** ip  */
     string ip = 1;
-    string pkey = 2;
+    /** 类型,1 供应商收藏   0 产品类型  */
+    uint32 type = 9;
+    /** 收藏表Pkey  */
+    uint32 pkey = 2;
+    /** 被收藏的供应商Id usrMain  */
     uint32 supId = 3;
+    /** 被收藏的产品ID  */
     uint32 pdtId = 4;
+    /** 产品名称  或者供应商名称  */
     string name = 5;
+    /** 产品图片或者供应商logo  */
     string img = 6;
+    /** 状态 0 取消收藏  */
     uint32 status = 7;
 }

@@ -80,6 +80,11 @@ public class URLMatchDataUtilServiceTest extends BaseTest {
     entity.setType(URLDataTypeEnum.PAGETYPE);
     entity.setPriority(10);
     matchDataDao.save(entity);
+    entity = new URLMatchDataEntity();
+    entity.setName("INTERVIEW");
+    entity.setRegex("");
+    entity.setType(URLDataTypeEnum.SEARCHENGINE);
+    matchDataDao.save(entity);
   }
 
   /**
@@ -111,6 +116,8 @@ public class URLMatchDataUtilServiceTest extends BaseTest {
     Assert.assertEquals(type, SourceTypeEnum.GOOGLE);
     type = urlMatchDataUtilService.getSourceType("https://www.google.com/?awdawdawdawdawudawdawaw");
     Assert.assertEquals(type, SourceTypeEnum.GOOGLE);
+    type = urlMatchDataUtilService.getSourceType("");
+    Assert.assertEquals(type, SourceTypeEnum.INTERVIEW);
   }
 
   /**

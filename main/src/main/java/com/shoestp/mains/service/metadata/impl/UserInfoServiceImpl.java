@@ -134,6 +134,8 @@ public class UserInfoServiceImpl implements UserInfoService {
   /**
    * Sync user info 同步用户信息
    *
+   * <p>同步用户资料,具体逻辑如下: 当用户不存在,添加用户, 当用户存在,更新用户资料.
+   *
    * @param info the info
    * @author lijie
    * @date 2019 /08/09
@@ -141,7 +143,9 @@ public class UserInfoServiceImpl implements UserInfoService {
    */
   @Override
   public void syncUserInfo(GRPC_SendDataProto.UserInfo info) {
-    if (!userInfoDao.findById(info.getUserId()).isPresent()) {
+    Optional<UserInfo> result = userInfoDao.findById(info.getUserId());
+    /** 存在用户,那么进行更新 */
+    if (result.isPresent()) {
       save(info);
     }
   }

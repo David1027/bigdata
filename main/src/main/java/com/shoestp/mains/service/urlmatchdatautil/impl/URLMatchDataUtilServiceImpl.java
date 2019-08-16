@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.start2do.utils.MyStringUtils;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * The type Url match data util service.
@@ -73,13 +74,15 @@ public class URLMatchDataUtilServiceImpl implements URLMatchDataUtilService {
    */
   @Override
   public SourceTypeEnum getSourceType(String url) {
-    for (URLMatchDataEntity urlMatchDataEntity :
-        urlMatchDataDao.findByTypeOrderByPriorityDesc(URLDataTypeEnum.SEARCHENGINE)) {
+    List<URLMatchDataEntity> list =
+        urlMatchDataDao.findByTypeOrderByPriorityDesc(URLDataTypeEnum.SEARCHENGINE);
+    for (URLMatchDataEntity urlMatchDataEntity : list) {
       logger.debug("Name:{},Regex:{}", urlMatchDataEntity.getName(), urlMatchDataEntity.getRegex());
       if (MyStringUtils.isMatch3(urlMatchDataEntity.getRegex(), url)) {
         return SourceTypeEnum.valueOf(urlMatchDataEntity.getName());
       }
     }
+
     return SourceTypeEnum.OTHER;
   }
   /**

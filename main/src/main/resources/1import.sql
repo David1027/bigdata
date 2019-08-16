@@ -275,3 +275,4 @@ INSERT INTO urlmatch_data_entity (id, name, priority, regex, type) VALUES (5, 'I
 INSERT INTO urlmatch_data_entity (id, name, priority, regex, type) VALUES (6, 'INDEX', null, '/home/usr_UsrPurchase', 'PAGETYPE');
 INSERT INTO urlmatch_data_entity (id, name, priority, regex, type) VALUES (7, 'LIST', null, '/home/pdt_PdtProduct?cated=*', 'PAGETYPE');
 INSERT INTO urlmatch_data_entity (id, name, priority, regex, type) VALUES (8, 'INQUIRY', 10, '/home/usr_UsrSupplier_goContactSupplier*', 'PAGETYPE');
+INSERT INTO urlmatch_data_entity (id, name, priority, regex, type) VALUES (9, 'INTERVIEW', null, '', 'SEARCHENGINE');

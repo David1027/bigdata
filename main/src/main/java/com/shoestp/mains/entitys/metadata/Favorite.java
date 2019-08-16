@@ -1,10 +1,20 @@
 package com.shoestp.mains.entitys.metadata;
 
+import com.shoestp.mains.entitys.metadata.enums.FavoriteEnum;
 import lombok.Data;
 
 import javax.persistence.*;
 import java.util.Date;
 
+/**
+ * The type Favorite.
+ *
+ * <p>
+ *
+ * @date 2019 /08/16
+ * @since
+ * @modify Lijie HelloBox@outlook.com 2019-08-16 15:02 添加类型字段
+ */
 @Data
 @Entity
 @Table(name = "meta_data_favorite")
@@ -15,6 +25,8 @@ public class Favorite {
   private Integer id;
   /** 鞋贸港收藏表pkey */
   private Integer pkey;
+  /** 原来没有供应商收藏,只有产品. 现在添加类型,用于区分,方便统计. */
+  private FavoriteEnum type;
   /** 商家id usr_main表 */
   @Column(name = "sup_id")
   private Integer supId;

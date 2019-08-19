@@ -548,7 +548,6 @@ public class FlowServiceImpl implements FlowService {
     Map<String, List<AccessView>> accessPageMap = new HashMap<>(16);
     List<AccessView> list = new ArrayList<>();
     for (AccessTypeEnum a : AccessTypeEnum.values()) {
-      System.err.println(a);
       AccessView access = new AccessView();
       // 页面类型
       access.setAccessType(a.toString());

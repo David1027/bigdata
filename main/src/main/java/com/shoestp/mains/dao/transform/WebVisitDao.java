@@ -254,8 +254,7 @@ public class WebVisitDao extends BaseDao<WebVisitInfo> {
   /**
    * 根据地域，时间获取访客数
    *
-   * @author: lingjian
-   * @Date: 2019/8/13 9:14
+   * @author: lingjian @Date: 2019/8/13 9:14
    * @param areaId 地域id
    * @param start 开始时间
    * @param end 结束时间
@@ -271,5 +270,42 @@ public class WebVisitDao extends BaseDao<WebVisitInfo> {
             .groupBy(qWebVisitInfo.ip)
             .from(qWebVisitInfo)
             .fetchCount();
+  }
+
+  /**
+   * 获取start时间之前所有去重后的ip集合
+   *
+   * @author: lingjian @Date: 2019/8/19 14:52
+   * @param start 时间
+   * @return List<String>
+   */
+  public List<String> listWebVisitIp(Date start) {
+    QWebVisitInfo qWebVisitInfo = QWebVisitInfo.webVisitInfo;
+    return getQuery()
+        .select(qWebVisitInfo.ip)
+        .where(qWebVisitInfo.createTime.before(start))
+        .groupBy(qWebVisitInfo.ip)
+        .from(qWebVisitInfo)
+        .fetchResults()
+        .getResults();
+  }
+
+  /**
+   * 获取开始时间和结束时间之间的去重后ip的集合
+   *
+   * @author: lingjian @Date: 2019/8/19 15:19
+   * @param start 开始时间
+   * @param end 结束时间
+   * @return List<String>
+   */
+  public List<String> listWebVisitIp(Date start, Date end) {
+    QWebVisitInfo qWebVisitInfo = QWebVisitInfo.webVisitInfo;
+    return getQuery()
+        .select(qWebVisitInfo.ip)
+        .where(qWebVisitInfo.createTime.between(start, end))
+        .groupBy(qWebVisitInfo.ip)
+        .from(qWebVisitInfo)
+        .fetchResults()
+        .getResults();
   }
 }

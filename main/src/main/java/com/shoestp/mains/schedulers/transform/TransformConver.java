@@ -8,6 +8,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
+import com.shoestp.mains.entitys.dataview.country.DataViewCountry;
 import com.shoestp.mains.entitys.dataview.flow.DataViewFlow;
 import com.shoestp.mains.entitys.dataview.flow.DataViewFlowPage;
 import com.shoestp.mains.entitys.dataview.inquiry.DataViewInquiry;
@@ -95,6 +96,9 @@ public class TransformConver extends BaseSchedulers {
       // 转化用户地域表
       List<DataViewUserArea> userArea = metaToViewService.toUserArea(start, end);
       logger.debug("执行成功=====> " + userArea);
+      // 转化国家表
+      List<DataViewCountry> country = metaToViewService.toCountry(start, end);
+      logger.debug("执行成功=====> " + country);
     } catch (Exception e) {
       e.printStackTrace();
     }

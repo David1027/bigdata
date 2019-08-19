@@ -157,4 +157,22 @@ public class MetaToViewController {
     logger.debug(httpRequest.getCookies());
     return MessageResult.builder().code(1).result(metaToViewService.toUserArea(start, end)).build();
   }
+
+  /**
+   * 源数据转化country国家表
+   *
+   * @author: lingjian @Date: 2019/8/19 10:01
+   * @param httpRequest 请求参数
+   * @param start 开始时间
+   * @param end 结束时间
+   * @return Object对象
+   */
+  @GetMapping(value = "/tocountry")
+  public Object toCountry(
+      HttpServletRequest httpRequest,
+      @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") Date start,
+      @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") Date end) {
+    logger.debug(httpRequest.getCookies());
+    return MessageResult.builder().code(1).result(metaToViewService.toCountry(start, end)).build();
+  }
 }

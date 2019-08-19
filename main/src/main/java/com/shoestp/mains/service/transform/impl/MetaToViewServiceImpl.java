@@ -1,5 +1,6 @@
 package com.shoestp.mains.service.transform.impl;
 
+import com.shoestp.mains.dao.dataview.realcountry.RealCountryDao;
 import com.shoestp.mains.dao.dataview.flow.FlowDao;
 import com.shoestp.mains.dao.dataview.flow.FlowPageDao;
 import com.shoestp.mains.dao.dataview.inquiry.InquiryDao;
@@ -10,6 +11,7 @@ import com.shoestp.mains.dao.dataview.user.UserDao;
 import com.shoestp.mains.dao.transform.NewInquiryInfoDao;
 import com.shoestp.mains.dao.transform.NewUserInfoDao;
 import com.shoestp.mains.dao.transform.WebVisitDao;
+import com.shoestp.mains.entitys.dataview.country.DataViewCountry;
 import com.shoestp.mains.entitys.dataview.flow.DataViewFlow;
 import com.shoestp.mains.entitys.dataview.flow.DataViewFlowPage;
 import com.shoestp.mains.entitys.dataview.inquiry.DataViewInquiry;
@@ -24,7 +26,6 @@ import com.shoestp.mains.entitys.metadata.enums.RegisterTypeEnum;
 import com.shoestp.mains.enums.flow.AccessTypeEnum;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
-import com.shoestp.mains.pojo.PageSourcePojo;
 import com.shoestp.mains.service.transform.MetaToViewService;
 import com.shoestp.mains.service.urlmatchdatautil.URLMatchDataUtilService;
 import org.springframework.stereotype.Service;
@@ -56,6 +57,7 @@ public class MetaToViewServiceImpl implements MetaToViewService {
   @Resource private URLMatchDataUtilService urlMatchDataUtilService;
   @Resource private UserDao userDao;
   @Resource private UserAreaDao userAreaDao;
+  @Resource private RealCountryDao realCountryDao;
 
   /**
    * 判断DataViewReal的数据是否为空
@@ -538,6 +540,37 @@ public class MetaToViewServiceImpl implements MetaToViewService {
         userAreaDao.save(area);
       }
       list.add(area);
+    }
+    return list;
+  }
+
+  /**
+   * 源数据转化country国家表
+   *
+   * @author: lingjian @Date: 2019/8/19 10:02
+   * @param start 开始时间
+   * @param end 结束时间
+   * @return List<DataViewCountry> 国家表集合对象
+   */
+  @Override
+  public List<DataViewCountry> toCountry(Date start, Date end) {
+    List<DataViewCountry> list = new ArrayList<>();
+    List<WebVisitInfo> webVisitUserArea = webVisitDao.getWebVisitUserArea(start, end);
+    for (WebVisitInfo w : webVisitUserArea) {
+      DataViewCountry country = new DataViewCountry();
+      // 国家名称
+      country.setCountryName(w.getLocation().getName());
+      // 国家英文名称
+      country.setCountryEnglishName(w.getLocation().getEngName());
+      // 国旗图片
+      country.setCountryImage(w.getLocation().getImg());
+      // 访客数
+      country.setVisitorCount(
+          webVisitDao.countWebVisitUserArea(w.getLocation().getId(), start, end));
+      // 创建时间
+      country.setCreateTime(new Date());
+      realCountryDao.save(country);
+      list.add(country);
     }
     return list;
   }

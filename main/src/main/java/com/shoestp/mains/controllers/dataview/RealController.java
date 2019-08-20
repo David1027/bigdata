@@ -1,5 +1,6 @@
 package com.shoestp.mains.controllers.dataview;
 
+import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.pojo.MessageResult;
 import com.shoestp.mains.service.dataview.RealService;
 import java.util.Date;
@@ -8,10 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @description: 实时-控制器
@@ -69,7 +67,6 @@ public class RealController {
     return MessageResult.builder().code(1).result(realService.getIndexOverview(date, num)).build();
   }
 
-
   /**
    * 获取首页整体看板时段分布
    *
@@ -120,6 +117,101 @@ public class RealController {
         .code(1)
         .msg("Hello")
         .result(realService.getRealTrend(date))
+        .build();
+  }
+
+  /**
+   * 获取流量来源列表
+   *
+   * @author: lingjian @Date: 2019/8/20 10:17
+   * @param httpRequest 请求参数
+   * @return Object对象
+   */
+  @GetMapping(value = "/sourcetype")
+  public Object getSourceType(HttpServletRequest httpRequest) {
+    logger.debug(httpRequest);
+    return MessageResult.builder().code(1).msg("Hello").result(realService.getSourceType()).build();
+  }
+
+  /**
+   * 获取实时访客列表
+   *
+   * @author: lingjian @Date: 2019/8/20 13:53
+   * @param httpRequest 请求参数
+   * @param page 开始条数
+   * @param limit 显示条数
+   * @param visitType 访客类型
+   * @param sourceType 流量来源类型
+   * @param urlPage 被访问页面
+   * @param country 访客位置
+   * @return Object对象
+   */
+  @GetMapping(value = "/realvisitor")
+  public Object getRealVisitor(
+      HttpServletRequest httpRequest,
+      Integer page,
+      Integer limit,
+      Integer visitType,
+      SourceTypeEnum sourceType,
+      String urlPage,
+      Integer country) {
+    logger.debug(visitType + "---" + sourceType + "---" + urlPage + "---" + country);
+    return MessageResult.builder()
+        .code(1)
+        .msg("Hello")
+        .result(realService.getRealVisitor(page, limit, visitType, sourceType, urlPage, country))
+        .build();
+  }
+
+  /**
+   * 获取首页常访问页面列表
+   *
+   * @author: lingjian @Date: 2019/8/20 17:10
+   * @param httpRequest 请求参数
+   * @param startDate 开始时间
+   * @param endDate 结束时间
+   * @param page 开始条目
+   * @param limit 结束条目
+   * @return Object对象
+   */
+  @GetMapping(value = "/realvisitpage")
+  public Object getRealVisitPage(
+      HttpServletRequest httpRequest,
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate,
+      Integer page,
+      Integer limit) {
+    logger.debug(httpRequest);
+    return MessageResult.builder()
+        .code(1)
+        .msg("Hello")
+        .result(realService.getRealVisitPage(startDate, endDate, page, limit))
+        .build();
+  }
+
+  /**
+   * 获取页面分析页面访问排行列表
+   *
+   * @author: lingjian @Date: 2019/8/20 17:11
+   * @param httpRequest 请求参数
+   * @param date 时间
+   * @param num 天数类型
+   * @param page 开始条数
+   * @param limit 结束条数
+   * @return Object对象
+   */
+  @GetMapping(value = "/realvisitpagenum")
+  public Object getRealVisitPage(
+      HttpServletRequest httpRequest,
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
+      Integer num,
+      Integer page,
+      Integer limit) {
+    logger.debug(httpRequest);
+    return MessageResult.builder()
+        .code(1)
+        .msg("Hello")
+        .result(realService.getRealVisitPage(date, num, page, limit))
         .build();
   }
 }

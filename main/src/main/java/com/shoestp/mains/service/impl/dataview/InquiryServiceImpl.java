@@ -210,7 +210,7 @@ public class InquiryServiceImpl implements InquiryService {
   public List<InquiryTypeView> getInquiryRankPage(
       InquiryTypeEnum inquiryType, Integer page, Integer pageSize) {
     return inquiryRankDao.findAllByInquiryType(
-        inquiryType, DateTimeUtil.getTimesmorning(), page, pageSize);
+        inquiryType, DateTimeUtil.getTimesnight(), page, pageSize);
   }
 
   /**

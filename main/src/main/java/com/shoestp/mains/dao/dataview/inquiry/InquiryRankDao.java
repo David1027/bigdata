@@ -39,6 +39,7 @@ public class InquiryRankDao extends BaseDao<DataViewInquiryRank> {
 
   /**
    * 关联InquiryTypeView询盘排行前端展示类
+   *
    * @param qDataViewInquiryRank q询盘排行表
    * @return QBean<InquiryTypeView>
    */
@@ -71,7 +72,7 @@ public class InquiryRankDao extends BaseDao<DataViewInquiryRank> {
             .where(qDataViewInquiryRank.createTime.before(date))
             .where(qDataViewInquiryRank.inquiryType.eq(inquiryType))
             .groupBy(qDataViewInquiryRank.inquiryName)
-            .orderBy(qDataViewInquiryRank.inquiryCount.desc());
+            .orderBy(qDataViewInquiryRank.inquiryCount.sum().desc());
     if (page != null) {
       quiry.offset(page).limit(pageSize);
     }
@@ -96,8 +97,8 @@ public class InquiryRankDao extends BaseDao<DataViewInquiryRank> {
             .from(qDataViewInquiryRank)
             .where(qDataViewInquiryRank.createTime.between(startDate, endDate))
             .where(qDataViewInquiryRank.inquiryType.eq(inquiryType))
-                .groupBy(qDataViewInquiryRank.inquiryName)
-            .orderBy(qDataViewInquiryRank.inquiryCount.desc());
+            .groupBy(qDataViewInquiryRank.inquiryName)
+            .orderBy(qDataViewInquiryRank.inquiryCount.sum().desc());
     if (page != null) {
       quiry.offset(page).limit(pageSize);
     }

@@ -1,10 +1,14 @@
 package com.shoestp.mains.service.dataview;
 
+import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.views.dataview.real.IndexGrand;
 import com.shoestp.mains.views.dataview.real.IndexOverView;
 import com.shoestp.mains.views.dataview.real.RealOverView;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * @description: 实时-服务层接口
@@ -40,7 +44,6 @@ public interface RealService {
    */
   IndexOverView getIndexOverview(Date date, Integer num);
 
-
   /**
    * 获取首页整体看板时段分布
    *
@@ -67,4 +70,56 @@ public interface RealService {
    * @return Map<String,Map>
    */
   Map<String, Map> getRealTrend(Date date);
+
+  /**
+   * 获取流量来源列表
+   *
+   * @author: lingjian @Date: 2019/8/20 10:17
+   * @return List
+   */
+  List getSourceType();
+
+  /**
+   * 获取实时访客列表
+   *
+   * @author: lingjian @Date: 2019/8/20 13:55
+   * @param page 开始条数
+   * @param limit 显示条数
+   * @param visitType 访客类型
+   * @param sourceType 流量来源类型
+   * @param urlPage 被访问页面
+   * @param country 访客位置
+   * @return Map
+   */
+  Map getRealVisitor(
+      Integer page,
+      Integer limit,
+      Integer visitType,
+      SourceTypeEnum sourceType,
+      String urlPage,
+      Integer country);
+
+  /**
+   * 获取首页常访问页面列表
+   *
+   * @author: lingjian @Date: 2019/8/20 17:12
+   * @param startDate 开始时间
+   * @param endDate 结束时间
+   * @param page 开始条目
+   * @param limit 结束条目
+   * @return List
+   */
+  List getRealVisitPage(Date startDate, Date endDate, Integer page, Integer limit);
+
+  /**
+   * 获取页面分析页面访问排行列表
+   *
+   * @author: lingjian @Date: 2019/8/20 17:12
+   * @param date 时间
+   * @param num 天数类型
+   * @param page 开始条目
+   * @param limit 结束条目
+   * @return Map
+   */
+  Map getRealVisitPage(Date date, Integer num, Integer page, Integer limit);
 }

@@ -6,7 +6,7 @@ import com.shoestp.mains.dao.BaseDao;
 import com.shoestp.mains.entitys.dataview.country.DataViewCountry;
 import com.shoestp.mains.entitys.dataview.country.QDataViewCountry;
 import com.shoestp.mains.repositorys.dataview.realcountry.RealCountryRepository;
-import com.shoestp.mains.views.dataview.real.IndexGrand;
+import com.shoestp.mains.views.dataview.country.CountryView;
 import com.shoestp.mains.views.dataview.real.RealView;
 import org.springframework.stereotype.Repository;
 
@@ -25,6 +25,16 @@ public class RealCountryDao extends BaseDao<DataViewCountry> {
   @Resource private RealCountryRepository realCountryRepository;
 
   /**
+   * 新增国家表记录
+   *
+   * @author: lingjian @Date: 2019/8/19 9:51
+   * @param dataViewCountry 国家表对象
+   */
+  public void save(DataViewCountry dataViewCountry) {
+    realCountryRepository.save(dataViewCountry);
+  }
+
+  /**
    * 根据时间获取国家地区类数据
    *
    * @author: lingjian @Date: 2019/5/13 11:14
@@ -32,71 +42,21 @@ public class RealCountryDao extends BaseDao<DataViewCountry> {
    * @param end 结束时间
    * @return List<DataViewCountry>
    */
-  public List<Tuple> findAllByCountry(Date start, Date end) {
-    //    return realCountryRepository.findAllByCreateTimeBetween(start, end);
+  public List<CountryView> findAllByCountry(Date start, Date end) {
     QDataViewCountry qDataViewCountry = QDataViewCountry.dataViewCountry;
     return getQuery()
         .select(
-            qDataViewCountry.countryName,
-            qDataViewCountry.countryEnglishName,
-            qDataViewCountry.countryImage,
-            qDataViewCountry.visitorCount.sum(),
-            qDataViewCountry.visitorCountPc.sum(),
-            qDataViewCountry.visitorCountWap.sum())
+            Projections.bean(
+                CountryView.class,
+                qDataViewCountry.countryName,
+                qDataViewCountry.countryEnglishName,
+                qDataViewCountry.countryImage,
+                qDataViewCountry.visitorCount.sum().as("visitorCount")))
         .from(qDataViewCountry)
         .where(qDataViewCountry.createTime.between(start, end))
         .groupBy(qDataViewCountry.countryEnglishName)
         .fetchResults()
         .getResults();
-  }
-
-  /**
-   * 根据时间间隔获取所有的记录
-   *
-   * @author: lingjian @Date: 2019/5/22 9:11
-   * @param start
-   * @param end
-   * @return
-   */
-  public RealView findAllByCreateTimeBetween(Date start, Date end) {
-    QDataViewCountry qDataViewCountry = QDataViewCountry.dataViewCountry;
-    return getQuery()
-        .select(
-            Projections.bean(
-                RealView.class,
-                qDataViewCountry.visitorCount.sum().as("visitorCount"),
-                qDataViewCountry.pageViewsCount.sum().as("viewCount"),
-                qDataViewCountry.registerCount.sum().as("registerCount"),
-                qDataViewCountry.inquiryCount.sum().as("inquiryCount"),
-                qDataViewCountry.rfqCount.sum().as("rfqCount")))
-        .from(qDataViewCountry)
-        .where(qDataViewCountry.createTime.between(start, end))
-        .fetchOne();
-  }
-
-  /**
-   * 获取今天之前累计的询盘量，RFQ数，注册量
-   *
-   * @author: lingjian @Date: 2019/5/23 14:14
-   * @param date
-   * @return
-   */
-  public IndexGrand findByCreateTimeBefore(Date date) {
-    QDataViewCountry qDataViewCountry = QDataViewCountry.dataViewCountry;
-    return getQuery()
-        .select(
-            Projections.bean(
-                IndexGrand.class,
-                qDataViewCountry.registerCount.sum().as("grandRegister"),
-                qDataViewCountry.inquiryCount.sum().as("grandInquiry"),
-                qDataViewCountry.rfqCount.sum().as("grandRfq")))
-        .from(qDataViewCountry)
-        .where(qDataViewCountry.createTime.before(date))
-        .fetchOne();
-  }
-
-  public void save(DataViewCountry country) {
-    realCountryRepository.save(country);
   }
 
   public Optional<DataViewCountry> getLastCountryByCountryName(String name) {

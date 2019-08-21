@@ -3,6 +3,7 @@ package com.shoestp.mains.service.transform;
 import java.util.Date;
 import java.util.List;
 
+import com.shoestp.mains.entitys.dataview.country.DataViewCountry;
 import com.shoestp.mains.entitys.dataview.flow.DataViewFlow;
 import com.shoestp.mains.entitys.dataview.flow.DataViewFlowPage;
 import com.shoestp.mains.entitys.dataview.inquiry.DataViewInquiry;
@@ -87,4 +88,14 @@ public interface MetaToViewService {
    * @return List<DataViewUserArea> 用户地域表集合对象
    */
   List<DataViewUserArea> toUserArea(Date start, Date end);
+
+  /**
+   * 源数据转化country国家表
+   *
+   * @author: lingjian @Date: 2019/8/19 10:02
+   * @param start 开始时间
+   * @param end 结束时间
+   * @return List<DataViewCountry> 国家表集合对象
+   */
+  List<DataViewCountry> toCountry(Date start, Date end);
 }

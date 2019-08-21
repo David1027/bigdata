@@ -1,23 +1,24 @@
 package com.shoestp.mains.service.impl.dataview;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
 import com.shoestp.mains.constant.dataview.Contants;
 import com.shoestp.mains.dao.dataview.flow.FlowPageDao;
 import com.shoestp.mains.dao.dataview.real.RealDao;
-import com.shoestp.mains.dao.dataview.realcountry.RealCountryDao;
 import com.shoestp.mains.dao.dataview.user.UserDao;
+import com.shoestp.mains.dao.transform.SearchWordInfoDao;
+import com.shoestp.mains.dao.transform.WebVisitDao;
+import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.service.dataview.RealService;
+import com.shoestp.mains.service.urlmatchdatautil.URLMatchDataUtilService;
 import com.shoestp.mains.utils.dateUtils.CalculateUtil;
 import com.shoestp.mains.utils.dateUtils.CustomDoubleSerialize;
 import com.shoestp.mains.utils.dateUtils.DateTimeUtil;
 import com.shoestp.mains.utils.dateUtils.KeyValueViewUtil;
-import com.shoestp.mains.views.dataview.real.IndexGrand;
-import com.shoestp.mains.views.dataview.real.IndexOverView;
-import com.shoestp.mains.views.dataview.real.RealOverView;
-import com.shoestp.mains.views.dataview.real.RealView;
+import com.shoestp.mains.views.dataview.real.*;
 import com.shoestp.mains.views.dataview.utils.KeyValue;
 
 import org.springframework.stereotype.Service;
@@ -29,10 +30,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class RealServiceImpl implements RealService {
 
-  @Resource private RealCountryDao realCountryDao;
   @Resource private RealDao realDao;
   @Resource private FlowPageDao flowPageDao;
   @Resource private UserDao userDao;
+  @Resource private WebVisitDao webVisitDao;
+  @Resource private SearchWordInfoDao searchWordInfoDao;
+  @Resource private URLMatchDataUtilService urlMatchDataUtilService;
 
   /**
    * 判断是否为空处理
@@ -442,5 +445,223 @@ public class RealServiceImpl implements RealService {
     grand.setGrandPurchase(user.getGrandPurchase());
     grand.setGrandSupplier(user.getGrandSupplier());
     return grand;
+  }
+
+  /**
+   * 获取流量来源列表
+   *
+   * @author: lingjian @Date: 2019/8/20 10:18
+   * @return List
+   */
+  @Override
+  public List getSourceType() {
+    List<KeyValue> list = new ArrayList<>();
+    for (SourceTypeEnum s : SourceTypeEnum.values()) {
+      KeyValue keyValue = new KeyValue();
+      keyValue.setKey(s.toString());
+      keyValue.setValue(s.getName());
+      list.add(keyValue);
+    }
+    return list;
+  }
+
+  /**
+   * 分页获取当天访客列表记录
+   *
+   * @author: lingjian @Date: 2019/8/20 13:56
+   * @param page 开始条数
+   * @param limit 显示条数
+   * @param visitType 访客类型
+   * @param sourceType 流量来源类型
+   * @param urlPage 被访问页面
+   * @param country 访客位置
+   * @return Map
+   */
+  @Override
+  public Map getRealVisitor(
+      Integer page,
+      Integer limit,
+      Integer visitType,
+      SourceTypeEnum sourceType,
+      String urlPage,
+      Integer country) {
+    // 获取当天0点，24点时间
+    Date start = DateTimeUtil.getTimesmorning();
+    Date end = DateTimeUtil.getTimesnight();
+
+    Map<String, Object> map = new HashMap<>(16);
+
+    // 获取访客集合
+    List<RealVisitorView> list =
+        webVisitDao.listWebVisit(start, end, page, limit, visitType, sourceType, urlPage, country)
+            .stream()
+            .map(
+                bean -> {
+                  RealVisitorView visitor = new RealVisitorView();
+                  // 编号
+                  visitor.setId(bean.getId());
+                  // 被访问url
+                  visitor.setUrl(bean.getUrl());
+                  // 来源url
+                  visitor.setReferer(bean.getReferer());
+                  // 流量来源,流量来源名称
+                  SourceTypeEnum sourceTypeEnum =
+                      urlMatchDataUtilService.getSourceType(bean.getReferer());
+                  visitor.setSourceType(sourceTypeEnum);
+                  visitor.setSourceTypeName(sourceTypeEnum.getName());
+                  // 访客国家id,访客国家名称
+                  visitor.setCountryId(bean.getCountryId());
+                  visitor.setCountryName(bean.getCountryName());
+                  // 访客类型,访客类型名称
+                  visitor.setType(bean.getType());
+                  visitor.setTypeName(bean.getType().getName());
+                  // 创建时间
+                  visitor.setCreateTime(bean.getCreateTime());
+                  return visitor;
+                })
+            .collect(Collectors.toList());
+    // 获取访客集合总条数
+    Integer count =
+        webVisitDao.countWebVisit(start, end, page, limit, visitType, sourceType, urlPage, country);
+    map.put("list", list);
+    map.put("total", count);
+    return map;
+  }
+
+  /**
+   * 获取常访问页面列表
+   *
+   * @author: lingjian @Date: 2019/8/20 17:15
+   * @param startDate 开始时间
+   * @param endDate 结束时间
+   * @return List
+   */
+  private List getRealVisitPageList(Date startDate, Date endDate) {
+    // 获取开始时间和结束时间
+    Date start = DateTimeUtil.getTimesOfDay(startDate, 0);
+    Date end = DateTimeUtil.getTimesOfDay(endDate, 24);
+
+    return webVisitDao.getWebVisitUrl(start, end).stream()
+        .map(
+            bean -> {
+              RealVisitorPageView visitPage = new RealVisitorPageView();
+              // 页面url
+              visitPage.setUrl(bean.getUrl());
+              // 浏览量
+              visitPage.setViewCount(webVisitDao.countUrlView(bean.getUrl(), start, end));
+              // 访客数
+              visitPage.setVisitorCount(webVisitDao.countUrlVisitor(bean.getUrl(), start, end));
+              // 平均停留时长
+              visitPage.setAverageTime(bean.getAverageTime());
+              return visitPage;
+            })
+        .sorted(
+            Comparator.comparing(RealVisitorPageView::getViewCount)
+                .thenComparing(RealVisitorPageView::getVisitorCount)
+                .reversed())
+        .collect(Collectors.toList());
+  }
+
+  /**
+   * 获取常访问页面列表的总条数
+   *
+   * @author: lingjian @Date: 2019/8/20 17:15
+   * @param startDate 开始时间
+   * @param endDate 结束时间
+   * @return Integer
+   */
+  private Integer countRealVisitPage(Date startDate, Date endDate) {
+    return getRealVisitPageList(startDate, endDate).size();
+  }
+
+  /**
+   * 分页获取首页常访问页面列表
+   *
+   * @author: lingjian @Date: 2019/8/20 17:14
+   * @param startDate 开始时间
+   * @param endDate 结束时间
+   * @param page 开始条目
+   * @param limit 结束条目
+   * @return List
+   */
+  @Override
+  public List getRealVisitPage(Date startDate, Date endDate, Integer page, Integer limit) {
+    List list = getRealVisitPageList(startDate, endDate);
+    limit = list.size() >= limit ? limit : list.size();
+    return list.subList(page, limit);
+  }
+
+  /**
+   * 分页获取页面分析页面访问排行列表
+   *
+   * @author: lingjian @Date: 2019/8/20 17:18
+   * @param date 时间
+   * @param num 天数类型
+   * @param page 开始条目
+   * @param limit 结束条目
+   * @return Map
+   */
+  public Map getRealVisitPage(Date date, Integer num, Integer page, Integer limit) {
+    List list;
+    Integer count;
+    if (num != null) {
+      list = getRealVisitPage(DateTimeUtil.getDayFromNum(date, num), date, page, limit);
+      count = countRealVisitPage(DateTimeUtil.getDayFromNum(date, num), date);
+    } else {
+      list = getRealVisitPage(date, date, page, limit);
+      count = countRealVisitPage(date, date);
+    }
+    Map<String, Object> map = new HashMap<>(16);
+    map.put("list", list);
+    map.put("total", count);
+    return map;
+  }
+
+  /**
+   * 根据开始时间和结束时间获取搜索关键词排行集合
+   *
+   * @author: lingjian @Date: 2019/8/21 10:31
+   * @param startDate 开始时间
+   * @param endDate 结束时间
+   * @return List
+   */
+  private List getHomeSearchList(Date startDate, Date endDate) {
+    Date start = DateTimeUtil.getTimesOfDay(startDate, 0);
+    Date end = DateTimeUtil.getTimesOfDay(endDate, 24);
+    return searchWordInfoDao.listSearchWord(start, end).stream()
+        .map(
+            bean -> {
+              HomeSearchView search = new HomeSearchView();
+              // 搜索关键词
+              search.setKeyword(bean);
+              // 搜索人气
+              Integer view = searchWordInfoDao.countSearchWordView(bean, start, end);
+              search.setViewCount(view);
+              return search;
+            })
+        .sorted(Comparator.comparing(HomeSearchView::getViewCount).reversed())
+        .collect(Collectors.toList());
+  }
+
+  /**
+   * 分页获取首页搜索关键词排行
+   *
+   * @author: lingjian @Date: 2019/8/21 10:30
+   * @param startDate 开始时间
+   * @param endDate 结束时间
+   * @param page 开始条目
+   * @param limit 结束条目
+   * @return Map
+   */
+  @Override
+  public Map getHomeSearch(Date startDate, Date endDate, Integer page, Integer limit) {
+    List list = getHomeSearchList(startDate, endDate);
+    limit = list.size() >= limit ? limit : list.size();
+    Map<String, Object> map = new HashMap<>(16);
+    // 搜索关键词列表
+    map.put("list", list.subList(page, limit));
+    // 搜索关键词列表总条数
+    map.put("total", list.size());
+    return map;
   }
 }

@@ -14,10 +14,6 @@ public class CountryView {
   private String countryEnglishName;
   /** 国旗图片 */
   private String countryImage;
-  /** PC端访客数 */
-  private Integer visitorCountPc;
-  /** 移动端访客数 */
-  private Integer visitorCountWap;
-  /** 总访客数 */
+  /** 访客数 */
   private Integer visitorCount;
 }

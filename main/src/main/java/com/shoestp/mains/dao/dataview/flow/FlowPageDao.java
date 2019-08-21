@@ -43,11 +43,13 @@ public class FlowPageDao extends BaseDao<DataViewFlowPage> {
    */
   public Integer findAllByAccessTotal(Date start, Date end) {
     QDataViewFlowPage qDataViewFlowPage = QDataViewFlowPage.dataViewFlowPage;
-    return getQuery()
-        .select(qDataViewFlowPage.visitorCount.sum())
-        .from(qDataViewFlowPage)
-        .where(qDataViewFlowPage.createTime.between(start, end))
-        .fetchFirst();
+    Integer result =
+        getQuery()
+            .select(qDataViewFlowPage.visitorCount.sum())
+            .from(qDataViewFlowPage)
+            .where(qDataViewFlowPage.createTime.between(start, end))
+            .fetchFirst();
+    return result == null ? 0 : result;
   }
 
   /**

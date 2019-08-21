@@ -1,5 +1,6 @@
 package com.shoestp.mains.service.transform.impl;
 
+import com.shoestp.mains.dao.dataview.realcountry.RealCountryDao;
 import com.shoestp.mains.dao.dataview.flow.FlowDao;
 import com.shoestp.mains.dao.dataview.flow.FlowPageDao;
 import com.shoestp.mains.dao.dataview.inquiry.InquiryDao;
@@ -10,6 +11,7 @@ import com.shoestp.mains.dao.dataview.user.UserDao;
 import com.shoestp.mains.dao.transform.NewInquiryInfoDao;
 import com.shoestp.mains.dao.transform.NewUserInfoDao;
 import com.shoestp.mains.dao.transform.WebVisitDao;
+import com.shoestp.mains.entitys.dataview.country.DataViewCountry;
 import com.shoestp.mains.entitys.dataview.flow.DataViewFlow;
 import com.shoestp.mains.entitys.dataview.flow.DataViewFlowPage;
 import com.shoestp.mains.entitys.dataview.inquiry.DataViewInquiry;
@@ -24,18 +26,16 @@ import com.shoestp.mains.entitys.metadata.enums.RegisterTypeEnum;
 import com.shoestp.mains.enums.flow.AccessTypeEnum;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
-import com.shoestp.mains.pojo.PageSourcePojo;
 import com.shoestp.mains.service.transform.MetaToViewService;
 import com.shoestp.mains.service.urlmatchdatautil.URLMatchDataUtilService;
+import com.shoestp.mains.utils.dateUtils.DateTimeUtil;
+
 import org.springframework.stereotype.Service;
-import org.start2do.utils.DateTimeUtil;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @description: 源数据转化展示数据 - 服务层实现类
@@ -56,6 +56,7 @@ public class MetaToViewServiceImpl implements MetaToViewService {
   @Resource private URLMatchDataUtilService urlMatchDataUtilService;
   @Resource private UserDao userDao;
   @Resource private UserAreaDao userAreaDao;
+  @Resource private RealCountryDao realCountryDao;
 
   /**
    * 判断DataViewReal的数据是否为空
@@ -456,45 +457,23 @@ public class MetaToViewServiceImpl implements MetaToViewService {
   @Override
   public DataViewUser toUser(Date start, Date end) {
     DataViewUser user = new DataViewUser();
-    /* 定义每次查询多少条 */
-    int count = 1000;
-    List<WebVisitInfo> webVisitInfos = null;
-    /* 新用户数 */
-    AtomicInteger newCount = new AtomicInteger();
-    /* 老用户数 */
-    AtomicInteger oldCount = new AtomicInteger();
-    /* 数据库查询的起始位置 */
-    Long offset = 0L;
-    do {
-      /* 查询数据 */
-      webVisitInfos = webVisitDao.getWebVisitUserId(start, end, offset, count);
-      CountDownLatch countDownLatch = new CountDownLatch(webVisitInfos.size());
-      webVisitInfos
-          .parallelStream()
-          .forEach(
-              webVisitInfo -> {
-                /* 比较时间,和起始时间作比较,然后早于start的时间,为老用户,晚于的是新用户 */
-                if (DateTimeUtil.timeDifferent(start, webVisitInfo.getUserId().getCreateTime())
-                        .toNanos()
-                    >= 0) {
-                  newCount.getAndIncrement();
-                } else {
-                  oldCount.getAndIncrement();
-                }
-                countDownLatch.countDown();
-              });
-      offset += count;
-      try {
-        /* 等待处理完成 */
-        countDownLatch.await();
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
-      /* 只有查询出结果等于每次查询条数的时候才会继续查询,否则 */
-    } while (webVisitInfos.size() == count);
-    user.setNewVisitorCount(newCount.intValue());
-    user.setOldVisitorCount(oldCount.intValue());
 
+    // 判断当天的去重ip是否已存在当天之前所有的ip中
+    int newVisitorCount = 0;
+    int oldVisitorCount = 0;
+    List<String> oldIpList = webVisitDao.listWebVisitIp(DateTimeUtil.getTimesOfDay(start, 0));
+    List<String> newIpList = webVisitDao.listWebVisitIp(start, end);
+    for (String ip : newIpList) {
+      if (oldIpList.contains(ip)) {
+        oldVisitorCount++;
+      } else {
+        newVisitorCount++;
+      }
+    }
+    // 新用户数
+    user.setNewVisitorCount(newVisitorCount);
+    // 老用户数
+    user.setOldVisitorCount(oldVisitorCount);
     // 访客数
     user.setVisitorCount(getVisitorCount(start, end, null));
     // 总注册量
@@ -538,6 +517,37 @@ public class MetaToViewServiceImpl implements MetaToViewService {
         userAreaDao.save(area);
       }
       list.add(area);
+    }
+    return list;
+  }
+
+  /**
+   * 源数据转化country国家表
+   *
+   * @author: lingjian @Date: 2019/8/19 10:02
+   * @param start 开始时间
+   * @param end 结束时间
+   * @return List<DataViewCountry> 国家表集合对象
+   */
+  @Override
+  public List<DataViewCountry> toCountry(Date start, Date end) {
+    List<DataViewCountry> list = new ArrayList<>();
+    List<WebVisitInfo> webVisitUserArea = webVisitDao.getWebVisitUserArea(start, end);
+    for (WebVisitInfo w : webVisitUserArea) {
+      DataViewCountry country = new DataViewCountry();
+      // 国家名称
+      country.setCountryName(w.getLocation().getName());
+      // 国家英文名称
+      country.setCountryEnglishName(w.getLocation().getEngName());
+      // 国旗图片
+      country.setCountryImage(w.getLocation().getImg());
+      // 访客数
+      country.setVisitorCount(
+          webVisitDao.countWebVisitUserArea(w.getLocation().getId(), start, end));
+      // 创建时间
+      country.setCreateTime(new Date());
+      realCountryDao.save(country);
+      list.add(country);
     }
     return list;
   }

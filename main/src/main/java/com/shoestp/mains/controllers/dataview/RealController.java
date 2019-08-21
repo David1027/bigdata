@@ -190,9 +190,35 @@ public class RealController {
   }
 
   /**
+   * 获取首页搜索关键词排行
+   *
+   * @author: lingjian @Date: 2019/8/21 10:30
+   * @param httpRequest 请求参数
+   * @param startDate 开始时间
+   * @param endDate 结束时间
+   * @param page 开始条目
+   * @param limit 结束条目
+   * @return Object对象
+   */
+  @PostMapping(value = "/homesearch")
+  public Object getHomeSearch(
+      HttpServletRequest httpRequest,
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate,
+      Integer page,
+      Integer limit) {
+    logger.debug(httpRequest);
+    return MessageResult.builder()
+        .code(1)
+        .msg("Hello")
+        .result(realService.getHomeSearch(startDate, endDate, page, limit))
+        .build();
+  }
+
+  /**
    * 获取页面分析页面访问排行列表
    *
-   * @author: lingjian @Date: 2019/8/20 17:11
+   * @author: lingjian @Date: 2019/8/20 17:18
    * @param httpRequest 请求参数
    * @param date 时间
    * @param num 天数类型

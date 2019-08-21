@@ -1,18 +1,16 @@
 package com.shoestp.mains.service.impl.dataview;
 
 import java.util.*;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
-import com.querydsl.core.types.Projections;
 import com.shoestp.mains.constant.dataview.Contants;
 import com.shoestp.mains.dao.dataview.flow.FlowPageDao;
 import com.shoestp.mains.dao.dataview.real.RealDao;
 import com.shoestp.mains.dao.dataview.user.UserDao;
+import com.shoestp.mains.dao.transform.SearchWordInfoDao;
 import com.shoestp.mains.dao.transform.WebVisitDao;
-import com.shoestp.mains.entitys.metadata.WebVisitInfo;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.service.dataview.RealService;
 import com.shoestp.mains.service.urlmatchdatautil.URLMatchDataUtilService;
@@ -36,6 +34,7 @@ public class RealServiceImpl implements RealService {
   @Resource private FlowPageDao flowPageDao;
   @Resource private UserDao userDao;
   @Resource private WebVisitDao webVisitDao;
+  @Resource private SearchWordInfoDao searchWordInfoDao;
   @Resource private URLMatchDataUtilService urlMatchDataUtilService;
 
   /**
@@ -542,27 +541,25 @@ public class RealServiceImpl implements RealService {
     Date start = DateTimeUtil.getTimesOfDay(startDate, 0);
     Date end = DateTimeUtil.getTimesOfDay(endDate, 24);
 
-    List<RealVisitorPageView> list =
-        webVisitDao.getWebVisitUrl(start, end).stream()
-            .map(
-                bean -> {
-                  RealVisitorPageView visitPage = new RealVisitorPageView();
-                  // 页面url
-                  visitPage.setUrl(bean.getUrl());
-                  // 浏览量
-                  visitPage.setViewCount(webVisitDao.countUrlView(bean.getUrl(), start, end));
-                  // 访客数
-                  visitPage.setVisitorCount(webVisitDao.countUrlVisitor(bean.getUrl(), start, end));
-                  // 平均停留时长
-                  visitPage.setAverageTime(bean.getAverageTime());
-                  return visitPage;
-                })
-            .sorted(
-                Comparator.comparing(RealVisitorPageView::getViewCount)
-                    .thenComparing(RealVisitorPageView::getVisitorCount)
-                    .reversed())
-            .collect(Collectors.toList());
-    return list;
+    return webVisitDao.getWebVisitUrl(start, end).stream()
+        .map(
+            bean -> {
+              RealVisitorPageView visitPage = new RealVisitorPageView();
+              // 页面url
+              visitPage.setUrl(bean.getUrl());
+              // 浏览量
+              visitPage.setViewCount(webVisitDao.countUrlView(bean.getUrl(), start, end));
+              // 访客数
+              visitPage.setVisitorCount(webVisitDao.countUrlVisitor(bean.getUrl(), start, end));
+              // 平均停留时长
+              visitPage.setAverageTime(bean.getAverageTime());
+              return visitPage;
+            })
+        .sorted(
+            Comparator.comparing(RealVisitorPageView::getViewCount)
+                .thenComparing(RealVisitorPageView::getVisitorCount)
+                .reversed())
+        .collect(Collectors.toList());
   }
 
   /**
@@ -573,7 +570,7 @@ public class RealServiceImpl implements RealService {
    * @param endDate 结束时间
    * @return Integer
    */
-  public Integer countRealVisitPage(Date startDate, Date endDate) {
+  private Integer countRealVisitPage(Date startDate, Date endDate) {
     return getRealVisitPageList(startDate, endDate).size();
   }
 
@@ -597,7 +594,7 @@ public class RealServiceImpl implements RealService {
   /**
    * 分页获取页面分析页面访问排行列表
    *
-   * @author: lingjian @Date: 2019/8/20 17:16
+   * @author: lingjian @Date: 2019/8/20 17:18
    * @param date 时间
    * @param num 天数类型
    * @param page 开始条目
@@ -617,6 +614,54 @@ public class RealServiceImpl implements RealService {
     Map<String, Object> map = new HashMap<>(16);
     map.put("list", list);
     map.put("total", count);
+    return map;
+  }
+
+  /**
+   * 根据开始时间和结束时间获取搜索关键词排行集合
+   *
+   * @author: lingjian @Date: 2019/8/21 10:31
+   * @param startDate 开始时间
+   * @param endDate 结束时间
+   * @return List
+   */
+  private List getHomeSearchList(Date startDate, Date endDate) {
+    Date start = DateTimeUtil.getTimesOfDay(startDate, 0);
+    Date end = DateTimeUtil.getTimesOfDay(endDate, 24);
+    return searchWordInfoDao.listSearchWord(start, end).stream()
+        .map(
+            bean -> {
+              HomeSearchView search = new HomeSearchView();
+              // 搜索关键词
+              search.setKeyword(bean);
+              // 搜索人气
+              Integer view = searchWordInfoDao.countSearchWordView(bean, start, end);
+              search.setViewCount(view);
+              return search;
+            })
+        .sorted(Comparator.comparing(HomeSearchView::getViewCount).reversed())
+        .collect(Collectors.toList());
+  }
+
+  /**
+   * 分页获取首页搜索关键词排行
+   *
+   * @author: lingjian @Date: 2019/8/21 10:30
+   * @param startDate 开始时间
+   * @param endDate 结束时间
+   * @param page 开始条目
+   * @param limit 结束条目
+   * @return Map
+   */
+  @Override
+  public Map getHomeSearch(Date startDate, Date endDate, Integer page, Integer limit) {
+    List list = getHomeSearchList(startDate, endDate);
+    limit = list.size() >= limit ? limit : list.size();
+    Map<String, Object> map = new HashMap<>(16);
+    // 搜索关键词列表
+    map.put("list", list.subList(page, limit));
+    // 搜索关键词列表总条数
+    map.put("total", list.size());
     return map;
   }
 }

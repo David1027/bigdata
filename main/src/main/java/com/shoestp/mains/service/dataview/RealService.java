@@ -112,6 +112,18 @@ public interface RealService {
   List getRealVisitPage(Date startDate, Date endDate, Integer page, Integer limit);
 
   /**
+   * 获取首页搜索关键词排行
+   *
+   * @author: lingjian @Date: 2019/8/21 10:30
+   * @param startDate 开始时间
+   * @param endDate 结束时间
+   * @param page 开始条目
+   * @param limit 结束条目
+   * @return Map
+   */
+  Map getHomeSearch(Date startDate, Date endDate, Integer page, Integer limit);
+
+  /**
    * 获取页面分析页面访问排行列表
    *
    * @author: lingjian @Date: 2019/8/20 17:12

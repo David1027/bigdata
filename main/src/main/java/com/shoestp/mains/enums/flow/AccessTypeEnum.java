@@ -25,7 +25,15 @@ public enum AccessTypeEnum {
   /** 个人中心首页 */
   MYCENTER("个人中心首页"),
   /** 其他 */
-  OTHER("其他页面");
+  OTHER("其他页面"),
+  /** /home/usr_UsrMain_completeReg */
+  USER_REG("用户注册页"),
+  /** /home/usr_UsrMessages_center */
+  USER_MESSAGE_CENTER("用户中心"),
+  /** /seller 商家端 */
+  SELLER_ADMIN("商家后台"),
+  /** /platform 平台端 */
+  PLATFORM_ADMIN("平台端");
 
   private String name;
 }

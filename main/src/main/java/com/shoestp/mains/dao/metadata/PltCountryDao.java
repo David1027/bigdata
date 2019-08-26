@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface PltCountryDao extends JpaRepository<PltCountry, Integer> {
 
   Optional<PltCountry> findByName(String name);
+
+  Optional<PltCountry> findFirstByShortName(String name);
 }

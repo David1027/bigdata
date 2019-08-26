@@ -78,4 +78,19 @@ public class LocationServiceImpl implements LocationService {
   public String[] getAddress(String ip) {
     return city.find(ip);
   }
+
+  /**
+   * 根据 ISO-3166 alpha-3 三位地区简写查询国家
+   *
+   * @param country
+   */
+  @Override
+  @CacheResult
+  public PltCountry getCountryByShortName(String country) {
+    Optional<PltCountry> result = countryDao.findFirstByShortName(country);
+    if (result.isPresent()) {
+      return result.get();
+    }
+    return countryDao.findById(6).get();
+  }
 }

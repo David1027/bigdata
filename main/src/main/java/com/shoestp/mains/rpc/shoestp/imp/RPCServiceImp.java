@@ -55,7 +55,7 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
       public void onNext(GRPC_SendDataProto.Inquiry info) {
         switch (info.getAction()) {
           case 1:
-            inquiryInfoService.syncUserInfo(info);
+            inquiryInfoService.syncInquiry(info);
             break;
           case 0:
           default:

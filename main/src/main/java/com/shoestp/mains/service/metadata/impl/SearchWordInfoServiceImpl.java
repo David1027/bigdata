@@ -69,7 +69,6 @@ public class SearchWordInfoServiceImpl implements SearchWordInfoService {
 
   @Override
   public void save(GRPC_SendDataProto.SearchInfo searchInfo) {
-    logger.debug("++++++++++++++++++++++++++++++++++++++++++");
     logger.debug(searchInfo);
     SearchWordInfo searchWordInfo = new SearchWordInfo();
     searchWordInfo.setIp(searchInfo.getIp());
@@ -78,5 +77,6 @@ public class SearchWordInfoServiceImpl implements SearchWordInfoService {
     searchWordInfo.setUserId(
         userInfoService.getUserInfo(searchInfo.getUserId(), searchInfo.getSign()));
     searchWordInfo.setCreateTime(new Date());
+    searchDao.save(searchWordInfo);
   }
 }

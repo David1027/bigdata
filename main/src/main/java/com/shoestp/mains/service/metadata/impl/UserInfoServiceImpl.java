@@ -7,6 +7,7 @@ import com.shoestp.mains.entitys.metadata.enums.RegisterTypeEnum;
 import com.shoestp.mains.entitys.metadata.enums.SexEnum;
 import com.shoestp.mains.entitys.metadata.enums.UserStatus;
 import com.shoestp.mains.rpc.shoestp.pojo.GRPC_SendDataProto;
+import com.shoestp.mains.service.metadata.LocationService;
 import com.shoestp.mains.service.metadata.UserInfoService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,6 +21,7 @@ import java.util.Optional;
 public class UserInfoServiceImpl implements UserInfoService {
   private static final Logger logger = LogManager.getLogger(UserInfoServiceImpl.class);
   @Resource private UserInfoDao userInfoDao;
+  @Resource private LocationService locationService;
 
   @Override
   public void save(UserInfo u) {}
@@ -64,6 +66,9 @@ public class UserInfoServiceImpl implements UserInfoService {
 
   @Override
   public UserInfo getUser(String sign) {
+    if (sign == null || sign.length() < 1) {
+      return null;
+    }
     Optional<UserInfo> result = userInfoDao.findBySign(sign);
     if (result.isPresent()) {
       return result.get();
@@ -79,13 +84,23 @@ public class UserInfoServiceImpl implements UserInfoService {
   @Override
   public void save(GRPC_SendDataProto.UserInfo info) {
     com.shoestp.mains.entitys.metadata.UserInfo userInfo;
-    Optional<com.shoestp.mains.entitys.metadata.UserInfo> result =
-        userInfoDao.findBySign(info.getSign());
+    Optional<com.shoestp.mains.entitys.metadata.UserInfo> result;
+    /** 如果有签名的情况下根据签名获取数据 */
+    if (info.getSign().length() > 1) {
+      result = userInfoDao.findBySign(info.getSign());
+    } else {
+      if (info.getUserId() < 1) {
+        return;
+      }
+      result = userInfoDao.findByUserId(info.getUserId());
+    }
+
     if (result.isPresent()) {
       userInfo = result.get();
     } else {
       userInfo = new com.shoestp.mains.entitys.metadata.UserInfo();
     }
+    /** 获取用户类型 */
     switch (info.getSex()) {
       case 1:
         userInfo.setSex(SexEnum.MAN);
@@ -106,6 +121,7 @@ public class UserInfoServiceImpl implements UserInfoService {
         userInfo.setType(RegisterTypeEnum.SUPPLIER);
         break;
     }
+    /** 设置用户状态 */
     switch (info.getStatus()) {
       case 1:
         userInfo.setStatus(UserStatus.VERIFY);
@@ -113,10 +129,17 @@ public class UserInfoServiceImpl implements UserInfoService {
       default:
         userInfo.setStatus(UserStatus.UNVERIFY);
     }
+    /** 设置国家地址 */
+    userInfo.setCountry(locationService.getCountryByShortName(info.getCountry()));
+    userInfo.setUserId(info.getUserId());
     userInfo.setName(info.getName());
-    userInfo.setCreateTime(new Date(info.getCreateDate()));
-    userInfo.setLastVisitTime(new Date());
-    userInfoDao.save(userInfo);
+    if (userInfo.getCreateTime() == null) {
+      userInfo.setCreateTime(new Date(info.getCreateDate()));
+    }
+    if (userInfo.getLastVisitTime() == null) {
+      userInfo.setLastVisitTime(new Date());
+    }
+    userInfoDao.saveAndFlush(userInfo);
   }
 
   @Override
@@ -143,11 +166,7 @@ public class UserInfoServiceImpl implements UserInfoService {
    */
   @Override
   public void syncUserInfo(GRPC_SendDataProto.UserInfo info) {
-    Optional<UserInfo> result = userInfoDao.findById(info.getUserId());
-    /** 存在用户,那么进行更新 */
-    if (result.isPresent()) {
-      save(info);
-    }
+    save(info);
   }
 
   /**

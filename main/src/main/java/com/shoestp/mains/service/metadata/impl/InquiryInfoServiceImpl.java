@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.Optional;
 
 /** Created by IntelliJ IDEA. User: lijie@shoestp.cn Date: 2019/5/20 Time: 11:28 */
 @Service
@@ -27,7 +28,13 @@ public class InquiryInfoServiceImpl implements InquiryInfoService {
 
   @Override
   public void save(GRPC_SendDataProto.Inquiry inquiry) {
-    InquiryInfo inquiryInfo = new InquiryInfo();
+    InquiryInfo inquiryInfo;
+    Optional<InquiryInfo> result = inquiryDao.findByInquiryId(inquiry.getInquiryId());
+    if (result.isPresent()) {
+      inquiryInfo = result.get();
+    } else {
+      inquiryInfo = new InquiryInfo();
+    }
     switch (inquiry.getType()) {
       case 1:
         inquiryInfo.setType(InquiryTypeEnum.RFQ);
@@ -47,6 +54,7 @@ public class InquiryInfoServiceImpl implements InquiryInfoService {
     }
     inquiryInfo.setSubmit_user(
         userInfoServicel.getUserInfo(inquiry.getSubmitUser(), inquiry.getSign()));
+    inquiryInfo.setRecipient_user(userInfoServicel.getUserInfo(inquiry.getRecipientUser(), null));
     inquiryInfo.setUrl(inquiry.getUrl());
     /** Shoestp 询盘表单的ID */
     inquiryInfo.setInquiryId(inquiry.getInquiryId());
@@ -56,14 +64,13 @@ public class InquiryInfoServiceImpl implements InquiryInfoService {
     inquiryInfo.setPkey(inquiry.getPkey());
     inquiryInfo.setMoney(inquiry.getMoney());
     inquiryInfo.setImg(inquiry.getImg());
+    inquiryInfo.setIp(inquiry.getIp());
     inquiryInfo.setDeviceType(DeviceTypeEnum.PC);
     inquiryDao.save(inquiryInfo);
   }
 
   @Override
-  public void syncUserInfo(GRPC_SendDataProto.Inquiry info) {
-    if (!inquiryDao.findByInquiryId(info.getInquiryId()).isPresent()) {
-      save(info);
-    }
+  public void syncInquiry(GRPC_SendDataProto.Inquiry info) {
+    save(info);
   }
 }

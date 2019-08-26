@@ -66,4 +66,6 @@ public interface LocationService {
    * @return the string [ ]
    */
   String[] getAddress(String ip);
+  /** 根据 ISO-3166 alpha-3 三位地区简写查询国家 */
+  PltCountry getCountryByShortName(String country);
 }

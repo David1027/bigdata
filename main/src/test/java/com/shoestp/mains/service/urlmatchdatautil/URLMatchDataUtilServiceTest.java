@@ -9,7 +9,6 @@ import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.annotation.Rollback;
 
 import javax.annotation.Resource;
 
@@ -54,21 +53,7 @@ public class URLMatchDataUtilServiceTest extends BaseTest {
     entity.setRegex("http*//www.google.*");
     entity.setType(URLDataTypeEnum.SEARCHENGINE);
     matchDataDao.save(entity);
-    entity = new URLMatchDataEntity();
-    entity.setName("DETAIL");
-    entity.setRegex("/*_p*.html");
-    entity.setType(URLDataTypeEnum.PAGETYPE);
-    matchDataDao.save(entity);
-    entity = new URLMatchDataEntity();
-    entity.setName("INDEX");
-    entity.setRegex("/");
-    entity.setType(URLDataTypeEnum.PAGETYPE);
-    matchDataDao.save(entity);
-    entity = new URLMatchDataEntity();
-    entity.setName("INDEX");
-    entity.setRegex("/home/usr_UsrPurchase");
-    entity.setType(URLDataTypeEnum.PAGETYPE);
-    matchDataDao.save(entity);
+    /** */
     entity = new URLMatchDataEntity();
     entity.setName("LIST");
     entity.setRegex("/home/pdt_PdtProduct?cated=*");
@@ -84,6 +69,43 @@ public class URLMatchDataUtilServiceTest extends BaseTest {
     entity.setName("INTERVIEW");
     entity.setRegex("");
     entity.setType(URLDataTypeEnum.SEARCHENGINE);
+    matchDataDao.save(entity);
+    /** 填充数据 */
+    /** 页面类型 */
+    entity = new URLMatchDataEntity();
+    entity.setName("SELLER_ADMIN");
+    entity.setRegex("/newseller*");
+    entity.setType(URLDataTypeEnum.PAGETYPE);
+    matchDataDao.save(entity);
+    /** 产品详情 */
+    entity = new URLMatchDataEntity();
+    entity.setName("DETAIL");
+    entity.setRegex("/*_p*.html");
+    entity.setType(URLDataTypeEnum.PAGETYPE);
+    matchDataDao.save(entity);
+    /** 首页 */
+    entity = new URLMatchDataEntity();
+    entity.setName("INDEX");
+    entity.setRegex("/");
+    entity.setType(URLDataTypeEnum.PAGETYPE);
+    matchDataDao.save(entity);
+    /** 商家用户中心 */
+    entity = new URLMatchDataEntity();
+    entity.setName("USER_REG");
+    entity.setRegex("/home/usr_UsrMain_completeReg");
+    entity.setType(URLDataTypeEnum.PAGETYPE);
+    matchDataDao.save(entity);
+    /** 用户消息中心 */
+    entity = new URLMatchDataEntity();
+    entity.setName("USER_MESSAGE_CENTER");
+    entity.setRegex("/home/usr_UsrMessages_center");
+    entity.setType(URLDataTypeEnum.PAGETYPE);
+    matchDataDao.save(entity);
+    /** 平台 */
+    entity = new URLMatchDataEntity();
+    entity.setName("PLATFORM_ADMIN");
+    entity.setRegex("/platform/*");
+    entity.setType(URLDataTypeEnum.PAGETYPE);
     matchDataDao.save(entity);
   }
 

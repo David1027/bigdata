@@ -39,5 +39,5 @@ public interface InquiryInfoService {
    * @since .
    * @param info the info
    */
-  void syncUserInfo(GRPC_SendDataProto.Inquiry info);
+  void syncInquiry(GRPC_SendDataProto.Inquiry info);
 }

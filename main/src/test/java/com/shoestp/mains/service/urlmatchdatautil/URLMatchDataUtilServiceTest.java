@@ -42,33 +42,40 @@ public class URLMatchDataUtilServiceTest extends BaseTest {
     entity.setName("迪胜");
     entity.setRegex("/activity/html/ds*");
     entity.setType(URLDataTypeEnum.LANDINGPAGE);
+    entity.setDescription("着陆页-迪胜");
     matchDataDao.save(entity);
     entity = new URLMatchDataEntity();
     entity.setName("美廉美");
     entity.setRegex("/activity/html/mlm*");
     entity.setType(URLDataTypeEnum.LANDINGPAGE);
+    entity.setDescription("着陆页-mlm");
+
     matchDataDao.save(entity);
     entity = new URLMatchDataEntity();
     entity.setName("GOOGLE");
     entity.setRegex("http*//www.google.*");
     entity.setType(URLDataTypeEnum.SEARCHENGINE);
+    entity.setDescription("访问类型-Google搜索引擎");
     matchDataDao.save(entity);
     /** */
     entity = new URLMatchDataEntity();
     entity.setName("LIST");
     entity.setRegex("/home/pdt_PdtProduct?cated=*");
     entity.setType(URLDataTypeEnum.PAGETYPE);
+    entity.setDescription("页面-产品列表页");
     matchDataDao.save(entity);
     entity = new URLMatchDataEntity();
     entity.setName("INQUIRY");
     entity.setRegex("/home/usr_UsrSupplier_goContactSupplier*");
     entity.setType(URLDataTypeEnum.PAGETYPE);
     entity.setPriority(10);
+    entity.setDescription("页面-供应商询盘");
     matchDataDao.save(entity);
     entity = new URLMatchDataEntity();
     entity.setName("INTERVIEW");
     entity.setRegex("");
     entity.setType(URLDataTypeEnum.SEARCHENGINE);
+    entity.setDescription("访问类型-自助访问");
     matchDataDao.save(entity);
     /** 填充数据 */
     /** 页面类型 */
@@ -76,36 +83,42 @@ public class URLMatchDataUtilServiceTest extends BaseTest {
     entity.setName("SELLER_ADMIN");
     entity.setRegex("/newseller*");
     entity.setType(URLDataTypeEnum.PAGETYPE);
+    entity.setDescription("页面类型-商家后台");
     matchDataDao.save(entity);
     /** 产品详情 */
     entity = new URLMatchDataEntity();
     entity.setName("DETAIL");
     entity.setRegex("/*_p*.html");
     entity.setType(URLDataTypeEnum.PAGETYPE);
+    entity.setDescription("页面类型-产品详情页");
     matchDataDao.save(entity);
     /** 首页 */
     entity = new URLMatchDataEntity();
     entity.setName("INDEX");
     entity.setRegex("/");
     entity.setType(URLDataTypeEnum.PAGETYPE);
+    entity.setDescription("页面类型-首页");
     matchDataDao.save(entity);
     /** 商家用户中心 */
     entity = new URLMatchDataEntity();
     entity.setName("USER_REG");
     entity.setRegex("/home/usr_UsrMain_completeReg");
     entity.setType(URLDataTypeEnum.PAGETYPE);
+    entity.setDescription("页面类型-注册完成页");
     matchDataDao.save(entity);
     /** 用户消息中心 */
     entity = new URLMatchDataEntity();
     entity.setName("USER_MESSAGE_CENTER");
     entity.setRegex("/home/usr_UsrMessages_center");
     entity.setType(URLDataTypeEnum.PAGETYPE);
+    entity.setDescription("页面类型-用户消息中心");
     matchDataDao.save(entity);
     /** 平台 */
     entity = new URLMatchDataEntity();
     entity.setName("PLATFORM_ADMIN");
     entity.setRegex("/platform/*");
     entity.setType(URLDataTypeEnum.PAGETYPE);
+    entity.setDescription("页面类型-平台");
     matchDataDao.save(entity);
   }
 

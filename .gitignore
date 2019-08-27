@@ -33,7 +33,6 @@
 /**/*.iml
 **/**/*.iml
 # .idea/modules
-
 # CMake
 cmake-build-*/
 
@@ -169,3 +168,28 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+api/target/generated-sources/
+api/target/maven-archiver/
+api/target/maven-status/
+main/target/classes/17monipdb.datx
+main/target/classes/GoogleAnalytics/
+main/target/classes/ObjectSafeConfig.yml
+main/target/classes/application-dev.yml
+main/target/classes/ehcacheConfig.xml
+main/target/classes/errorCode/
+main/target/classes/log4j2.xml
+main/target/classes/static/
+main/target/generated-sources/
+main/target/generated-test-sources/
+main/target/main-1.0-SNAPSHOT.jar.original
+main/target/maven-archiver/
+main/target/maven-status/
+main/target/protoc-dependencies/
+main/target/protoc-plugins/
+main/target/surefire-reports/
+utils/target/generated-sources/
+utils/target/generated-test-sources/
+utils/target/maven-archiver/
+utils/target/maven-status/
+utils/target/test-classes/ObjectSafeConfig.yml
+utils/target/test-classes/log4j2.xml

@@ -1,13 +1,5 @@
 package com.shoestp.mains.schedulers.transform;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-
 import com.shoestp.mains.entitys.dataview.country.DataViewCountry;
 import com.shoestp.mains.entitys.dataview.flow.DataViewFlow;
 import com.shoestp.mains.entitys.dataview.flow.DataViewFlowPage;
@@ -19,14 +11,17 @@ import com.shoestp.mains.entitys.dataview.user.DataViewUserArea;
 import com.shoestp.mains.schedulers.BaseSchedulers;
 import com.shoestp.mains.service.transform.MetaToViewService;
 import com.shoestp.mains.utils.dateUtils.DateTimeUtil;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.platform.commons.function.Try;
 import org.quartz.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @description: 定时转化源数据表
@@ -40,11 +35,9 @@ public class TransformConver extends BaseSchedulers {
 
   @PostConstruct
   public void init() {
-    if (enable) {
-      setScheduleBuilder(
-          SimpleScheduleBuilder.simpleSchedule().withIntervalInMinutes(timing).repeatForever());
-      setJobNmae(TransformConver.class.getName());
-    }
+    setScheduleBuilder(
+        SimpleScheduleBuilder.simpleSchedule().withIntervalInMinutes(timing).repeatForever());
+    setJobNmae(TransformConver.class.getName());
   }
 
   @Value("${shoestp.scheduler.transformconver.enable}")
@@ -72,6 +65,9 @@ public class TransformConver extends BaseSchedulers {
   @Override
   protected void executeInternal(JobExecutionContext jobExecutionContext)
       throws JobExecutionException {
+    if (!enable) {
+      return;
+    }
     Date start = DateTimeUtil.getPreviousHour(new Date(), -1);
     Date end = new Date();
     try {

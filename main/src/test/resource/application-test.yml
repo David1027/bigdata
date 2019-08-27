@@ -46,20 +46,11 @@ proxy:
   port: 1088
 shoestp:
   scheduler:
-    #    谷歌元数据拉去时间
-    googlemete:
-      enable: true
-      timing: 5
-      #      185165418 原先老数据视图,现在新增新的数据视图
-      viewId: 196630472
-    #    数据转换时间
-    dataconver:
-      enable: true
+    #    源数据转换时间
+    transformconver:
+      enable: false
       timing: 60
-    #    商家数据转换时间
-    sellerconver:
-      enable: true
-      timing: 60
+
 
 management:
   endpoints:

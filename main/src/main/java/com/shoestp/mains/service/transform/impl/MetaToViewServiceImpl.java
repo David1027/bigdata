@@ -1,11 +1,11 @@
 package com.shoestp.mains.service.transform.impl;
 
-import com.shoestp.mains.dao.dataview.realcountry.RealCountryDao;
 import com.shoestp.mains.dao.dataview.flow.FlowDao;
 import com.shoestp.mains.dao.dataview.flow.FlowPageDao;
 import com.shoestp.mains.dao.dataview.inquiry.InquiryDao;
 import com.shoestp.mains.dao.dataview.inquiry.InquiryRankDao;
 import com.shoestp.mains.dao.dataview.real.RealDao;
+import com.shoestp.mains.dao.dataview.realcountry.RealCountryDao;
 import com.shoestp.mains.dao.dataview.user.UserAreaDao;
 import com.shoestp.mains.dao.dataview.user.UserDao;
 import com.shoestp.mains.dao.transform.NewInquiryInfoDao;
@@ -29,7 +29,6 @@ import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
 import com.shoestp.mains.service.transform.MetaToViewService;
 import com.shoestp.mains.service.urlmatchdatautil.URLMatchDataUtilService;
 import com.shoestp.mains.utils.dateUtils.DateTimeUtil;
-
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -339,10 +338,7 @@ public class MetaToViewServiceImpl implements MetaToViewService {
       // 点击率(该页面类型点击量/网站所有类型点击量)
       Integer clickAll = webVisitDao.getPageTypeClickCount(null, start, end);
       flowPage.setClickRate(clickAll != 0 ? click * 1.0 / clickAll : 0.0);
-      /*
-      访问次数：会话次数
-       跳失率(只浏览一个页面就离开的访问次数 / 该页面的全部访问次数)
-      */
+      /** 访问次数：会话次数 跳失率(只浏览一个页面就离开的访问次数 / 该页面的全部访问次数) */
       // 该页面的全部访问次数
       Integer session = webVisitDao.countPageTypeSession(a, start, end);
       // 只浏览该页面就离开的访问次数

@@ -11,6 +11,7 @@ import javax.persistence.*;
  * @author lijie
  * @date 2019 /08/07
  * @since
+ * @modify Lijie HelloBox@outlook.com 2019/8/27 9:57 上午 添加了规则的描述信息,用于区分具体规则的用途
  */
 @Data
 @Entity
@@ -28,4 +29,6 @@ public class URLMatchDataEntity {
   private URLDataTypeEnum type;
   /** 规则优先级 */
   private Integer priority;
+  /** 规则的描述信息 */
+  private String description;
 }

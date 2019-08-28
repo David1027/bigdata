@@ -23,6 +23,9 @@ import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
 
+import static org.quartz.DateBuilder.FRIDAY;
+import static org.quartz.DateBuilder.MONDAY;
+
 /**
  * @description: 定时转化源数据表
  * @author: lingjian
@@ -35,8 +38,6 @@ public class TransformConver extends BaseSchedulers {
 
   @PostConstruct
   public void init() {
-    setScheduleBuilder(
-        SimpleScheduleBuilder.simpleSchedule().withIntervalInMinutes(timing).repeatForever());
     setJobNmae(TransformConver.class.getName());
   }
 
@@ -53,10 +54,15 @@ public class TransformConver extends BaseSchedulers {
 
   @Bean(name = "TransformConverTrigger")
   public Trigger sampleJobTrigger() {
+
     return TriggerBuilder.newTrigger()
         .forJob(jobDetail())
         .withIdentity(getJobNmae() + "Trigger")
-        .withSchedule(getScheduleBuilder())
+        .withSchedule(
+            DailyTimeIntervalScheduleBuilder.dailyTimeIntervalSchedule()
+                .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(1, 0))
+                .endingDailyAt(TimeOfDay.hourAndMinuteOfDay(24, 0))
+                .withIntervalInHours(1))
         .build();
   }
 

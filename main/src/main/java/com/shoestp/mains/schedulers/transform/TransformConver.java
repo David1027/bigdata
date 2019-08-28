@@ -60,8 +60,8 @@ public class TransformConver extends BaseSchedulers {
         .withIdentity(getJobNmae() + "Trigger")
         .withSchedule(
             DailyTimeIntervalScheduleBuilder.dailyTimeIntervalSchedule()
-                .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(1, 0))
-                .endingDailyAt(TimeOfDay.hourAndMinuteOfDay(24, 0))
+                .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(0, 0))
+                .endingDailyAt(TimeOfDay.hourAndMinuteOfDay(23, 59))
                 .withIntervalInHours(1))
         .build();
   }

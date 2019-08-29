@@ -2,7 +2,6 @@ package com.shoestp.mains.config.exceptionhandles;
 
 import com.shoestp.mains.controllers.BaseController;
 import com.shoestp.mains.pojo.MessageResult;
-import javax.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.shiro.ShiroException;
@@ -11,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import javax.servlet.http.HttpServletRequest;
 
 /** Created by IntelliJ IDEA. User: lijie@shoestp.cn Date: 2019/5/22 Time: 14:18 */
 @RestControllerAdvice
@@ -44,7 +45,14 @@ public class ShiroErr extends BaseController {
     logger.error("Visit Url:{}", request.getRequestURI());
     logger.error(
         "Request Info:{}    User-Agent:{}", getIpByHeader(request), getUserAgentByHeader(request));
-    logger.error("Exception Info:{}", ex.getMessage());
+    StackTraceElement stackTraceElement = ex.getStackTrace()[0];
+    logger.error(
+        "Exception Info:{}\r\nClass:{},Line:{}\r\nMethod:{}",
+        ex.getMessage(),
+        stackTraceElement.getClassName(),
+        stackTraceElement.getLineNumber(),
+        stackTraceElement.getMethodName());
+    ex.printStackTrace();
     return MessageResult.builder().code(-1).msg("其他异常").build();
   }
 

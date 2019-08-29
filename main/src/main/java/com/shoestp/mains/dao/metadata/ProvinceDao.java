@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface ProvinceDao extends JpaRepository<Province, Integer> {
 
-  Optional<Province> findByName(String name);
+  Optional<Province> findByNameLike(String name);
 }

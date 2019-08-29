@@ -2,6 +2,8 @@ package com.shoestp.mains.service.metadata.impl;
 
 import com.shoestp.mains.controllers.analytics.view.pojo.UserInfoPojo;
 import com.shoestp.mains.dao.metadata.UserInfoDao;
+import com.shoestp.mains.entitys.metadata.PltCountry;
+import com.shoestp.mains.entitys.metadata.Province;
 import com.shoestp.mains.entitys.metadata.UserInfo;
 import com.shoestp.mains.entitys.metadata.enums.RegisterTypeEnum;
 import com.shoestp.mains.entitys.metadata.enums.SexEnum;
@@ -17,10 +19,24 @@ import javax.annotation.Resource;
 import java.util.Date;
 import java.util.Optional;
 
+/**
+ * The type User info service.
+ *
+ * <p>*
+ *
+ * @author lijie
+ * @date 2019 /08/28
+ * @since
+ */
 @Service
 public class UserInfoServiceImpl implements UserInfoService {
+  /** The constant logger. */
   private static final Logger logger = LogManager.getLogger(UserInfoServiceImpl.class);
+
+  /** The User info dao. */
   @Resource private UserInfoDao userInfoDao;
+
+  /** The Location service. */
   @Resource private LocationService locationService;
 
   @Override
@@ -28,40 +44,7 @@ public class UserInfoServiceImpl implements UserInfoService {
 
   @Override
   public UserInfo save(UserInfoPojo pojo) {
-    UserInfo info = null;
-    Optional<UserInfo> result;
-    /** 先判断是否登录用户 */
-    if (pojo == null || pojo.getUserId() == null) {
-      /** 如果是非登录用户,那么查询用户签名,以前存在是否有记录 */
-      result = userInfoDao.findBySign(pojo.getUserName());
-      if (result.isPresent()) {
-        info = result.get();
-        info.setLastVisitTime(new Date());
-        return info;
-      }
-      /** 不存在的情况下,保存记录 */
-      info = new UserInfo();
-      info.setSign(pojo.getUserName());
-      info.setType(RegisterTypeEnum.VISITOR);
-      info.setLastVisitTime(new Date());
-      info.setCreateTime(new Date());
-      return userInfoDao.save(info);
-    } else {
-      /** 查询存在的用户 */
-      result = userInfoDao.findByUserId(pojo.getUserId());
-      if (result.isPresent()) {
-        info = result.get();
-        info.setLastVisitTime(new Date());
-        return info;
-      }
-      /** 一般情况下不存在 注册用户不存在的情况 */
-      logger.error("请检查注册推送,或者该ID数据{},或者执行同步数据操作", pojo.getUserId());
-      info = new UserInfo();
-      info.setName(pojo.getUserName());
-      info.setLastVisitTime(new Date());
-      info.setCreateTime(new Date());
-      return userInfoDao.save(info);
-    }
+    return save(pojo, null, null);
   }
 
   @Override
@@ -172,13 +155,71 @@ public class UserInfoServiceImpl implements UserInfoService {
   /**
    * Update 更新用户
    *
-   * @param userInfo the user info
    * @author lijie
    * @date 2019 /08/09
-   * @since .
+   * @since . info.
+   * @param userInfo the user info
+   * @return the user info
    */
   @Override
-  public void update(UserInfo userInfo) {
-    userInfoDao.saveAndFlush(userInfo);
+  public UserInfo update(UserInfo userInfo) {
+    return userInfoDao.saveAndFlush(userInfo);
+  }
+
+  /**
+   * Save
+   *
+   * @param pojo the user info
+   * @param country the location
+   * @param province the province
+   * @return the user info
+   * @author lijie
+   * @date 2019 /08/28
+   * @since user info.
+   */
+  @Override
+  public UserInfo save(UserInfoPojo pojo, PltCountry country, Province province) {
+    UserInfo info = null;
+    Optional<UserInfo> result;
+    /** 先判断是否登录用户 */
+    if (pojo == null || pojo.getUserId() == null) {
+      /** 如果是非登录用户,那么查询用户签名,以前存在是否有记录 */
+      result = userInfoDao.findBySign(pojo.getUserName());
+      if (result.isPresent()) {
+        info = result.get();
+        info.setLastVisitTime(new Date());
+        info.setCountry(country);
+        info.setProvince(province);
+        return info;
+      }
+      /** 不存在的情况下,保存记录 */
+      info = new UserInfo();
+      info.setSign(pojo.getUserName());
+      info.setType(RegisterTypeEnum.VISITOR);
+      info.setLastVisitTime(new Date());
+      info.setCreateTime(new Date());
+      info.setCountry(country);
+      info.setProvince(province);
+      return userInfoDao.save(info);
+    } else {
+      /** 查询存在的用户 */
+      result = userInfoDao.findByUserId(pojo.getUserId());
+      if (result.isPresent()) {
+        info = result.get();
+        info.setLastVisitTime(new Date());
+        info.setCountry(country);
+        info.setProvince(province);
+        return update(info);
+      }
+      /** 一般情况下不存在 注册用户不存在的情况 */
+      logger.error("请检查注册推送,或者该ID数据{},或者执行同步数据操作", pojo.getUserId());
+      info = new UserInfo();
+      info.setName(pojo.getUserName());
+      info.setLastVisitTime(new Date());
+      info.setCreateTime(new Date());
+      info.setCountry(country);
+      info.setProvince(province);
+      return userInfoDao.save(info);
+    }
   }
 }

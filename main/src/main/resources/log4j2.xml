@@ -2,7 +2,7 @@
 <Configuration status="WARN" monitorInterval="30">
     <Properties>
         <Property name="PID">????</Property>
-        <Property name="LOG_PATTERN">%clr{%d{yyyy-MM-dd HH:mm:ss.SSS}}{faint} %clr{%5p} %clr{${sys:PID}}{magenta}%clr{---}{faint} %clr{[%15.15t]}{faint} %clr{%-40.40c{1.}}{cyan} %clr{:}{faint} %m%n%xwEx
+        <Property name="LOG_PATTERN">%clr{%d{yyyy-MM-dd HH:mm:ss.SSS}}{faint} %clr{%5p}%clr{${sys:PID}}{magenta}%clr{---}{faint} %clr{[%15.15t]}{faint} %clr{%-40.40c{1.}}{cyan} %clr{:}{faint} %m%n%xwEx
         </Property>
     </Properties>
     <Appenders>
@@ -14,5 +14,14 @@
         <Root level="debug">
             <AppenderRef ref="Console"/>
         </Root>
+        <Logger name="org.hibernate.engine.QueryParameters" level="trace">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <Logger name="org.hibernate.SQL" level="trace">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <Logger name="org.hibernate.engine.query.HQLQueryPlan" level="trace">
+            <AppenderRef ref="Console"/>
+        </Logger>
     </Loggers>
 </Configuration>

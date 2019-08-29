@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.start2do.utils.MyStringUtils;
 
 import javax.annotation.Resource;
+import javax.cache.annotation.CacheDefaults;
+import javax.cache.annotation.CacheResult;
 import java.util.List;
 
 /**
@@ -23,6 +25,7 @@ import java.util.List;
  * @since
  */
 @Service
+@CacheDefaults(cacheName = "15_Minutes")
 public class URLMatchDataUtilServiceImpl implements URLMatchDataUtilService {
   private static final Logger logger = LogManager.getLogger(URLMatchDataUtilServiceImpl.class);
   /** The Url match data dao. */
@@ -37,6 +40,7 @@ public class URLMatchDataUtilServiceImpl implements URLMatchDataUtilService {
    * @since *
    */
   @Override
+  @CacheResult
   public String getLandingPageSupplierName(String uri) {
     for (URLMatchDataEntity urlMatchDataEntity :
         urlMatchDataDao.findByTypeOrderByPriorityDesc(URLDataTypeEnum.LANDINGPAGE)) {
@@ -48,6 +52,7 @@ public class URLMatchDataUtilServiceImpl implements URLMatchDataUtilService {
   }
 
   @Override
+  @CacheResult
   public PageSourcePojo getUrlType(String url) {
     PageSourcePojo pageSourcePojo = new PageSourcePojo();
     for (URLMatchDataEntity urlMatchDataEntity : urlMatchDataDao.findAll()) {
@@ -73,6 +78,7 @@ public class URLMatchDataUtilServiceImpl implements URLMatchDataUtilService {
    * @since *
    */
   @Override
+  @CacheResult
   public SourceTypeEnum getSourceType(String url) {
     List<URLMatchDataEntity> list =
         urlMatchDataDao.findByTypeOrderByPriorityDesc(URLDataTypeEnum.SEARCHENGINE);
@@ -93,6 +99,7 @@ public class URLMatchDataUtilServiceImpl implements URLMatchDataUtilService {
    * @return: com.shoestp.mains.enums.flow.AccessTypeEnum
    */
   @Override
+  @CacheResult
   public AccessTypeEnum getPageType(String uri) {
     for (URLMatchDataEntity urlMatchDataEntity :
         urlMatchDataDao.findByTypeOrderByPriorityDesc(URLDataTypeEnum.PAGETYPE)) {

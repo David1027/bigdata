@@ -114,7 +114,7 @@
             var t = setTimeout(function () {
                 _that.data.firstReferrer = sessionStorage[_that.config.key
                 + _that.config.project]
-                _that.data.time_on_page = new Date() - window.performance.timing.domComplete
+                _that.data.time_on_page = new Date() - window.performance.timing.domLoading
                 _that.ajax.post(_that.config.host + _that.config.url,
                     JSON.stringify(_that.data))
                 _that.cookie.set("__" + _that.config.key + "_session", null, -1)

@@ -36,8 +36,8 @@ public class AnalyticsController extends BaseController {
     logger.info("Body Messages =>{}", body);
     WebVisitInfoView webVisitInfoView = objectMapper.readValue(body, WebVisitInfoView.class);
     logger.info("Pojo Info =>{}", webVisitInfoView);
-        webVisitInfoService.save(
-            webVisitInfoView, getIpByHeader(httpRequest), getUserAgentByHeader(httpRequest));
+    webVisitInfoService.save(
+        webVisitInfoView, getIpByHeader(httpRequest), getUserAgentByHeader(httpRequest));
     return MessageResult.builder().code(1).build();
   }
 
@@ -52,5 +52,11 @@ public class AnalyticsController extends BaseController {
     }
     sign.setSign(UUID.randomUUID().toString().replace("-", ""));
     return sign;
+  }
+
+  @RequestMapping(value = "fix")
+  public Object fixData() {
+    webVisitInfoService.fixdata();
+    return "ok";
   }
 }

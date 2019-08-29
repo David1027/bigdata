@@ -31,7 +31,7 @@ public class LocationServiceImpl implements LocationService {
   public PltCountry getCountry(String name) {
     logger.debug("getCountry=>name:{}", name);
     if (name != null) {
-      Optional<PltCountry> result = countryDao.findByName(name);
+      Optional<PltCountry> result = countryDao.findByNameLike(name);
       if (result.isPresent()) {
         return result.get();
       }
@@ -41,7 +41,7 @@ public class LocationServiceImpl implements LocationService {
 
   @Override
   public Province getProvince(String address) {
-    Optional<Province> result = provinceDao.findByName(address);
+    Optional<Province> result = provinceDao.findByNameLike("%" + address + "%");
     if (result.isPresent()) {
       return result.get();
     }

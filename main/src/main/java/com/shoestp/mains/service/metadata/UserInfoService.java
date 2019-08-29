@@ -1,6 +1,8 @@
 package com.shoestp.mains.service.metadata;
 
 import com.shoestp.mains.controllers.analytics.view.pojo.UserInfoPojo;
+import com.shoestp.mains.entitys.metadata.PltCountry;
+import com.shoestp.mains.entitys.metadata.Province;
 import com.shoestp.mains.entitys.metadata.UserInfo;
 import com.shoestp.mains.rpc.shoestp.pojo.GRPC_SendDataProto;
 
@@ -80,8 +82,22 @@ public interface UserInfoService {
    *
    * @author lijie
    * @date 2019 /08/09
-   * @since .
+   * @since . info.
    * @param userInfo the user info
+   * @return the user info
    */
-  void update(UserInfo userInfo);
+  UserInfo update(UserInfo userInfo);
+
+  /**
+   * Save
+   *
+   * @author lijie
+   * @date 2019 /08/28
+   * @since user info.
+   * @param userInfo the user info
+   * @param location the location
+   * @param province the province
+   * @return the user info
+   */
+  UserInfo save(UserInfoPojo userInfo, PltCountry location, Province province);
 }

@@ -294,7 +294,8 @@
                 <version>1.5.0.Final</version>
             </extension>
         </extensions>
-        <!-- <outputDirectory>/Volumes/RamDisk/java</outputDirectory> -->
+        <outputDirectory>/Volumes/RamDisk/big_data_java</outputDirectory>
+        <testOutputDirectory>/Volumes/RamDisk/big_data_java_test</testOutputDirectory>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

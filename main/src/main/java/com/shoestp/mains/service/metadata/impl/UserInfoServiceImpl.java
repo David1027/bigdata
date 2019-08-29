@@ -113,7 +113,17 @@ public class UserInfoServiceImpl implements UserInfoService {
         userInfo.setStatus(UserStatus.UNVERIFY);
     }
     /** 设置国家地址 */
-    userInfo.setCountry(locationService.getCountryByShortName(info.getCountry()));
+    if (info.getCountry() == null || info.getCountry().length() > 0) {
+      String[] address = locationService.getAddress(info.getIp());
+      PltCountry country = locationService.getCountry(address[0]);
+      userInfo.setCountry(country);
+      if (address.length > 1) {
+        Province province = locationService.getProvince(address[1]);
+        userInfo.setProvince(province);
+      }
+    } else {
+      userInfo.setCountry(locationService.getCountryByShortName(info.getCountry()));
+    }
     userInfo.setUserId(info.getUserId());
     userInfo.setName(info.getName());
     if (userInfo.getCreateTime() == null) {

@@ -2,11 +2,12 @@ package com.shoestp.mains.service.metadata.impl;
 
 import com.shoestp.mains.controllers.analytics.view.WebVisitInfoView;
 import com.shoestp.mains.dao.metadata.WebVisitInfoDao;
+import com.shoestp.mains.entitys.metadata.PltCountry;
 import com.shoestp.mains.entitys.metadata.Province;
+import com.shoestp.mains.entitys.metadata.UserInfo;
 import com.shoestp.mains.entitys.metadata.WebVisitInfo;
 import com.shoestp.mains.entitys.metadata.enums.DeviceTypeEnum;
 import com.shoestp.mains.enums.flow.AccessTypeEnum;
-import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.service.metadata.LocationService;
 import com.shoestp.mains.service.metadata.UserInfoService;
 import com.shoestp.mains.service.metadata.WebVisitInfoService;
@@ -20,6 +21,7 @@ import org.start2do.utils.DateTimeUtil;
 import javax.annotation.Resource;
 import java.time.Instant;
 import java.util.Date;
+import java.util.List;
 
 /** Created by IntelliJ IDEA. User: lijie@shoestp.cn Date: 2019/5/20 Time: 11:17 */
 @Service
@@ -95,29 +97,34 @@ public class WebVisitInfoServiceImpl implements WebVisitInfoService {
    */
   @Override
   public void fixdata() {
-    webVisitInfoDao
-        .findAll()
-        .parallelStream()
-        .forEach(
-            webVisitInfo -> {
-              boolean update = false;
-              if (webVisitInfo.getLocation().getId().equals(6)) {
-                String[] address = locationService.getAddress(webVisitInfo.getIp());
-                webVisitInfo.setLocation(locationService.getCountry(address[0]));
-                if (address.length > 1) {
-                  Province province = locationService.getProvince(address[1]);
-                  webVisitInfo.setProvince(province);
-                }
-                update = true;
-              }
-              AccessTypeEnum anEnum = urlMatchDataUtilService.getPageType(webVisitInfo.getUri());
-              if (!webVisitInfo.getPageType().equals(anEnum)) {
-                webVisitInfo.setPageType(anEnum);
-                update = true;
-              }
-              if (update) {
-                webVisitInfoDao.saveAndFlush(webVisitInfo);
-              }
-            });
+    List<WebVisitInfo> list = webVisitInfoDao.findAll();
+    list.forEach(
+        webVisitInfo -> {
+          boolean update = false;
+          String[] address = locationService.getAddress(webVisitInfo.getIp());
+          PltCountry country = locationService.getCountry(address[0]);
+          if (country == null
+              || webVisitInfo.getLocation() == null
+              || !country.getId().equals(webVisitInfo.getLocation().getId())) {
+            webVisitInfo.setLocation(country);
+            update = false;
+          }
+          UserInfo userInfo = webVisitInfo.getUserId();
+          userInfo.setCountry(country);
+          if (address.length > 1) {
+            Province province = locationService.getProvince(address[1]);
+            webVisitInfo.setProvince(province);
+            userInfo.setProvince(province);
+          }
+          userInfoService.update(userInfo);
+          AccessTypeEnum anEnum = urlMatchDataUtilService.getPageType(webVisitInfo.getUri());
+          if (!webVisitInfo.getPageType().equals(anEnum)) {
+            webVisitInfo.setPageType(anEnum);
+            update = true;
+          }
+          if (update) {
+            webVisitInfoDao.saveAndFlush(webVisitInfo);
+          }
+        });
   }
 }

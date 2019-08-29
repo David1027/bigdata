@@ -75,6 +75,8 @@ message UserInfo {
     uint64 createDate = 13;
     /** 用户唯一签名标志  */
     string sign = 9;
+    /** 用户Ip  */
+    string ip = 14;
 }
 message Favorite {
     /** 动作 0新增

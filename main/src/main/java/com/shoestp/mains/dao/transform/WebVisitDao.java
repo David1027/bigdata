@@ -1,5 +1,6 @@
 package com.shoestp.mains.dao.transform;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.shoestp.mains.dao.BaseDao;
@@ -12,9 +13,11 @@ import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.service.urlmatchdatautil.URLMatchDataUtilService;
 import com.shoestp.mains.views.dataview.real.RealVisitorPageView;
 import com.shoestp.mains.views.dataview.real.RealVisitorView;
+import com.shoestp.mains.views.dataview.real.VisitorView;
 
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -66,21 +69,41 @@ public class WebVisitDao extends BaseDao<WebVisitInfo> {
   }
 
   /**
-   * 根据设备来源，时间获取访客数
+   * 根据时间分组获取ip的集合数据
    *
-   * @param deviceTypeEnum 设备来源
    * @param start 开始时间
    * @param end 结束时间
-   * @return Integer
+   * @return List<String>
    */
-  public Integer countVisitor(DeviceTypeEnum deviceTypeEnum, Date start, Date end) {
+  public List<String> listIpGroup(AccessTypeEnum accessTypeEnum, Date start, Date end) {
     QWebVisitInfo qWebVisitInfo = QWebVisitInfo.webVisitInfo;
-    JPAQuery<WebVisitInfo> query =
-        getQuery().select(qWebVisitInfo).where(qWebVisitInfo.createTime.between(start, end));
-    if (deviceTypeEnum != null) {
-      query.where(qWebVisitInfo.equipmentPlatform.eq(deviceTypeEnum));
+    JPAQuery<String> query =
+        getQuery().select(qWebVisitInfo.ip).where(qWebVisitInfo.createTime.between(start, end));
+    if (accessTypeEnum != null) {
+      query.where(qWebVisitInfo.pageType.eq(accessTypeEnum));
     }
-    return (int) query.groupBy(qWebVisitInfo.ip).from(qWebVisitInfo).fetchCount();
+    return query.groupBy(qWebVisitInfo.ip).from(qWebVisitInfo).fetchResults().getResults();
+  }
+
+  /**
+   * 根据时间获取ip和设备来源的数据记录
+   *
+   * @param start 开始时间
+   * @param end 结束世家
+   * @return List<VisitorView> ip和设备类型的dto类
+   */
+  public List<VisitorView> listWebVisitInfoByIp(Date start, Date end) {
+    QWebVisitInfo qWebVisitInfo = QWebVisitInfo.webVisitInfo;
+
+    JPAQuery<VisitorView> query =
+        getQuery()
+            .select(
+                Projections.bean(
+                    VisitorView.class,
+                    qWebVisitInfo.ip.as("ip"),
+                    qWebVisitInfo.equipmentPlatform.as("deviceTypeEnum")))
+            .where(qWebVisitInfo.createTime.between(start, end));
+    return query.groupBy(qWebVisitInfo.ip).from(qWebVisitInfo).fetchResults().getResults();
   }
 
   /**
@@ -110,16 +133,17 @@ public class WebVisitDao extends BaseDao<WebVisitInfo> {
    * @param end 结束时间
    * @return Integer
    */
-  public Integer countPageTypeVisitor(AccessTypeEnum accessTypeEnum, Date start, Date end) {
+  public List<WebVisitInfo> countPageTypeVisitor(
+      AccessTypeEnum accessTypeEnum, Date start, Date end) {
     QWebVisitInfo qWebVisitInfo = QWebVisitInfo.webVisitInfo;
-    return (int)
-        getQuery()
-            .select(qWebVisitInfo)
-            .where(qWebVisitInfo.pageType.eq(accessTypeEnum))
-            .where(qWebVisitInfo.createTime.between(start, end))
-            .groupBy(qWebVisitInfo.ip)
-            .from(qWebVisitInfo)
-            .fetchCount();
+    return getQuery()
+        .select(qWebVisitInfo)
+        .where(qWebVisitInfo.pageType.eq(accessTypeEnum))
+        .where(qWebVisitInfo.createTime.between(start, end))
+        .groupBy(qWebVisitInfo.ip)
+        .from(qWebVisitInfo)
+        .fetchResults()
+        .getResults();
   }
 
   /**
@@ -222,28 +246,6 @@ public class WebVisitDao extends BaseDao<WebVisitInfo> {
   }
 
   /**
-   * 根据时间分页获取源数据表记录
-   *
-   * @param start 开始时间
-   * @param end 结束时间
-   * @param offset 开始条数
-   * @param limit 显示条数
-   * @return List<WebVisitInfo> 源数据表集合对象
-   */
-  public List<WebVisitInfo> getWebVisitUserId(Date start, Date end, Long offset, int limit) {
-    QWebVisitInfo qWebVisitInfo = QWebVisitInfo.webVisitInfo;
-    return getQuery()
-        .select(qWebVisitInfo)
-        .where(qWebVisitInfo.createTime.between(start, end))
-        .groupBy(qWebVisitInfo.userId)
-        .from(qWebVisitInfo)
-        .limit(limit)
-        .offset(offset)
-        .fetchResults()
-        .getResults();
-  }
-
-  /**
    * 根据地域，时间获取源数据表记录
    *
    * @author: lingjian @Date: 2019/8/13 9:19
@@ -271,16 +273,16 @@ public class WebVisitDao extends BaseDao<WebVisitInfo> {
    * @param end 结束时间
    * @return Integer
    */
-  public Integer countWebVisitUserArea(Integer areaId, Date start, Date end) {
+  public List<String> countWebVisitUserArea(Integer areaId, Date start, Date end) {
     QWebVisitInfo qWebVisitInfo = QWebVisitInfo.webVisitInfo;
-    return (int)
-        getQuery()
-            .select(qWebVisitInfo)
-            .where(qWebVisitInfo.location.id.eq(areaId))
-            .where(qWebVisitInfo.createTime.between(start, end))
-            .groupBy(qWebVisitInfo.ip)
-            .from(qWebVisitInfo)
-            .fetchCount();
+    return getQuery()
+        .select(qWebVisitInfo.ip)
+        .where(qWebVisitInfo.location.id.eq(areaId))
+        .where(qWebVisitInfo.createTime.between(start, end))
+        .groupBy(qWebVisitInfo.ip)
+        .from(qWebVisitInfo)
+        .fetchResults()
+        .getResults();
   }
 
   /**
@@ -459,6 +461,14 @@ public class WebVisitDao extends BaseDao<WebVisitInfo> {
     return (int) query.fetchCount();
   }
 
+  /**
+   * 根据时间分组获取url集合列表
+   *
+   * @author: lingjian @Date: 2019/8/29 14:46
+   * @param start 开始时间
+   * @param end 结束时间
+   * @return List<RealVisitorPageView>
+   */
   public List<RealVisitorPageView> getWebVisitUrl(Date start, Date end) {
     QWebVisitInfo qWebVisitInfo = QWebVisitInfo.webVisitInfo;
     return getQuery()
@@ -474,6 +484,15 @@ public class WebVisitDao extends BaseDao<WebVisitInfo> {
         .getResults();
   }
 
+  /**
+   * 根据时间，url分组获取浏览量
+   *
+   * @author: lingjian @Date: 2019/8/29 14:45
+   * @param url url
+   * @param start 开始时间
+   * @param end 结束时间
+   * @return Integer
+   */
   public Integer countUrlView(String url, Date start, Date end) {
     QWebVisitInfo qWebVisitInfo = QWebVisitInfo.webVisitInfo;
     return (int)
@@ -485,6 +504,15 @@ public class WebVisitDao extends BaseDao<WebVisitInfo> {
             .fetchCount();
   }
 
+  /**
+   * 根据时间，url分组获取访客数
+   *
+   * @author: lingjian @Date: 2019/8/29 14:44
+   * @param url url
+   * @param start 开始时间
+   * @param end 结束时间
+   * @return Integer
+   */
   public Integer countUrlVisitor(String url, Date start, Date end) {
     QWebVisitInfo qWebVisitInfo = QWebVisitInfo.webVisitInfo;
     return (int)

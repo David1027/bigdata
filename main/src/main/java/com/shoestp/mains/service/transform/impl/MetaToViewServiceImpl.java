@@ -1,5 +1,11 @@
 package com.shoestp.mains.service.transform.impl;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.Resource;
+
 import com.shoestp.mains.dao.dataview.flow.FlowDao;
 import com.shoestp.mains.dao.dataview.flow.FlowPageDao;
 import com.shoestp.mains.dao.dataview.inquiry.InquiryDao;
@@ -27,14 +33,11 @@ import com.shoestp.mains.enums.flow.AccessTypeEnum;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
 import com.shoestp.mains.service.transform.MetaToViewService;
-import com.shoestp.mains.service.urlmatchdatautil.URLMatchDataUtilService;
 import com.shoestp.mains.utils.dateUtils.DateTimeUtil;
-import org.springframework.stereotype.Service;
+import com.shoestp.mains.views.dataview.real.VisitorView;
+import com.shoestp.mains.views.dataview.utils.VisitorList;
 
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import org.springframework.stereotype.Service;
 
 /**
  * @description: 源数据转化展示数据 - 服务层实现类
@@ -52,10 +55,10 @@ public class MetaToViewServiceImpl implements MetaToViewService {
   @Resource private FlowPageDao flowPageDao;
   @Resource private InquiryDao inquiryDao;
   @Resource private InquiryRankDao inquiryRankDao;
-  @Resource private URLMatchDataUtilService urlMatchDataUtilService;
   @Resource private UserDao userDao;
   @Resource private UserAreaDao userAreaDao;
   @Resource private RealCountryDao realCountryDao;
+  @Resource private VisitorList visitorList;
 
   /**
    * 判断DataViewReal的数据是否为空
@@ -151,16 +154,51 @@ public class MetaToViewServiceImpl implements MetaToViewService {
   }
 
   /**
-   * 获取访客数
+   * 获取传入时间0点
    *
-   * @author: lingjian @Date: 2019/8/8 13:58
+   * @author: lingjian @Date: 2019/8/29 13:52
+   * @param date 传入时间
+   * @return Date
+   */
+  private Date getZeroDate(Date date) {
+    return DateTimeUtil.getTimesOfDay(date);
+  }
+
+  /**
+   * 根据时间获取访客数
+   *
    * @param start 开始时间
    * @param end 结束时间
-   * @param o 设备来源
-   * @return Integer 访客数
+   * @return int
    */
-  private Integer getVisitorCount(Date start, Date end, DeviceTypeEnum o) {
-    return webVisitDao.countVisitor(o, start, end);
+  private int getVisitorCount(Date start, Date end) {
+    int count = 0;
+    List<VisitorView> list = webVisitDao.listWebVisitInfoByIp(start, end);
+    for (VisitorView v : list) {
+      if (!visitorList.getList(getZeroDate(start), start).contains(v.getIp())) {
+        count++;
+      }
+    }
+    return count;
+  }
+
+  /**
+   * 根据地域id，时间获取访客数
+   *
+   * @param start 开始时间
+   * @param end 结束时间
+   * @param id 地域id
+   * @return int
+   */
+  private int getVisitorCount(Date start, Date end, Integer id) {
+    int count = 0;
+    List<String> ips = webVisitDao.countWebVisitUserArea(id, start, end);
+    for (String ip : ips) {
+      if (!visitorList.getList(getZeroDate(start), start).contains(ip)) {
+        count++;
+      }
+    }
+    return count;
   }
 
   /**
@@ -214,13 +252,28 @@ public class MetaToViewServiceImpl implements MetaToViewService {
    */
   @Override
   public DataViewReal toReal(Date start, Date end) {
+
     DataViewReal real = new DataViewReal();
     // 浏览量
     real.setPageViewsCount(webVisitDao.countWebVisitInfo(start, end));
     // 总访客数，pc端访客数，wap端访客数
-    real.setVisitorCountPc(getVisitorCount(start, end, DeviceTypeEnum.PC));
-    real.setVisitorCountWap(getVisitorCount(start, end, DeviceTypeEnum.WAP));
-    real.setVisitorCount(getVisitorCount(start, end, null));
+    int count = 0;
+    int countPc = 0;
+    int countWap = 0;
+    List<VisitorView> list = webVisitDao.listWebVisitInfoByIp(start, end);
+    for (VisitorView v : list) {
+      if (!visitorList.getList(getZeroDate(start), start).contains(v.getIp())) {
+        count++;
+        if (DeviceTypeEnum.PC.equals(v.getDeviceTypeEnum())) {
+          countPc++;
+        } else {
+          countWap++;
+        }
+      }
+    }
+    real.setVisitorCount(count);
+    real.setVisitorCountPc(countPc);
+    real.setVisitorCountWap(countWap);
     // 注册量
     real.setRegisterCount(getRegisterCount(null, start, end));
     // 询盘量
@@ -244,7 +297,7 @@ public class MetaToViewServiceImpl implements MetaToViewService {
    */
   @Override
   public List<DataViewFlow> toFlow(Date start, Date end) {
-    /**
+    /*
      * @modify Lijie HelloBox@outlook.com 2019-08-08 09:26
      *     <p>添加逻辑注释
      *     <p>从用元数据表页面访问表,转换规定时间内的数据到流量展示层
@@ -284,9 +337,11 @@ public class MetaToViewServiceImpl implements MetaToViewService {
                 temp.setSourcePage("自然搜索");
               }
               if (s.equals(temp.getSourceType()) && a.equals(temp.getSourcePage())) {
-                if (!l.contains(w.getIp())) {
-                  l.add(w.getIp());
-                  count++;
+                if (!visitorList.getList(getZeroDate(start), start).contains(w.getIp())) {
+                  if (!l.contains(w.getIp())) {
+                    l.add(w.getIp());
+                    count++;
+                  }
                 }
               }
             }
@@ -329,16 +384,22 @@ public class MetaToViewServiceImpl implements MetaToViewService {
       Integer view = webVisitDao.countPageTypeView(a, start, end);
       flowPage.setViewCount(view);
       // 访客数,点击人数
-      Integer visitor = webVisitDao.countPageTypeVisitor(a, start, end);
-      flowPage.setVisitorCount(visitor);
-      flowPage.setClickNumber(visitor);
+      int countVisitor = 0;
+      List<WebVisitInfo> ipsList = webVisitDao.countPageTypeVisitor(a, start, end);
+      for (WebVisitInfo w : ipsList) {
+        if (!visitorList.getList(a, getZeroDate(start), start).contains(w.getIp())) {
+          countVisitor++;
+        }
+      }
+      flowPage.setVisitorCount(countVisitor);
+      flowPage.setClickNumber(countVisitor);
       // 点击量
       Integer click = webVisitDao.getPageTypeClickCount(a, start, end);
       flowPage.setClickCount(click);
       // 点击率(该页面类型点击量/网站所有类型点击量)
       Integer clickAll = webVisitDao.getPageTypeClickCount(null, start, end);
       flowPage.setClickRate(clickAll != 0 ? click * 1.0 / clickAll : 0.0);
-      /** 访问次数：会话次数 跳失率(只浏览一个页面就离开的访问次数 / 该页面的全部访问次数) */
+      /* 访问次数：会话次数 跳失率(只浏览一个页面就离开的访问次数 / 该页面的全部访问次数) */
       // 该页面的全部访问次数
       Integer session = webVisitDao.countPageTypeSession(a, start, end);
       // 只浏览该页面就离开的访问次数
@@ -382,7 +443,7 @@ public class MetaToViewServiceImpl implements MetaToViewService {
   public DataViewInquiry toInquiry(Date start, Date end) {
     DataViewInquiry inquiry = new DataViewInquiry();
     // 访客数
-    inquiry.setVisitorCount(getVisitorCount(start, end, null));
+    inquiry.setVisitorCount(getVisitorCount(start, end));
     // 询盘数
     inquiry.setInquiryCount(getInquiryCount(null, null, start, end));
     // 询盘人数
@@ -460,10 +521,14 @@ public class MetaToViewServiceImpl implements MetaToViewService {
     List<String> oldIpList = webVisitDao.listWebVisitIp(DateTimeUtil.getTimesOfDay(start, 0));
     List<String> newIpList = webVisitDao.listWebVisitIp(start, end);
     for (String ip : newIpList) {
-      if (oldIpList.contains(ip)) {
-        oldVisitorCount++;
-      } else {
-        newVisitorCount++;
+      if (!visitorList.getList(getZeroDate(start), start).contains(ip)) {
+        {
+          if (oldIpList.contains(ip)) {
+            oldVisitorCount++;
+          } else {
+            newVisitorCount++;
+          }
+        }
       }
     }
     // 新用户数
@@ -471,7 +536,7 @@ public class MetaToViewServiceImpl implements MetaToViewService {
     // 老用户数
     user.setOldVisitorCount(oldVisitorCount);
     // 访客数
-    user.setVisitorCount(getVisitorCount(start, end, null));
+    user.setVisitorCount(getVisitorCount(start, end));
     // 总注册量
     user.setRegisterCount(getRegisterCount(null, start, end));
     // 采购商数量
@@ -503,7 +568,7 @@ public class MetaToViewServiceImpl implements MetaToViewService {
       // 地域名称
       area.setArea(w.getLocation().getName());
       // 地域访客数
-      area.setAreaCount(webVisitDao.countWebVisitUserArea(w.getLocation().getId(), start, end));
+      area.setAreaCount(getVisitorCount(start, end, w.getLocation().getId()));
       // TODO
       // 地域访客总数
       area.setAreaCountTotal(0);
@@ -538,8 +603,7 @@ public class MetaToViewServiceImpl implements MetaToViewService {
       // 国旗图片
       country.setCountryImage(w.getLocation().getImg());
       // 访客数
-      country.setVisitorCount(
-          webVisitDao.countWebVisitUserArea(w.getLocation().getId(), start, end));
+      country.setVisitorCount(getVisitorCount(start, end, w.getLocation().getId()));
       // 创建时间
       country.setCreateTime(new Date());
       realCountryDao.save(country);

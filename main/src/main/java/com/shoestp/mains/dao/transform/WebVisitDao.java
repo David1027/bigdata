@@ -338,11 +338,11 @@ public class WebVisitDao extends BaseDao<WebVisitInfo> {
       } else if (sourceType.equals(SourceTypeEnum.BAIDU)) {
         query.where(qWebVisitInfo.referer.like("%www.baidu%"));
       } else if (sourceType.equals(SourceTypeEnum.INTERVIEW)) {
-        query.where(qWebVisitInfo.referer.like("%%"));
+        query.where(qWebVisitInfo.referer.isEmpty());
       } else {
         query.where(qWebVisitInfo.referer.notLike("%www.google%"));
         query.where(qWebVisitInfo.referer.notLike("%www.baidu%"));
-        query.where(qWebVisitInfo.referer.notLike("%"));
+        query.where(qWebVisitInfo.referer.isNotEmpty());
       }
     }
   }

@@ -33,6 +33,7 @@ import com.shoestp.mains.enums.flow.AccessTypeEnum;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
 import com.shoestp.mains.service.transform.MetaToViewService;
+import com.shoestp.mains.service.urlmatchdatautil.URLMatchDataUtilService;
 import com.shoestp.mains.utils.dateUtils.DateTimeUtil;
 import com.shoestp.mains.views.dataview.real.VisitorView;
 import com.shoestp.mains.views.dataview.utils.VisitorList;
@@ -59,6 +60,7 @@ public class MetaToViewServiceImpl implements MetaToViewService {
   @Resource private UserAreaDao userAreaDao;
   @Resource private RealCountryDao realCountryDao;
   @Resource private VisitorList visitorList;
+  @Resource private URLMatchDataUtilService urlMatchDataUtilService;
 
   /**
    * 判断DataViewReal的数据是否为空
@@ -323,17 +325,15 @@ public class MetaToViewServiceImpl implements MetaToViewService {
           for (WebVisitInfo w : webVisitInfo) {
             if (w.getEquipmentPlatform().equals(d)) {
               DataViewFlow temp = new DataViewFlow();
-              if (w.getReferer() == null) {
-                temp.setSourceType(SourceTypeEnum.INTERVIEW);
+              SourceTypeEnum sourceType = urlMatchDataUtilService.getSourceType(w.getReferer());
+              temp.setSourceType(sourceType);
+              if (w.getReferer() == null || w.getReferer() == "") {
                 temp.setSourcePage("直接访问");
               } else if (w.getReferer().indexOf("baidu") > 0) {
-                temp.setSourceType(SourceTypeEnum.BAIDU);
                 temp.setSourcePage("自然搜索");
               } else if (w.getReferer().indexOf("google") > 0) {
-                temp.setSourceType(SourceTypeEnum.GOOGLE);
                 temp.setSourcePage("自然搜索");
               } else {
-                temp.setSourceType(SourceTypeEnum.OTHER);
                 temp.setSourcePage("自然搜索");
               }
               if (s.equals(temp.getSourceType()) && a.equals(temp.getSourcePage())) {

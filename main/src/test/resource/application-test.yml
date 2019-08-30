@@ -48,7 +48,7 @@ shoestp:
   scheduler:
     #    源数据转换时间
     transformconver:
-      enable: false
+      enable: true
       timing: 60
 
 

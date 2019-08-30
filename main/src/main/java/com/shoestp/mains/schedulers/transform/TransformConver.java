@@ -23,9 +23,6 @@ import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
 
-import static org.quartz.DateBuilder.FRIDAY;
-import static org.quartz.DateBuilder.MONDAY;
-
 /**
  * @description: 定时转化源数据表
  * @author: lingjian
@@ -39,6 +36,11 @@ public class TransformConver extends BaseSchedulers {
   @PostConstruct
   public void init() {
     setJobNmae(TransformConver.class.getName());
+    setScheduleBuilder(
+        DailyTimeIntervalScheduleBuilder.dailyTimeIntervalSchedule()
+            .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(0, 0))
+            .endingDailyAt(TimeOfDay.hourAndMinuteOfDay(23, 59))
+            .withIntervalInHours(1));
   }
 
   @Value("${shoestp.scheduler.transformconver.enable}")
@@ -54,15 +56,10 @@ public class TransformConver extends BaseSchedulers {
 
   @Bean(name = "TransformConverTrigger")
   public Trigger sampleJobTrigger() {
-
     return TriggerBuilder.newTrigger()
         .forJob(jobDetail())
         .withIdentity(getJobNmae() + "Trigger")
-        .withSchedule(
-            DailyTimeIntervalScheduleBuilder.dailyTimeIntervalSchedule()
-                .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(0, 0))
-                .endingDailyAt(TimeOfDay.hourAndMinuteOfDay(23, 59))
-                .withIntervalInHours(1))
+        .withSchedule(getScheduleBuilder())
         .build();
   }
 
@@ -103,6 +100,7 @@ public class TransformConver extends BaseSchedulers {
       logger.debug("执行成功=====> " + country);
     } catch (Exception e) {
       e.printStackTrace();
+      logger.error(e.getMessage());
     }
   }
 }

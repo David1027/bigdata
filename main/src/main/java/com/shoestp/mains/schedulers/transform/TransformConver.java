@@ -38,8 +38,7 @@ public class TransformConver extends BaseSchedulers {
     setJobNmae(TransformConver.class.getName());
     setScheduleBuilder(
         DailyTimeIntervalScheduleBuilder.dailyTimeIntervalSchedule()
-            .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(0, 0))
-            .endingDailyAt(TimeOfDay.hourAndMinuteOfDay(23, 59))
+            .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(0, 1))
             .withIntervalInHours(1));
   }
 

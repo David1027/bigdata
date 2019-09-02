@@ -466,6 +466,67 @@ public class RealServiceImpl implements RealService {
   }
 
   /**
+   * 分页获取当天访客列表集合
+   *
+   * @author: lingjian @Date: 2019/9/2 10:29
+   * @param page 开始条数
+   * @param limit 显示条数
+   * @param visitType 访客类型
+   * @param sourceType 流量来源类型
+   * @param urlPage 被访问页面
+   * @param country 访客位置
+   * @param start 开始时间
+   * @param end 结束时间
+   * @return List<RealVisitorView>
+   */
+  private List<RealVisitorView> getRealVisitorViews(
+      Integer page,
+      Integer limit,
+      Integer visitType,
+      SourceTypeEnum sourceType,
+      String urlPage,
+      Integer country,
+      Date start,
+      Date end) {
+    // 获取访客集合
+    return webVisitDao
+        .listWebVisit(start, end, page, limit, visitType, sourceType, urlPage, country).stream()
+        .peek(
+            bean -> {
+              // 流量来源,流量来源名称
+              SourceTypeEnum sourceTypeEnum =
+                  urlMatchDataUtilService.getSourceType(bean.getReferer());
+              bean.setSourceType(sourceTypeEnum);
+              bean.setSourceTypeName(sourceTypeEnum.getName());
+              // 访客类型名称
+              bean.setTypeName(bean.getType().getName());
+            })
+        .collect(Collectors.toList());
+  }
+
+  /**
+   * 获取当天访客列表集合总条目数
+   *
+   * @author: lingjian @Date: 2019/9/2 10:29
+   * @param visitType 访客类型
+   * @param sourceType 流量来源类型
+   * @param urlPage 被访问页面
+   * @param country 访客位置
+   * @param start 开始时间
+   * @param end 结束时间
+   * @return Long
+   */
+  private Long countRealVisitorViews(
+      Integer visitType,
+      SourceTypeEnum sourceType,
+      String urlPage,
+      Integer country,
+      Date start,
+      Date end) {
+    return webVisitDao.countWebVisit(start, end, visitType, sourceType, urlPage, country);
+  }
+
+  /**
    * 分页获取当天访客列表记录
    *
    * @author: lingjian @Date: 2019/8/20 13:56
@@ -490,41 +551,11 @@ public class RealServiceImpl implements RealService {
     Date end = DateTimeUtil.getTimesnight();
 
     Map<String, Object> map = new HashMap<>(16);
-
-    // 获取访客集合
-    List<RealVisitorView> list =
-        webVisitDao.listWebVisit(start, end, page, limit, visitType, sourceType, urlPage, country)
-            .stream()
-            .map(
-                bean -> {
-                  RealVisitorView visitor = new RealVisitorView();
-                  // 编号
-                  visitor.setId(bean.getId());
-                  // 被访问url
-                  visitor.setUrl(bean.getUrl());
-                  // 来源url
-                  visitor.setReferer(bean.getReferer());
-                  // 流量来源,流量来源名称
-                  SourceTypeEnum sourceTypeEnum =
-                      urlMatchDataUtilService.getSourceType(bean.getReferer());
-                  visitor.setSourceType(sourceTypeEnum);
-                  visitor.setSourceTypeName(sourceTypeEnum.getName());
-                  // 访客国家id,访客国家名称
-                  visitor.setCountryId(bean.getCountryId());
-                  visitor.setCountryName(bean.getCountryName());
-                  // 访客类型,访客类型名称
-                  visitor.setType(bean.getType());
-                  visitor.setTypeName(bean.getType().getName());
-                  // 创建时间
-                  visitor.setCreateTime(bean.getCreateTime());
-                  return visitor;
-                })
-            .collect(Collectors.toList());
+    map.put(
+        "list",
+        getRealVisitorViews(page, limit, visitType, sourceType, urlPage, country, start, end));
     // 获取访客集合总条数
-    Integer count =
-        webVisitDao.countWebVisit(start, end, page, limit, visitType, sourceType, urlPage, country);
-    map.put("list", list);
-    map.put("total", count);
+    map.put("total", countRealVisitorViews(visitType, sourceType, urlPage, country, start, end));
     return map;
   }
 
@@ -536,30 +567,12 @@ public class RealServiceImpl implements RealService {
    * @param endDate 结束时间
    * @return List
    */
-  private List getRealVisitPageList(Date startDate, Date endDate) {
-    // 获取开始时间和结束时间
-    Date start = DateTimeUtil.getTimesOfDay(startDate, 0);
-    Date end = DateTimeUtil.getTimesOfDay(endDate, 24);
-
-    return webVisitDao.getWebVisitUrl(start, end).stream()
-        .map(
-            bean -> {
-              RealVisitorPageView visitPage = new RealVisitorPageView();
-              // 页面url
-              visitPage.setUrl(bean.getUrl());
-              // 浏览量
-              visitPage.setViewCount(webVisitDao.countUrlView(bean.getUrl(), start, end));
-              // 访客数
-              visitPage.setVisitorCount(webVisitDao.countUrlVisitor(bean.getUrl(), start, end));
-              // 平均停留时长
-              visitPage.setAverageTime(bean.getAverageTime());
-              return visitPage;
-            })
-        .sorted(
-            Comparator.comparing(RealVisitorPageView::getViewCount)
-                .thenComparing(RealVisitorPageView::getVisitorCount)
-                .reversed())
-        .collect(Collectors.toList());
+  private List getRealVisitPageList(Date startDate, Date endDate, Integer page, Integer limit) {
+    return webVisitDao.getWebVisitUrl(
+        DateTimeUtil.getTimesOfDay(startDate, 0),
+        DateTimeUtil.getTimesOfDay(endDate, 24),
+        page,
+        limit);
   }
 
   /**
@@ -570,8 +583,9 @@ public class RealServiceImpl implements RealService {
    * @param endDate 结束时间
    * @return Integer
    */
-  private Integer countRealVisitPage(Date startDate, Date endDate) {
-    return getRealVisitPageList(startDate, endDate).size();
+  private Long countRealVisitPage(Date startDate, Date endDate) {
+    return webVisitDao.countWebVisitUrl(
+        DateTimeUtil.getTimesOfDay(startDate, 0), DateTimeUtil.getTimesOfDay(endDate, 24));
   }
 
   /**
@@ -586,9 +600,7 @@ public class RealServiceImpl implements RealService {
    */
   @Override
   public List getRealVisitPage(Date startDate, Date endDate, Integer page, Integer limit) {
-    List list = getRealVisitPageList(startDate, endDate);
-    limit = list.size() >= limit ? limit : list.size();
-    return list.subList(page, limit);
+    return getRealVisitPageList(startDate, endDate, page, limit);
   }
 
   /**
@@ -601,14 +613,15 @@ public class RealServiceImpl implements RealService {
    * @param limit 结束条目
    * @return Map
    */
+  @Override
   public Map getRealVisitPage(Date date, Integer num, Integer page, Integer limit) {
     List list;
-    Integer count;
+    Long count;
     if (num != null) {
-      list = getRealVisitPage(DateTimeUtil.getDayFromNum(date, num), date, page, limit);
+      list = getRealVisitPageList(DateTimeUtil.getDayFromNum(date, num), date, page, limit);
       count = countRealVisitPage(DateTimeUtil.getDayFromNum(date, num), date);
     } else {
-      list = getRealVisitPage(date, date, page, limit);
+      list = getRealVisitPageList(date, date, page, limit);
       count = countRealVisitPage(date, date);
     }
     Map<String, Object> map = new HashMap<>(16);
@@ -625,22 +638,25 @@ public class RealServiceImpl implements RealService {
    * @param endDate 结束时间
    * @return List
    */
-  private List getHomeSearchList(Date startDate, Date endDate) {
-    Date start = DateTimeUtil.getTimesOfDay(startDate, 0);
-    Date end = DateTimeUtil.getTimesOfDay(endDate, 24);
-    return searchWordInfoDao.listSearchWord(start, end).stream()
-        .map(
-            bean -> {
-              HomeSearchView search = new HomeSearchView();
-              // 搜索关键词
-              search.setKeyword(bean);
-              // 搜索人气
-              Integer view = searchWordInfoDao.countSearchWordView(bean, start, end);
-              search.setViewCount(view);
-              return search;
-            })
-        .sorted(Comparator.comparing(HomeSearchView::getViewCount).reversed())
-        .collect(Collectors.toList());
+  private List getHomeSearchList(Date startDate, Date endDate, Integer page, Integer limit) {
+    return searchWordInfoDao.listSearchWord(
+        DateTimeUtil.getTimesOfDay(startDate, 0),
+        DateTimeUtil.getTimesOfDay(endDate, 24),
+        page,
+        limit);
+  }
+
+  /**
+   * 根据开始时间和结束时间获取搜索关键词的总条目数
+   *
+   * @author: lingjian @Date: 2019/9/2 9:50
+   * @param startDate 开始时间
+   * @param endDate 结束时间
+   * @return Long
+   */
+  private Long countHomeSearchList(Date startDate, Date endDate) {
+    return searchWordInfoDao.countSearchWord(
+        DateTimeUtil.getTimesOfDay(startDate, 0), DateTimeUtil.getTimesOfDay(endDate, 24));
   }
 
   /**
@@ -655,13 +671,11 @@ public class RealServiceImpl implements RealService {
    */
   @Override
   public Map getHomeSearch(Date startDate, Date endDate, Integer page, Integer limit) {
-    List list = getHomeSearchList(startDate, endDate);
-    limit = list.size() >= limit ? limit : list.size();
     Map<String, Object> map = new HashMap<>(16);
     // 搜索关键词列表
-    map.put("list", list.subList(page, limit));
+    map.put("list", getHomeSearchList(startDate, endDate, page, limit));
     // 搜索关键词列表总条数
-    map.put("total", list.size());
+    map.put("total", countHomeSearchList(startDate, endDate));
     return map;
   }
 }

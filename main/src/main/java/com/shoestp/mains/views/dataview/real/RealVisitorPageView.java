@@ -18,9 +18,9 @@ public class RealVisitorPageView {
   /** * 页面URL */
   private String url;
   /** 浏览量 */
-  private Integer viewCount;
+  private Long viewCount;
   /** 访客数 */
-  private Integer visitorCount;
+  private Long visitorCount;
   /** 平均停留时长 */
   private Double averageTime;
 }

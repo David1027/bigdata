@@ -12,5 +12,5 @@ public class HomeSearchView {
   /** 搜索关键词 */
   private String keyword;
   /** 搜索人气-浏览量 */
-  private Integer viewCount;
+  private Long viewCount;
 }

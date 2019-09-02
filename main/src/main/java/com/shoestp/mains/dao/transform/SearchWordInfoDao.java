@@ -3,9 +3,11 @@ package com.shoestp.mains.dao.transform;
 import java.util.Date;
 import java.util.List;
 
+import com.querydsl.core.types.Projections;
 import com.shoestp.mains.dao.BaseDao;
 import com.shoestp.mains.entitys.metadata.QSearchWordInfo;
 import com.shoestp.mains.entitys.metadata.SearchWordInfo;
+import com.shoestp.mains.views.dataview.real.HomeSearchView;
 
 import org.springframework.stereotype.Repository;
 
@@ -20,38 +22,44 @@ public class SearchWordInfoDao extends BaseDao<SearchWordInfo> {
   /**
    * 根据时间分组获取搜索表关键词字段列表记录
    *
+   * @author: lingjian @Date: 2019/9/2 9:50
    * @param start 开始时间
    * @param end 结束时间
    * @return List<String>
    */
-  public List<String> listSearchWord(Date start, Date end) {
+  public List<HomeSearchView> listSearchWord(Date start, Date end, Integer page, Integer limit) {
     QSearchWordInfo qSearchWordInfo = QSearchWordInfo.searchWordInfo;
     return getQuery()
-        .select(qSearchWordInfo.keyword)
+        .select(
+            Projections.bean(
+                HomeSearchView.class,
+                qSearchWordInfo.keyword.as("keyword"),
+                qSearchWordInfo.id.count().as("viewCount")))
         .where(qSearchWordInfo.createTime.between(start, end))
         .groupBy(qSearchWordInfo.keyword)
         .from(qSearchWordInfo)
+        .orderBy(qSearchWordInfo.id.count().desc())
+        .offset(page)
+        .limit(limit)
         .fetchResults()
         .getResults();
   }
 
   /**
-   * 根据搜索关键词，时间获取搜索表对应记录的数量
+   * 根据时间分组获取搜索表关键词字段的总条目数
    *
-   * @author: lingjian @Date: 2019/8/21 10:34
-   * @param keyword 搜索关键词
+   * @author: lingjian @Date: 2019/9/2 9:50
    * @param start 开始时间
    * @param end 结束时间
-   * @return Integer
+   * @return Long
    */
-  public Integer countSearchWordView(String keyword, Date start, Date end) {
+  public Long countSearchWord(Date start, Date end) {
     QSearchWordInfo qSearchWordInfo = QSearchWordInfo.searchWordInfo;
-    return (int)
-        getQuery()
-            .select(qSearchWordInfo)
-            .where(qSearchWordInfo.createTime.between(start, end))
-            .where(qSearchWordInfo.keyword.eq(keyword))
-            .from(qSearchWordInfo)
-            .fetchCount();
+    return getQuery()
+        .select(qSearchWordInfo)
+        .where(qSearchWordInfo.createTime.between(start, end))
+        .groupBy(qSearchWordInfo.keyword)
+        .from(qSearchWordInfo)
+        .fetchCount();
   }
 }

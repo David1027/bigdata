@@ -13,6 +13,7 @@ import org.start2do.utils.ResourceUtils;
 
 public abstract class AbstractResource implements Resource {
 
+  @Override
   public boolean exists() {
     try {
       return this.getFile().exists();
@@ -26,18 +27,22 @@ public abstract class AbstractResource implements Resource {
     }
   }
 
+  @Override
   public boolean isReadable() {
     return this.exists();
   }
 
+  @Override
   public boolean isOpen() {
     return false;
   }
 
+  @Override
   public boolean isFile() {
     return false;
   }
 
+  @Override
   public URL getURL() throws IOException {
     throw new FileNotFoundException(this.getDescription() + " cannot be resolved to URL");
   }
@@ -52,6 +57,7 @@ public abstract class AbstractResource implements Resource {
     }
   }
 
+  @Override
   public File getFile() throws IOException {
     throw new FileNotFoundException(
         this.getDescription() + " cannot be resolved to absolute file path");
@@ -62,6 +68,7 @@ public abstract class AbstractResource implements Resource {
     return Channels.newChannel(this.getInputStream());
   }
 
+  @Override
   public long contentLength() throws IOException {
     InputStream is = this.getInputStream();
 
@@ -82,6 +89,7 @@ public abstract class AbstractResource implements Resource {
     }
   }
 
+  @Override
   public long lastModified() throws IOException {
     File fileToCheck = this.getFileForLastModifiedCheck();
     long lastModified = fileToCheck.lastModified();
@@ -98,25 +106,30 @@ public abstract class AbstractResource implements Resource {
     return this.getFile();
   }
 
+  @Override
   public Resource createRelative(String relativePath) throws IOException {
     throw new FileNotFoundException(
         "Cannot create a relative resource for " + this.getDescription());
   }
 
+  @Override
   public String getFilename() {
     return null;
   }
 
+  @Override
   public boolean equals(Object other) {
     return this == other
         || other instanceof Resource
             && ((Resource) other).getDescription().equals(this.getDescription());
   }
 
+  @Override
   public int hashCode() {
     return this.getDescription().hashCode();
   }
 
+  @Override
   public String toString() {
     return this.getDescription();
   }

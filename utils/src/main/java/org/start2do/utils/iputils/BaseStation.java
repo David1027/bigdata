@@ -6,16 +6,16 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public class City {
+public class BaseStation {
 
   /** @var Reader */
   private Reader reader;
 
-  public City(String name) throws IOException, InvalidDatabaseException {
+  public BaseStation(String name) throws IOException, InvalidDatabaseException {
     this.reader = new Reader(name);
   }
 
-  public City(InputStream in) throws IOException, InvalidDatabaseException {
+  public BaseStation(InputStream in) throws IOException, InvalidDatabaseException {
     this.reader = new Reader(in);
   }
 
@@ -41,8 +41,10 @@ public class City {
     if (data == null) {
       return null;
     }
-    String[] fields = this.reader.getSupportFields();
     Map<String, String> m = new HashMap<String, String>();
+
+    String[] fields = this.reader.getSupportFields();
+
     for (int i = 0, l = data.length; i < l; i++) {
       m.put(fields[i], data[i]);
     }
@@ -50,7 +52,7 @@ public class City {
     return m;
   }
 
-  public CityInfo findInfo(String addr, String language)
+  public BaseStationInfo findInfo(String addr, String language)
       throws IPFormatException, InvalidDatabaseException {
 
     String[] data = this.reader.find(addr, language);
@@ -58,11 +60,7 @@ public class City {
       return null;
     }
 
-    return new CityInfo(data);
-  }
-
-  public int buildTime() {
-    return this.reader.getBuildUTCTime();
+    return new BaseStationInfo(data);
   }
 
   public boolean isIPv4() {
@@ -75,6 +73,10 @@ public class City {
 
   public String fields() {
     return Arrays.toString(this.reader.getSupportFields());
+  }
+
+  public int buildTime() {
+    return this.reader.getBuildUTCTime();
   }
 
   public String languages() {

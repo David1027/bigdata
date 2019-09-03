@@ -1,19 +1,16 @@
 package com.shoestp.mains.dao.dataview.real;
 
-import java.util.Date;
-
 import com.querydsl.core.types.Projections;
 import com.shoestp.mains.dao.BaseDao;
-import com.shoestp.mains.entitys.dataview.country.QDataViewCountry;
 import com.shoestp.mains.entitys.dataview.real.DataViewReal;
 import com.shoestp.mains.entitys.dataview.real.QDataViewReal;
 import com.shoestp.mains.repositorys.dataview.real.RealRepository;
 import com.shoestp.mains.views.dataview.real.IndexGrand;
 import com.shoestp.mains.views.dataview.real.RealView;
-
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
+import java.util.Date;
 
 /**
  * @description: 国家-数据层

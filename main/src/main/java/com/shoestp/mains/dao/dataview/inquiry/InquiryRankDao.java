@@ -8,10 +8,7 @@ import com.shoestp.mains.entitys.dataview.inquiry.DataViewInquiryRank;
 import com.shoestp.mains.entitys.dataview.inquiry.QDataViewInquiryRank;
 import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
 import com.shoestp.mains.repositorys.dataview.inquory.InquiryRankRepository;
-import com.shoestp.mains.views.dataview.flow.PageViewObject;
-import com.shoestp.mains.views.dataview.inquiry.InquiryRankView;
 import com.shoestp.mains.views.dataview.inquiry.InquiryTypeView;
-
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;

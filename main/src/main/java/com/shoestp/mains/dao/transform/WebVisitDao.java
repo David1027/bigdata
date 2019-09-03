@@ -1,7 +1,5 @@
 package com.shoestp.mains.dao.transform;
 
-import com.querydsl.core.Tuple;
-import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.shoestp.mains.dao.BaseDao;
@@ -11,20 +9,13 @@ import com.shoestp.mains.entitys.metadata.enums.DeviceTypeEnum;
 import com.shoestp.mains.entitys.metadata.enums.RegisterTypeEnum;
 import com.shoestp.mains.enums.flow.AccessTypeEnum;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
-import com.shoestp.mains.service.urlmatchdatautil.URLMatchDataUtilService;
 import com.shoestp.mains.views.dataview.real.RealVisitorPageView;
 import com.shoestp.mains.views.dataview.real.RealVisitorView;
 import com.shoestp.mains.views.dataview.real.VisitorView;
-
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import javax.annotation.Resource;
-
-import static com.querydsl.core.QueryModifiers.offset;
 
 /**
  * @description: 源数据层 - 数据访问层

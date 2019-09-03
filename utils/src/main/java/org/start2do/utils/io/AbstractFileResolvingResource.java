@@ -15,6 +15,7 @@ import org.start2do.utils.ResourceUtils;
 
 /** Created by IntelliJ IDEA. User: Lijie HelloBox@outlook.com Date: 2019/5/31 Time: 13:48 */
 public abstract class AbstractFileResolvingResource extends AbstractResource {
+  @Override
   public boolean exists() {
     try {
       URL url = this.getURL();
@@ -51,6 +52,7 @@ public abstract class AbstractFileResolvingResource extends AbstractResource {
     }
   }
 
+  @Override
   public boolean isReadable() {
     try {
       URL url = this.getURL();
@@ -84,6 +86,7 @@ public abstract class AbstractFileResolvingResource extends AbstractResource {
     }
   }
 
+  @Override
   public boolean isFile() {
     try {
       URL url = this.getURL();
@@ -93,11 +96,13 @@ public abstract class AbstractFileResolvingResource extends AbstractResource {
     }
   }
 
+  @Override
   public File getFile() throws IOException {
     URL url = this.getURL();
     return ResourceUtils.getFile(url, this.getDescription());
   }
 
+  @Override
   protected File getFileForLastModifiedCheck() throws IOException {
     URL url = this.getURL();
     if (ResourceUtils.isJarURL(url)) {
@@ -125,6 +130,7 @@ public abstract class AbstractFileResolvingResource extends AbstractResource {
     }
   }
 
+  @Override
   public long contentLength() throws IOException {
     URL url = this.getURL();
     if (ResourceUtils.isFileURL(url)) {
@@ -144,6 +150,7 @@ public abstract class AbstractFileResolvingResource extends AbstractResource {
     }
   }
 
+  @Override
   public long lastModified() throws IOException {
     URL url = this.getURL();
     boolean fileCheck = false;

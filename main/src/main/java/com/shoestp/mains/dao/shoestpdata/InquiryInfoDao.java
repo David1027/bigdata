@@ -10,4 +10,3 @@ import java.util.Optional;
 public interface InquiryInfoDao extends JpaRepository<InquiryInfo, Integer> {
   Optional<InquiryInfo> findByInquiryId(Integer id);
 }
-

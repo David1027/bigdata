@@ -5,13 +5,14 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.shoestp.mains.entitys.metadata.QSearchWordInfo;
 import com.shoestp.mains.views.dataview.utils.KeyValue;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.PostConstruct;
-import javax.persistence.EntityManager;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class SearchDaoImpl {
 

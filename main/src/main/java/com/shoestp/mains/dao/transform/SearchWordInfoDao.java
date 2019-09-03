@@ -1,15 +1,14 @@
 package com.shoestp.mains.dao.transform;
 
-import java.util.Date;
-import java.util.List;
-
 import com.querydsl.core.types.Projections;
 import com.shoestp.mains.dao.BaseDao;
 import com.shoestp.mains.entitys.metadata.QSearchWordInfo;
 import com.shoestp.mains.entitys.metadata.SearchWordInfo;
 import com.shoestp.mains.views.dataview.real.HomeSearchView;
-
 import org.springframework.stereotype.Repository;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * @description: 搜索关键词源数据 - 数据访问层

@@ -1,13 +1,11 @@
 package com.shoestp.mains.dao.dataview.realcountry;
 
-import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.shoestp.mains.dao.BaseDao;
 import com.shoestp.mains.entitys.dataview.country.DataViewCountry;
 import com.shoestp.mains.entitys.dataview.country.QDataViewCountry;
 import com.shoestp.mains.repositorys.dataview.realcountry.RealCountryRepository;
 import com.shoestp.mains.views.dataview.country.CountryView;
-import com.shoestp.mains.views.dataview.real.RealView;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;

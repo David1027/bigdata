@@ -5,10 +5,10 @@ import com.shoestp.mains.dao.metadata.ProvinceDao;
 import com.shoestp.mains.entitys.metadata.PltCountry;
 import com.shoestp.mains.entitys.metadata.Province;
 import com.shoestp.mains.service.metadata.LocationService;
-import com.shoestp.mains.utils.iputils.City;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
+import org.start2do.utils.iputils.IpUtils;
 
 import javax.annotation.Resource;
 import javax.cache.annotation.CacheDefaults;
@@ -23,8 +23,6 @@ public class LocationServiceImpl implements LocationService {
   @Resource private PltCountryDao countryDao;
   @Resource private ProvinceDao provinceDao;
 
-  @Resource(name = "ipCity")
-  private City city;
 
   @Override
   @CacheResult
@@ -58,7 +56,7 @@ public class LocationServiceImpl implements LocationService {
   @CacheResult
   public PltCountry getCountryByIp(String ip) {
     String[] strings = getAddress(ip);
-    if (strings.length == 0) {
+    if (strings != null && strings.length == 0) {
       return getCountry(null);
     }
     return getCountry(strings[0]);
@@ -76,7 +74,7 @@ public class LocationServiceImpl implements LocationService {
   @Override
   @CacheResult
   public String[] getAddress(String ip) {
-    return city.find(ip);
+    return IpUtils.find(ip);
   }
 
   /**

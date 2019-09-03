@@ -5,6 +5,7 @@ import com.shoestp.mains.controllers.BaseController;
 import com.shoestp.mains.controllers.analytics.view.SignView;
 import com.shoestp.mains.controllers.analytics.view.WebVisitInfoView;
 import com.shoestp.mains.pojo.MessageResult;
+import com.shoestp.mains.service.metadata.LocationService;
 import com.shoestp.mains.service.metadata.WebVisitInfoService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,6 +31,7 @@ public class AnalyticsController extends BaseController {
 
   @Resource WebVisitInfoService webVisitInfoService;
   @Resource ObjectMapper objectMapper;
+  @Resource private LocationService locationService;
 
   @PostMapping({"save", ""})
   public Object save(@RequestBody String body, HttpServletRequest httpRequest) throws IOException {
@@ -58,5 +60,11 @@ public class AnalyticsController extends BaseController {
   public Object fixData() {
     webVisitInfoService.fixdata();
     return "ok";
+  }
+
+  @GetMapping("test")
+  public Object test(String ip) {
+    logger.debug(ip);
+    return locationService.getCountryByIp(ip);
   }
 }

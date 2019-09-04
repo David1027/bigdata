@@ -6,6 +6,8 @@ import lombok.ToString;
 import javax.persistence.*;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * -鞋贸港国家表
  *
@@ -32,6 +34,7 @@ public class PltCountry {
   @Column(length = 50)
   private String name;
   /** 实体类关系映射 */
+  @JsonIgnore
   @OneToMany(mappedBy = "country")
   private Set<UserInfo> userInfos;
 }

@@ -91,7 +91,7 @@ public class FlowDao extends BaseDao<DataViewFlow> {
         .select(
             dataViewFlow.sourceType.stringValue(),
             dataViewFlow.visitorCount.sum(),
-            dataViewFlow.inquiryCount.sum())
+            dataViewFlow.viewCount.sum())
         .from(dataViewFlow)
         .where(dataViewFlow.createTime.between(start, end))
         .groupBy(dataViewFlow.sourceType)
@@ -134,7 +134,7 @@ public class FlowDao extends BaseDao<DataViewFlow> {
         .select(
             dataViewFlow.sourcePage.stringValue(),
             dataViewFlow.visitorCount.sum(),
-            dataViewFlow.inquiryCount.sum())
+            dataViewFlow.viewCount.sum())
         .from(dataViewFlow)
         .where(dataViewFlow.sourceType.eq(source))
         .where(dataViewFlow.createTime.between(start, end))
@@ -160,7 +160,7 @@ public class FlowDao extends BaseDao<DataViewFlow> {
         .select(
             dataViewFlow.sourcePage.stringValue(),
             dataViewFlow.visitorCount.sum(),
-            dataViewFlow.inquiryCount.sum())
+            dataViewFlow.viewCount.sum())
         .from(dataViewFlow)
         .where(dataViewFlow.sourceType.eq(sourceType))
         .where(dataViewFlow.sourcePage.eq(sourcePage))

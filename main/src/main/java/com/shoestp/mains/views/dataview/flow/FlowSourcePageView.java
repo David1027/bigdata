@@ -12,6 +12,6 @@ public class FlowSourcePageView {
   private String sourcePage;
   /** 访客数 */
   private Integer visitorCount;
-  /** 询盘数 */
+  /** 浏览量 */
   private Integer inquiryCount;
 }

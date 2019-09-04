@@ -318,8 +318,9 @@ public class MetaToViewServiceImpl implements MetaToViewService {
           // 来源渠道
           flow.setSourcePage(a);
           // TODO
-          // 访客数
+          // 访客数,浏览量
           int count = 0;
+          int viewCount = 0;
           List<WebVisitInfo> webVisitInfo = webVisitDao.getWebVisitInfo(d, start, end);
           List<String> l = new ArrayList();
           for (WebVisitInfo w : webVisitInfo) {
@@ -337,6 +338,7 @@ public class MetaToViewServiceImpl implements MetaToViewService {
                 temp.setSourcePage("自然搜索");
               }
               if (s.equals(temp.getSourceType()) && a.equals(temp.getSourcePage())) {
+                viewCount++;
                 if (!visitorList.getList(getZeroDate(start), start).contains(w.getIp())) {
                   if (!l.contains(w.getIp())) {
                     l.add(w.getIp());
@@ -346,10 +348,8 @@ public class MetaToViewServiceImpl implements MetaToViewService {
               }
             }
           }
-
           flow.setVisitorCount(count);
-          // 询盘量
-          flow.setInquiryCount(0);
+          flow.setViewCount(viewCount);
           // 创建时间
           flow.setCreateTime(new Date());
           if (flow.getDeviceType().equals(DeviceTypeEnum.PC)

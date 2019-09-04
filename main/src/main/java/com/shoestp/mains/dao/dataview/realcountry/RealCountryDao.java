@@ -4,6 +4,7 @@ import com.querydsl.core.types.Projections;
 import com.shoestp.mains.dao.BaseDao;
 import com.shoestp.mains.entitys.dataview.country.DataViewCountry;
 import com.shoestp.mains.entitys.dataview.country.QDataViewCountry;
+import com.shoestp.mains.entitys.metadata.QWebVisitInfo;
 import com.shoestp.mains.repositorys.dataview.realcountry.RealCountryRepository;
 import com.shoestp.mains.views.dataview.country.CountryView;
 import org.springframework.stereotype.Repository;
@@ -53,6 +54,7 @@ public class RealCountryDao extends BaseDao<DataViewCountry> {
         .from(qDataViewCountry)
         .where(qDataViewCountry.createTime.between(start, end))
         .groupBy(qDataViewCountry.countryEnglishName)
+        .orderBy(qDataViewCountry.visitorCount.sum().desc())
         .fetchResults()
         .getResults();
   }

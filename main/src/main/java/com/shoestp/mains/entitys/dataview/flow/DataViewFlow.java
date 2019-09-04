@@ -39,9 +39,9 @@ public class DataViewFlow {
   /** 访客数 */
   @Column(name = "visitor_count")
   private Integer visitorCount;
-  /** 询盘数 */
-  @Column(name = "inquiry_count")
-  private Integer inquiryCount;
+  /** 浏览量 */
+  @Column(name = "view_count")
+  private Integer viewCount;
   /** 创建时间 */
   @Column(name = "create_time")
   private Date createTime;

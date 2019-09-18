@@ -14,6 +14,8 @@ public enum RegisterTypeEnum {
   PURCHASE("采购商"),
   /** 供应商 */
   SUPPLIER("供应商"),
+  /** 管理员  */
+  ADMIN("供应商"),
   /** 游客 */
   VISITOR("游客");
 

@@ -1,6 +1,7 @@
 package com.shoestp.mains.controllers.analytics;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shoestp.mains.constant.analytics.AnalyticsConstant;
 import com.shoestp.mains.controllers.BaseController;
 import com.shoestp.mains.controllers.analytics.view.SignView;
 import com.shoestp.mains.controllers.analytics.view.WebVisitInfoView;
@@ -38,6 +39,9 @@ public class AnalyticsController extends BaseController {
     logger.info("Body Messages =>{}", body);
     WebVisitInfoView webVisitInfoView = objectMapper.readValue(body, WebVisitInfoView.class);
     logger.info("Pojo Info =>{}", webVisitInfoView);
+    if (webVisitInfoView.getPage_wait_time() > AnalyticsConstant.PAGEONTIME) {
+      webVisitInfoView.setPage_wait_time(AnalyticsConstant.PAGEONTIME);
+    }
     webVisitInfoService.save(
         webVisitInfoView, getIpByHeader(httpRequest), getUserAgentByHeader(httpRequest));
     return MessageResult.builder().code(1).build();

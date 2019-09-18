@@ -55,4 +55,15 @@ public interface URLMatchDataUtilService {
    * @return the page type
    */
   AccessTypeEnum getPageType(String uri);
+
+  /**
+   * Gets supplier pkey by url. 根据 Url 获取卖家的 Id,用于着陆页转换
+   *
+   * @author lijie
+   * @date 2019 /09/16
+   * @since *
+   * @param uri the uri
+   * @return the supplier pkey by url
+   */
+  Integer getSupplierPkeyByUrl(String uri);
 }

@@ -1,7 +1,9 @@
 package com.shoestp.mains.entitys.metadata;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.ToString;
+import org.junit.Ignore;
 
 import javax.persistence.*;
 import java.util.Set;

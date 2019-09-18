@@ -49,7 +49,9 @@ shoestp:
     #    源数据转换时间
     transformconver:
       enable: true
-      timing: 60
+    InquiryConver:
+      enable: true
+
 
 management:
   endpoints:
@@ -67,7 +69,7 @@ management:
 #  config: ./log4j2.xml
 appconfig:
   domain:
-  - www.shoestp.com
-  - w3.shoestp.com
-  - shoestp.com
+    - www.shoestp.com
+    - w3.shoestp.com
+    - shoestp.com
 

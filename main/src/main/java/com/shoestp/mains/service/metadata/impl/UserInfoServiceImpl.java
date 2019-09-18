@@ -67,7 +67,7 @@ public class UserInfoServiceImpl implements UserInfoService {
   @Override
   public void save(GRPC_SendDataProto.UserInfo info) {
     com.shoestp.mains.entitys.metadata.UserInfo userInfo;
-    Optional<com.shoestp.mains.entitys.metadata.UserInfo> result;
+    Optional<com.shoestp.mains.entitys.metadata.UserInfo> result = null;
     /** 如果有签名的情况下根据签名获取数据 */
     if (info.getSign().length() > 1) {
       result = userInfoDao.findBySign(info.getSign());
@@ -75,10 +75,12 @@ public class UserInfoServiceImpl implements UserInfoService {
       if (info.getUserId() < 1) {
         return;
       }
-      result = userInfoDao.findByUserId(info.getUserId());
+      if (info.getUserId() > 1) {
+        result = userInfoDao.findByUserId(info.getUserId());
+      }
     }
 
-    if (result.isPresent()) {
+    if (result != null && result.isPresent()) {
       userInfo = result.get();
     } else {
       userInfo = new com.shoestp.mains.entitys.metadata.UserInfo();

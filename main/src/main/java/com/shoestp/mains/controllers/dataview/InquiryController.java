@@ -1,18 +1,18 @@
 package com.shoestp.mains.controllers.dataview;
 
+import com.shoestp.mains.controllers.dataview.inquiry.pojo.InquiryType;
 import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
 import com.shoestp.mains.pojo.MessageResult;
 import com.shoestp.mains.service.dataview.InquiryService;
-import java.util.Date;
-import javax.annotation.Resource;
+import com.shoestp.mains.service.dataview.inquiry.InquiryNewService;
+import com.shoestp.mains.views.Page;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import java.util.Date;
 
 /**
  * @description: 询盘-控制器
@@ -24,6 +24,7 @@ public class InquiryController {
   private static final Logger logger = LogManager.getLogger(InquiryController.class);
 
   @Resource private InquiryService inquiryService;
+  @Resource private InquiryNewService inquiryNewService;
 
   /**
    * 根据时间获取询盘概况
@@ -84,11 +85,27 @@ public class InquiryController {
    */
   @PostMapping(value = "/inquiryrank")
   public Object getInquiryRank(InquiryTypeEnum inquiryType, Integer page, Integer pageSize) {
-    logger.debug(inquiryType);
-    return MessageResult.builder()
-        .code(1)
-        .result(inquiryService.getInquiryRank(inquiryType, page, pageSize))
-        .build();
+    Page result = null;
+    switch (inquiryType) {
+      case SUPPLIER:
+        result =
+            inquiryNewService.getInquiryDateViewByKeyWordAndType(
+                null, page, pageSize, InquiryType.SUPPLIER);
+        break;
+      case COMMODITY:
+        result =
+            inquiryNewService.getInquiryDateViewByKeyWordAndType(
+                null, page, pageSize, InquiryType.PRODUCT);
+        break;
+      case LANDING:
+      default:
+        result =
+            inquiryNewService.getInquiryDateViewByKeyWordAndType(
+                null, page, pageSize, InquiryType.LANDING);
+        break;
+    }
+
+    return MessageResult.builder().code(1).result(result).build();
   }
 
   /**

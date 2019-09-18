@@ -14,7 +14,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 /** Created by IntelliJ IDEA. User: lijie@shoestp.cn Date: 2019/5/14 Time: 15:00 */
 @Component
@@ -25,6 +28,21 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
   @Resource private UserInfoService userInfoService;
   @Resource private InquiryInfoService inquiryInfoService;
   @Resource private FavoriteService favoriteService;
+
+  private List<UserInfo> userInfos;
+
+  @PostConstruct
+  public void init() {
+    userInfos = new ArrayList<>();
+  }
+
+  public void completed() {
+    userInfos.parallelStream().forEach(
+        userInfo -> {
+          logger.info("执行数据");
+          userInfoService.syncUserInfo(userInfo);
+        });
+  }
 
   @Override
   public StreamObserver<GRPC_SendDataProto.SearchInfo> sendSearch(
@@ -82,9 +100,10 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
 
       @Override
       public void onNext(UserInfo info) {
+        logger.info("UserInfo:{}", info);
         switch (info.getAction()) {
           case 1:
-            userInfoService.syncUserInfo(info);
+            userInfos.add(info);
             break;
           case 0:
           default:
@@ -100,6 +119,7 @@ public class RPCServiceImp extends SendDataUtilGrpc.SendDataUtilImplBase {
       @Override
       public void onCompleted() {
         responseObserver.onCompleted();
+        completed();
       }
     };
   }

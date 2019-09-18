@@ -55,7 +55,6 @@ public class SellerUserController {
     logger.debug(date);
     return MessageResult.builder()
         .code(1)
-        .msg("Hello")
         .result(
             sellerUserService.getRealVisitor(
                 date, country, province, supplierid, type,keywords, start, limit))

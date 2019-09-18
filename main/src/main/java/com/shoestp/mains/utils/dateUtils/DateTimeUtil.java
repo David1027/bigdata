@@ -4,17 +4,12 @@
  */
 package com.shoestp.mains.utils.dateUtils;
 
+import com.shoestp.mains.constant.dataview.Contants;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TimeZone;
-
-import com.shoestp.mains.constant.dataview.Contants;
+import java.time.LocalDateTime;
+import java.util.*;
 
 /**
  * 日期和时间工具类
@@ -719,5 +714,9 @@ public final class DateTimeUtil {
     rightNow.setTime(date);
     rightNow.add(type, num);
     return rightNow.getTime();
+  }
+
+  public static LocalDateTime now() {
+    return LocalDateTime.now().withNano(0);
   }
 }

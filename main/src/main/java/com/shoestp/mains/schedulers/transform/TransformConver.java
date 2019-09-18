@@ -44,9 +44,6 @@ public class TransformConver extends BaseSchedulers {
 
   @Value("${shoestp.scheduler.transformconver.enable}")
   private Boolean enable = false;
-  /** * 定时60分钟 */
-  @Value("${shoestp.scheduler.transformconver.timing}")
-  private int timing = 60;
 
   @Bean(name = "TransformConver")
   public JobDetail jobDetail() {

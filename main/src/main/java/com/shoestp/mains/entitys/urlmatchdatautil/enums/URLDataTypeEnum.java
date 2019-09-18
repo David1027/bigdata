@@ -13,5 +13,7 @@ public enum URLDataTypeEnum {
   /** 搜索引擎 */
   SEARCHENGINE,
   /** 页面类型 */
-  PAGETYPE
+  PAGETYPE,
+  /** 着陆页_商家 ID 转化 */
+  CONVERSION_URL_SUPPLIER_ID
 }

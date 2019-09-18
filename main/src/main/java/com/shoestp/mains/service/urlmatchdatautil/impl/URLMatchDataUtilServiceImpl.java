@@ -109,4 +109,25 @@ public class URLMatchDataUtilServiceImpl implements URLMatchDataUtilService {
     }
     return AccessTypeEnum.OTHER;
   }
+
+  /**
+   * Gets supplier pkey by url. 根据 Url 获取卖家的 Id,用于着陆页转换
+   *
+   * @param uri the uri
+   * @author lijie
+   * @date 2019 /09/16
+   * @since *
+   * @return the supplier pkey by url
+   */
+  @Override
+  @CacheResult
+  public Integer getSupplierPkeyByUrl(String uri) {
+    for (URLMatchDataEntity urlMatchDataEntity :
+        urlMatchDataDao.findByTypeOrderByPriorityDesc(URLDataTypeEnum.CONVERSION_URL_SUPPLIER_ID)) {
+      if (MyStringUtils.isMatch3(urlMatchDataEntity.getRegex(), uri)) {
+        return Integer.valueOf(urlMatchDataEntity.getName());
+      }
+    }
+    return 0;
+  }
 }

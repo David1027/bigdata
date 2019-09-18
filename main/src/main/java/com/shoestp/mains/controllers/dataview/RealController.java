@@ -130,7 +130,7 @@ public class RealController {
   @GetMapping(value = "/sourcetype")
   public Object getSourceType(HttpServletRequest httpRequest) {
     logger.debug(httpRequest);
-    return MessageResult.builder().code(1).msg("Hello").result(realService.getSourceType()).build();
+    return MessageResult.builder().code(1).result(realService.getSourceType()).build();
   }
 
   /**
@@ -158,7 +158,6 @@ public class RealController {
     logger.debug(visitType + "---" + sourceType + "---" + urlPage + "---" + country);
     return MessageResult.builder()
         .code(1)
-        .msg("Hello")
         .result(realService.getRealVisitor(page, limit, visitType, sourceType, urlPage, country))
         .build();
   }

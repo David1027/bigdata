@@ -1,10 +1,11 @@
 package com.shoestp.mains.repositorys.dataview.inquory;
 
 import com.shoestp.mains.entitys.dataview.inquiry.DataViewInquiryRank;
-import java.util.Date;
-import java.util.List;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * @description: 询盘-实现JPA接口
@@ -17,5 +18,5 @@ public interface InquiryRankRepository
       value =
           "SELECT inquiry_name,count(*) FROM `data_view_inquiry_rank` where inquiry_type = ?1 and create_time > ?2 and create_time < ?3 GROUP BY pkey limit ?4,?5 ",
       nativeQuery = true)
-  public List<Object> getRanking(String type, Date startTime, Date endTime, int start, int limit);
+  List<Object> getRanking(String type, Date startTime, Date endTime, int start, int limit);
 }

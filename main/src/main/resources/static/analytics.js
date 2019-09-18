@@ -93,7 +93,6 @@
                         _that.data.session_create_time = date
                     })
             }
-            // window.onbeforeunload = this.send
             /** 添加事件  */
             window.addEventListener('unload', function (event) {
                 _that.data.firstReferrer = sessionStorage[_that.config.key
@@ -114,7 +113,7 @@
             var t = setTimeout(function () {
                 _that.data.firstReferrer = sessionStorage[_that.config.key
                 + _that.config.project]
-                _that.data.time_on_page = new Date() - window.performance.timing.domLoading
+                _that.data.time_on_page = new Date() - window.performance.timing.domComplete
                 _that.ajax.post(_that.config.host + _that.config.url,
                     JSON.stringify(_that.data))
                 _that.cookie.set("__" + _that.config.key + "_session", null, -1)
@@ -130,8 +129,8 @@
             "title": document.title,
             /** url  */
             "url": window.location.href,
-            /** uri  */
-            "uri": window.location.pathname,
+            /** uri  保留参数*/
+            "uri": window.location.href.replace(window.location.protocol + "//" + window.location.host, ""),
             /** 首次跳入的ref  */
             "firstReferrer": sessionStorage["bigdata"],
             /** 页面跳入的ref  */
@@ -158,7 +157,7 @@
             /** 页面停留时间  */
             time_on_page: 0
         },
-        saveData:function(){
+        saveData: function () {
 
         },
         ScollPostion: function () {

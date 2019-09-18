@@ -8,8 +8,10 @@ import com.shoestp.mains.rpc.shoestp.pojo.GRPC_SendDataProto;
 import com.shoestp.mains.service.metadata.InquiryInfoService;
 import com.shoestp.mains.service.metadata.UserInfoService;
 import org.springframework.stereotype.Service;
+import org.start2do.utils.DateTimeUtil;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Optional;
 
@@ -72,5 +74,24 @@ public class InquiryInfoServiceImpl implements InquiryInfoService {
   @Override
   public void syncInquiry(GRPC_SendDataProto.Inquiry info) {
     save(info);
+  }
+
+  /**
+   * Count by pkey and type 根据产品/商家的 id 和类型统计某个时间段内的询盘总数
+   *
+   * @param pkey the pkey
+   * @param type the type
+   * @param start the start
+   * @param end the end
+   * @return the long
+   * @author lijie
+   * @date 2019 /09/16
+   * @since long.
+   */
+  @Override
+  public Long countByPkeyAndType(
+      Integer pkey, InquiryTypeEnum type, LocalDateTime start, LocalDateTime end) {
+    return inquiryDao.countByPkeyAndTypeAndCreateTimeBetween(
+        pkey, type, DateTimeUtil.toDate(start), DateTimeUtil.toDate(end));
   }
 }

@@ -1,5 +1,6 @@
 package com.shoestp.mains.config;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shoestp.mains.pojo.MessageResult;
 import org.apache.logging.log4j.LogManager;
@@ -40,6 +41,13 @@ public class CustomResponseBodyAdvice implements ResponseBodyAdvice {
       ServerHttpResponse serverHttpResponse) {
     if (o instanceof MessageResult) {
       return o;
+    }
+    if (o instanceof String) {
+      try {
+        return objectMapper.writeValueAsString(MessageResult.builder().code(1).result(o).build());
+      } catch (JsonProcessingException e) {
+        e.printStackTrace();
+      }
     }
     return MessageResult.builder().code(1).result(o).build();
   }

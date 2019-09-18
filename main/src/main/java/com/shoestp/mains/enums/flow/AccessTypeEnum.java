@@ -32,8 +32,11 @@ public enum AccessTypeEnum {
   USER_MESSAGE_CENTER("用户中心"),
   /** /seller 商家端 */
   SELLER_ADMIN("商家后台"),
+  SUPPLIER_PAGE(" 供应商店铺"),
   /** /platform 平台端 */
-  PLATFORM_ADMIN("平台端");
+  PLATFORM_ADMIN("平台端"),
+
+  LANDING("着陆页");
 
   private String name;
 }

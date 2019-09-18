@@ -12,27 +12,41 @@ import com.shoestp.mains.service.metadata.LocationService;
 import com.shoestp.mains.service.metadata.UserInfoService;
 import com.shoestp.mains.service.metadata.WebVisitInfoService;
 import com.shoestp.mains.service.urlmatchdatautil.URLMatchDataUtilService;
+import com.shoestp.mains.views.Page;
 import eu.bitwalker.useragentutils.UserAgent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.start2do.utils.DateTimeUtil;
 
 import javax.annotation.Resource;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
-/** Created by IntelliJ IDEA. User: lijie@shoestp.cn Date: 2019/5/20 Time: 11:17 */
+/**
+ * Created by IntelliJ IDEA. User: lijie@shoestp.cn Date: 2019/5/20 Time: 11:17 @author lijie
+ *
+ * @date 2019 /09/12
+ * @since
+ */
 @Service
 public class WebVisitInfoServiceImpl implements WebVisitInfoService {
+  /** The constant logger. */
   private static final Logger logger = LogManager.getLogger(WebVisitInfoServiceImpl.class);
 
+  /** The Web visit info dao. */
   @Resource(name = "com.shoestp.mains.dao.metadata.WebVisitDao")
   private WebVisitInfoDao webVisitInfoDao;
 
+  /** The User info service. */
   @Resource private UserInfoService userInfoService;
+  /** The Location service. */
   @Resource private LocationService locationService;
+  /** The Url match data util service. */
   @Resource private URLMatchDataUtilService urlMatchDataUtilService;
 
   @Override
@@ -98,33 +112,63 @@ public class WebVisitInfoServiceImpl implements WebVisitInfoService {
   @Override
   public void fixdata() {
     List<WebVisitInfo> list = webVisitInfoDao.findAll();
-    list.forEach(
-        webVisitInfo -> {
-          boolean update = false;
-          String[] address = locationService.getAddress(webVisitInfo.getIp());
-          PltCountry country = locationService.getCountry(address[0]);
-          if (country == null
-              || webVisitInfo.getLocation() == null
-              || !country.getId().equals(webVisitInfo.getLocation().getId())) {
-            webVisitInfo.setLocation(country);
-            update = false;
-          }
-          UserInfo userInfo = webVisitInfo.getUserId();
-          userInfo.setCountry(country);
-          if (address.length > 1) {
-            Province province = locationService.getProvince(address[1]);
-            webVisitInfo.setProvince(province);
-            userInfo.setProvince(province);
-          }
-          userInfoService.update(userInfo);
-          AccessTypeEnum anEnum = urlMatchDataUtilService.getPageType(webVisitInfo.getUri());
-          if (!webVisitInfo.getPageType().equals(anEnum)) {
-            webVisitInfo.setPageType(anEnum);
-            update = true;
-          }
-          if (update) {
-            webVisitInfoDao.saveAndFlush(webVisitInfo);
-          }
-        });
+    list.parallelStream()
+        .forEach(
+            webVisitInfo -> {
+              boolean update = false;
+              String[] address = locationService.getAddress(webVisitInfo.getIp());
+              PltCountry country = locationService.getCountry(address[0]);
+              if (country == null
+                  || webVisitInfo.getLocation() == null
+                  || !country.getId().equals(webVisitInfo.getLocation().getId())) {
+                webVisitInfo.setLocation(country);
+                update = false;
+              }
+              UserInfo userInfo = webVisitInfo.getUserId();
+              userInfo.setCountry(country);
+              if (address.length > 1) {
+                Province province = locationService.getProvince(address[1]);
+                webVisitInfo.setProvince(province);
+                userInfo.setProvince(province);
+              }
+              userInfoService.update(userInfo);
+              AccessTypeEnum anEnum = urlMatchDataUtilService.getPageType(webVisitInfo.getUri());
+              if (!webVisitInfo.getPageType().equals(anEnum)) {
+                webVisitInfo.setPageType(anEnum);
+                update = true;
+              }
+              if (update) {
+                webVisitInfoDao.saveAndFlush(webVisitInfo);
+              }
+            });
+  }
+
+  /**
+   * Gets all by page type. 按照类型,并且根据开始结束时间的访问记录
+   *
+   * @author lijie
+   * @date 2019 /09/12
+   * @since *
+   * @param startDate the start date
+   * @param endDate the end date
+   * @param start the start
+   * @param limit the limit
+   * @param typeEnum the type enum
+   * @return the all by page type
+   */
+  @Override
+  public Page<WebVisitInfo> getAllByPageTypeAndStartTimeAndEndTime(
+      LocalDateTime startDate,
+      LocalDateTime endDate,
+      Integer start,
+      Integer limit,
+      AccessTypeEnum... typeEnum) {
+    Pageable pageable = null;
+    if (start != null && limit != null) {
+      pageable = PageRequest.of(start / limit, limit);
+    }
+    return Page.build(
+        webVisitInfoDao.findAllByPageTypeInAndCreateTimeGreaterThanAndCreateTimeLessThan(
+            typeEnum, DateTimeUtil.toDate(startDate), DateTimeUtil.toDate(endDate), pageable));
   }
 }

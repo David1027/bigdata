@@ -266,3 +266,35 @@ INSERT INTO meta_data_province (id, name) VALUES (650000, '新疆维吾尔自治
 INSERT INTO meta_data_province (id, name) VALUES (710000, '台湾省');
 INSERT INTO meta_data_province (id, name) VALUES (810000, '香港特别行政区');
 INSERT INTO meta_data_province (id, name) VALUES (820000, '澳门特别行政区');
+-- # Update 代码
+INSERT INTO urlmatch_data_entity (id, name, priority, regex, type, description)
+VALUES (1, '迪胜', null, '/activity/html/ds*', 'LANDINGPAGE', null);
+INSERT INTO urlmatch_data_entity (id, name, priority, regex, type, description)
+VALUES (2, '美廉美', null, '/activity/html/mlm*', 'LANDINGPAGE', null);
+INSERT INTO urlmatch_data_entity (id, name, priority, regex, type, description)
+VALUES (3, 'GOOGLE', null, 'http*//www.google.*', 'SEARCHENGINE', null);
+INSERT INTO urlmatch_data_entity (id, name, priority, regex, type, description)
+VALUES (4, 'DETAIL', null, '/*_p*.html', 'PAGETYPE', null);
+INSERT INTO urlmatch_data_entity (id, name, priority, regex, type, description)
+VALUES (5, 'INDEX', null, '/', 'PAGETYPE', null);
+INSERT INTO urlmatch_data_entity (id, name, priority, regex, type, description)
+VALUES (6, 'INDEX', null, '/home/usr_UsrPurchase', 'PAGETYPE', null);
+INSERT INTO urlmatch_data_entity (id, name, priority, regex, type, description)
+VALUES (7, 'LIST', null, '/home/pdt_PdtProduct?cated=*', 'PAGETYPE', null);
+INSERT INTO urlmatch_data_entity (id, name, priority, regex, type, description)
+VALUES (8, 'INQUIRY', 10, '/home/usr_UsrSupplier_goContactSupplier*', 'PAGETYPE', null);
+INSERT INTO urlmatch_data_entity (id, name, priority, regex, type, description)
+VALUES (9, 'INTERVIEW', null, '', 'SEARCHENGINE', null);
+INSERT INTO urlmatch_data_entity (id, name, priority, regex, type, description)
+VALUES (10, 'USER_REG', null, '/home/usr_UsrMain_completeReg', 'PAGETYPE', null);
+INSERT INTO urlmatch_data_entity (id, name, priority, regex, type, description)
+VALUES (11, 'USER_MESSAGE_CENTER', null, '/home/usr_UsrMessages_center', 'PAGETYPE', null);
+INSERT INTO urlmatch_data_entity (id, name, priority, regex, type, description)
+VALUES (12, 'PLATFORM_ADMIN', null, '/platform/*', 'PAGETYPE', null);
+INSERT INTO urlmatch_data_entity (id, name, priority, regex, type, description)
+VALUES (13, 'SUPPLIER_PAGE', null, '/home/usr_UsrSupplier_gtSupIndex?pkey=*', 'PAGETYPE', null);
+INSERT INTO urlmatch_data_entity (id, name, priority, regex, type, description)
+VALUES (14, 'SUPPLIER_PAGE', null, '/home/usr_UsrSupplier_gtSupPro?pkey=*', 'PAGETYPE', null);
+INSERT INTO urlmatch_data_entity (id, name, priority, regex, type, description)
+VALUES (15, 'SUPPLIER_PAGE', null, '/home/usr_UsrSupplier_gtSupInfo?pkey=*
+', 'PAGETYPE', null);

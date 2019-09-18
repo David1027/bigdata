@@ -24,7 +24,9 @@ public class SetBeanUtils {
       SetAfter<S, T> setAfter) {
     try {
       T target = targetClass.newInstance();
-      if (setBefore != null) setBefore.before(source, target);
+      if (setBefore != null) {
+        setBefore.before(source, target);
+      }
       if (source instanceof Map) {
         mapSet((Map) source, target, (SetRun<Map, T>) setRun);
       } else {
@@ -72,16 +74,22 @@ public class SetBeanUtils {
       try {
         Field sourceFld;
         sourceFld = sourceClass.getDeclaredField(setBeanFldInfo.getName());
-        if (!TypeSafeUtil.check(sourceFld.getType(), setBeanFldInfo.getType(), isLeft)) continue;
+        if (!TypeSafeUtil.check(sourceFld.getType(), setBeanFldInfo.getType(), isLeft)) {
+          continue;
+        }
         Object value = ClassUtils.Value(source, setBeanFldInfo.getGetMethod(), null, null, false);
         TypeSafeResult result =
             isLeft
                 ? TypeSafeUtil.convert(source.getClass(), value, sourceFld.getType())
                 : TypeSafeUtil.convert(source.getClass(), value, setBeanFldInfo.getType());
-        if (result == null) continue;
+        if (result == null) {
+          continue;
+        }
         ClassUtils.Value(
             target, setBeanFldInfo.getSetMethod(), result.getSetType(), result.getSetValue(), true);
-        if (setRun != null) setRun.run(source, target);
+        if (setRun != null) {
+          setRun.run(source, target);
+        }
       } catch (NoSuchFieldException e) {
         e.printStackTrace();
       }
@@ -97,10 +105,14 @@ public class SetBeanUtils {
     for (SetBeanFldInfo setBeanFldInfo : GetClassInfo.getFld(Map.class, target.getClass(), false)) {
       Object value = map.get(setBeanFldInfo.getName());
       TypeSafeResult result = TypeSafeUtil.convert(null, value, setBeanFldInfo.getType());
-      if (result == null) continue;
+      if (result == null) {
+        continue;
+      }
       ClassUtils.Value(
           target, setBeanFldInfo.getSetMethod(), result.getSetType(), result.getSetValue(), true);
-      if (run != null) run.run(map, target);
+      if (run != null) {
+        run.run(map, target);
+      }
     }
     return target;
   }

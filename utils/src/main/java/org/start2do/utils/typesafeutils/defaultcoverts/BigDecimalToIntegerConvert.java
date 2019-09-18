@@ -1,7 +1,7 @@
 package org.start2do.utils.typesafeutils.defaultcoverts;
 
-import org.start2do.utils.typeSafe.TypeSafe;
-import org.start2do.utils.typeSafe.TypeSafeConvert;
+import org.start2do.utils.typesafe.TypeSafe;
+import org.start2do.utils.typesafe.TypeSafeConvert;
 
 import java.math.BigDecimal;
 

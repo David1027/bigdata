@@ -15,9 +15,9 @@ import org.apache.logging.log4j.Logger;
 import org.reflections.Reflections;
 import org.start2do.utils.MyStringUtils;
 import org.start2do.utils.ResourceUtils;
-import org.start2do.utils.typeSafe.TypeSafe;
-import org.start2do.utils.typeSafe.TypeSafeConvert;
-import org.start2do.utils.typeSafe.TypeSafeTools;
+import org.start2do.utils.typesafe.TypeSafe;
+import org.start2do.utils.typesafe.TypeSafeConvert;
+import org.start2do.utils.typesafe.TypeSafeTools;
 import org.start2do.utils.typesafeutils.pojo.ObjectSafeConfig;
 import org.start2do.utils.typesafeutils.pojo.TypeSafeResult;
 

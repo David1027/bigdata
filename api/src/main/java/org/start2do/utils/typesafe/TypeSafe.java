@@ -1,4 +1,4 @@
-package org.start2do.utils.typeSafe;
+package org.start2do.utils.typesafe;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

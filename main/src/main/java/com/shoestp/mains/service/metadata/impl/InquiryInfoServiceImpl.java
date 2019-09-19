@@ -7,6 +7,8 @@ import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
 import com.shoestp.mains.rpc.shoestp.pojo.GRPC_SendDataProto;
 import com.shoestp.mains.service.metadata.InquiryInfoService;
 import com.shoestp.mains.service.metadata.UserInfoService;
+import com.shoestp.mains.views.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.start2do.utils.DateTimeUtil;
 
@@ -93,5 +95,19 @@ public class InquiryInfoServiceImpl implements InquiryInfoService {
       Integer pkey, InquiryTypeEnum type, LocalDateTime start, LocalDateTime end) {
     return inquiryDao.countByPkeyAndTypeAndCreateTimeBetween(
         pkey, type, DateTimeUtil.toDate(start), DateTimeUtil.toDate(end));
+  }
+
+  /**
+   * Gets inquiry. 根据类型查询出相应的询盘
+   *
+   * @param type
+   * @author lijie
+   * @date 2019 /09/19
+   * @since
+   */
+  @Override
+  public Page<InquiryInfo> getInquiry(InquiryTypeEnum type) {
+    PageRequest request = PageRequest.of(0, 10);
+    return Page.build(inquiryDao.findAllByType(type, request));
   }
 }

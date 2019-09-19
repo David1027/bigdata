@@ -50,6 +50,8 @@ shoestp:
     transformconver:
       enable: true
       timing: 60
+    InquiryConver:
+      enable: true
 
 
 management:

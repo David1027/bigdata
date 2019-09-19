@@ -76,7 +76,6 @@
             }
             /** 如果没有唯一标识获取用户唯一标识 */
             if (!_that.data.userInfo || !_that.data.userInfo.userName) {
-                console.log("请求签名")
                 this.ajax.get(this.config.host + "/api/analytics/device_sign",
                     function (data) {
                         data = JSON.parse(data)
@@ -93,6 +92,20 @@
                         _that.data.session_create_time = date
                     })
             }
+            /** 获取 session  */
+            if (!_that.data.session){
+                this.ajax.get(this.config.host + "/api/analytics/device_sign?get=session",
+                    function (data) {
+                        data = JSON.parse(data)
+                        /** 设置会话ID及会话创建时间,但是不设置过期时间,默认关闭浏览器就过期  */
+                        _that.cookie.set("__" + _that.config.key + "_session", data.result.session)
+                        var date = Number(new Date());
+                        _that.cookie.set("__" + _that.config.key + "_session_time", date)
+                        _that.data.session = data.result.session
+                        _that.data.session_create_time = date
+                    })
+            }
+
             /** 添加事件  */
             window.addEventListener('unload', function (event) {
                 _that.data.firstReferrer = sessionStorage[_that.config.key

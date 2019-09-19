@@ -24,7 +24,6 @@ public class IpUtils {
       try {
         return db.find(ips, "CN");
       } catch (Exception e) {
-        e.printStackTrace();
         logger.error("ip format error:{}", ips);
       }
     }

@@ -188,4 +188,9 @@ public class InquiryController {
                 InquiryTypeEnum.COMMODITY.toString(), endTime, num, start, limit))
         .build();
   }
+
+  @GetMapping(value = "/execInquiry")
+  public void execInquiry() {
+    inquiryNewService.schedulers();
+  }
 }

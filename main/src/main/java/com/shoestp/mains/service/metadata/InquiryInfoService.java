@@ -3,6 +3,7 @@ package com.shoestp.mains.service.metadata;
 import com.shoestp.mains.entitys.metadata.InquiryInfo;
 import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
 import com.shoestp.mains.rpc.shoestp.pojo.GRPC_SendDataProto;
+import com.shoestp.mains.views.Page;
 
 import java.time.LocalDateTime;
 
@@ -59,4 +60,13 @@ public interface InquiryInfoService {
    */
   Long countByPkeyAndType(
       Integer pkey, InquiryTypeEnum type, LocalDateTime start, LocalDateTime end);
+
+  /**
+   * Gets inquiry.
+   * 根据类型查询出相应的询盘
+   * @author lijie
+   * @date 2019 /09/19
+   * @since
+   */
+  Page<InquiryInfo> getInquiry(InquiryTypeEnum type);
 }

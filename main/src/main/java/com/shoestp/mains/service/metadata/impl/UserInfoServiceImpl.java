@@ -83,7 +83,12 @@ public class UserInfoServiceImpl implements UserInfoService {
     if (result != null && result.isPresent()) {
       userInfo = result.get();
     } else {
-      userInfo = new com.shoestp.mains.entitys.metadata.UserInfo();
+      result = userInfoDao.findByName(info.getName());
+      if (result.isPresent()) {
+        userInfo = result.get();
+      } else {
+        userInfo = new com.shoestp.mains.entitys.metadata.UserInfo();
+      }
     }
     /** 获取用户类型 */
     switch (info.getSex()) {
@@ -105,6 +110,8 @@ public class UserInfoServiceImpl implements UserInfoService {
       case 1:
         userInfo.setType(RegisterTypeEnum.SUPPLIER);
         break;
+      default:
+        userInfo.setType(RegisterTypeEnum.ADMIN);
     }
     /** 设置用户状态 */
     switch (info.getStatus()) {
@@ -115,7 +122,7 @@ public class UserInfoServiceImpl implements UserInfoService {
         userInfo.setStatus(UserStatus.UNVERIFY);
     }
     /** 设置国家地址 */
-    if (info.getCountry() == null || info.getCountry().length() > 0) {
+    if (info.getCountry() == null || info.getCountry().length() < 1) {
       String[] address = locationService.getAddress(info.getIp());
       PltCountry country = locationService.getCountry(address[0]);
       userInfo.setCountry(country);

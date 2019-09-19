@@ -341,13 +341,14 @@ public class InquiryServiceImpl implements InquiryService {
   public Map<String, List> getInquiryTimeHourMap(
       InquiryTypeEnum inquiryType, String inquiryName, Date date) {
     List<KeyValue> keyValue = new ArrayList<>();
-    keyValue.add(
-        KeyValueViewUtil.getFlowKeyValue(
-            "visitorCount",
-            getEveryHourByInquiryName(inquiryType, inquiryName, date, "visitorCount")));
-    keyValue.add(
-        KeyValueViewUtil.getFlowKeyValue(
-            "viewCount", getEveryHourByInquiryName(inquiryType, inquiryName, date, "viewCount")));
+    //    keyValue.add(
+    //        KeyValueViewUtil.getFlowKeyValue(
+    //            "visitorCount",
+    //            getEveryHourByInquiryName(inquiryType, inquiryName, date, "visitorCount")));
+    //    keyValue.add(
+    //        KeyValueViewUtil.getFlowKeyValue(
+    //            "viewCount", getEveryHourByInquiryName(inquiryType, inquiryName, date,
+    // "viewCount")));
     keyValue.add(
         KeyValueViewUtil.getFlowKeyValue(
             "inquiryCount",
@@ -356,11 +357,11 @@ public class InquiryServiceImpl implements InquiryService {
         KeyValueViewUtil.getFlowKeyValue(
             "inquiryNumber",
             getEveryHourByInquiryName(inquiryType, inquiryName, date, "inquiryNumber")));
-    keyValue.add(
-        KeyValueViewUtil.getFlowKeyValue(
-            "inquiryAmount",
-            getEveryHourByInquiryName(inquiryType, inquiryName, date, "inquiryAmount")));
-    Map<String, List> inquiryTimeMap = new HashMap<>();
+    //    keyValue.add(
+    //        KeyValueViewUtil.getFlowKeyValue(
+    //            "inquiryAmount",
+    //            getEveryHourByInquiryName(inquiryType, inquiryName, date, "inquiryAmount")));
+    Map<String, List> inquiryTimeMap = new HashMap<>(16);
     inquiryTimeMap.put("day", keyValue);
     return inquiryTimeMap;
   }

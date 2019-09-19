@@ -66,7 +66,7 @@ public class RealServiceImpl implements RealService {
     if (d == null) {
       d = 0.0;
     }
-    return d;
+    return CustomDoubleSerialize.setDouble(d);
   }
 
   /**

@@ -548,24 +548,33 @@ public class FlowServiceImpl implements FlowService {
     Map<String, List<AccessView>> accessPageMap = new HashMap<>(16);
     List<AccessView> list = new ArrayList<>();
     for (AccessTypeEnum a : AccessTypeEnum.values()) {
-      AccessView access = new AccessView();
-      // 页面类型
-      access.setAccessType(a.toString());
-      access.setAccessName(a.getName());
-      // 访客数
-      Integer visitor =
-          flowPageDao.countAccessByType(
-              a, DateTimeUtil.getTimesOfDay(startDate, 0), DateTimeUtil.getTimesOfDay(endDate, 24));
-      access.setVisitorCount(visitor);
-      // 访客占比率
-      // 一天内的总访客数
-      Integer visitorTotal =
-          flowPageDao.findAllByAccessTotal(
-              DateTimeUtil.getTimesOfDay(startDate, 0), DateTimeUtil.getTimesOfDay(endDate, 24));
-      // 占比率
-      access.setVisitorRate(
-          CustomDoubleSerialize.setDouble(CalculateUtil.getExcept(visitor, visitorTotal)));
-      list.add(access);
+      if (a.equals(AccessTypeEnum.INDEX)
+          || a.equals(AccessTypeEnum.DETAIL)
+          || a.equals(AccessTypeEnum.LIST)
+          || a.equals(AccessTypeEnum.OTHER)
+          || a.equals(AccessTypeEnum.USER_REG)
+          || a.equals(AccessTypeEnum.LANDING)) {
+        AccessView access = new AccessView();
+        // 页面类型
+        access.setAccessType(a.toString());
+        access.setAccessName(a.getName());
+        // 访客数
+        Integer visitor =
+            flowPageDao.countAccessByType(
+                a,
+                DateTimeUtil.getTimesOfDay(startDate, 0),
+                DateTimeUtil.getTimesOfDay(endDate, 24));
+        access.setVisitorCount(visitor);
+        // 访客占比率
+        // 一天内的总访客数
+        Integer visitorTotal =
+            flowPageDao.findAllByAccessTotal(
+                DateTimeUtil.getTimesOfDay(startDate, 0), DateTimeUtil.getTimesOfDay(endDate, 24));
+        // 占比率
+        access.setVisitorRate(
+            CustomDoubleSerialize.setDouble(CalculateUtil.getExcept(visitor, visitorTotal)));
+        list.add(access);
+      }
     }
     accessPageMap.put("access", list);
     return accessPageMap;

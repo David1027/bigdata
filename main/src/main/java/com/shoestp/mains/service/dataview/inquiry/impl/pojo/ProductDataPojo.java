@@ -51,6 +51,13 @@ public class ProductDataPojo {
     return productDataPojo;
   }
 
+  public Long getInquiryCount() {
+    if (inquiryCount == null) {
+      return 0L;
+    }
+    return inquiryCount;
+  }
+
   /**
    * Add
    *
@@ -91,6 +98,14 @@ public class ProductDataPojo {
       uv = 1;
     } else {
       uv++;
+    }
+  }
+
+  public void addInquery() {
+    if (inquiryCount == null) {
+      inquiryCount = 1L;
+    } else {
+      inquiryCount++;
     }
   }
 }

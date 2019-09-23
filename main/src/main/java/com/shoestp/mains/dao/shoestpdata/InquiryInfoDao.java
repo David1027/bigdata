@@ -3,8 +3,8 @@ package com.shoestp.mains.dao.shoestpdata;
 import com.shoestp.mains.entitys.metadata.InquiryInfo;
 import com.shoestp.mains.enums.inquiry.InquiryTypeEnum;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
@@ -18,7 +18,7 @@ import java.util.Optional;
  * @since
  */
 @Repository(value = "com.shoestp.mains.dao.shoestpdata.InquiryInfoDao")
-public interface InquiryInfoDao extends JpaRepository<InquiryInfo, Integer> {
+public interface InquiryInfoDao extends PagingAndSortingRepository<InquiryInfo, Integer> {
   /**
    * Find by inquiry id
    *
@@ -48,11 +48,15 @@ public interface InquiryInfoDao extends JpaRepository<InquiryInfo, Integer> {
   /**
    * The constant fin. @author lijie
    *
+   * @author lijie
    * @date 2019 /09/19
    * @since page.
    * @param type the type
+   * @param start the start
+   * @param end the end
    * @param pageRequest the page request
    * @return the page
    */
-  Page<InquiryInfo> findAllByType(InquiryTypeEnum type, PageRequest pageRequest);
+  Page<InquiryInfo> findAllByTypeAndCreateTimeBetween(
+      InquiryTypeEnum type, Date start, Date end, Pageable pageRequest);
 }

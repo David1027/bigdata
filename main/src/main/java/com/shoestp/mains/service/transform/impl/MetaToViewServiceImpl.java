@@ -416,7 +416,7 @@ public class MetaToViewServiceImpl implements MetaToViewService {
       // 平均停留时长（访问页面的总时长 / 浏览量）
       Long time = webVisitDao.getPageTypeTimeOnPage(a, start, end);
       if (view != 0) {
-        flowPage.setAverageStayTime(time / view / 1000.0);
+        flowPage.setAverageStayTime((time / view) / 1000.0);
       } else {
         flowPage.setAverageStayTime(0.0);
       }

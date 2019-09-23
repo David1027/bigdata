@@ -298,3 +298,5 @@ VALUES (14, 'SUPPLIER_PAGE', null, '/home/usr_UsrSupplier_gtSupPro?pkey=*', 'PAG
 INSERT INTO urlmatch_data_entity (id, name, priority, regex, type, description)
 VALUES (15, 'SUPPLIER_PAGE', null, '/home/usr_UsrSupplier_gtSupInfo?pkey=*
 ', 'PAGETYPE', null);
+INSERT INTO urlmatch_data_entity (id, name, priority, regex, type, description) VALUES (16, 'LANDING', null, '/activity/html/*', 'PAGETYPE', null);
+INSERT INTO urlmatch_data_entity (id, name, priority, regex, type, description) VALUES (17, 'BAIDU', null, 'http*//www.baidu.com*', 'SEARCHENGINE', null);

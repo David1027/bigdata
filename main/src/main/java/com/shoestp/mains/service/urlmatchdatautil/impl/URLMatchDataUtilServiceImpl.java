@@ -84,6 +84,9 @@ public class URLMatchDataUtilServiceImpl implements URLMatchDataUtilService {
         urlMatchDataDao.findByTypeOrderByPriorityDesc(URLDataTypeEnum.SEARCHENGINE);
     for (URLMatchDataEntity urlMatchDataEntity : list) {
       logger.debug("Name:{},Regex:{}", urlMatchDataEntity.getName(), urlMatchDataEntity.getRegex());
+      if (url == null) {
+        continue;
+      }
       if (MyStringUtils.isMatch3(urlMatchDataEntity.getRegex(), url)) {
         return SourceTypeEnum.valueOf(urlMatchDataEntity.getName());
       }

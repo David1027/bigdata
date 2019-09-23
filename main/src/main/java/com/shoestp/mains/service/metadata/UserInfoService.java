@@ -100,4 +100,13 @@ public interface UserInfoService {
    * @return the user info
    */
   UserInfo save(UserInfoPojo userInfo, PltCountry location, Province province);
+
+  /**
+   * Remove duplicate user
+   *
+   * @author lijie
+   * @date 2019 /09/20
+   * @since .
+   */
+  void removeDuplicateUser();
 }

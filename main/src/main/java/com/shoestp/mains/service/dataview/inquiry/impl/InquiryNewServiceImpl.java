@@ -24,6 +24,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -61,25 +63,9 @@ public class InquiryNewServiceImpl implements InquiryNewService {
     if (start != null && limit != null) {
       pageable = PageRequest.of(((start / limit)), limit);
     }
-    Optional<DataViewInquiryNew> result =
-        inquiryNewRepository.findTopByOrderByStatisticalTimeDesc();
-    if (result.isPresent()) {
-      if (keyword != null) {
-        return Page.build(
-            inquiryNewRepository.findAllByNameAndTypeAndStatisticalTimeEquals(
-                keyword,
-                InquiryTypeEnum.valueOf(type.name()),
-                result.get().getStatisticalTime(),
-                pageable));
-      } else {
-        return Page.build(
-            inquiryNewRepository.findAllByTypeAndStatisticalTimeEquals(
-                InquiryTypeEnum.valueOf(type.name()), result.get().getStatisticalTime(), pageable));
-      }
-    }
+    InquiryTypeEnum _type = InquiryTypeEnum.valueOf(type.name());
     return Page.build(
-        inquiryNewRepository.findAllByNameAndTypeAndStatisticalTimeEquals(
-            keyword, InquiryTypeEnum.valueOf(type.name()), null, pageable));
+        inquiryNewRepository.findAllByNameAndTypeGroupByNameAndImage(keyword, _type, pageable));
   }
 
   /**
@@ -92,8 +78,17 @@ public class InquiryNewServiceImpl implements InquiryNewService {
   @Override
   public void schedulers() {
     /** 获取最后的统计时间 */
+    LocalDateTime[] time = getLastTime(InquiryTypeEnum.SUPPLIER);
+    supplier(time[0], time[1]);
+    time = getLastTime(InquiryTypeEnum.PRODUCT);
+    product(time[0], time[1]);
+    time = getLastTime(InquiryTypeEnum.LANDING);
+    landing(time[0], time[1]);
+  }
+
+  private LocalDateTime[] getLastTime(InquiryTypeEnum type) {
     Optional<DataViewInquiryNew> result =
-        inquiryNewRepository.findTopByOrderByStatisticalTimeDesc();
+        inquiryNewRepository.findTopByTypeOrderByStatisticalTimeDesc(type);
     LocalDateTime lastTime = DateTimeUtil.now();
     LocalDateTime startTime;
     if (result.isPresent()) {
@@ -101,10 +96,10 @@ public class InquiryNewServiceImpl implements InquiryNewService {
     } else {
       startTime = LocalDateTime.of(2000, 1, 1, 0, 0);
     }
-    supplier(startTime, lastTime);
-    product(startTime, lastTime);
-    landing(startTime, lastTime);
+    return new LocalDateTime[] {startTime, lastTime};
   }
+
+  private Pattern landingName = Pattern.compile(".*?landing/(\\w+)/.*");
 
   private void landing(LocalDateTime startTime, LocalDateTime lastTime) {
     Page<WebVisitInfo> landingList =
@@ -113,7 +108,6 @@ public class InquiryNewServiceImpl implements InquiryNewService {
     ConcurrentHashMap<String, SupplierDataPojo> landingMap = new ConcurrentHashMap<>();
     landingList
         .getList()
-        //        .parallelStream()
         .forEach(
             webVisitInfo -> {
               logger.debug("Landing Page Url:{}", webVisitInfo.getUri());
@@ -125,18 +119,57 @@ public class InquiryNewServiceImpl implements InquiryNewService {
               } else {
                 pojo = getSupplierDataPojo(landingMap.get(id), webVisitInfo, id);
               }
-              if (pojo.getInquiryCount() == null) {
-
-                pojo.setInquiryCount(
-                    meta_inquiryInfoService.countByPkeyAndType(
-                        Integer.valueOf(id),
-                        com.shoestp.mains.enums.inquiry.InquiryTypeEnum.SUPPLIER,
-                        startTime,
-                        lastTime));
-              }
               if (id == 0) {
                 landingMap.put(webVisitInfo.getTitle(), pojo);
               } else {
+                landingMap.put(String.valueOf(id), pojo);
+              }
+            });
+    meta_inquiryInfoService
+        .getInquiry(com.shoestp.mains.enums.inquiry.InquiryTypeEnum.LANDING, startTime, lastTime)
+        .getList()
+        .forEach(
+            inquiryInfo -> {
+              Integer id = null;
+              try {
+                id =
+                    urlMatchDataUtilService.getSupplierPkeyByUrl(
+                        new URL(inquiryInfo.getUrl()).getPath());
+              } catch (MalformedURLException e) {
+                e.printStackTrace();
+              }
+              SupplierDataPojo pojo;
+              if (id == 0 || id == null) {
+                Matcher matcher = landingName.matcher(inquiryInfo.getUrl());
+                if (matcher.find()) {
+                  pojo = landingMap.get(matcher.group(1));
+                } else {
+                  pojo = landingMap.get(inquiryInfo.getName());
+                }
+              } else {
+                pojo = landingMap.get(id);
+              }
+              if (pojo == null) {
+                pojo = SupplierDataPojo.getInstance();
+                pojo.setInquiryCount(1L);
+                pojo.setPv(1);
+                pojo.setUv(1);
+              } else {
+                pojo.addUV();
+                pojo.addInquiry();
+                pojo.add();
+              }
+              if (id == 0) {
+                /** TODO 2019/9/19 8:55 下午 这里最好和 user 表关联 */
+                Matcher matcher = landingName.matcher(inquiryInfo.getUrl());
+                if (matcher.find()) {
+                  pojo.setTitle(matcher.group(1));
+                } else {
+                  pojo.setTitle(inquiryInfo.getName());
+                }
+                landingMap.put(pojo.getTitle(), pojo);
+              } else {
+                pojo.setTitle(userInfoService.getUserInfo(id, null).getName());
                 landingMap.put(String.valueOf(id), pojo);
               }
             });
@@ -178,24 +211,37 @@ public class InquiryNewServiceImpl implements InquiryNewService {
                   productDataPojo = ProductDataPojo.getInstance();
                 }
                 BloomFilter<String> filter = productDataPojo.getIpFilter();
-                /** 注意这里 Ip 过滤器按照一天的周期来运行,如果定时任务,小于一天,要根据具体的 uv 规则来,所以后续可能先初始化 ip 过滤器  */
+                /** 注意这里 Ip 过滤器按照一天的周期来运行,如果定时任务,小于一天,要根据具体的 uv 规则来,所以后续可能先初始化 ip 过滤器 */
                 if (!filter.mightContain(webVisitInfo.getIp())) {
                   productDataPojo.addUV();
                   filter.put(webVisitInfo.getIp());
                 }
-                productDataPojo.setInquiryCount(
-                    meta_inquiryInfoService.countByPkeyAndType(
-                        Integer.valueOf(id),
-                        com.shoestp.mains.enums.inquiry.InquiryTypeEnum.COMMODITY,
-                        startTime,
-                        lastTime));
-
                 productDataPojo.add(webVisitInfo.getTitle());
                 productMap.put(id, productDataPojo);
               }
             });
     /** 得到数据 */
     logger.debug("统计产品数据:{}", productMap);
+    meta_inquiryInfoService
+        .getInquiry(com.shoestp.mains.enums.inquiry.InquiryTypeEnum.COMMODITY, startTime, lastTime)
+        .getList()
+        .parallelStream()
+        .forEach(
+            inquiryInfo -> {
+              ProductDataPojo productDataPojo = productMap.get(inquiryInfo.getPkey());
+              if (productDataPojo == null) {
+                productDataPojo = ProductDataPojo.getInstance();
+                productDataPojo.setTitle(inquiryInfo.getName());
+              }
+              if (productDataPojo.getImage() == null || productDataPojo.getImage().length() < 1) {
+                productDataPojo.setImage(inquiryInfo.getImg());
+              }
+              productDataPojo.add();
+              productDataPojo.addUV();
+              productDataPojo.addInquery();
+              productMap.put(String.valueOf(inquiryInfo.getPkey()), productDataPojo);
+            });
+
     productMap.forEach(
         (s, productDataPojo) -> {
           DataViewInquiryNew dataViewInquiryNew = new DataViewInquiryNew();
@@ -238,6 +284,7 @@ public class InquiryNewServiceImpl implements InquiryNewService {
     Page<WebVisitInfo> infoPage =
         webVisitInfoService.getAllByPageTypeAndStartTimeAndEndTime(
             startTime, lastTime, null, null, AccessTypeEnum.SUPPLIER_PAGE);
+    /** 存入的 Integer 为 Id */
     ConcurrentHashMap<String, SupplierDataPojo> supplierMap = new ConcurrentHashMap<>();
     for (WebVisitInfo webVisitInfo : infoPage.getList()) {
       Matcher matcher = supplierId.matcher(webVisitInfo.getUri());
@@ -246,12 +293,7 @@ public class InquiryNewServiceImpl implements InquiryNewService {
         logger.debug("url:{} supplier Id:{}", webVisitInfo.getUri(), id);
         SupplierDataPojo pojo =
             getSupplierDataPojo(supplierMap.get(id), webVisitInfo, Integer.valueOf(id));
-        pojo.setInquiryCount(
-            meta_inquiryInfoService.countByPkeyAndType(
-                Integer.valueOf(id),
-                com.shoestp.mains.enums.inquiry.InquiryTypeEnum.SUPPLIER,
-                startTime,
-                lastTime));
+
         supplierMap.put(id, pojo);
       } else {
         logger.info(
@@ -261,6 +303,28 @@ public class InquiryNewServiceImpl implements InquiryNewService {
       }
     }
     logger.debug("Supplier Data:{}:", supplierMap);
+    meta_inquiryInfoService
+        .getInquiry(com.shoestp.mains.enums.inquiry.InquiryTypeEnum.SUPPLIER, startTime, lastTime)
+        .getList()
+        .parallelStream()
+        .forEach(
+            inquiryInfo -> {
+              /** 获取所有供应商询盘 */
+              UserInfo supplier = inquiryInfo.getRecipient_user();
+              if (supplier == null) {
+                return;
+              }
+              SupplierDataPojo pojo = supplierMap.get(supplier.getUserId());
+              if (pojo == null) {
+                pojo = SupplierDataPojo.getInstance();
+                pojo.setTitle(supplier.getName());
+                pojo.setPv(1);
+                pojo.setUv(1);
+              }
+              pojo.addInquiry();
+              supplierMap.put(String.valueOf(supplier.getUserId()), pojo);
+            });
+
     supplierMap.forEach(
         (s, pojo) -> {
           DataViewInquiryNew dataViewInquiryNew = new DataViewInquiryNew();

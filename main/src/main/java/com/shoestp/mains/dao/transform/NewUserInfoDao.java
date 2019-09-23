@@ -5,6 +5,7 @@ import com.shoestp.mains.dao.BaseDao;
 import com.shoestp.mains.entitys.metadata.QUserInfo;
 import com.shoestp.mains.entitys.metadata.UserInfo;
 import com.shoestp.mains.entitys.metadata.enums.RegisterTypeEnum;
+import com.shoestp.mains.entitys.metadata.enums.UserStatus;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
@@ -34,7 +35,9 @@ public class NewUserInfoDao extends BaseDao<UserInfo> {
             .where(qUserInfo.createTime.between(start, end))
             .from(qUserInfo);
     if (registerTypeEnum != null) {
-      query.where(qUserInfo.type.eq(registerTypeEnum));
+      query
+          .where(qUserInfo.type.eq(registerTypeEnum))
+          .where(qUserInfo.status.eq(UserStatus.VERIFY));
     } else {
       query.where(qUserInfo.type.ne(RegisterTypeEnum.VISITOR));
     }

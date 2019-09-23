@@ -30,26 +30,17 @@ public class InquiryConver extends BaseSchedulers {
   /** The constant logger. */
   private static final Logger logger = LogManager.getLogger(InquiryConver.class);
 
-  /**
-   * Init
-   *
-   * @author lijie
-   * @date 2019 /09/17
-   * @since .
-   */
-  @PostConstruct
-  public void init() {
-    setJobNmae(InquiryConver.class.getName());
-    setScheduleBuilder(
-        DailyTimeIntervalScheduleBuilder.dailyTimeIntervalSchedule()
-            .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(0, 1))
-            .withInterval(24, DateBuilder.IntervalUnit.HOUR));
-  }
-
   /** The Enable. */
   @Value("${shoestp.scheduler.InquiryConver.enable}")
   private Boolean enable = false;
 
+  @Value("${shoestp.scheduler.InquiryConver.cron}")
+  private String cron = "0 1 0 * * ?";
+
+  @PostConstruct
+  public void init() {
+    setJobNmae(InquiryConver.class.getName());
+  }
   /**
    * Job detail
    *
@@ -74,9 +65,8 @@ public class InquiryConver extends BaseSchedulers {
   @Bean(name = "InquiryConverTrigger")
   public Trigger sampleJobTrigger() {
     return TriggerBuilder.newTrigger()
-        .forJob(jobDetail())
-        .withIdentity(getJobNmae() + "Trigger")
-        .withSchedule(getScheduleBuilder())
+        .forJob(getJobNmae())
+        .withSchedule(CronScheduleBuilder.cronSchedule(cron))
         .build();
   }
 

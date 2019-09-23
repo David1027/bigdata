@@ -106,8 +106,11 @@ public class InquiryInfoServiceImpl implements InquiryInfoService {
    * @since
    */
   @Override
-  public Page<InquiryInfo> getInquiry(InquiryTypeEnum type) {
+  public Page<InquiryInfo> getInquiry(
+      InquiryTypeEnum type, LocalDateTime start, LocalDateTime end) {
     PageRequest request = PageRequest.of(0, 10);
-    return Page.build(inquiryDao.findAllByType(type, request));
+    return Page.build(
+        inquiryDao.findAllByTypeAndCreateTimeBetween(
+            type, DateTimeUtil.toDate(start), DateTimeUtil.toDate(end), request));
   }
 }

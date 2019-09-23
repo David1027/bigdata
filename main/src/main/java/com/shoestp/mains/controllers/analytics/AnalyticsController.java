@@ -40,7 +40,7 @@ public class AnalyticsController extends BaseController {
     WebVisitInfoView webVisitInfoView = objectMapper.readValue(body, WebVisitInfoView.class);
     logger.info("Pojo Info =>{}", webVisitInfoView);
     if (webVisitInfoView.getTime_on_page() > AnalyticsConstant.PAGEONTIME) {
-      webVisitInfoView.setPage_wait_time(AnalyticsConstant.PAGEONTIME);
+      webVisitInfoView.setTime_on_page(AnalyticsConstant.PAGEONTIME);
     }
     webVisitInfoService.save(
         webVisitInfoView, getIpByHeader(httpRequest), getUserAgentByHeader(httpRequest));

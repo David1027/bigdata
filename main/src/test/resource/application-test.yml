@@ -52,6 +52,7 @@ shoestp:
       timing: 60
     InquiryConver:
       enable: true
+      cron: "0 1 0 * * ?"
 
 
 management:

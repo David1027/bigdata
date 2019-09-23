@@ -59,7 +59,7 @@ internal class InquiryServiceImplTest : BaseTest() {
     @Test
     fun findTopOrderByStatistical_timeDesc() {
         setUp()
-        val dataViewInquiryNew = inquiryNewRepository!!.findTopByOrderByStatisticalTimeDesc().get()
+        val dataViewInquiryNew = inquiryNewRepository!!.findTopByTypeOrderByStatisticalTimeDesc(InquiryTypeEnum.SUPPLIER).get()
         val result = DateTimeUtil.timeDifferent(
                 dataViewInquiryNew.statisticalTime, LocalDateTime.of(2019, 9, 22, 11, 22))
                 .toString()

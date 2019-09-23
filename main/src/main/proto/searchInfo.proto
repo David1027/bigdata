@@ -44,7 +44,7 @@ message Inquiry {
     string img = 9;
     /** 用户询盘者的ID  */
     uint32 submit_user = 10;
-    /** 询盘接受者ID,即商家ID  */
+    /** 询盘接受者ID,即商家ID  usrMain Id*/
     uint32 recipient_user = 14;
     /** 用户唯一标识  */
     string sign = 11;

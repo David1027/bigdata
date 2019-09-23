@@ -50,7 +50,7 @@ public class RealController {
   @GetMapping(value = "/indexgrand")
   public Object getIndexGrand(HttpServletRequest httpRequest) {
     logger.debug(httpRequest.getCookies());
-    return MessageResult.builder().code(1).msg("Hello").result(realService.getIndexGrand()).build();
+    return MessageResult.builder().code(1).result(realService.getIndexGrand()).build();
   }
 
   /**

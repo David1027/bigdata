@@ -62,11 +62,11 @@ public interface InquiryInfoService {
       Integer pkey, InquiryTypeEnum type, LocalDateTime start, LocalDateTime end);
 
   /**
-   * Gets inquiry.
-   * 根据类型查询出相应的询盘
+   * Gets inquiry. 根据类型查询出相应的询盘
+   *
    * @author lijie
    * @date 2019 /09/19
    * @since
    */
-  Page<InquiryInfo> getInquiry(InquiryTypeEnum type);
+  Page<InquiryInfo> getInquiry(InquiryTypeEnum type, LocalDateTime start, LocalDateTime end);
 }

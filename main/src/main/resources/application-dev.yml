@@ -51,6 +51,7 @@ shoestp:
       enable: true
     InquiryConver:
       enable: true
+      cron: 0 1 0 * * ?
 
 
 management:

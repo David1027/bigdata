@@ -1,5 +1,7 @@
 package com.shoestp.mains.service.metadata.impl;
 
+import com.google.common.hash.BloomFilter;
+import com.google.common.hash.Funnels;
 import com.shoestp.mains.controllers.analytics.view.pojo.UserInfoPojo;
 import com.shoestp.mains.dao.metadata.UserInfoDao;
 import com.shoestp.mains.entitys.metadata.PltCountry;
@@ -16,7 +18,9 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.nio.charset.Charset;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -239,6 +243,26 @@ public class UserInfoServiceImpl implements UserInfoService {
       info.setCountry(country);
       info.setProvince(province);
       return userInfoDao.save(info);
+    }
+  }
+
+  @Override
+  public void removeDuplicateUser() {
+    List<UserInfo> list = userInfoDao.findAll();
+    BloomFilter filter =
+        BloomFilter.create(Funnels.stringFunnel(Charset.forName("UTF-8")), list.size());
+    for (UserInfo userInfo : list) {
+      if (userInfo.getName() != null) {
+        try {
+          if (!filter.mightContain(userInfo.getName())) {
+            filter.put(userInfo.getName());
+          } else {
+            userInfoDao.delete(userInfo);
+          }
+        } catch (Exception e) {
+
+        }
+      }
     }
   }
 }

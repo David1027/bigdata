@@ -23,6 +23,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.xinlianshiye.clouds</groupId>
+            <artifactId>clouds-sso-facade</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <!-- Import dependency management from Spring Boot -->
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-dependencies</artifactId>

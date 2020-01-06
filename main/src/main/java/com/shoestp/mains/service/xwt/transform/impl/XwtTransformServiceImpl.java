@@ -35,22 +35,14 @@ import org.springframework.stereotype.Service;
 @SuppressWarnings("ALL")
 public class XwtTransformServiceImpl implements XwtTransformService {
 
-  @Autowired
-  private XwtMetaAccessLogDAO accessLogDAO;
-  @Autowired
-  private XwtMetaMemberInfoDAO memberInfoDAO;
-  @Autowired
-  private XwtViewRealDAO realDAO;
-  @Autowired
-  private XwtViewFlowDAO flowDAO;
-  @Autowired
-  private XwtViewFlowPageDAO flowPageDAO;
-  @Autowired
-  private XwtViewUserDAO userDAO;
-  @Autowired
-  private XwtViewUserAreaDAO userAreaDAO;
-  @Autowired
-  private XwtViewCountryDAO countryDAO;
+  @Autowired private XwtMetaAccessLogDAO accessLogDAO;
+  @Autowired private XwtMetaMemberInfoDAO memberInfoDAO;
+  @Autowired private XwtViewRealDAO realDAO;
+  @Autowired private XwtViewFlowDAO flowDAO;
+  @Autowired private XwtViewFlowPageDAO flowPageDAO;
+  @Autowired private XwtViewUserDAO userDAO;
+  @Autowired private XwtViewUserAreaDAO userAreaDAO;
+  @Autowired private XwtViewCountryDAO countryDAO;
 
   /**
    * 判断XwtViewReal实时表的数据是否为空
@@ -129,7 +121,7 @@ public class XwtTransformServiceImpl implements XwtTransformService {
    * @return List<XwtMetaAccessLog> 日志信息集合对象
    */
   private List<XwtMetaAccessLog> listDeviceSource(
-          Date start, Date end, DeviceTypeEnum device, SourceTypeEnum source) {
+      Date start, Date end, DeviceTypeEnum device, SourceTypeEnum source) {
     return accessLogDAO.findAllByCreateTimeBetweenAndDeviceTypeAndSourceType(
         start, end, device, source);
   }
@@ -380,6 +372,8 @@ public class XwtTransformServiceImpl implements XwtTransformService {
     user.setMaterialCount(0L);
     // 设计师数量
     user.setDesignerCount(0L);
+    // 创建时间
+    user.setCreateTime(new Date());
     if (decideIsNull(user)) {
       userDAO.save(user);
     }

@@ -4,6 +4,9 @@ import java.util.Date;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.shoestp.mains.utils.dateUtils.CustomDoubleSerialize;
+
 import lombok.Data;
 
 /**
@@ -29,7 +32,7 @@ public class XwtViewReal {
   @Column(name = "visitor_count_wap", columnDefinition = "bigint(20) comment '移动端访客数'")
   private Long visitorCountWap;
 
-  /** 总访客数 */
+  /** 访客数 */
   @Column(name = "visitor_count", columnDefinition = "bigint(20) comment '总访客数'")
   private Long visitorCount;
 
@@ -44,4 +47,27 @@ public class XwtViewReal {
   /** 创建时间 */
   @Column(name = "create_time", columnDefinition = "datetime comment '创建时间'")
   private Date createTime;
+
+  /* ==============================忽略字段============================== */
+  /** 访客数与昨日的比较值 */
+  @Transient private Double visitorCompareYesterday;
+  /** 访客数与上周同一日的比较值 */
+  @Transient private Double visitorCompareWeek;
+
+  /** 浏览量与昨日的比较值 */
+  @Transient private Double viewCompareYesterday;
+  /** 浏览量与上周同一日的比较值 */
+  @Transient private Double viewCompareWeek;
+
+  /** 注册量与昨日的比较值 */
+  @Transient private Double registerCompareYesterday;
+  /** 注册量与上周同一日的比较值 */
+  @Transient private Double registerCompareWeek;
+
+  /** 跳失率 */
+  @Transient private Double jumpRate;
+  /** 跳失率与昨日的比较值 */
+  @Transient private Double jumpRateCompareYesterday;
+  /** 跳失率与上周同一日的比较值 */
+  @Transient private Double jumpRateCompareWeek;
 }

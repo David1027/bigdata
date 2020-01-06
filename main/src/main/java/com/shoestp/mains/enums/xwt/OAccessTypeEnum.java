@@ -11,8 +11,20 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum OAccessTypeEnum {
-  /** 首页 */
-  INDEX("首页"),
+  /** 首页 - /shopMall/ */
+  XWT_INDEX("首页"),
+  /** 订货会 */
+  XWT_ORDERMEET("订货会"),
+  /** 采购市场 */
+  XWT_PURCHASE("采购市场"),
+  /** 寻商机 */
+  XWT_COOPERATE("寻商机"),
+  /** 鞋设计 */
+  XWT_DESIGN("鞋设计"),
+  /** 流行趋势 */
+  XWT_FASHION("流行趋势"),
+  /** 鞋资讯 */
+  XWT_NEWS("鞋资讯"),
   /** 其他 */
   OTHER("其他");
 

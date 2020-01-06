@@ -8,6 +8,7 @@ import com.shoestp.mains.entitys.xwt.metadata.XwtMetaMemberInfo;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.enums.xwt.OAccessTypeEnum;
 import com.shoestp.mains.enums.xwt.OMemberRoleEnum;
+import com.shoestp.mains.service.urlmatchdatautil.URLMatchDataUtilService;
 import com.shoestp.mains.service.xwt.metadata.XwtMetaAccessLogService;
 import com.shoestp.mains.service.xwt.metadata.XwtMetaCountryService;
 import com.shoestp.mains.service.xwt.metadata.XwtMetaMemberInfoService;
@@ -29,16 +30,12 @@ import org.start2do.utils.iputils.IpUtils;
 @Service
 public class XwtMetaAccessLogServiceImpl implements XwtMetaAccessLogService {
 
-  @Autowired
-  private XwtMetaAccessLogDAO dao;
-  @Autowired
-  private MemberServiceGrpc.MemberServiceBlockingStub memberServiceBlockingStub;
-  @Autowired
-  private XwtMetaMemberInfoService memberInfoService;
-  @Autowired
-  private XwtMetaCountryService countryService;
-  @Autowired
-  private XwtMetaProvinceService provinceService;
+  @Autowired private XwtMetaAccessLogDAO dao;
+  @Autowired private MemberServiceGrpc.MemberServiceBlockingStub memberServiceBlockingStub;
+  @Autowired private XwtMetaMemberInfoService memberInfoService;
+  @Autowired private XwtMetaCountryService countryService;
+  @Autowired private XwtMetaProvinceService provinceService;
+  @Autowired private URLMatchDataUtilService urlMatchDataUtilService;
 
   /**
    * 保存日志信息
@@ -50,7 +47,8 @@ public class XwtMetaAccessLogServiceImpl implements XwtMetaAccessLogService {
     // 处理来源类型
     accessLog.setSourceType(getSourceType(accessLog.getRef()));
     // 处理页面类型
-    accessLog.setAccessType(getAccessType(accessLog.getUrl()));
+    accessLog.setAccessType(urlMatchDataUtilService.getAccessType(accessLog.getUri()));
+    //    accessLog.setAccessType(getAccessType(accessLog.getUrl()));
     // 关联用户信息表
     accessLog.setMemberInfoId(
         getMemberInfo(accessLog.getUserId(), accessLog.getToken(), accessLog.getUvId()));
@@ -74,8 +72,10 @@ public class XwtMetaAccessLogServiceImpl implements XwtMetaAccessLogService {
     if (accessLog.getSsCount() > 0) {
       XwtMetaAccessLog access =
           dao.findBySsIdAndSsCount(accessLog.getSsId(), accessLog.getSsCount() - 1);
-      access.setTimeOnPage(accessLog.getSsTime().getTime() - access.getSsTime().getTime());
-      dao.save(access);
+      if (access != null) {
+        access.setTimeOnPage(accessLog.getSsTime().getTime() - access.getSsTime().getTime());
+        dao.save(access);
+      }
       return 0L;
     }
     return 0L;
@@ -99,6 +99,7 @@ public class XwtMetaAccessLogServiceImpl implements XwtMetaAccessLogService {
     } else {
       // 如果查询不存在，则默认返回6
       accessLog.setCountryId(6);
+      accessLog.setProvinceId(1);
     }
   }
 
@@ -169,7 +170,7 @@ public class XwtMetaAccessLogServiceImpl implements XwtMetaAccessLogService {
    */
   private OAccessTypeEnum getAccessType(String url) {
     if ("http://localhost/shopMall/".equals(url)) {
-      return OAccessTypeEnum.INDEX;
+      return OAccessTypeEnum.XWT_INDEX;
     }
     return OAccessTypeEnum.OTHER;
   }

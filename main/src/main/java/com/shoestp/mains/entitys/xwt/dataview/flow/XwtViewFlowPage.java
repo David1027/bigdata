@@ -4,7 +4,9 @@ import java.util.Date;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.shoestp.mains.enums.xwt.OAccessTypeEnum;
+import com.shoestp.mains.utils.dateUtils.CustomDoubleSerialize;
 
 import lombok.Data;
 
@@ -50,4 +52,28 @@ public class XwtViewFlowPage {
   /** 创建时间 */
   @Column(name = "create_time")
   private Date createTime;
+
+  /* ==============================忽略字段============================== */
+  /** 访客占比 */
+  @Transient private Double visitorRate;
+  /** 页面名称 */
+  @Transient private String accessName;
+
+  /** 平均浏览量 */
+  @Transient private Double viewAvgCount;
+  /** 平均浏览量与昨日的比较值 */
+  @Transient private Double viewCompareYesterday;
+  /** 平均浏览量与上周同一日的比较值 */
+
+  @Transient private Double viewCompareWeek;
+  /** 跳失率与昨日的比较值 */
+  @Transient private Double jumpCompareYesterday;
+  /** 跳失率与上周同一日的比较值 */
+  @Transient private Double jumpCompareWeek;
+
+
+  /** 平均停留时长与昨日的比较值 */
+  @Transient private Double timeCompareYesterday;
+  /** 平均停留时长与上周同一日的比较值 */
+  @Transient private Double timeCompareWeek;
 }

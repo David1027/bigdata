@@ -113,13 +113,12 @@ public class XwtMetaAccessLog {
 
   /* ==============================忽略字段============================== */
 
+  /** uri */
+  @Transient private String uri;
   /** 用户登陆id */
-  @Transient
-  private String userId;
+  @Transient private String userId;
   /** 用户登陆token */
-  @Transient
-  private String token;
+  @Transient private String token;
   /** cookie中的访客id */
-  @Transient
-  private String uvId;
+  @Transient private String uvId;
 }

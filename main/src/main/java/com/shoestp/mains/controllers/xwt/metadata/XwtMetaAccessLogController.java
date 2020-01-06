@@ -53,11 +53,6 @@ public class XwtMetaAccessLogController {
     accessLog.setIp(HttpRequestUtils.getIpAddress(request));
     // 添加设备平台标识
     accessLog.setDeviceType(HttpRequestUtils.getDevice(request));
-
-    System.err.println("==================================");
-    System.err.println("xwtMetaAccessLog" + accessLog);
-    System.err.println("==================================");
-
     // 保存日志对象
     service.save(accessLog);
   }

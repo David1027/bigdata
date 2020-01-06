@@ -3,7 +3,10 @@ package com.shoestp.mains.dao.xwt.metadata.repository;
 import java.util.Date;
 import java.util.List;
 
+import com.shoestp.mains.controllers.xwt.dataview.plat.vo.real.XwtRealVisitorPageVO;
+import com.shoestp.mains.controllers.xwt.dataview.plat.vo.real.XwtRealVisitorVO;
 import com.shoestp.mains.entitys.xwt.metadata.XwtMetaAccessLog;
+import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.enums.xwt.OAccessTypeEnum;
 import com.shoestp.mains.enums.xwt.OMemberRoleEnum;
 import com.shoestp.mains.views.transform.DeviceVisitorVO;
@@ -52,7 +55,7 @@ public interface XwtMetaAccessLogRepository {
    * @return Long 会话次数
    */
   List countByCreateTimeAndAccessTypeGroupBySsIdHavingSsCount(
-          Date start, Date end, OAccessTypeEnum accessType);
+      Date start, Date end, OAccessTypeEnum accessType);
 
   /**
    * 根据时间和页面类型获取平均停留时长
@@ -111,4 +114,70 @@ public interface XwtMetaAccessLogRepository {
    * @return List<XwtMetaAccessLog> 日志信息集合对象
    */
   List<XwtMetaAccessLog> listByCreateTimeAndCountry(Date start, Date end, Integer countryId);
+
+  /**
+   * 根据搜索条件，时间分页获取日志信息记录
+   *
+   * @author: lingjian @Date: 2020/1/3 13:56
+   * @param start 开始时间
+   * @param end 结束时间
+   * @param page 开始条数
+   * @param limit 显示条数
+   * @param visitType 访客类型
+   * @param sourceType 流量来源类型
+   * @param urlPage 被访问页面
+   * @param country 国家
+   * @return List<XwtMetaAccessLog> 日志信息集合对象
+   */
+  List<XwtRealVisitorVO> listAccessLogs(
+      Date start,
+      Date end,
+      Integer page,
+      Integer limit,
+      Integer visitType,
+      SourceTypeEnum sourceType,
+      String urlPage,
+      Integer country);
+
+  /**
+   * 根据搜索条件，时间分页获取日志信息记录的数量
+   *
+   * @author: lingjian @Date: 2020/1/3 13:56
+   * @param start 开始时间
+   * @param end 结束时间
+   * @param visitType 访客类型
+   * @param sourceType 流量来源类型
+   * @param urlPage 被访问页面
+   * @param country 国家
+   * @return Long 日志信息记录数
+   */
+  Long countAccessLogs(
+      Date start,
+      Date end,
+      Integer visitType,
+      SourceTypeEnum sourceType,
+      String urlPage,
+      Integer country);
+
+  /**
+   * 根据时间分组获取url日志信息记录
+   *
+   * @author: lingjian @Date: 2020/1/3 14:16
+   * @param start 开始时间
+   * @param end 结束时间
+   * @param page 开始条数
+   * @param limit 显示条数
+   * @return List<XwtRealVisitorPageVO> 常访问页面前端展示类集合对象
+   */
+  List<XwtRealVisitorPageVO> listAccessLogsUrl(Date start, Date end, Integer page, Integer limit);
+
+  /**
+   * 根据时间分组获取url日志信息记录的总条数
+   *
+   * @author: lingjian @Date: 2020/1/3 14:22
+   * @param start 开始时间
+   * @param end 结束时间
+   * @return Long 日志信息记录数
+   */
+  Long countAccessLogsUrl(Date start, Date end);
 }

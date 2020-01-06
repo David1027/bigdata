@@ -14,6 +14,12 @@ public final class Contants {
   public static final String VISITOR = "visitor";
   /** 浏览量 */
   public static final String VIEW = "view";
+  /** 点击率 */
+  public static final String CLICK_RATE = "clickRate";
+  /** 平均停留时长 */
+  public static final String AVERAGE_STAY_TIME = "averageStayTime";
+  /** 平均浏览量 */
+  public static final String VIEW_AVG_COUNT = "viewAvgCount";
   /** 注册量 */
   public static final String REGISTER = "register";
   /** 询盘数 */
@@ -26,6 +32,16 @@ public final class Contants {
   public static final String LIST = "list";
   /** 今天名称 */
   public static final String TODAY = "today";
+  /** 月份 */
+  public static final String MONTH = "month";
   /** 昨天名称 */
   public static final String RATHERDAY = "ratherday";
+  /** 来源类型 */
+  public static final String SOURCE_TYPE = "sourcetype";
+  /** 页面类型 */
+  public static final String ACCESS = "access";
+  /** 页面类型的集合 */
+  public static final String ANALYSIS = "analysis";
+  /** 流量页面 */
+  public static final String FLOW_PAGE = "flowpage";
 }

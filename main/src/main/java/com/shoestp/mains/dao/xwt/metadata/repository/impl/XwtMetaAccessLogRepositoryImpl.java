@@ -5,10 +5,13 @@ import java.util.List;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
+import com.shoestp.mains.controllers.xwt.dataview.plat.vo.real.XwtRealVisitorPageVO;
+import com.shoestp.mains.controllers.xwt.dataview.plat.vo.real.XwtRealVisitorVO;
 import com.shoestp.mains.dao.BaseDao;
 import com.shoestp.mains.dao.xwt.metadata.repository.XwtMetaAccessLogRepository;
 import com.shoestp.mains.entitys.xwt.metadata.QXwtMetaAccessLog;
 import com.shoestp.mains.entitys.xwt.metadata.XwtMetaAccessLog;
+import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.enums.xwt.OAccessTypeEnum;
 import com.shoestp.mains.enums.xwt.OMemberRoleEnum;
 import com.shoestp.mains.views.transform.DeviceVisitorVO;
@@ -225,5 +228,164 @@ public class XwtMetaAccessLogRepositoryImpl extends BaseDao<XwtMetaAccessLog>
         .groupBy(qAccessLog.memberInfoId)
         .fetchResults()
         .getResults();
+  }
+
+  /**
+   * 根据搜索条件，时间分页获取源数据表记录的方法
+   *
+   * @author: lingjian @Date: 2020/1/3 14:03
+   * @param start 开始时间
+   * @param end 结束时间
+   * @param visitType 访客类型
+   * @param sourceType 流量来源类型
+   * @param urlPage 被访问页面
+   * @param country 国家
+   * @return JPAQuery<XwtMetaAccessLog> 日志信息集合对象
+   */
+  private JPAQuery<XwtRealVisitorVO> getRealVisitorViewJPAQuery(
+      Date start,
+      Date end,
+      Integer visitType,
+      SourceTypeEnum sourceType,
+      String urlPage,
+      Integer country) {
+    JPAQuery<XwtRealVisitorVO> query =
+        getQuery()
+            .select(Projections.bean(
+                    XwtRealVisitorVO.class,
+                    qAccessLog.id.as("id"),
+                    qAccessLog.url.as("url"),
+                    qAccessLog.ref.as("referer"),
+                    qAccessLog.sourceType.as("sourceType"),
+                    qAccessLog.countryId.as("countryId"),
+                    qAccessLog.xwtMetaCountry.name.as("countryName"),
+                    qAccessLog.xwtMetaMemberInfo.userRole.as("type"),
+                    qAccessLog.createTime.as("createTime"))
+            )
+            .from(qAccessLog)
+            .where(qAccessLog.createTime.between(start, end));
+    // 访客类型
+    if (visitType != null && visitType == 1) {
+      query.where(qAccessLog.xwtMetaMemberInfo.userRole.eq(OMemberRoleEnum.REGISTER));
+    } else if (visitType != null && visitType == 0) {
+      query.where(qAccessLog.xwtMetaMemberInfo.userRole.eq(OMemberRoleEnum.VISITOR));
+    }
+    // 被访问页面
+    if (urlPage != null && !"".equals(urlPage)) {
+      query.where(qAccessLog.url.eq(urlPage));
+    }
+    // 访客位置
+    if (country != null) {
+      query.where(qAccessLog.countryId.eq(country));
+    }
+    // 来源类型
+    if (sourceType != null) {
+      query.where(qAccessLog.sourceType.eq(sourceType));
+    }
+    query.orderBy(qAccessLog.createTime.desc());
+    return query;
+  }
+
+  /**
+   * 根据搜索条件，时间分页获取日志信息记录
+   *
+   * @param start 开始时间
+   * @param end 结束时间
+   * @param page 开始条数
+   * @param limit 显示条数
+   * @param visitType 访客类型
+   * @param sourceType 流量来源类型
+   * @param urlPage 被访问页面
+   * @param country 国家
+   * @return List<XwtMetaAccessLog> 日志信息集合对象
+   */
+  @Override
+  public List<XwtRealVisitorVO> listAccessLogs(
+      Date start,
+      Date end,
+      Integer page,
+      Integer limit,
+      Integer visitType,
+      SourceTypeEnum sourceType,
+      String urlPage,
+      Integer country) {
+    JPAQuery<XwtRealVisitorVO> query =
+        getRealVisitorViewJPAQuery(start, end, visitType, sourceType, urlPage, country);
+    return query.offset(page).limit(limit).fetchResults().getResults();
+  }
+
+  /**
+   * 根据搜索条件，时间分页获取日志信息记录的数量
+   *
+   * @author: lingjian @Date: 2020/1/3 13:56
+   * @param start 开始时间
+   * @param end 结束时间
+   * @param visitType 访客类型
+   * @param sourceType 流量来源类型
+   * @param urlPage 被访问页面
+   * @param country 国家
+   * @return Long 日志信息记录数
+   */
+  @Override
+  public Long countAccessLogs(
+      Date start,
+      Date end,
+      Integer visitType,
+      SourceTypeEnum sourceType,
+      String urlPage,
+      Integer country) {
+    JPAQuery<XwtRealVisitorVO> query =
+        getRealVisitorViewJPAQuery(start, end, visitType, sourceType, urlPage, country);
+    return query.fetchCount();
+  }
+
+  /**
+   * 根据时间分组获取url集合列表
+   *
+   * @author: lingjian @Date: 2020/1/3 14:16
+   * @param start 开始时间
+   * @param end 结束时间
+   * @param page 开始条数
+   * @param limit 显示条数
+   * @return List<XwtMetaAccessLog> 日志信息集合对象
+   */
+  @Override
+  public List<XwtRealVisitorPageVO> listAccessLogsUrl(
+      Date start, Date end, Integer page, Integer limit) {
+    return getQuery()
+        .select(
+            Projections.bean(
+                XwtRealVisitorPageVO.class,
+                qAccessLog.url.as("url"),
+                qAccessLog.ip.countDistinct().as("visitorCount"),
+                qAccessLog.count().as("viewCount"),
+                qAccessLog.timeOnPage.avg().as("averageTime")))
+        .where(qAccessLog.createTime.between(start, end))
+        .groupBy(qAccessLog.url)
+        .from(qAccessLog)
+        .orderBy(qAccessLog.id.count().desc())
+        .orderBy(qAccessLog.ip.countDistinct().desc())
+        .offset(page)
+        .limit(limit)
+        .fetchResults()
+        .getResults();
+  }
+
+  /**
+   * 根据时间分组获取url日志信息记录的总条数
+   *
+   * @author: lingjian @Date: 2020/1/3 14:22
+   * @param start 开始时间
+   * @param end 结束时间
+   * @return Long 日志信息记录数
+   */
+  @Override
+  public Long countAccessLogsUrl(Date start, Date end) {
+    return getQuery()
+        .select(qAccessLog)
+        .where(qAccessLog.createTime.between(start, end))
+        .groupBy(qAccessLog.url)
+        .from(qAccessLog)
+        .fetchCount();
   }
 }

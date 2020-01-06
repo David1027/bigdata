@@ -22,6 +22,20 @@ public class CalculateUtil {
   }
 
   /**
+   * 计算两个值相除的值
+   *
+   * @param num1 值1
+   * @param num2 值2
+   * @return Double
+   */
+  public static Double getExcept(long num1, long num2) {
+    if (num2 == 0) {
+      num2 = 1;
+    }
+    return num1 / (num2 * 1.0);
+  }
+
+  /**
    * 计算两个值差相除的值
    *
    * @param num1 值1

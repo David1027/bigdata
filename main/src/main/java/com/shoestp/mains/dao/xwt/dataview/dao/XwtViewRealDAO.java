@@ -1,5 +1,7 @@
 package com.shoestp.mains.dao.xwt.dataview.dao;
 
+import java.util.Date;
+
 import com.shoestp.mains.dao.xwt.dataview.repository.XwtViewRealRepository;
 import com.shoestp.mains.entitys.xwt.dataview.real.XwtViewReal;
 
@@ -11,4 +13,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author lingjian
  * @since 2019-12-31 15:22:23
  */
-public interface XwtViewRealDAO extends XwtViewRealRepository, JpaRepository<XwtViewReal, Integer> {}
+public interface XwtViewRealDAO
+    extends XwtViewRealRepository, JpaRepository<XwtViewReal, Integer> {}

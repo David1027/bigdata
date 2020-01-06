@@ -17,8 +17,7 @@ import org.springframework.stereotype.Service;
 @SuppressWarnings("ALL")
 public class XwtMetaProvinceServiceImpl implements XwtMetaProvinceService {
 
-  @Autowired
-  private XwtMetaProvinceDAO dao;
+  @Autowired private XwtMetaProvinceDAO dao;
 
   /**
    * 根据省份名称返回省表id
@@ -28,6 +27,6 @@ public class XwtMetaProvinceServiceImpl implements XwtMetaProvinceService {
    */
   @Override
   public Integer getProvinceId(String name) {
-    return dao.findByNameLike(name).map(XwtMetaProvince::getId).orElse(null);
+    return dao.findByNameLike(name).map(XwtMetaProvince::getId).orElse(1);
   }
 }

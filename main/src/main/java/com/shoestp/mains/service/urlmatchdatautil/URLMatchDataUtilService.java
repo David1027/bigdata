@@ -2,6 +2,7 @@ package com.shoestp.mains.service.urlmatchdatautil;
 
 import com.shoestp.mains.enums.flow.AccessTypeEnum;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
+import com.shoestp.mains.enums.xwt.OAccessTypeEnum;
 import com.shoestp.mains.pojo.PageSourcePojo;
 
 /**
@@ -55,6 +56,16 @@ public interface URLMatchDataUtilService {
    * @return the page type
    */
   AccessTypeEnum getPageType(String uri);
+
+  /**
+   * 根据uri获取页面类型
+   *
+   * @author: lingjian
+   * @create: 2020/1/2 16:23
+   * @param uri 请求的uri
+   * @return OAccessTypeEnum 鞋网通页面类型
+   */
+  OAccessTypeEnum getAccessType(String uri);
 
   /**
    * Gets supplier pkey by url. 根据 Url 获取卖家的 Id,用于着陆页转换

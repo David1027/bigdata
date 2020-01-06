@@ -5,6 +5,7 @@ import com.shoestp.mains.entitys.urlmatchdatautil.URLMatchDataEntity;
 import com.shoestp.mains.entitys.urlmatchdatautil.enums.URLDataTypeEnum;
 import com.shoestp.mains.enums.flow.AccessTypeEnum;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
+import com.shoestp.mains.enums.xwt.OAccessTypeEnum;
 import com.shoestp.mains.pojo.PageSourcePojo;
 import com.shoestp.mains.service.urlmatchdatautil.URLMatchDataUtilService;
 import org.apache.logging.log4j.LogManager;
@@ -111,6 +112,25 @@ public class URLMatchDataUtilServiceImpl implements URLMatchDataUtilService {
       }
     }
     return AccessTypeEnum.OTHER;
+  }
+
+  /**
+   * 根据uri获取页面类型
+   *
+   * @author: lingjian
+   * @create: 2020/1/2 16:25
+   * @param uri 请求的uri
+   * @return OAccessTypeEnum 鞋网通页面类型
+   */
+  @Override
+  public OAccessTypeEnum getAccessType(String uri) {
+    for (URLMatchDataEntity urlMatchDataEntity :
+        urlMatchDataDao.findByTypeOrderByPriorityDesc(URLDataTypeEnum.PAGETYPE)) {
+      if (MyStringUtils.isMatch3(urlMatchDataEntity.getRegex(), uri)) {
+        return OAccessTypeEnum.valueOf(urlMatchDataEntity.getName());
+      }
+    }
+    return OAccessTypeEnum.OTHER;
   }
 
   /**

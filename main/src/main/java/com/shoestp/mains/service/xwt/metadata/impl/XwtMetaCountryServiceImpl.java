@@ -1,5 +1,7 @@
 package com.shoestp.mains.service.xwt.metadata.impl;
 
+import java.util.List;
+
 import com.shoestp.mains.dao.xwt.metadata.dao.XwtMetaCountryDAO;
 import com.shoestp.mains.entitys.xwt.metadata.XwtMetaCountry;
 import com.shoestp.mains.service.xwt.metadata.XwtMetaCountryService;
@@ -17,8 +19,7 @@ import org.springframework.stereotype.Service;
 @SuppressWarnings("ALL")
 public class XwtMetaCountryServiceImpl implements XwtMetaCountryService {
 
-  @Autowired
-  private XwtMetaCountryDAO dao;
+  @Autowired private XwtMetaCountryDAO dao;
 
   /**
    * 根据国家名称获取国家表id
@@ -29,5 +30,16 @@ public class XwtMetaCountryServiceImpl implements XwtMetaCountryService {
   @Override
   public Integer getCountryId(String name) {
     return dao.findByNameLike(name).map(XwtMetaCountry::getId).orElse(6);
+  }
+
+  /**
+   * 获取国家选择框列表
+   *
+   * @author: lingjian @Date: 2020/1/7 9:28
+   * @return List<XwtMetaCountry>
+   */
+  @Override
+  public List<XwtMetaCountry> getCountry() {
+    return dao.findAll();
   }
 }

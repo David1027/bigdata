@@ -1,8 +1,11 @@
 package com.shoestp.mains.service.urlmatchdatautil;
 
+import java.util.Map;
+
 import com.shoestp.mains.enums.flow.AccessTypeEnum;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.enums.xwt.OAccessTypeEnum;
+import com.shoestp.mains.enums.xwt.OProductEnum;
 import com.shoestp.mains.pojo.PageSourcePojo;
 
 /**
@@ -60,8 +63,7 @@ public interface URLMatchDataUtilService {
   /**
    * 根据uri获取页面类型
    *
-   * @author: lingjian
-   * @create: 2020/1/2 16:23
+   * @author: lingjian @Date: 2020/1/8 13:51
    * @param uri 请求的uri
    * @return OAccessTypeEnum 鞋网通页面类型
    */
@@ -77,4 +79,21 @@ public interface URLMatchDataUtilService {
    * @return the supplier pkey by url
    */
   Integer getSupplierPkeyByUrl(String uri);
+
+  /**
+   * 根据uri返回店铺的id或产品的id
+   *
+   * @author: lingjian @Date: 2020/1/8 13:51
+   * @param uri 请求的uri
+   * @return Map<OProductEnum,Integer> <店铺名称-店铺id>或<产品名称-产品的id>
+   */
+  Map<OProductEnum, Integer> getProductIdByUrl(String uri);
+
+  /**
+   * 根据uri返回搜索词
+   *
+   * @param uri url
+   * @return String 搜索词
+   */
+  String getSearchTermByUrl(String uri);
 }

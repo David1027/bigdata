@@ -14,6 +14,14 @@ public final class Contants {
   public static final String VISITOR = "visitor";
   /** 浏览量 */
   public static final String VIEW = "view";
+  /** 销售量 */
+  public static final String SALES = "sales";
+  /** 收藏量 */
+  public static final String FAVORITE = "favorite";
+  /** 交易金额 */
+  public static final String SALES_PRICE = "salesPrice";
+  /** 市场指数 */
+  public static final String MARKET = "market";
   /** 点击率 */
   public static final String CLICK_RATE = "clickRate";
   /** 平均停留时长 */
@@ -32,6 +40,8 @@ public final class Contants {
   public static final String LIST = "list";
   /** 今天名称 */
   public static final String TODAY = "today";
+  /** 日 */
+  public static final String DAY = "day";
   /** 月份 */
   public static final String MONTH = "month";
   /** 昨天名称 */

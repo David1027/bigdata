@@ -82,13 +82,13 @@ public class XwtMetaAccessLog {
   /** 关联国家 */
   @ManyToOne
   @JoinColumn(
-      name = "xwtMetaCountry",
+      name = "country",
       columnDefinition = "int(11) comment '关联国家'",
       updatable = false,
       insertable = false)
   private XwtMetaCountry xwtMetaCountry;
 
-  @Column(name = "xwtMetaCountry", columnDefinition = "int(11) comment '关联国家'")
+  @Column(name = "country", columnDefinition = "int(11) comment '关联国家'")
   private Integer countryId;
 
   /** 关联省份-中国 */
@@ -117,6 +117,12 @@ public class XwtMetaAccessLog {
   @Transient private String uri;
   /** 用户登陆id */
   @Transient private String userId;
+  /** 用户昵称 */
+  @Transient private String nickName;
+  /** 用户邮箱 */
+  @Transient private String email;
+  /** 用户手机号码 */
+  @Transient private String phone;
   /** 用户登陆token */
   @Transient private String token;
   /** cookie中的访客id */

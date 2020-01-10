@@ -5,8 +5,8 @@ import java.util.stream.Collectors;
 
 import com.shoestp.mains.controllers.xwt.dataview.plat.vo.user.XwtUserAreaVO;
 import com.shoestp.mains.controllers.xwt.dataview.plat.vo.user.XwtUserVO;
-import com.shoestp.mains.entitys.xwt.dataview.user.XwtViewUser;
-import com.shoestp.mains.entitys.xwt.dataview.user.XwtViewUserArea;
+import com.shoestp.mains.entitys.xwt.dataview.plat.user.XwtViewUser;
+import com.shoestp.mains.entitys.xwt.dataview.plat.user.XwtViewUserArea;
 import com.shoestp.mains.utils.xwt.BeanCopyUtils;
 
 import lombok.ToString;

@@ -6,7 +6,7 @@ import javax.annotation.Resource;
 
 import com.shoestp.mains.controllers.xwt.dataview.plat.dto.user.XwtUserDTO;
 import com.shoestp.mains.pojo.MessageResult;
-import com.shoestp.mains.service.xwt.dataview.XwtViewUserService;
+import com.shoestp.mains.service.xwt.dataview.plat.XwtViewUserService;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.PostMapping;

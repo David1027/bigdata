@@ -7,7 +7,7 @@ import javax.annotation.Resource;
 import com.shoestp.mains.controllers.xwt.dataview.plat.dto.real.XwtRealDTO;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.pojo.MessageResult;
-import com.shoestp.mains.service.xwt.dataview.XwtViewRealService;
+import com.shoestp.mains.service.xwt.dataview.plat.XwtViewRealService;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;

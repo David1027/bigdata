@@ -11,9 +11,9 @@ spring:
       config: classpath:/ehcacheConfig.xml
   datasource:
     #    url: jdbc:mysql://192.168.99.100:3306/test?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
-    url: jdbc:mysql://localhost:3306/bigdata?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/xwt_bigdata?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
     username: root
-    password: 123
+    password: root
     driver-class-name: com.mysql.jdbc.Driver
     type: com.zaxxer.hikari.HikariDataSource
     hikari:
@@ -73,4 +73,12 @@ appconfig:
     - www.shoestp.com
     - w3.shoestp.com
     - shoestp.com
+logging:
+  level:
+    root: info
+#sso:
+#  grpc:
+#    host: 192.168.100.48
+#    port: 50051
+#  domain: http://192.168.100.48:8180
 

@@ -5,9 +5,10 @@ import java.util.Date;
 import javax.annotation.Resource;
 
 import com.shoestp.mains.controllers.xwt.dataview.plat.dto.flow.XwtFlowDTO;
+import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.enums.xwt.OAccessTypeEnum;
 import com.shoestp.mains.pojo.MessageResult;
-import com.shoestp.mains.service.xwt.dataview.XwtViewFlowService;
+import com.shoestp.mains.service.xwt.dataview.plat.XwtViewFlowService;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -108,6 +109,23 @@ public class XwtViewFlowController {
   }
 
   /**
+   * 根据时间和来源类型获取流量概况(小时)
+   *
+   * @author: lingjian @Date: 2020/1/7 10:37
+   * @param date 时间
+   * @param sourceType 来源类型
+   * @return Map<String, Map>
+   */
+  @PostMapping(value = "new_flow_source_type_time_by_hour")
+  public Object getFlowSourceTypeTimeByHour(
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date, SourceTypeEnum sourceType) {
+    return MessageResult.builder()
+        .code(1)
+        .result(service.getFlowSourceTypeTimeByHour(date, sourceType))
+        .build();
+  }
+
+  /**
    * 根据时间获取流量概况(天)
    *
    * @author: lingjian @Date: 2020/1/6 9:58
@@ -121,6 +139,23 @@ public class XwtViewFlowController {
     return MessageResult.builder()
         .code(1)
         .result(service.getFlowSourceTypeTimeByDay(num, date))
+        .build();
+  }
+  /**
+   * 根据时间获取流量概况(天)
+   *
+   * @author: lingjian @Date: 2020/1/7 10:40
+   * @param date 时间
+   * @param num 天数
+   * @param sourceType 来源类型
+   * @return Map<String, Map>
+   */
+  @PostMapping(value = "new_flow_source_type_time_by_day")
+  public Object getFlowSourceTypeTimeByDay(
+      @DateTimeFormat(pattern = "yyyy-MM-dd") Date date, int num, SourceTypeEnum sourceType) {
+    return MessageResult.builder()
+        .code(1)
+        .result(service.getFlowSourceTypeTimeByDay(num, date,sourceType))
         .build();
   }
 

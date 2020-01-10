@@ -3,12 +3,12 @@ package com.shoestp.mains.service.xwt.transform;
 import java.util.Date;
 import java.util.List;
 
-import com.shoestp.mains.entitys.xwt.dataview.country.XwtViewCountry;
-import com.shoestp.mains.entitys.xwt.dataview.flow.XwtViewFlow;
-import com.shoestp.mains.entitys.xwt.dataview.flow.XwtViewFlowPage;
-import com.shoestp.mains.entitys.xwt.dataview.real.XwtViewReal;
-import com.shoestp.mains.entitys.xwt.dataview.user.XwtViewUser;
-import com.shoestp.mains.entitys.xwt.dataview.user.XwtViewUserArea;
+import com.shoestp.mains.entitys.xwt.dataview.plat.country.XwtViewCountry;
+import com.shoestp.mains.entitys.xwt.dataview.plat.flow.XwtViewFlow;
+import com.shoestp.mains.entitys.xwt.dataview.plat.flow.XwtViewFlowPage;
+import com.shoestp.mains.entitys.xwt.dataview.plat.real.XwtViewReal;
+import com.shoestp.mains.entitys.xwt.dataview.plat.user.XwtViewUser;
+import com.shoestp.mains.entitys.xwt.dataview.plat.user.XwtViewUserArea;
 
 /**
  * @description: 源数据转化展示数据服务层接口

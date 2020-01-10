@@ -1,5 +1,8 @@
 package com.shoestp.mains.controllers.xwt.metadata;
 
+import java.io.IOException;
+import java.net.URLDecoder;
+
 import javax.servlet.http.HttpServletRequest;
 
 import com.shoestp.mains.entitys.xwt.metadata.XwtMetaAccessLog;
@@ -25,8 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/xwt/meta/date/access/log")
 public class XwtMetaAccessLogController {
 
-  @Autowired
-  private XwtMetaAccessLogService service;
+  @Autowired private XwtMetaAccessLogService service;
 
   /**
    * 保存日志信息
@@ -34,7 +36,7 @@ public class XwtMetaAccessLogController {
    * @param request 客户端请求
    */
   @GetMapping("save")
-  public void save(HttpServletRequest request) throws NoSuchFieldException {
+  public void save(HttpServletRequest request) throws NoSuchFieldException, IOException {
     // 创建访问日志对象
     XwtMetaAccessLog accessLog = new XwtMetaAccessLog();
     // 获取访问日志对象属性名列表
@@ -53,7 +55,15 @@ public class XwtMetaAccessLogController {
     accessLog.setIp(HttpRequestUtils.getIpAddress(request));
     // 添加设备平台标识
     accessLog.setDeviceType(HttpRequestUtils.getDevice(request));
+    // 处理url中中文转码问题
+    accessLog.setUrl(URLDecoder.decode(accessLog.getUrl(), "UTF-8"));
+    accessLog.setUri(URLDecoder.decode(accessLog.getUri(), "UTF-8"));
+
+    System.err.println("=========================");
+    System.err.println(accessLog);
+    System.err.println("=========================");
     // 保存日志对象
     service.save(accessLog);
+    //
   }
 }

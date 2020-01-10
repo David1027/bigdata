@@ -14,7 +14,7 @@ public enum OMemberRoleEnum {
   /** 游客 */
   VISITOR("游客"),
   /** 注册用户 */
-  REGISTER("注册用户");
+  REGISTER("注册会员");
   /** 描述 */
   private String description;
 }

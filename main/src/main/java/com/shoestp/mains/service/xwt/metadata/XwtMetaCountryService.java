@@ -1,5 +1,9 @@
 package com.shoestp.mains.service.xwt.metadata;
 
+import java.util.List;
+
+import com.shoestp.mains.entitys.xwt.metadata.XwtMetaCountry;
+
 /**
  * 国家表表服务层接口
  *
@@ -15,4 +19,12 @@ public interface XwtMetaCountryService {
    * @return Integer 国家表id
    */
   Integer getCountryId(String name);
+
+  /**
+   * 获取国家选择框列表
+   *
+   * @author: lingjian @Date: 2020/1/7 9:28
+   * @return List<XwtMetaCountry> 国家表对象
+   */
+  List<XwtMetaCountry> getCountry();
 }

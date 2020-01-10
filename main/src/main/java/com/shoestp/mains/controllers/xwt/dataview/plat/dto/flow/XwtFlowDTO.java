@@ -6,8 +6,8 @@ import java.util.stream.Collectors;
 import com.shoestp.mains.controllers.xwt.dataview.plat.vo.flow.XwtFlowDeviceVO;
 import com.shoestp.mains.controllers.xwt.dataview.plat.vo.flow.XwtFlowPageVO;
 import com.shoestp.mains.controllers.xwt.dataview.plat.vo.flow.XwtFlowSourceVO;
-import com.shoestp.mains.entitys.xwt.dataview.flow.XwtViewFlow;
-import com.shoestp.mains.entitys.xwt.dataview.flow.XwtViewFlowPage;
+import com.shoestp.mains.entitys.xwt.dataview.plat.flow.XwtViewFlow;
+import com.shoestp.mains.entitys.xwt.dataview.plat.flow.XwtViewFlowPage;
 import com.shoestp.mains.utils.xwt.BeanCopyUtils;
 
 import lombok.ToString;

@@ -23,5 +23,5 @@ public interface XwtMetaMemberInfoService {
    * @param uvId 访客id
    * @return Integer 用户信息表id
    */
-  Integer getUserInfoIdByUvId(String uvId);
+  XwtMetaMemberInfo getUserInfoIdByUvId(String uvId);
 }

@@ -265,10 +265,8 @@ public class XwtMetaAccessLogRepositoryImpl extends BaseDao<XwtMetaAccessLog>
             .from(qAccessLog)
             .where(qAccessLog.createTime.between(start, end));
     // 访客类型
-    if (visitType != null && visitType == 1) {
+    if (visitType == 1) {
       query.where(qAccessLog.xwtMetaMemberInfo.userRole.eq(OMemberRoleEnum.REGISTER));
-    } else if (visitType != null && visitType == 0) {
-      query.where(qAccessLog.xwtMetaMemberInfo.userRole.eq(OMemberRoleEnum.VISITOR));
     }
     // 被访问页面
     if (urlPage != null && !"".equals(urlPage)) {

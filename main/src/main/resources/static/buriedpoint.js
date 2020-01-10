@@ -221,7 +221,8 @@ function ar_get_random(n) {
 }
 
 /* main function */
-function ar_main(referrer) {
+function ar_main(referrer, email, mobile) {
+  console.log('ref===>',referrer)
   // 收集完日志 提交到的路径
   var dest_path = 'http://192.168.40.25:9000/xwt/meta/date/access/log/save?'
   var expire_time = 30 * 60 * 1000// 会话超时时长
@@ -289,6 +290,9 @@ function ar_main(referrer) {
   // 用户登陆id
   var user_id = ar_get_cookie('__userid__')
 
+  // 用户昵称
+  var nick_name = ar_get_cookie('nick')
+
   // 用户登陆token
   var token = ar_get_cookie('_tb_token_')
 
@@ -296,6 +300,9 @@ function ar_main(referrer) {
   var url = window.location.href
   // var url = document.URL
   url = ar_encode(String(url))
+
+  var uri = window.location.href.replace(window.location.protocol + '//' + window.location.host, '')
+  uri = ar_encode(String(uri))
 
   // 当前资源名
   var urlname = document.URL.substring(document.URL.lastIndexOf('/') + 1)
@@ -348,6 +355,7 @@ function ar_main(referrer) {
   // 拼接访问地址 增加如上信息
   var dest = dest_path +
     'url=' + url +
+    '&uri=' + uri +
     '&urlname=' + urlname +
     '&title=' + title +
     '&chset=' + charset +
@@ -357,6 +365,9 @@ function ar_main(referrer) {
     '&jvm_enabled=' + jvm_enabled +
     '&cookie_enabled=' + cookie_enabled +
     '&user_id=' + user_id +
+    '&nick_name=' + nick_name +
+    '&email=' + email +
+    '&phone=' + mobile +
     '&token=' + token +
     '&ref=' + ref +
     '&agent=' + agent +

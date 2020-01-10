@@ -18,8 +18,7 @@ import org.springframework.stereotype.Service;
 @SuppressWarnings("ALL")
 public class XwtMetaMemberInfoServiceImpl implements XwtMetaMemberInfoService {
 
-  @Autowired
-  private XwtMetaMemberInfoDAO dao;
+  @Autowired private XwtMetaMemberInfoDAO dao;
 
   /**
    * 保存用户信息对象
@@ -42,7 +41,7 @@ public class XwtMetaMemberInfoServiceImpl implements XwtMetaMemberInfoService {
    * @return Integer 用户信息表id
    */
   @Override
-  public Integer getUserInfoIdByUvId(String uvId) {
-    return dao.findByUvId(uvId).map(XwtMetaMemberInfo::getId).orElse(0);
+  public XwtMetaMemberInfo getUserInfoIdByUvId(String uvId) {
+    return dao.findByUvId(uvId).orElse(null);
   }
 }

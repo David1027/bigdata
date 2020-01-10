@@ -1,5 +1,7 @@
 package com.shoestp.mains.service.xwt.metadata;
 
+import java.io.IOException;
+
 import com.shoestp.mains.entitys.xwt.metadata.XwtMetaAccessLog;
 
 /**
@@ -13,5 +15,5 @@ public interface XwtMetaAccessLogService {
    *
    * @param accessLog 访问日志对象
    */
-  void save(XwtMetaAccessLog accessLog);
+  void save(XwtMetaAccessLog accessLog) throws IOException;
 }

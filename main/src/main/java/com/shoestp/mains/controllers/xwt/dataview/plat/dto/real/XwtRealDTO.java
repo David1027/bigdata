@@ -1,7 +1,7 @@
 package com.shoestp.mains.controllers.xwt.dataview.plat.dto.real;
 
 import com.shoestp.mains.controllers.xwt.dataview.plat.vo.real.XwtIndexOverVO;
-import com.shoestp.mains.entitys.xwt.dataview.real.XwtViewReal;
+import com.shoestp.mains.entitys.xwt.dataview.plat.real.XwtViewReal;
 import com.shoestp.mains.utils.xwt.BeanCopyUtils;
 
 import lombok.ToString;

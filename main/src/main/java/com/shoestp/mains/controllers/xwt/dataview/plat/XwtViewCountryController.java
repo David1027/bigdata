@@ -6,7 +6,7 @@ import javax.annotation.Resource;
 
 import com.shoestp.mains.controllers.xwt.dataview.plat.dto.country.XwtCountryDTO;
 import com.shoestp.mains.pojo.MessageResult;
-import com.shoestp.mains.service.xwt.dataview.XwtViewCountryService;
+import com.shoestp.mains.service.xwt.dataview.plat.XwtViewCountryService;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,7 +30,7 @@ public class XwtViewCountryController {
    *
    * @param date 时间
    * @param num 天数类型
-   * @return List<XwtCountryVO> 国家前端展示类集合对象
+   * @return List<XwtMetaCountryVO> 国家前端展示类集合对象
    */
   @PostMapping(value = "country")
   public Object getCountry(@DateTimeFormat(pattern = "yyyy-MM-dd") Date date, Integer num) {

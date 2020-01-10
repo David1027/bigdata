@@ -1,5 +1,6 @@
 package com.shoestp.mains.service.xwt.metadata.impl;
 
+import java.io.IOException;
 import java.util.Date;
 
 import com.shoestp.mains.dao.xwt.metadata.dao.XwtMetaAccessLogDAO;
@@ -9,13 +10,7 @@ import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.enums.xwt.OAccessTypeEnum;
 import com.shoestp.mains.enums.xwt.OMemberRoleEnum;
 import com.shoestp.mains.service.urlmatchdatautil.URLMatchDataUtilService;
-import com.shoestp.mains.service.xwt.metadata.XwtMetaAccessLogService;
-import com.shoestp.mains.service.xwt.metadata.XwtMetaCountryService;
-import com.shoestp.mains.service.xwt.metadata.XwtMetaMemberInfoService;
-import com.shoestp.mains.service.xwt.metadata.XwtMetaProvinceService;
-import com.xinlianshiye.clouds.sso.facade.bean.MemberBean;
-import com.xinlianshiye.clouds.sso.facade.bean.Token;
-import com.xinlianshiye.clouds.sso.facade.service.MemberServiceGrpc;
+import com.shoestp.mains.service.xwt.metadata.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,27 +26,26 @@ import org.start2do.utils.iputils.IpUtils;
 public class XwtMetaAccessLogServiceImpl implements XwtMetaAccessLogService {
 
   @Autowired private XwtMetaAccessLogDAO dao;
-  @Autowired private MemberServiceGrpc.MemberServiceBlockingStub memberServiceBlockingStub;
   @Autowired private XwtMetaMemberInfoService memberInfoService;
   @Autowired private XwtMetaCountryService countryService;
   @Autowired private XwtMetaProvinceService provinceService;
   @Autowired private URLMatchDataUtilService urlMatchDataUtilService;
+  @Autowired private XwtMetaProductService productService;
+  @Autowired private XwtMetaFavoriteService favoriteService;
 
   /**
    * 保存日志信息
    *
-   * @param xwtMetaAccessLog 访问日志对象
+   * @param accessLog 访问日志对象
    */
   @Override
-  public void save(XwtMetaAccessLog accessLog) {
+  public void save(XwtMetaAccessLog accessLog) throws IOException {
     // 处理来源类型
     accessLog.setSourceType(getSourceType(accessLog.getRef()));
     // 处理页面类型
     accessLog.setAccessType(urlMatchDataUtilService.getAccessType(accessLog.getUri()));
-    //    accessLog.setAccessType(getAccessType(accessLog.getUrl()));
     // 关联用户信息表
-    accessLog.setMemberInfoId(
-        getMemberInfo(accessLog.getUserId(), accessLog.getToken(), accessLog.getUvId()));
+    accessLog.setMemberInfoId(getMemberInfo(accessLog));
     // 关联国家表,关联省份表
     setCountryAndProvince(accessLog);
     // 处理页面停留时长
@@ -60,6 +54,10 @@ public class XwtMetaAccessLogServiceImpl implements XwtMetaAccessLogService {
     accessLog.setCreateTime(new Date());
     // 保存日志信息
     dao.save(accessLog);
+    // 保存店铺产品日志信息
+    productService.saveProduct(accessLog);
+    // 保存搜索关键词日志信息
+    favoriteService.saveFavorite(accessLog);
   }
 
   /**
@@ -111,34 +109,42 @@ public class XwtMetaAccessLogServiceImpl implements XwtMetaAccessLogService {
    * @param uvId 访客id
    * @return Integer 用户信息表id
    */
-  private Integer getMemberInfo(String userId, String token, String uvId) {
+  private Integer getMemberInfo(XwtMetaAccessLog accessLog) {
     // 判断访客id对应的用户信息记录是否已经存在，0-用户信息不存在，不等于0-用户信息已经存在
-    Integer userInfoId = memberInfoService.getUserInfoIdByUvId(uvId);
-    if (userInfoId != 0) {
+    XwtMetaMemberInfo memberInfo = memberInfoService.getUserInfoIdByUvId(accessLog.getUvId());
+    if (memberInfo != null) {
+      // 如果用户id存在，更新登陆用户信息
+      if (accessLog.getUserId() != "") {
+        // 添加第三方用户信息
+        memberInfo.setUserId(Integer.parseInt(accessLog.getUserId()));
+        memberInfo.setNickName(accessLog.getNickName());
+        memberInfo.setEmail("null".equals(accessLog.getEmail()) ? null : accessLog.getEmail());
+        memberInfo.setPhone("null".equals(accessLog.getPhone()) ? null : accessLog.getPhone());
+        memberInfo.setUserRole(OMemberRoleEnum.REGISTER);
+        memberInfoService.save(memberInfo);
+      }
       // 用户信息已经存在，直接返回用户信息表id
-      return userInfoId;
+      return memberInfo.getId();
     } else {
       // 用户信息不存在存在，获取用户信息，保存，并返回用户信息id
       // 创建用户信息对象
       XwtMetaMemberInfo xwtMetaMemberInfo = new XwtMetaMemberInfo();
 
       // 判断用户是否登陆，true-从第三方查询用户信息，false-创建游客信息
-      if (userId != "" && token != "") {
-        // 从第三方获取用户信息
-        MemberBean memberBean =
-            memberServiceBlockingStub.fetchMember(
-                Token.newBuilder().setToken(token).setUserid(userId).build());
+      if (accessLog.getUserId() != "") {
         // 设置用户信息
-        xwtMetaMemberInfo.setUserId(memberBean.getId());
-        xwtMetaMemberInfo.setNickName(memberBean.getNickname());
-        xwtMetaMemberInfo.setEmail(memberBean.getEmail());
-        xwtMetaMemberInfo.setPhone(memberBean.getTelephone());
+        xwtMetaMemberInfo.setUserId(Integer.parseInt(accessLog.getUserId()));
+        xwtMetaMemberInfo.setNickName(accessLog.getNickName());
+        xwtMetaMemberInfo.setEmail(
+            "null".equals(accessLog.getEmail()) ? null : accessLog.getEmail());
+        xwtMetaMemberInfo.setPhone(
+            "null".equals(accessLog.getPhone()) ? null : accessLog.getPhone());
         xwtMetaMemberInfo.setUserRole(OMemberRoleEnum.REGISTER);
       } else {
         xwtMetaMemberInfo.setUserRole(OMemberRoleEnum.VISITOR);
       }
       // 设置访客id
-      xwtMetaMemberInfo.setUvId(uvId);
+      xwtMetaMemberInfo.setUvId(accessLog.getUvId());
 
       // 保存对象并返回id
       return memberInfoService.save(xwtMetaMemberInfo);
@@ -152,7 +158,7 @@ public class XwtMetaAccessLogServiceImpl implements XwtMetaAccessLogService {
    * @return SourceTypeEnum 来源类型枚举
    */
   private SourceTypeEnum getSourceType(String ref) {
-    if ("".equals(ref)) {
+    if ("/".equals(ref)) {
       return SourceTypeEnum.INTERVIEW;
     } else if (ref.indexOf("baidu") > 0) {
       return SourceTypeEnum.BAIDU;
@@ -160,18 +166,5 @@ public class XwtMetaAccessLogServiceImpl implements XwtMetaAccessLogService {
       return SourceTypeEnum.GOOGLE;
     }
     return SourceTypeEnum.OTHER;
-  }
-
-  /**
-   * 根据url返回页面类型
-   *
-   * @param url 访问页面url
-   * @return OAccessTypeEnum 页面类型枚举
-   */
-  private OAccessTypeEnum getAccessType(String url) {
-    if ("http://localhost/shopMall/".equals(url)) {
-      return OAccessTypeEnum.XWT_INDEX;
-    }
-    return OAccessTypeEnum.OTHER;
   }
 }

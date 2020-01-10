@@ -6,8 +6,12 @@ import com.shoestp.mains.entitys.urlmatchdatautil.enums.URLDataTypeEnum;
 import com.shoestp.mains.enums.flow.AccessTypeEnum;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
 import com.shoestp.mains.enums.xwt.OAccessTypeEnum;
+import com.shoestp.mains.enums.xwt.OProductEnum;
 import com.shoestp.mains.pojo.PageSourcePojo;
 import com.shoestp.mains.service.urlmatchdatautil.URLMatchDataUtilService;
+import com.shoestp.mains.utils.xwt.EnumUtil;
+import com.shoestp.mains.views.dataview.utils.KeyValue;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
@@ -16,7 +20,10 @@ import org.start2do.utils.MyStringUtils;
 import javax.annotation.Resource;
 import javax.cache.annotation.CacheDefaults;
 import javax.cache.annotation.CacheResult;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The type Url match data util service.
@@ -127,6 +134,9 @@ public class URLMatchDataUtilServiceImpl implements URLMatchDataUtilService {
     for (URLMatchDataEntity urlMatchDataEntity :
         urlMatchDataDao.findByTypeOrderByPriorityDesc(URLDataTypeEnum.PAGETYPE)) {
       if (MyStringUtils.isMatch3(urlMatchDataEntity.getRegex(), uri)) {
+        if (EnumUtil.isInclude(urlMatchDataEntity.getName())) {
+          return OAccessTypeEnum.OTHER;
+        }
         return OAccessTypeEnum.valueOf(urlMatchDataEntity.getName());
       }
     }
@@ -152,5 +162,60 @@ public class URLMatchDataUtilServiceImpl implements URLMatchDataUtilService {
       }
     }
     return 0;
+  }
+
+  /**
+   * 根据uri返回店铺的id或产品的id
+   *
+   * @author: lingjian @Date: 2020/1/8 13:54
+   * @param uri 请求的uri
+   * @return Map<String,Integer> <店铺名称-店铺id>或<产品名称-产品的id>
+   */
+  @Override
+  public Map<OProductEnum, Integer> getProductIdByUrl(String uri) {
+    Map<OProductEnum, Integer> map = new HashMap<>(16);
+    for (URLMatchDataEntity urlMatchDataEntity :
+        urlMatchDataDao.findByTypeOrderByPriorityDesc(URLDataTypeEnum.PAGETYPE)) {
+      if (MyStringUtils.isMatch3(urlMatchDataEntity.getRegex(), uri)) {
+        String name = urlMatchDataEntity.getName();
+        if (EnumUtil.isInclude(name)) {
+          OProductEnum product = OProductEnum.valueOf(urlMatchDataEntity.getName());
+          int id;
+          if (product.equals(OProductEnum.SHOP_PRODUCT)
+              || product.equals(OProductEnum.MATERIAL_PRODUCT)) {
+            id = Integer.parseInt(uri.substring(uri.indexOf("-") + 1, uri.indexOf(".")));
+          } else {
+            if (uri.contains("&")) {
+              id = Integer.parseInt(uri.substring(uri.indexOf("se=") + 1, uri.indexOf("&")));
+            } else {
+              String substring = uri.substring(uri.indexOf("=") + 1);
+              id = Integer.parseInt(substring);
+            }
+          }
+          map.put(product, id);
+          return map;
+        }
+        return null;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * 根据uri返回搜索词
+   *
+   * @param uri url
+   * @return String 搜索词
+   */
+  @Override
+  public String getSearchTermByUrl(String uri) {
+    for (URLMatchDataEntity urlMatchDataEntity :
+        urlMatchDataDao.findByTypeOrderByPriorityDesc(URLDataTypeEnum.SEARCH)) {
+      if (MyStringUtils.isMatch3(urlMatchDataEntity.getRegex(), uri)) {
+        String substring = uri.substring(uri.indexOf("=") + 1);
+        return substring;
+      }
+    }
+    return null;
   }
 }

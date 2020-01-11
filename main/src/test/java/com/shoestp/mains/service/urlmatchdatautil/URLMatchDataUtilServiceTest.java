@@ -1,16 +1,17 @@
 package com.shoestp.mains.service.urlmatchdatautil;
 
-import base.BaseTest;
+import javax.annotation.Resource;
+
 import com.shoestp.mains.dao.urlmatchdatautil.URLMatchDataDao;
 import com.shoestp.mains.entitys.urlmatchdatautil.URLMatchDataEntity;
 import com.shoestp.mains.entitys.urlmatchdatautil.enums.URLDataTypeEnum;
 import com.shoestp.mains.enums.flow.AccessTypeEnum;
 import com.shoestp.mains.enums.flow.SourceTypeEnum;
+
+import base.BaseTest;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import javax.annotation.Resource;
 
 /**
  * The type Url match data util service test.

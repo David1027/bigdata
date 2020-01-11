@@ -12,8 +12,8 @@ import com.shoestp.mains.entitys.metadata.enums.DeviceTypeEnum
 import com.shoestp.mains.enums.flow.AccessTypeEnum
 import com.shoestp.mains.service.dataview.inquiry.InquiryNewService
 import com.shoestp.mains.service.metadata.WebVisitInfoService
+import junit.framework.Assert
 import org.apache.logging.log4j.LogManager
-import org.junit.Assert
 import org.junit.jupiter.api.Test
 import org.start2do.utils.DateTimeUtil
 import java.time.LocalDateTime
